@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Las Ñañas | Ecosistema Rural</title>
+
+    <!-- Tipografías de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@500;600&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Fondo oscuro sólido -->
+    <div class="dark-background"></div>
+
+    <!-- Contenedor del entorno interactivo (Íconos y Palabras) -->
+    <div id="floating-environment" aria-hidden="true"></div>
+
+    <!-- Contenido Principal -->
+    <main class="main-container">
+        <!-- Recuadro central -->
+        <article class="glass-panel fade-in">
+
+            <header>
+                <!-- Logo -->
+                <img src="assets/logo.jpg" alt="Logo de Las Ñañas" class="logo" onerror="this.style.display='none'">
+
+                <!-- Título plateado -->
+                <h1 class="silver-text">Raíces profundas.<br>Ecosistemas vivos.</h1>
+            </header>
+
+            <section class="content">
+                <h2 class="subtitle">Cultivando el futuro desde la sabiduría ancestral.</h2>
+                <p class="description">
+                    Un espacio donde la agroecología, la cultura mapuche y la fuerza de la mujer campesina convergen. Impulsamos el turismo rural, protegemos nuestras plantas nativas y fomentamos la soberanía alimentaria.
+                </p>
+
+                <div class="launch-message">
+                    <span class="status-dot"></span>
+                    <p>La tierra se prepara. Nuestra semilla germinará pronto.</p>
+                </div>
+            </section>
+
+            <footer>
+                <a href="mailto:contacto@lasñañas.cl" class="cta-button" aria-label="Contáctanos vía correo">Únete a nuestro ciclo</a>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Visita nuestro Instagram">
+                        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <!-- JavaScript Vanilla -->
+    <script src="script.js"></script>
+</body>
+</html>
