@@ -72,8 +72,9 @@ body {
 .floating-box svg { width: 32px; height: 32px; opacity: 0.95; }
 
 /* Versión chica, usada solo en teléfono (ver script.js -> elementosMovil) */
-.floating-box--sm { width: 40px; height: 40px; opacity: 0.75; }
-.floating-box--sm svg { width: 20px; height: 20px; }
+.floating-box--sm { width: 38px; height: 38px; opacity: 0.75; }
+.floating-box--sm svg { width: 19px; height: 19px; }
+.floating-word--sm { font-size: 0.8rem; opacity: 0.6; }
 
 /* ==========================================================================
    PALABRAS FLOTANTES
@@ -221,12 +222,16 @@ body {
    Se permite scroll vertical por si el contenido no entra en pantalla.
    ========================================================================== */
 @media (max-width: 600px) {
-    body { overflow-y: auto; padding: 20px 0; }
+    body { overflow-y: auto; padding: 14px 0; }
 
-    .glass-panel { padding: 1.8rem 1.2rem; margin: 0 14px; }
-    .logo { width: 100px; }
-    .silver-text { font-size: 1.5rem; }
-    .subtitle { font-size: 0.8rem; }
-    .description { font-size: 0.92rem; margin-bottom: 1.5rem; }
-    .progress-track { max-width: 200px; }
+    .glass-panel { padding: 1.4rem 1.1rem; margin: 0 14px; border-radius: 14px; }
+    .logo { width: 76px; margin-bottom: 0.9rem; }
+    .silver-text { font-size: 1.35rem; line-height: 1.2; margin-bottom: 0.7rem; }
+    .subtitle { font-size: 0.72rem; margin-bottom: 0.8rem; letter-spacing: 0.5px; }
+    .description { font-size: 0.85rem; line-height: 1.45; margin-bottom: 1.1rem; }
+    .launch-message { font-size: 0.8rem; margin-bottom: 0.7rem; }
+    .progress-wrap { margin-bottom: 1.1rem; }
+    .progress-track { max-width: 160px; height: 6px; }
+    .cta-button { padding: 10px 24px; font-size: 0.85rem; margin-bottom: 1rem; }
+    .social-links a { width: 18px; height: 18px; }
 }

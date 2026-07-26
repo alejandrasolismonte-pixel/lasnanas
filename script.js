@@ -21,17 +21,22 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'text', x: 8,  y: 91, content: "kvme mogen" },
         { type: 'box',  x: 27, y: 92, color: "20, 184, 166", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 22l0 -14" /><path d="M9 13l3 -5" /><path d="M15 13l-3 -5" /><path d="M12 6l-2 -3" /><path d="M12 6l2 -3" />' }, // araucaria
         { type: 'text', x: 46, y: 93, content: "tecnología rural" },
-        { type: 'text', x: 73, y: 91, content: "neyen y neyen" },
+        { type: 'text', x: 73, y: 91, content: "neyen" },
         { type: 'box',  x: 90, y: 92, color: "234, 179, 8",  content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><line x1="3" y1="6" x2="3" y2="19" /><line x1="12" y1="6" x2="12" y2="19" /><line x1="21" y1="6" x2="21" y2="19" />' } // educación
     ];
 
-    /* En teléfono el panel ocupa casi toda la pantalla, así que solo dejamos
-       4 íconos chicos en las esquinas reales — nada de palabras (chocarían). */
+    /* En teléfono el panel ocupa casi toda la pantalla, así que solo usamos
+       las franjas libres de arriba y abajo: 4 íconos chicos en las esquinas
+       + 4 palabras chicas entre medio de esos íconos. */
     const elementosMovil = [
-        { type: 'box', x: 5,  y: 4,  small: true, color: "16, 185, 129", content: elementosDesktop[0].content },
-        { type: 'box', x: 82, y: 4,  small: true, color: "245, 158, 11", content: elementosDesktop[3].content },
-        { type: 'box', x: 5,  y: 90, small: true, color: "20, 184, 166", content: elementosDesktop[9].content },
-        { type: 'box', x: 82, y: 90, small: true, color: "234, 179, 8",  content: elementosDesktop[12].content }
+        { type: 'box',  x: 5,  y: 4,  small: true, color: "16, 185, 129", content: elementosDesktop[0].content },
+        { type: 'text', x: 30, y: 3,  small: true, content: "agroecología" },
+        { type: 'text', x: 60, y: 3,  small: true, content: "voluntariado" },
+        { type: 'box',  x: 82, y: 4,  small: true, color: "245, 158, 11", content: elementosDesktop[3].content },
+        { type: 'box',  x: 5,  y: 90, small: true, color: "20, 184, 166", content: elementosDesktop[9].content },
+        { type: 'text', x: 30, y: 93, small: true, content: "kvme mogen" },
+        { type: 'text', x: 58, y: 93, small: true, content: "neyen" },
+        { type: 'box',  x: 82, y: 90, small: true, color: "234, 179, 8",  content: elementosDesktop[12].content }
     ];
 
     const elementos = esMovil ? elementosMovil : elementosDesktop;
@@ -50,6 +55,7 @@ function createFloatingElement(container, data) {
         el.innerHTML = `<svg viewBox="0 0 24 24" stroke="rgb(${data.color})" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">${data.content}</svg>`;
     } else if (data.type === 'text') {
         el.classList.add('floating-word');
+        if (data.small) el.classList.add('floating-word--sm');
         el.innerText = data.content;
     }
 
@@ -64,10 +70,10 @@ function createFloatingElement(container, data) {
        ANIMACIÓN DE MOVIMIENTO — EDITAR AQUÍ la velocidad:
        "duration" más bajo = se mueve más rápido.
        ========================================================================== */
-    const moveX = (Math.random() - 0.5) * 4;
-    const moveY = (Math.random() - 0.5) * 4;
-    const duration = 12 + Math.random() * 8; // 12 a 20 segundos
-    const delay = Math.random() * -15;
+    const moveX = (Math.random() - 0.5) * 6;
+    const moveY = (Math.random() - 0.5) * 6;
+    const duration = 7 + Math.random() * 6; // 7 a 13 segundos (más rápido)
+    const delay = Math.random() * -10;
 
     el.animate([
         { transform: `translate(0, 0)` },
