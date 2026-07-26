@@ -1,9 +1,12 @@
+/* ==========================================================================
+   VARIABLES GLOBALES
+   ========================================================================== */
 :root {
     --font-heading: 'Playfair Display', serif;
     --font-body: 'Inter', sans-serif;
     --font-rustic: 'Fraunces', serif;
-    --color-bg-dark: #0f1115;
-    --glass-bg: rgba(20, 24, 28, 0.6);
+    --color-bg-dark: #07080a;
+    --glass-bg: rgba(14, 17, 20, 0.65);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,19 +19,24 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow: hidden; /* en mobile se cambia a auto, ver media query abajo */
     position: relative;
 }
 
+/* ==========================================================================
+   FONDO (foto hero + overlay oscuro)
+   EDITAR AQUÍ: sube los valores del rgba para más negro, bájalos para
+   que se note más la foto.
+   ========================================================================== */
 .dark-background {
     position: absolute;
     top: 0; left: 0; width: 100vw; height: 100vh;
     background:
-        radial-gradient(circle at center, rgba(15,17,21,0.55) 0%, rgba(10,11,14,0.88) 100%),
+        radial-gradient(circle at center, rgba(4,5,6,0.80) 0%, rgba(2,2,3,0.97) 100%),
         url('assets/hero.jpg');
     background-size: cover;
     background-position: center;
-    filter: saturate(1.05);
+    filter: saturate(1.05) brightness(0.55);
     z-index: 1;
 }
 
@@ -36,7 +44,7 @@ body {
     content: '';
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at center, #1e2229 0%, #0a0b0e 100%);
+    background: radial-gradient(circle at center, #101318 0%, #030405 100%);
     z-index: -1;
 }
 
@@ -45,6 +53,9 @@ body {
     z-index: 3; pointer-events: none; overflow: hidden;
 }
 
+/* ==========================================================================
+   ÍCONOS FLOTANTES
+   ========================================================================== */
 .floating-box {
     position: absolute;
     width: 64px;
@@ -57,17 +68,24 @@ body {
     -webkit-backdrop-filter: blur(4px);
     opacity: 0.9;
     box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-    transition: opacity 0.3s ease;
 }
 .floating-box svg { width: 32px; height: 32px; opacity: 0.95; }
 
+/* Versión chica, usada solo en teléfono (ver script.js -> elementosMovil) */
+.floating-box--sm { width: 40px; height: 40px; opacity: 0.75; }
+.floating-box--sm svg { width: 20px; height: 20px; }
+
+/* ==========================================================================
+   PALABRAS FLOTANTES
+   EDITAR AQUÍ font-size para agrandar/achicar el texto flotante.
+   ========================================================================== */
 .floating-word {
     position: absolute;
     font-family: var(--font-rustic);
     font-style: italic;
     font-weight: 500;
     font-optical-sizing: auto;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     letter-spacing: 0.5px;
     white-space: nowrap;
     text-transform: lowercase;
@@ -83,6 +101,10 @@ body {
 
 @keyframes word-shine { to { background-position: 200% center; } }
 
+/* ==========================================================================
+   PANEL CENTRAL (glassmorphism) — más chico y ajustado al texto
+   EDITAR AQUÍ max-width para hacerlo más ancho/angosto.
+   ========================================================================== */
 .main-container { position: relative; z-index: 10; padding: 20px; }
 
 .glass-panel {
@@ -90,9 +112,9 @@ body {
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    padding: 3.5rem 4rem;
-    max-width: 780px;
+    border-radius: 18px;
+    padding: 2.6rem 3rem;
+    max-width: 600px;
     text-align: center;
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     animation: panel-pulse 12s infinite alternate ease-in-out;
@@ -104,13 +126,13 @@ body {
     100% { box-shadow: 0 0 50px rgba(139, 69, 19, 0.12); border-color: rgba(255, 255, 255, 0.06); }
 }
 
-.logo { width: 160px; margin-bottom: 2.5rem; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.4)); }
+.logo { width: 130px; margin-bottom: 1.6rem; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.4)); }
 
 .silver-text {
     font-family: var(--font-heading);
-    font-size: 3.5rem;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
+    font-size: 2.6rem;
+    line-height: 1.15;
+    margin-bottom: 1.1rem;
     font-weight: 600;
     background: linear-gradient(110deg, #8b9eb7 0%, #ffffff 20%, #b8c6db 40%, #ffffff 60%, #8b9eb7 100%);
     background-size: 200% auto;
@@ -122,9 +144,9 @@ body {
 
 @keyframes shine { to { background-position: 200% center; } }
 
-.subtitle { font-size: 1.1rem; color: #94a3b8; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
-.description { font-size: 1.15rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 3rem; font-weight: 300; }
-.launch-message { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 2.5rem; font-size: 0.95rem; color: #8b9eb7; }
+.subtitle { font-size: 0.95rem; color: #94a3b8; margin-bottom: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+.description { font-size: 1rem; line-height: 1.55; color: #cbd5e1; margin-bottom: 1.8rem; font-weight: 300; }
+.launch-message { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 1rem; font-size: 0.9rem; color: #8b9eb7; }
 .status-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; animation: pulse-dot 2s infinite; }
 
 @keyframes pulse-dot {
@@ -133,18 +155,78 @@ body {
     100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
-.cta-button { display: inline-block; padding: 14px 36px; background-color: rgba(255, 255, 255, 0.05); color: #fff; text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; transition: all 0.3s ease; margin-bottom: 2rem; }
+/* ==========================================================================
+   BARRA DE "CARGA" — estilo suelo/tierra, café, indeterminada (en loop)
+   EDITAR AQUÍ: colores del gradiente, velocidad ("2.2s"), o ancho de la
+   franja que se desliza ("width: 35%").
+   ========================================================================== */
+.progress-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.8rem;
+}
+
+.progress-track {
+    position: relative;
+    width: 100%;
+    max-width: 240px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(101, 67, 33, 0.18);
+    border: 1px solid rgba(166, 124, 82, 0.25);
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.progress-fill {
+    position: absolute;
+    top: 0;
+    left: -35%;
+    width: 35%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #4a2f1c 0%, #a9773f 45%, #d9a86a 55%, #a9773f 65%, #4a2f1c 100%);
+    box-shadow: 0 0 12px rgba(169, 119, 63, 0.5);
+    animation: soil-slide 2.2s ease-in-out infinite;
+}
+
+@keyframes soil-slide {
+    0%   { left: -35%; }
+    100% { left: 100%; }
+}
+
+.cta-button { display: inline-block; padding: 12px 30px; background-color: rgba(255, 255, 255, 0.05); color: #fff; text-decoration: none; font-size: 0.95rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; transition: all 0.3s ease; margin-bottom: 1.4rem; }
 .cta-button:hover { background-color: #fff; color: var(--color-bg-dark); box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
 .social-links { display: flex; justify-content: center; gap: 20px; }
-.social-links a { color: #64748b; width: 24px; height: 24px; transition: color 0.3s ease, transform 0.3s ease; }
+.social-links a { color: #64748b; width: 22px; height: 22px; transition: color 0.3s ease, transform 0.3s ease; }
 .social-links a:hover { color: #fff; transform: translateY(-3px); }
 .fade-in { opacity: 0; transform: translateY(20px); animation: fadeInUp 1s forwards 0.2s; }
 @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
+/* ==========================================================================
+   RESPONSIVE — TABLETS (≤768px)
+   ========================================================================== */
 @media (max-width: 768px) {
-    .glass-panel { padding: 2.5rem 1.5rem; margin: 0 15px; border-radius: 16px; }
-    .silver-text { font-size: 2.2rem; }
-    .floating-word { font-size: 1.1rem; }
-    .floating-box { width: 48px; height: 48px; }
-    .floating-box svg { width: 24px; height: 24px; }
+    .glass-panel { padding: 2.2rem 1.6rem; margin: 0 15px; border-radius: 16px; }
+    .silver-text { font-size: 2rem; }
+    .floating-word { font-size: 1.15rem; }
+    .floating-box { width: 52px; height: 52px; }
+    .floating-box svg { width: 26px; height: 26px; }
+}
+
+/* ==========================================================================
+   RESPONSIVE — TELÉFONOS (≤600px)
+   Las palabras y 2 íconos de escritorio no se generan en JS para móvil
+   (ver "elementosMovil" en script.js) — aquí solo ajustamos tamaños.
+   Se permite scroll vertical por si el contenido no entra en pantalla.
+   ========================================================================== */
+@media (max-width: 600px) {
+    body { overflow-y: auto; padding: 20px 0; }
+
+    .glass-panel { padding: 1.8rem 1.2rem; margin: 0 14px; }
+    .logo { width: 100px; }
+    .silver-text { font-size: 1.5rem; }
+    .subtitle { font-size: 0.8rem; }
+    .description { font-size: 0.92rem; margin-bottom: 1.5rem; }
+    .progress-track { max-width: 200px; }
 }

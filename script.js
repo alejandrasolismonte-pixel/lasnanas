@@ -1,31 +1,40 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('floating-environment');
+    const esMovil = window.innerWidth <= 600;
 
-    // Cada elemento tiene una posición fija en % del viewport (x, y),
-    // ubicada en el PERÍMETRO de la pantalla para dejar libre la zona
-    // central donde vive el panel de cristal (glass-panel).
-    const elementos = [
-        // --- Borde superior ---
+    /* ==========================================================================
+       ELEMENTOS FLOTANTES (posiciones de escritorio, en % de pantalla)
+       EDITAR AQUÍ:
+       - Para cambiar una PALABRA: modifica "content" en un type:'text'.
+       - Para cambiar un COLOR de ícono: modifica "color" ("R, G, B").
+       - Para cambiar la POSICIÓN: modifica "x" (izquierda) e "y" (arriba), en %.
+       ========================================================================== */
+    const elementosDesktop = [
         { type: 'box',  x: 6,  y: 8,  color: "16, 185, 129", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3" /><path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3" /><path d="M12 20l0 -10" />' }, // manos / comunidad
         { type: 'text', x: 27, y: 6,  content: "agroecología" },
         { type: 'text', x: 68, y: 6,  content: "voluntariado" },
         { type: 'box',  x: 91, y: 8,  color: "245, 158, 11", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="5 12 3 12 12 3 21 12 19 12" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />' }, // casa
-
-        // --- Costados, franja superior ---
-        { type: 'text', x: 5,  y: 35, content: "tecnología rural" },
+        { type: 'box',  x: 5,  y: 35, color: "139, 92, 246", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 21c-4 -1 -7 -6 -7 -12v-3h3c5 0 9 3 9 8" /><path d="M12 21c4 -1 7 -6 7 -12v-3h-3c-3 0 -6 1 -8 3" /><path d="M12 21v-8" />' }, // semilla
         { type: 'box',  x: 92, y: 35, color: "59, 130, 246", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M12 3v18" /><path d="M3 12h18" /><path d="M12 8l4 4" /><path d="M12 16l-4 -4" />' }, // cultrún
-
-        // --- Costados, franja inferior ---
         { type: 'text', x: 5,  y: 63, content: "bioinsumos" },
         { type: 'text', x: 92, y: 63, content: "naturaleza" },
-
-        // --- Borde inferior ---
-        { type: 'text', x: 10, y: 90, content: "kvme mogen" },
-        { type: 'box',  x: 30, y: 91, color: "20, 184, 166", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 22l0 -14" /><path d="M9 13l3 -5" /><path d="M15 13l-3 -5" /><path d="M12 6l-2 -3" /><path d="M12 6l2 -3" />' }, // araucaria
-        { type: 'text', x: 66, y: 90, content: "neyen" },
-        { type: 'box',  x: 90, y: 91, color: "234, 179, 8",  content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><line x1="3" y1="6" x2="3" y2="19" /><line x1="12" y1="6" x2="12" y2="19" /><line x1="21" y1="6" x2="21" y2="19" />' } // educación
+        { type: 'text', x: 8,  y: 91, content: "kvme mogen" },
+        { type: 'box',  x: 27, y: 92, color: "20, 184, 166", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 22l0 -14" /><path d="M9 13l3 -5" /><path d="M15 13l-3 -5" /><path d="M12 6l-2 -3" /><path d="M12 6l2 -3" />' }, // araucaria
+        { type: 'text', x: 46, y: 93, content: "tecnología rural" },
+        { type: 'text', x: 73, y: 91, content: "neyen y neyen" },
+        { type: 'box',  x: 90, y: 92, color: "234, 179, 8",  content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><line x1="3" y1="6" x2="3" y2="19" /><line x1="12" y1="6" x2="12" y2="19" /><line x1="21" y1="6" x2="21" y2="19" />' } // educación
     ];
 
+    /* En teléfono el panel ocupa casi toda la pantalla, así que solo dejamos
+       4 íconos chicos en las esquinas reales — nada de palabras (chocarían). */
+    const elementosMovil = [
+        { type: 'box', x: 5,  y: 4,  small: true, color: "16, 185, 129", content: elementosDesktop[0].content },
+        { type: 'box', x: 82, y: 4,  small: true, color: "245, 158, 11", content: elementosDesktop[3].content },
+        { type: 'box', x: 5,  y: 90, small: true, color: "20, 184, 166", content: elementosDesktop[9].content },
+        { type: 'box', x: 82, y: 90, small: true, color: "234, 179, 8",  content: elementosDesktop[12].content }
+    ];
+
+    const elementos = esMovil ? elementosMovil : elementosDesktop;
     elementos.forEach(el => createFloatingElement(container, el));
 });
 
@@ -34,6 +43,7 @@ function createFloatingElement(container, data) {
 
     if (data.type === 'box') {
         el.classList.add('floating-box');
+        if (data.small) el.classList.add('floating-box--sm');
         el.style.backgroundColor = `rgba(${data.color}, 0.14)`;
         el.style.border = `1px solid rgba(${data.color}, 0.4)`;
         el.style.boxShadow = `0 4px 24px rgba(${data.color}, 0.35), 0 0 30px rgba(${data.color}, 0.15)`;
@@ -43,20 +53,21 @@ function createFloatingElement(container, data) {
         el.innerText = data.content;
     }
 
-    // Pequeño jitter aleatorio para que no se vean perfectamente alineados
-    const jitterX = (Math.random() - 0.5) * 2; // +-1vw
-    const jitterY = (Math.random() - 0.5) * 2; // +-1vh
-
-    el.style.left = `${data.x + jitterX}vw`;
-    el.style.top = `${data.y + jitterY}vh`;
+    // Posición puesta directo en el elemento: no depende de que ninguna
+    // clase CSS externa coincida, así que no se puede "romper" al copiar.
+    el.style.position = 'absolute';
+    el.style.left = `${data.x}vw`;
+    el.style.top = `${data.y}vh`;
     container.appendChild(el);
 
-    // Movimiento sutil dentro de su propia zona (siempre lejos del centro)
-    const moveX = (Math.random() - 0.5) * 3; // vw
-    const moveY = (Math.random() - 0.5) * 3; // vh
-
-    const duration = 25 + Math.random() * 20; // 25 a 45 segundos
-    const delay = Math.random() * -30;
+    /* ==========================================================================
+       ANIMACIÓN DE MOVIMIENTO — EDITAR AQUÍ la velocidad:
+       "duration" más bajo = se mueve más rápido.
+       ========================================================================== */
+    const moveX = (Math.random() - 0.5) * 4;
+    const moveY = (Math.random() - 0.5) * 4;
+    const duration = 12 + Math.random() * 8; // 12 a 20 segundos
+    const delay = Math.random() * -15;
 
     el.animate([
         { transform: `translate(0, 0)` },
