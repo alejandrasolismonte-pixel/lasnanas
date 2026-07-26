@@ -127,7 +127,18 @@ body {
     100% { box-shadow: 0 0 50px rgba(139, 69, 19, 0.12); border-color: rgba(255, 255, 255, 0.06); }
 }
 
-.logo { width: 130px; margin-bottom: 1.6rem; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.4)); }
+.logo {
+    width: 130px;
+    margin-bottom: 1.6rem;
+    filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.4));
+    animation: logo-float 5s ease-in-out infinite;
+}
+
+/* EDITAR AQUÍ: "translateY(-8px)" = cuánto sube; "5s" = qué tan lento flota */
+@keyframes logo-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
 
 .silver-text {
     font-family: var(--font-heading);
