@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Las Ñañas: territorio, agroecología, semillas, comunidad y saberes que florecen desde Wallmapu.">
+  <title>Las Ñañas | Desarrollo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/desarrollo.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <div class="welcome-message" role="status" aria-live="polite">
+    <span aria-hidden="true">✦</span> Mari mari pu lamgen!!
+  </div>
+
+  <header class="site-header" data-header>
+    <div class="header__inner container">
+      <a class="brand" href="#inicio" aria-label="Las Ñañas, ir al inicio">
+        <span class="brand__mark" aria-hidden="true">LN</span>
+        <span>Las Ñañas</span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation">
+        <span class="sr-only">Abrir menú</span>
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="main-nav" id="main-navigation" aria-label="Navegación principal">
+        <a href="#inicio">Inicio</a>
+        <a href="#quienes-somos">Quiénes somos</a>
+        <a href="#territorio">Territorio</a>
+        <a href="#preguntas">Preguntas frecuentes</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+
+      <a class="header-ecosystem" href="#ecosistema">Ecosistema Ñañas <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="hero section-shell" id="inicio" aria-labelledby="hero-title">
+      <video class="hero__video" autoplay muted loop playsinline poster="assets/hero.png" aria-hidden="true">
+        <source src="assets/videos/video-header.mp4" type="video/mp4">
+      </video>
+      <div class="hero__overlay"></div>
+      <div class="hero__texture" aria-hidden="true"></div>
+      <div class="hero__content container reveal">
+        <p class="eyebrow">Wallmapu · La Araucanía · Chile</p>
+        <h1 id="hero-title">Raíces que cuidan.<br><em>Redes que florecen.</em></h1>
+        <p class="hero__lead">Un proyecto agroecológico que une territorio, semillas, biodiversidad y saberes comunitarios para cultivar futuros más vivos.</p>
+        <div class="hero__actions">
+          <a class="button button--primary" href="#voluntariado">Participa como voluntaria/o <span aria-hidden="true">→</span></a>
+          <a class="button button--ghost" href="#contacto">Conversemos</a>
+        </div>
+        <p class="hero__identity">Mujeres, agroecología y comunidad en movimiento.</p>
+      </div>
+      <a class="hero__scroll" href="#quienes-somos">Explorar <span aria-hidden="true">↓</span></a>
+    </section>
+
+    <section class="section-shell section" id="quienes-somos" aria-labelledby="about-title">
+      <div class="container split-grid">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Kimün · saberes compartidos</p>
+          <h2 id="about-title">La tierra nos enseña a trabajar en red.</h2>
+        </div>
+        <article class="surface-card surface-card--large reveal">
+          <p class="lead-text">Las Ñañas nace desde el vínculo con el territorio, la producción responsable de alimentos y la fuerza de la colaboración comunitaria.</p>
+          <p>Defendemos la biodiversidad, acompañamos procesos de aprendizaje y creamos caminos para que las semillas, los oficios y las historias sigan circulando.</p>
+          <div class="pill-list" aria-label="Pilares de Las Ñañas">
+            <span>Agroecología</span><span>Semillas libres</span><span>Autogestión</span><span>Redes de apoyo</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-shell section section--territory" id="territorio" aria-labelledby="territory-title">
+      <div class="container">
+        <div class="section-heading section-heading--wide reveal">
+          <p class="eyebrow">Mapu · territorio vivo</p>
+          <h2 id="territory-title">Un mapa para recorrer nuestras conexiones.</h2>
+          <p>Selecciona un pin para conocer iniciativas, lugares y aprendizajes que dan vida a Las Ñañas.</p>
+        </div>
+
+        <div class="map-experience reveal" data-map-experience>
+          <div class="map-toolbar" role="group" aria-label="Filtrar puntos del mapa">
+            <button class="map-filter is-active" type="button" data-filter="all">Todos</button>
+            <button class="map-filter" type="button" data-filter="nanas">Las Ñañas</button>
+            <button class="map-filter" type="button" data-filter="territory">Territorio</button>
+          </div>
+          <div class="map-stage" aria-label="Mapa ilustrado de Wallmapu con puntos interactivos">
+            <img src="assets/img/mapa-araucania.png" alt="Mapa ilustrado de Wallmapu y La Araucanía">
+            <button class="map-pin pin--nanas" type="button" style="--x: 31%; --y: 58%;" data-category="nanas" data-title="Las Ñañas · Carahue" data-text="Nodo territorial en Carahue. Ubicación de referencia a confirmar con el equipo." aria-label="Abrir información de Las Ñañas en Carahue"><span aria-hidden="true">✦</span></button>
+            <button class="map-pin pin--nanas" type="button" style="--x: 45%; --y: 52%;" data-category="nanas" data-title="Las Ñañas · Chol Chol" data-text="Nodo territorial en Chol Chol. Ubicación de referencia a confirmar con el equipo." aria-label="Abrir información de Las Ñañas en Chol Chol"><span aria-hidden="true">✦</span></button>
+            <button class="map-pin pin--nanas" type="button" style="--x: 72%; --y: 60%;" data-category="nanas" data-title="Las Ñañas · Temuco" data-text="Conexiones, redes y actividades de Las Ñañas en Temuco." aria-label="Abrir información de Las Ñañas en Temuco"><span aria-hidden="true">✦</span></button>
+            <button class="map-pin pin--nanas" type="button" style="--x: 66%; --y: 84%;" data-category="nanas" data-title="Las Ñañas · Villarrica" data-text="Encuentros territoriales y vínculos de Las Ñañas en Villarrica." aria-label="Abrir información de Las Ñañas en Villarrica"><span aria-hidden="true">✦</span></button>
+            <button class="map-pin pin--territory" type="button" style="--x: 51%; --y: 40%;" data-category="territory" data-title="Faros agroecológicos" data-text="Espacios de aprendizaje, experimentación y producción responsable que iluminan rutas posibles." aria-label="Abrir información sobre faros agroecológicos"><span aria-hidden="true">♧</span></button>
+            <button class="map-pin pin--territory" type="button" style="--x: 58%; --y: 68%;" data-category="territory" data-title="Flora y fauna" data-text="Observación y cuidado de especies nativas como parte de un ecosistema vivo e interdependiente." aria-label="Abrir información sobre flora y fauna"><span aria-hidden="true">❋</span></button>
+            <button class="map-pin pin--territory" type="button" style="--x: 42%; --y: 32%;" data-category="territory" data-title="Observatorio intercultural" data-text="Un espacio para mirar el territorio desde saberes diversos, conversación y respeto mutuo." aria-label="Abrir información sobre observatorio intercultural"><span aria-hidden="true">◉</span></button>
+            <button class="map-pin pin--territory" type="button" style="--x: 53%; --y: 55%;" data-category="territory" data-title="Rukas" data-text="Espacios de encuentro, conversación, abrigo y transmisión de saberes." aria-label="Abrir información sobre rukas"><span aria-hidden="true">⌂</span></button>
+          </div>
+          <aside class="map-detail" aria-live="polite">
+            <p class="map-detail__eyebrow">Explora el territorio</p>
+            <h3>Elige un pin</h3>
+            <p>Verás aquí la historia breve de cada punto del mapa.</p>
+          </aside>
+        </div>
+        <p class="section-note">Las ubicaciones de Carahue y Chol Chol son referenciales y se ajustarán con coordenadas o indicaciones del equipo.</p>
+      </div>
+    </section>
+
+    <section class="section-shell section" id="nanas" aria-labelledby="nanas-title">
+      <div class="container">
+        <div class="section-heading section-heading--wide reveal">
+          <p class="eyebrow">Pu lamngen · comunidad</p>
+          <h2 id="nanas-title">Las Ñañas: una red que se sostiene entre muchas.</h2>
+          <p>Estos son ejemplos editables. Cada tarjeta puede presentar a una integrante, su territorio y la tarea que acompaña.</p>
+        </div>
+        <div class="people-grid">
+          <button class="person-card reveal" type="button" aria-pressed="false"><span class="person-card__inner"><span class="person-card__face person-card__face--front"><span class="person-card__avatar">A</span><strong>Antü</strong><small>Carahue</small></span><span class="person-card__face person-card__face--back">Cuida semillas, acompaña siembras y comparte saberes de temporada.</span></span><span class="sr-only">Presiona para conocer su tarea</span></button>
+          <button class="person-card reveal" type="button" aria-pressed="false"><span class="person-card__inner"><span class="person-card__face person-card__face--front"><span class="person-card__avatar">K</span><strong>Küyen</strong><small>Chol Chol</small></span><span class="person-card__face person-card__face--back">Fortalece redes de intercambio y actividades comunitarias.</span></span><span class="sr-only">Presiona para conocer su tarea</span></button>
+          <button class="person-card reveal" type="button" aria-pressed="false"><span class="person-card__inner"><span class="person-card__face person-card__face--front"><span class="person-card__avatar">R</span><strong>Rayen</strong><small>Temuco</small></span><span class="person-card__face person-card__face--back">Conecta talleres, difusión y aprendizaje intercultural.</span></span><span class="sr-only">Presiona para conocer su tarea</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell section section--ecosystem" id="ecosistema" aria-labelledby="ecosystem-title">
+      <div class="container">
+        <div class="ecosystem-intro reveal">
+          <p class="eyebrow">Ecosistema Las Ñañas</p>
+          <h2 id="ecosystem-title">Productos, oficios, aprendizajes y participación.</h2>
+          <p>Descubre productos agroecológicos con Sello Étnico, servicios técnicos para la tierra y programas de voluntariado.</p>
+        </div>
+        <div class="ecosystem-grid">
+          <a class="ecosystem-card reveal" href="#productos"><span aria-hidden="true">◒</span><h3>Productos</h3><p>Del territorio a tu mesa.</p></a>
+          <a class="ecosystem-card reveal" href="#servicios"><span aria-hidden="true">⌁</span><h3>TecnoAgro</h3><p>Técnica con pertinencia territorial.</p></a>
+          <a class="ecosystem-card reveal" href="#voluntariado"><span aria-hidden="true">✦</span><h3>Voluntariado</h3><p>Aprender haciendo en comunidad.</p></a>
+          <a class="ecosystem-card reveal" href="#voluntariado"><span aria-hidden="true">◌</span><h3>Membresías</h3><p>Elige cómo quieres participar.</p></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell section" id="voluntariado" aria-labelledby="volunteer-title">
+      <div class="container split-grid split-grid--reverse">
+        <div class="section-heading reveal"><p class="eyebrow">Red de voluntariado y guardadores</p><h2 id="volunteer-title">Participar es cuidar junto a otras personas.</h2><p>Conviértete en parte del resguardo de semillas libres y apoya las labores agrícolas en Wallmapu.</p></div>
+        <div class="membership-grid reveal">
+          <article class="membership-card"><p>Plan 01</p><h3>Semilla</h3><ul><li>Participación extendida</li><li>Alojamiento y actividades</li><li>Experiencia inmersiva</li></ul></article>
+          <article class="membership-card membership-card--featured"><p>Plan 02</p><h3>Brote</h3><ul><li>Experiencia corta</li><li>Recorrido territorial</li><li>Actividades específicas</li></ul></article>
+          <article class="membership-card"><p>Plan 03</p><h3>Guardianas del territorio</h3><ul><li>Participación introductoria</li><li>Actividades acotadas</li><li>Primer vínculo comunitario</li></ul></article>
+        </div>
+      </div>
+      <div class="container volunteer-cta reveal"><a class="button button--primary" href="#contacto">Quiero participar <span aria-hidden="true">→</span></a><p>El formulario de inscripción completo se conectará cuando definamos cómo recibir las postulaciones.</p></div>
+    </section>
+
+    <section class="section-shell section" id="servicios" aria-labelledby="services-title">
+      <div class="container"><div class="section-heading reveal"><p class="eyebrow">TecnoAgro</p><h2 id="services-title">Tecnología y oficios al servicio de la tierra.</h2></div>
+        <div class="service-grid">
+          <article class="service-card reveal"><span aria-hidden="true">◈</span><h3>Riego inteligente</h3><p>Sensores IoT para humedad, riego y microclima en huertas.</p></article>
+          <article class="service-card reveal"><span aria-hidden="true">⌁</span><h3>Diseño agroecológico</h3><p>Permacultura, captación de aguas y corredores biológicos.</p></article>
+          <article class="service-card reveal"><span aria-hidden="true">✳</span><h3>Chipeadora</h3><p>Chipeado de restos vegetales para compost y mulching protector.</p></article>
+          <article class="service-card reveal"><span aria-hidden="true">◐</span><h3>Motocultor</h3><p>Preparación de suelos respetando su estructura y microbiología.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell section section--products" id="productos" aria-labelledby="products-title">
+      <div class="container"><div class="section-heading section-heading--wide reveal"><p class="eyebrow">Mogelei · lo que crece</p><h2 id="products-title">Productos que tienen historia, estación y territorio.</h2><p>La canasta es una demostración: podrás agregar productos y preparar un mensaje de consulta, sin pasarela de pago por ahora.</p></div>
+        <div class="product-filters" role="group" aria-label="Filtrar productos"><button class="product-filter is-active" type="button" data-product-filter="all">Todos</button><button class="product-filter" type="button" data-product-filter="mermeladas">Mermeladas</button><button class="product-filter" type="button" data-product-filter="chocolates">Chocolates mapuches</button><button class="product-filter" type="button" data-product-filter="nanas">Productos Ñañas</button></div>
+        <div class="product-grid">
+          <article class="product-card reveal" data-product-category="nanas"><div class="product-card__visual product-card__visual--seed">◌</div><p class="product-card__category">Productos Ñañas</p><h3>Semillas libres</h3><p>Variedades cuidadas y compartidas desde el territorio.</p><strong>Valor a confirmar</strong><button class="add-to-cart" type="button" data-product="Semillas libres">Agregar a canasta</button></article>
+          <article class="product-card reveal" data-product-category="mermeladas"><div class="product-card__visual product-card__visual--jam">◒</div><p class="product-card__category">Mermeladas</p><h3>Mermelada de temporada</h3><p>Elaboración artesanal según la cosecha disponible.</p><strong>Valor a confirmar</strong><button class="add-to-cart" type="button" data-product="Mermelada de temporada">Agregar a canasta</button></article>
+          <article class="product-card reveal" data-product-category="chocolates"><div class="product-card__visual product-card__visual--chocolate">✦</div><p class="product-card__category">Chocolates mapuches</p><h3>Chocolate artesanal</h3><p>Una línea especial por definir junto al equipo.</p><strong>Valor a confirmar</strong><button class="add-to-cart" type="button" data-product="Chocolate artesanal">Agregar a canasta</button></article>
+          <article class="product-card reveal" data-product-category="nanas"><div class="product-card__visual product-card__visual--plant">♧</div><p class="product-card__category">Productos Ñañas</p><h3>Plantas nativas</h3><p>Especies para recuperar y habitar el ecosistema.</p><strong>Valor a confirmar</strong><button class="add-to-cart" type="button" data-product="Plantas nativas">Agregar a canasta</button></article>
+        </div>
+        <aside class="cart-panel" aria-live="polite"><div><span class="cart-panel__icon" aria-hidden="true">⌑</span><strong>Mi canasta <span data-cart-count>0</span></strong><p data-cart-summary>Aún no agregas productos.</p></div><a class="button button--small button--primary is-disabled" data-cart-contact href="#contacto">Consultar disponibilidad</a></aside>
+      </div>
+    </section>
+
+    <section class="section-shell section memorice-section" id="memorice" aria-labelledby="memorice-title"><div class="container memorice-box reveal"><p class="eyebrow">Próximamente</p><h2 id="memorice-title">Memorice del territorio</h2><p>Este espacio queda reservado para integrar tu juego. Cuando agregues sus archivos, lo incorporaremos aquí sin afectar el resto del sitio.</p></div></section>
+
+    <section class="section-shell section" id="preguntas" aria-labelledby="faq-title"><div class="container faq-layout"><div class="section-heading reveal"><p class="eyebrow">Preguntas frecuentes</p><h2 id="faq-title">Conversemos con claridad.</h2></div><div class="faq-list reveal">
+      <details><summary>¿Qué es Las Ñañas?</summary><p>Las Ñañas es un proyecto agroecológico vinculado al territorio, la producción responsable, la protección de semillas y los saberes de la tierra.</p></details>
+      <details><summary>¿Qué productos ofrecen?</summary><p>Trabajamos con hortalizas, semillas, plantas nativas y productos elaborados, según temporada y disponibilidad.</p></details>
+      <details><summary>¿Cómo puedo comprar?</summary><p>Puedes agregar productos a la canasta de demostración y luego contactarnos para consultar disponibilidad, formatos de venta y entrega.</p></details>
+      <details><summary>¿Realizan talleres o actividades?</summary><p>Sí. Las Ñañas busca compartir conocimientos sobre agroecología, biodiversidad, semillas y cultivo mediante actividades comunitarias.</p></details>
+      <details><summary>¿Cómo puedo apoyar el proyecto?</summary><p>Comprando, participando en actividades, difundiendo el trabajo o colaborando con iniciativas de cuidado territorial.</p></details>
+    </div></div></section>
+
+    <section class="section-shell section contact-section" id="contacto" aria-labelledby="contact-title"><div class="container contact-grid"><div class="contact-copy reveal"><p class="eyebrow">Conectemos · Ruka</p><h2 id="contact-title">¿Tienes una pregunta o una idea para compartir?</h2><p>¿Quieres comercializar tus semillas, participar o contratar servicios técnicos? Escríbenos directamente.</p><a href="mailto:equipolasnanas.aiep@gmail.com">equipolasnanas.aiep@gmail.com</a><p>Región de La Araucanía, Chile</p></div>
+      <form class="contact-form reveal" data-contact-form><label>Nombre<input name="nombre" type="text" autocomplete="name" required></label><label>País<input name="pais" type="text" autocomplete="country-name" required></label><label>Correo electrónico<input name="email" type="email" autocomplete="email" required></label><label>WhatsApp <span>(opcional)</span><input name="whatsapp" type="tel" autocomplete="tel"></label><label>Mensaje<textarea name="mensaje" rows="4" required></textarea></label><button class="button button--primary" type="submit">Preparar correo <span aria-hidden="true">→</span></button><p class="form-feedback" data-form-feedback aria-live="polite"></p></form>
+    </div></section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-grid"><a class="footer-brand" href="#inicio"><span class="brand__mark" aria-hidden="true">LN</span><span>Las Ñañas</span></a><p>Territorio, semillas y comunidad para futuros que florecen.</p><div class="footer-links"><a href="#territorio">Territorio</a><a href="#productos">Productos</a><a href="#contacto">Contacto</a></div><p class="footer-copy">© <span data-current-year></span> Las Ñañas · La Araucanía, Chile</p></div></footer>
+
+  <script src="js/desarrollo.js"></script>
+</body>
+</html>
