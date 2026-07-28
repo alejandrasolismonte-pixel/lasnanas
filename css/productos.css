@@ -1,0 +1,111 @@
+/* ==========================================================================
+   ESTILOS CATÁLOGO DE PRODUCTOS Y CANASTA
+   ========================================================================== */
+.product-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.product-filter {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--muted);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.product-filter:hover, .product-filter.is-active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.product-card {
+  background: var(--bg-panel);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card__visual {
+  height: 150px;
+  background-color: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px dashed rgba(255,255,255,0.1);
+}
+
+.product-card__category {
+  color: var(--orange-light);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.product-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.product-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  flex-grow: 1;
+}
+
+.product-card strong {
+  display: block;
+  font-size: 1.3rem;
+  margin: 15px 0;
+  color: #fff;
+}
+
+.add-to-cart {
+  background: transparent;
+  color: var(--orange-light);
+  border: 1px solid var(--orange-light);
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.add-to-cart:hover {
+  background: var(--orange-light);
+  color: #fff;
+}
+
+.cart-panel {
+  margin-top: 3rem;
+  background: rgba(234, 88, 12, 0.1);
+  border: 1px solid var(--orange);
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

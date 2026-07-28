@@ -4,13 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const navigation = document.querySelector('.main-nav');
   const welcomeMessage = document.querySelector('.welcome-message');
 
+  // Mostrar el mensaje de bienvenida "Mari mari..." animado
   window.setTimeout(() => welcomeMessage?.classList.add('is-visible'), 350);
   window.setTimeout(() => welcomeMessage?.classList.remove('is-visible'), 3350);
 
+  // Header scroll state
   const updateHeader = () => header?.classList.toggle('is-scrolled', window.scrollY > 16);
   updateHeader();
   window.addEventListener('scroll', updateHeader, { passive: true });
 
+  // Menú móvil
   menuButton?.addEventListener('click', () => {
     const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
     menuButton.setAttribute('aria-expanded', String(!isOpen));
@@ -18,17 +21,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.toggle('menu-open', !isOpen);
   });
 
+  // Cerrar menú móvil al hacer clic en un enlace
   navigation?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
     menuButton?.setAttribute('aria-expanded', 'false');
     navigation.classList.remove('is-open');
     document.body.classList.remove('menu-open');
   }));
 
+  // Animaciones Fade In al scrollear
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
 
+  // Mapa Interactivo
   const mapDetail = document.querySelector('.map-detail');
   const mapPins = document.querySelectorAll('.map-pin');
   document.querySelectorAll('.map-filter').forEach((filter) => {
@@ -37,16 +43,31 @@ document.addEventListener('DOMContentLoaded', () => {
       mapPins.forEach((pin) => pin.classList.toggle('is-hidden', filter.dataset.filter !== 'all' && pin.dataset.category !== filter.dataset.filter));
     });
   });
+  
   mapPins.forEach((pin) => pin.addEventListener('click', () => {
     mapPins.forEach((item) => item.classList.toggle('is-active', item === pin));
     mapDetail.innerHTML = `<p class="map-detail__eyebrow">${pin.dataset.category === 'nanas' ? 'Red Las Ñañas' : 'Territorio vivo'}</p><h3>${pin.dataset.title}</h3><p>${pin.dataset.text}</p>`;
   }));
 
+  // Tarjetas Giratorias
   document.querySelectorAll('.person-card').forEach((card) => card.addEventListener('click', () => {
     const flipped = card.classList.toggle('is-flipped');
     card.setAttribute('aria-pressed', String(flipped));
   }));
 
+  // Lógica del Acordeón FAQ (Cerrar los otros al abrir uno)
+  const detailsElements = document.querySelectorAll('.faq-list details');
+  detailsElements.forEach((targetDetail) => {
+    targetDetail.addEventListener('click', () => {
+      detailsElements.forEach((detail) => {
+        if (detail !== targetDetail) {
+          detail.removeAttribute('open');
+        }
+      });
+    });
+  });
+
+  // Filtros de Productos
   document.querySelectorAll('.product-filter').forEach((filter) => {
     filter.addEventListener('click', () => {
       document.querySelectorAll('.product-filter').forEach((button) => button.classList.toggle('is-active', button === filter));
@@ -56,20 +77,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Canasta de Productos (Transferencia)
   const cart = [];
   const cartCount = document.querySelector('[data-cart-count]');
   const cartSummary = document.querySelector('[data-cart-summary]');
   const cartContact = document.querySelector('[data-cart-contact]');
+  
   document.querySelectorAll('.add-to-cart').forEach((button) => button.addEventListener('click', () => {
     cart.push(button.dataset.product);
-    cartCount.textContent = cart.length;
-    cartSummary.textContent = cart.length === 1 ? `${cart[0]} agregado.` : `${cart.length} productos agregados a tu consulta.`;
-    cartContact.classList.remove('is-disabled');
-    cartContact.href = `mailto:equipolasnanas.aiep@gmail.com?subject=${encodeURIComponent('Consulta de productos - Las Ñañas')}&body=${encodeURIComponent(`Hola, me interesa consultar por: ${cart.join(', ')}.`)}`;
+    
+    // Verificamos que los elementos existan en la página actual
+    if(cartCount) cartCount.textContent = cart.length;
+    if(cartSummary) cartSummary.textContent = cart.length === 1 ? `${cart[0]} agregado.` : `${cart.length} productos agregados a tu canasta.`;
+    
+    if(cartContact) {
+      cartContact.classList.remove('is-disabled');
+      cartContact.href = `mailto:equipolasnanas.aiep@gmail.com?subject=${encodeURIComponent('Consulta de compra - Productos Las Ñañas')}&body=${encodeURIComponent(`Mari mari, me interesa coordinar la compra/transferencia de los siguientes productos:\n\n- ${cart.join('\n- ')}\n\nQuedo atento/a a la disponibilidad y datos de pago.`)}`;
+    }
+    
     button.textContent = 'Agregado ✓';
     window.setTimeout(() => { button.textContent = 'Agregar a canasta'; }, 1100);
   }));
 
+  // Envío del Formulario Principal
   const form = document.querySelector('[data-contact-form]');
   const feedback = document.querySelector('[data-form-feedback]');
   form?.addEventListener('submit', (event) => {
@@ -81,5 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = `mailto:equipolasnanas.aiep@gmail.com?subject=${encodeURIComponent(`Contacto web - ${name}`)}&body=${encodeURIComponent(body)}`;
   });
 
-  document.querySelector('[data-current-year]').textContent = new Date().getFullYear();
+  // Año footer
+  const yearEl = document.querySelector('[data-current-year]');
+  if(yearEl) {
+    yearEl.textContent = new Date().getFullYear();
+  }
 });

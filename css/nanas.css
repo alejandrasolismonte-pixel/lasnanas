@@ -1,0 +1,51 @@
+/* ==========================================================================
+   ESTILOS HISTORIA LAS ÑAÑAS Y ECOSISTEMA
+   ========================================================================== */
+.story-content {
+  background: var(--bg-panel);
+  padding: 40px;
+  border-radius: 12px;
+  border-left: 4px solid var(--orange);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.lead-text {
+  font-family: var(--font-heading);
+  line-height: 1.4;
+}
+
+.section--ecosystem {
+  background: linear-gradient(to bottom, var(--bg-dark), #141e30);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.ecosystem-card {
+  background: var(--bg-panel);
+  padding: 30px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: transform 0.3s, border-color 0.3s;
+  text-decoration: none;
+  color: var(--text);
+  display: block;
+  text-align: center;
+}
+
+.ecosystem-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--orange-light);
+  box-shadow: 0 10px 20px rgba(234, 88, 12, 0.15);
+}
+
+.ecosystem-card h3 {
+  color: var(--orange-light);
+  margin-bottom: 15px;
+}
