@@ -1,51 +1,116 @@
-/* ==========================================================================
-   ESTILOS HISTORIA LAS ÑAÑAS Y ECOSISTEMA
-   ========================================================================== */
-.story-content {
-  background: var(--bg-panel);
-  padding: 40px;
-  border-radius: 12px;
-  border-left: 4px solid var(--orange);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.lead-text {
-  font-family: var(--font-heading);
-  line-height: 1.4;
-}
-
-.section--ecosystem {
-  background: linear-gradient(to bottom, var(--bg-dark), #141e30);
-  border-top: 1px solid rgba(255,255,255,0.05);
-}
-
-.ecosystem-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  position: relative;
-  z-index: 1;
-}
-
-.ecosystem-card {
-  background: var(--bg-panel);
-  padding: 30px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.05);
-  transition: transform 0.3s, border-color 0.3s;
-  text-decoration: none;
-  color: var(--text);
-  display: block;
+/* ============================================================
+   PÁGINA ÑAÑAS: HERO, AYUDA/SABERES Y CARRUSEL
+   ============================================================ */
+.nanas-page-hero {
+  padding: clamp(6rem, 12vw, 9rem) 0 3rem;
   text-align: center;
 }
-
-.ecosystem-card:hover {
-  transform: translateY(-8px);
-  border-color: var(--orange-light);
-  box-shadow: 0 10px 20px rgba(234, 88, 12, 0.15);
+.nanas-page-hero h1 {
+  max-width: 820px;
+  margin: 0 auto 1rem;
+}
+.nanas-page-hero p {
+  max-width: 640px;
+  margin: 0 auto;
+  color: var(--muted);
 }
 
-.ecosystem-card h3 {
+.help-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.help-card {
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(28,39,52,.94), rgba(23,32,43,.94));
+}
+.help-card h3 {
+  font-size: 1.6rem;
+  margin-bottom: .9rem;
   color: var(--orange-light);
-  margin-bottom: 15px;
+}
+.help-card ul {
+  margin: 1rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+}
+.help-card li + li {
+  margin-top: .5rem;
+}
+
+/* Carrusel de Ñañas */
+.nanas-carousel {
+  position: relative;
+  margin-top: 1rem;
+}
+.carousel-track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: .5rem;
+}
+.carousel-track::-webkit-scrollbar {
+  height: 6px;
+}
+.carousel-track::-webkit-scrollbar-thumb {
+  background: var(--orange);
+  border-radius: 999px;
+}
+.carousel-slide {
+  flex: 0 0 260px;
+  scroll-snap-align: start;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  margin: 0;
+}
+.carousel-slide img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+}
+.carousel-slide figcaption {
+  padding: .9rem 1rem;
+  font-size: .9rem;
+  color: var(--muted);
+}
+.carousel-slide figcaption strong {
+  display: block;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+.carousel-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: .6rem;
+  margin-top: .8rem;
+}
+.carousel-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.1rem;
+  display: grid;
+  place-items: center;
+  transition: background .2s, border-color .2s;
+}
+.carousel-btn:hover {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+@media (max-width: 720px) {
+  .help-grid { grid-template-columns: 1fr; }
+  .carousel-slide { flex-basis: 210px; }
+  .carousel-slide img { height: 230px; }
 }

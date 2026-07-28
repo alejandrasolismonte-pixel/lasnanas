@@ -22,29 +22,30 @@
   </div>
 
   <!-- Header -->
-  <header class="site-header" data-header>
-    <div class="header__inner container">
-      <a class="brand" href="#inicio" aria-label="Las Ñañas, ir al inicio">
-        <span class="brand__mark" aria-hidden="true">LN</span>
-        <span>Las Ñañas</span>
-      </a>
+<header class="site-header" data-header>
+  <div class="header__inner container">
+    <a class="brand" href="#inicio" aria-label="Las Ñañas, ir al inicio">
+      <img class="brand__mark" src="assets/img/logo.png" alt="" aria-hidden="true">
+      <span>Las Ñañas</span>
+    </a>
 
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation">
-        <span class="sr-only">Abrir menú</span>
-        <span></span><span></span><span></span>
-      </button>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation">
+      <span class="sr-only">Abrir menú</span>
+      <span></span><span></span><span></span>
+    </button>
 
-      <nav class="main-nav" id="main-navigation" aria-label="Navegación principal">
-        <a href="#inicio">Inicio</a>
-        <a href="#quienes-somos">Quiénes somos</a>
-        <a href="#territorio">Territorio</a>
-        <a href="#preguntas">Preguntas frecuentes</a>
-        <a href="#contacto">Contacto</a>
-      </nav>
+    <nav class="main-nav" id="main-navigation" aria-label="Navegación principal">
+      <a href="#inicio">Inicio</a>
+      <a href="#quienes-somos">Quiénes somos</a>
+      <a href="#territorio">Territorio</a>
+      <a href="#ecosistema">Ñañas</a>
+      <a href="#preguntas">Preguntas frecuentes</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
 
-      <a class="header-ecosystem" href="#ecosistema">Ecosistema Ñañas <span aria-hidden="true">↗</span></a>
-    </div>
-  </header>
+    <a class="header-ecosystem" href="pages/nanas.html">Ecosistema Ñañas <span aria-hidden="true">↗</span></a>
+  </div>
+</header>
 
   <main id="contenido">
     <!-- Hero / Inicio -->
@@ -102,18 +103,21 @@
             <button class="map-filter" type="button" data-filter="territory">Territorio</button>
           </div>
           <div class="map-stage" aria-label="Mapa ilustrado de Wallmapu con puntos interactivos">
-            
+
             <!-- AQUI ESTÁ LA IMAGEN DEL MAPA (Revisa que se llame mapa-araucania.png) -->
             <img src="assets/img/mapa-araucania.png" alt="Mapa ilustrado de Wallmapu y La Araucanía">
-            
-            <!-- Nodo Central VIVO (Temuco) -->
-            <button class="map-pin pin--nanas is-live" type="button" style="--x: 79.5%; --y: 54%;" data-category="nanas" data-title="Las Ñañas · Temuco" data-text="Conexiones, redes y actividades en Temuco." aria-label="Abrir información de Las Ñañas en Temuco"><span aria-hidden="true">✦</span></button>
-            
-            <!-- Otros Nodos -->
-            <button class="map-pin pin--nanas" type="button" style="--x: 71.5%; --y: 82.5%;" data-category="nanas" data-title="Las Ñañas · Villarrica" data-text="Encuentros territoriales en Villarrica." aria-label="Abrir información de Las Ñañas en Villarrica"><span aria-hidden="true">✦</span></button>
-            <button class="map-pin pin--nanas" type="button" style="--x: 23%; --y: 73%;" data-category="nanas" data-title="Las Ñañas · Carahue" data-text="Nodo territorial referencial en Carahue." aria-label="Abrir información de Las Ñañas en Carahue"><span aria-hidden="true">✦</span></button>
-            <button class="map-pin pin--nanas" type="button" style="--x: 52%; --y: 45%;" data-category="nanas" data-title="Las Ñañas · Chol Chol" data-text="Nodo territorial referencial en Chol Chol." aria-label="Abrir información de Las Ñañas en Chol Chol"><span aria-hidden="true">✦</span></button>
-            
+
+            <!-- Nodo Central VIVO (Temuco) - Pin de ubicación GPS -->
+            <button class="map-pin pin--nanas pin--location is-live" type="button" style="--x: 79.5%; --y: 54%;" data-category="nanas" data-title="Las Ñañas · Temuco" data-text="Conexiones, redes y actividades en Temuco." aria-label="Abrir información de Las Ñañas en Temuco"><span aria-hidden="true">✦</span></button>
+
+            <!-- Puntos verdes ajustados a la imagen -->
+            <button class="map-pin pin--nanas" type="button" style="--x: 76%; --y: 27%;" data-category="nanas" data-title="Las Ñañas · Renaico" data-text="Nodo territorial referencial en Renaico." aria-label="Abrir información de Las Ñañas en Renaico"><span aria-hidden="true">✦</span></button>
+            <button class="map-pin pin--nanas" type="button" style="--x: 33%; --y: 58%;" data-category="nanas" data-title="Las Ñañas · Sector Estero" data-text="Nodo territorial referencial junto al estero y las huertas." aria-label="Abrir información de Las Ñañas en Sector Estero"><span aria-hidden="true">✦</span></button>
+            <button class="map-pin pin--nanas" type="button" style="--x: 57%; --y: 76%;" data-category="nanas" data-title="Las Ñañas · Sector Fogón" data-text="Nodo territorial referencial junto a las plantas medicinales y el fogón." aria-label="Abrir información de Las Ñañas en Sector Fogón"><span aria-hidden="true">✦</span></button>
+            <button class="map-pin pin--nanas" type="button" style="--x: 80%; --y: 60%;" data-category="nanas" data-title="Las Ñañas · Padre Las Casas" data-text="Nodo territorial referencial en Padre Las Casas." aria-label="Abrir información de Las Ñañas en Padre Las Casas"><span aria-hidden="true">✦</span></button>
+            <button class="map-pin pin--nanas" type="button" style="--x: 70%; --y: 83%;" data-category="nanas" data-title="Las Ñañas · Villarrica" data-text="Encuentros territoriales en Villarrica." aria-label="Abrir información de Las Ñañas en Villarrica"><span aria-hidden="true">✦</span></button>
+            <button class="map-pin pin--nanas" type="button" style="--x: 90%; --y: 64%;" data-category="nanas" data-title="Las Ñañas · Lago Budi" data-text="Nodo territorial referencial junto al Lago Budi." aria-label="Abrir información de Las Ñañas en Lago Budi"><span aria-hidden="true">✦</span></button>
+
             <!-- Pines de Territorio -->
             <button class="map-pin pin--territory" type="button" style="--x: 62.5%; --y: 28.5%;" data-category="territory" data-title="Rukas" data-text="Espacios de encuentro, abrigo y transmisión de saberes." aria-label="Abrir información sobre rukas"><span aria-hidden="true">⌂</span></button>
             <button class="map-pin pin--territory" type="button" style="--x: 32%; --y: 15%;" data-category="territory" data-title="Flora y fauna" data-text="Observación y cuidado de especies nativas." aria-label="Abrir información sobre flora y fauna"><span aria-hidden="true">❋</span></button>
@@ -178,6 +182,45 @@
             </span>
             <span class="sr-only">Presiona para conocer su tarea</span>
           </button>
+          <!-- Tarjeta 4 -->
+          <button class="person-card reveal" type="button" aria-pressed="false">
+            <span class="person-card__inner">
+              <span class="person-card__face person-card__face--front">
+                <span class="person-card__avatar">W</span>
+                <strong>Wenu</strong><small>Renaico</small>
+              </span>
+              <span class="person-card__face person-card__face--back">
+                Sostiene los vínculos con el norte del territorio y las rutas del río.
+              </span>
+            </span>
+            <span class="sr-only">Presiona para conocer su tarea</span>
+          </button>
+          <!-- Tarjeta 5 -->
+          <button class="person-card reveal" type="button" aria-pressed="false">
+            <span class="person-card__inner">
+              <span class="person-card__face person-card__face--front">
+                <span class="person-card__avatar">L</span>
+                <strong>Likan</strong><small>Villarrica</small>
+              </span>
+              <span class="person-card__face person-card__face--back">
+                Organiza encuentros junto al lago y acompaña a las productoras locales.
+              </span>
+            </span>
+            <span class="sr-only">Presiona para conocer su tarea</span>
+          </button>
+          <!-- Tarjeta 6 -->
+          <button class="person-card reveal" type="button" aria-pressed="false">
+            <span class="person-card__inner">
+              <span class="person-card__face person-card__face--front">
+                <span class="person-card__avatar">K</span>
+                <strong>Kallfü</strong><small>Lago Budi</small>
+              </span>
+              <span class="person-card__face person-card__face--back">
+                Vincula el trabajo costero e insular con la red de Las Ñañas.
+              </span>
+            </span>
+            <span class="sr-only">Presiona para conocer su tarea</span>
+          </button>
         </div>
       </div>
     </section>
@@ -215,7 +258,7 @@
       <div class="container memorice-box reveal">
         <p class="eyebrow">Memorice</p>
         <h2 id="memorice-title">Juega y aprende con el territorio</h2>
-        
+
         <!-- ========================================== -->
         <!-- AQUI VA EL CÓDIGO HTML DE TU JUEGO         -->
         <!-- ========================================== -->
@@ -234,70 +277,70 @@
           <h2 id="faq-title">Conversemos con claridad.</h2>
         </div>
         <div class="faq-list reveal">
-          
+
           <details>
             <summary>1. ¿Qué es Las Ñañas?</summary>
             <div class="faq-content">
               <p>Las Ñañas es un proyecto agroecológico que nace desde el vínculo con el territorio, la producción responsable de alimentos, la protección de semillas y la recuperación de saberes relacionados con la tierra y la biodiversidad.</p>
             </div>
           </details>
-          
+
           <details>
             <summary>2. ¿Dónde nace el proyecto Las Ñañas?</summary>
             <div class="faq-content">
               <p>Las Ñañas nace en territorio de La Araucanía, desde una mirada de respeto hacia la naturaleza, los ciclos agrícolas y los conocimientos comunitarios que han cuidado la tierra por generaciones.</p>
             </div>
           </details>
-          
+
           <details>
             <summary>3. ¿Qué productos ofrecen?</summary>
             <div class="faq-content">
               <p>Trabajamos con productos agroecológicos como hortalizas, semillas, plantas nativas, productos elaborados y otros elementos vinculados al cuidado de la tierra.</p>
             </div>
           </details>
-          
+
           <details>
             <summary>4. ¿Qué significa que sus productos sean agroecológicos?</summary>
             <div class="faq-content">
               <p>La agroecología busca producir alimentos respetando los ecosistemas, reduciendo impactos negativos y fortaleciendo la biodiversidad del territorio.</p>
             </div>
           </details>
-          
+
           <details>
             <summary>5. ¿Venden semillas o plantas nativas?</summary>
             <div class="faq-content">
               <p>Sí, uno de nuestros objetivos es fortalecer la conservación y circulación de semillas, además de promover plantas nativas y especies adaptadas al territorio.</p>
             </div>
           </details>
-          
+
           <details>
             <summary>6. ¿Cómo puedo comprar productos de Las Ñañas?</summary>
             <div class="faq-content">
               <p>Puedes contactarnos directamente a través de nuestro formulario, redes sociales o WhatsApp para consultar disponibilidad, formatos de venta y fechas de entrega.</p>
             </div>
           </details>
-          
+
           <details>
             <summary>7. ¿Realizan envíos o entregas?</summary>
             <div class="faq-content">
               <p>Actualmente trabajamos con modalidades de entrega que dependen del producto, ubicación y disponibilidad. Contáctanos para revisar las opciones disponibles.</p>
             </div>
           </details>
-          
+
           <details>
             <summary>8. ¿Realizan talleres o actividades educativas?</summary>
             <div class="faq-content">
               <p>Sí, Las Ñañas busca compartir conocimientos relacionados con agroecología, semillas, cultivo, biodiversidad y conexión con el territorio mediante talleres y actividades comunitarias.</p>
             </div>
           </details>
-          
+
           <details>
             <summary>9. ¿Cómo puedo apoyar el proyecto?</summary>
             <div class="faq-content">
               <p>Puedes apoyar comprando nuestros productos, participando en actividades, difundiendo nuestro trabajo o colaborando en iniciativas relacionadas con la protección de semillas y biodiversidad.</p>
             </div>
           </details>
-          
+
           <details>
             <summary>10. ¿Las Ñañas trabaja con comunidades u organizaciones?</summary>
             <div class="faq-content">
@@ -342,18 +385,16 @@
           <h3>Las Ñañas</h3>
           <p>Territorio, semillas y comunidad.</p>
         </div>
-        
+
         <!-- Centro (Logo Brillante Animado) -->
         <div class="footer-center">
           <div class="glowing-ring">
             <div class="ethnic-border">
-              <!-- AQUI VA LA IMAGEN DEL LOGO PARA EL FOOTER -->
-              <!-- Reemplaza el texto "LN" por <img src="assets/img/tu-logo.png" alt="Logo"> -->
-              <div class="logo-placeholder">LN</div>
+              <img class="logo-placeholder" src="assets/img/logo.png" alt="Logo Las Ñañas">
             </div>
           </div>
         </div>
-        
+
         <!-- Columna Derecha (Datos) -->
         <div class="footer-side right-side">
           <ul class="footer-contact-list">
