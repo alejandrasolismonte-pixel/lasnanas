@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const name = data.get('nombre');
     const body = `Nombre: ${name}\nPaís: ${data.get('pais')}\nCorreo: ${data.get('email')}\nWhatsApp: ${data.get('whatsapp') || 'No indicado'}\n\nMensaje:\n${data.get('mensaje')}`;
     feedback.textContent = 'Abriremos tu aplicación de correo para enviar el mensaje.';
-    window.location.href = `mailto:equipolasnanas.aiep@gmail.com?subject=${encodeURIComponent(`Contacto web - ${name}`)}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:alejandra.solis.monte@gmail.com?subject=${encodeURIComponent(`Contacto web - ${name}`)}&body=${encodeURIComponent(body)}`;
   });
 
   // Año footer
@@ -116,4 +116,61 @@ document.addEventListener('DOMContentLoaded', () => {
   if(yearEl) {
     yearEl.textContent = new Date().getFullYear();
   }
+
+  // Efecto de partículas (fondo de estrellas) - Territorio y Ecosistema
+  function createStarField(canvas, { count = 120, color = '255,255,255', speed = 0.20 } = {}) {
+    const ctx = canvas.getContext('2d');
+    let width, height, dpr, stars = [];
+
+    const resize = () => {
+      dpr = window.devicePixelRatio || 1;
+      width = canvas.parentElement.clientWidth;
+      height = canvas.parentElement.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const createStars = () => {
+      stars = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 1.4 + 0.4,
+        vx: (Math.random() - 0.9) * speed,
+        vy: (Math.random() - 0.) * speed,
+        alpha: Math.random() * 0.5 + 0.3,
+        twinkle: Math.random() * Math.PI * 2
+      }));
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+      stars.forEach((star) => {
+        star.x += star.vx;
+        star.y += star.vy;
+        star.twinkle += 0.02;
+
+        if (star.x < 0) star.x = width;
+        if (star.x > width) star.x = 0;
+        if (star.y < 0) star.y = height;
+        if (star.y > height) star.y = 0;
+
+        const twinkleAlpha = Math.max(0, star.alpha + Math.sin(star.twinkle) * 0.2);
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${color}, ${twinkleAlpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animate);
+    };
+
+    resize();
+    createStars();
+    window.addEventListener('resize', () => { resize(); createStars(); });
+    animate();
+  }
+
+  document.querySelectorAll('.particles-canvas').forEach((canvas) => createStarField(canvas));
 });

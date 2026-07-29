@@ -4,23 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Las Ñañas: territorio, agroecología, semillas, comunidad y saberes que florecen desde Wallmapu.">
-  <title>Las Ñañas | Inicio</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/desarrollo.css">
+  
 </head>
 <body>
   <!-- Fondo de marcas de agua mapuche flotantes -->
   <div class="watermark-bg" aria-hidden="true"></div>
-
+ 
+  <!-- ==========================================================
+       FRANJA ÉTNICA LATERAL (vertical, semitransparente)
+       Para QUITARLA: borra este <div class="ethnic-side-strip">.
+       Para EDITAR ancho/opacidad/colores: ve a css/desarrollo.css,
+       bloque "FRANJA ÉTNICA LATERAL" (sección 19).
+       ========================================================== -->
+  <div class="ethnic-side-strip" aria-hidden="true"></div>
+  
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
-
+ 
   <!-- Mensaje flotante inicial animado -->
   <div class="welcome-message" role="status" aria-live="polite">
     <span aria-hidden="true">✦</span> Mari mari pu lamgen!!
   </div>
-
+ 
   <!-- Header -->
 <header class="site-header" data-header>
   <div class="header__inner container">
@@ -28,12 +37,12 @@
       <img class="brand__mark" src="assets/img/logo.png" alt="" aria-hidden="true">
       <span>Las Ñañas</span>
     </a>
-
+ 
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation">
       <span class="sr-only">Abrir menú</span>
       <span></span><span></span><span></span>
     </button>
-
+ 
     <nav class="main-nav" id="main-navigation" aria-label="Navegación principal">
       <a href="#inicio">Inicio</a>
       <a href="#quienes-somos">Quiénes somos</a>
@@ -42,11 +51,11 @@
       <a href="#preguntas">Preguntas frecuentes</a>
       <a href="#contacto">Contacto</a>
     </nav>
-
+ 
     <a class="header-ecosystem" href="pages/nanas.html">Ecosistema Ñañas <span aria-hidden="true">↗</span></a>
   </div>
 </header>
-
+ 
   <main id="contenido">
     <!-- Hero / Inicio -->
     <section class="hero section-shell" id="inicio" aria-labelledby="hero-title">
@@ -57,7 +66,7 @@
       <div class="hero__overlay"></div>
       <div class="hero__texture" aria-hidden="true"></div>
       <div class="hero__content container reveal">
-        <p class="eyebrow">Wallmapu · La Araucanía · Chile</p>
+        <p class="eyebrow location-tag">Wallmapu · La Araucanía · Chile</p>
         <h1 id="hero-title">Raíces que cuidan.<br><em>Redes que florecen.</em></h1>
         <p class="hero__lead">Un proyecto agroecológico de autogestión y creación de redes de apoyo que une territorio, semillas, biodiversidad y saberes comunitarios.</p>
         <div class="hero__actions">
@@ -69,7 +78,7 @@
       </div>
       <a class="hero__scroll" href="#quienes-somos">Explorar <span aria-hidden="true">↓</span></a>
     </section>
-
+ 
     <!-- Quiénes somos -->
     <section class="section-shell section" id="quienes-somos" aria-labelledby="about-title">
       <div class="container split-grid">
@@ -86,16 +95,19 @@
         </article>
       </div>
     </section>
-
+ 
     <!-- Territorios (MAPA) -->
     <section class="section-shell section section--territory" id="territorio" aria-labelledby="territory-title">
+      <!-- EFECTO DE ESTRELLAS: para quitarlo, borra este <canvas> y el bloque
+           .particles-canvas en el CSS (sección 18) y createStarField en el JS -->
+      <canvas class="particles-canvas" aria-hidden="true"></canvas>
       <div class="container">
         <div class="section-heading section-heading--wide reveal">
           <p class="eyebrow">Mapu · territorio vivo</p>
           <h2 id="territory-title">Un mapa para recorrer nuestras conexiones.</h2>
           <p>Selecciona un pin para conocer iniciativas, lugares y aprendizajes que dan vida a Las Ñañas.</p>
         </div>
-
+ 
         <div class="map-experience reveal" data-map-experience>
           <div class="map-toolbar" role="group" aria-label="Filtrar puntos del mapa">
             <button class="map-filter is-active" type="button" data-filter="all">Todos</button>
@@ -103,13 +115,13 @@
             <button class="map-filter" type="button" data-filter="territory">Territorio</button>
           </div>
           <div class="map-stage" aria-label="Mapa ilustrado de Wallmapu con puntos interactivos">
-
+ 
             <!-- AQUI ESTÁ LA IMAGEN DEL MAPA (Revisa que se llame mapa-araucania.png) -->
             <img src="assets/img/mapa-araucania.png" alt="Mapa ilustrado de Wallmapu y La Araucanía">
-
+ 
             <!-- Nodo Central VIVO (Temuco) - Pin de ubicación GPS -->
             <button class="map-pin pin--nanas pin--location is-live" type="button" style="--x: 79.5%; --y: 54%;" data-category="nanas" data-title="Las Ñañas · Temuco" data-text="Conexiones, redes y actividades en Temuco." aria-label="Abrir información de Las Ñañas en Temuco"><span aria-hidden="true">✦</span></button>
-
+ 
             <!-- Puntos verdes ajustados a la imagen -->
             <button class="map-pin pin--nanas" type="button" style="--x: 76%; --y: 27%;" data-category="nanas" data-title="Las Ñañas · Renaico" data-text="Nodo territorial referencial en Renaico." aria-label="Abrir información de Las Ñañas en Renaico"><span aria-hidden="true">✦</span></button>
             <button class="map-pin pin--nanas" type="button" style="--x: 33%; --y: 58%;" data-category="nanas" data-title="Las Ñañas · Sector Estero" data-text="Nodo territorial referencial junto al estero y las huertas." aria-label="Abrir información de Las Ñañas en Sector Estero"><span aria-hidden="true">✦</span></button>
@@ -117,7 +129,7 @@
             <button class="map-pin pin--nanas" type="button" style="--x: 80%; --y: 60%;" data-category="nanas" data-title="Las Ñañas · Padre Las Casas" data-text="Nodo territorial referencial en Padre Las Casas." aria-label="Abrir información de Las Ñañas en Padre Las Casas"><span aria-hidden="true">✦</span></button>
             <button class="map-pin pin--nanas" type="button" style="--x: 70%; --y: 83%;" data-category="nanas" data-title="Las Ñañas · Villarrica" data-text="Encuentros territoriales en Villarrica." aria-label="Abrir información de Las Ñañas en Villarrica"><span aria-hidden="true">✦</span></button>
             <button class="map-pin pin--nanas" type="button" style="--x: 90%; --y: 64%;" data-category="nanas" data-title="Las Ñañas · Lago Budi" data-text="Nodo territorial referencial junto al Lago Budi." aria-label="Abrir información de Las Ñañas en Lago Budi"><span aria-hidden="true">✦</span></button>
-
+ 
             <!-- Pines de Territorio -->
             <button class="map-pin pin--territory" type="button" style="--x: 62.5%; --y: 28.5%;" data-category="territory" data-title="Rukas" data-text="Espacios de encuentro, abrigo y transmisión de saberes." aria-label="Abrir información sobre rukas"><span aria-hidden="true">⌂</span></button>
             <button class="map-pin pin--territory" type="button" style="--x: 32%; --y: 15%;" data-category="territory" data-title="Flora y fauna" data-text="Observación y cuidado de especies nativas." aria-label="Abrir información sobre flora y fauna"><span aria-hidden="true">❋</span></button>
@@ -132,6 +144,7 @@
         </div>
       </div>
     </section>
+ 
 
     <!-- Las Ñañas (Tarjetas Flip) -->
     <section class="section-shell section" id="nanas" aria-labelledby="nanas-title">
@@ -143,45 +156,50 @@
         </div>
         <div class="people-grid">
           <!-- Tarjeta 1 -->
-          <button class="person-card reveal" type="button" aria-pressed="false">
-            <span class="person-card__inner">
-              <span class="person-card__face person-card__face--front">
-                <!-- AQUI VA LA FOTO DE LA ÑAÑA (Reemplazar la letra A por etiqueta <img>) -->
-                <span class="person-card__avatar">A</span>
-                <strong>Antü</strong><small>Carahue</small>
-              </span>
-              <span class="person-card__face person-card__face--back">
-                Cuida semillas, acompaña siembras y comparte saberes de temporada.
-              </span>
-            </span>
-            <span class="sr-only">Presiona para conocer su tarea</span>
-          </button>
+<button class="person-card reveal" type="button" aria-pressed="false">
+  <span class="person-card__inner">
+    <span class="person-card__face person-card__face--front">
+      <span class="person-card__avatar">
+        <img src="assets/img/vivi.jpeg" alt="viviana">
+      </span>
+      <strong>Viviana Catrileo Epul</strong><small>Tromen bajo, en el alto</small>
+    </span>
+    <span class="person-card__face person-card__face--back">
+     Profesora Intercultural, Cuida semillas, acompaña siembras y comparte saberes.
+    </span>
+  </span>
+  <span class="sr-only">Presiona para conocer su tarea</span>
+</button>
           <!-- Tarjeta 2 -->
-          <button class="person-card reveal" type="button" aria-pressed="false">
-            <span class="person-card__inner">
-              <span class="person-card__face person-card__face--front">
-                <span class="person-card__avatar">K</span>
-                <strong>Küyen</strong><small>Chol Chol</small>
-              </span>
-              <span class="person-card__face person-card__face--back">
-                Fortalece redes de intercambio y actividades comunitarias.
-              </span>
-            </span>
-            <span class="sr-only">Presiona para conocer su tarea</span>
-          </button>
+         <button class="person-card reveal" type="button" aria-pressed="false">
+  <span class="person-card__inner">
+    <span class="person-card__face person-card__face--front">
+      <span class="person-card__avatar">
+        <img src="assets/img/machi.jpeg"alt="Antü">
+      </span>
+      <strong>Antü</strong><small>Carahue</small>
+    </span>
+    <span class="person-card__face person-card__face--back">
+      Cuida semillas, acompaña siembras y comparte saberes de temporada.
+    </span>
+  </span>
+  <span class="sr-only">Presiona para conocer su tarea</span>
+</button>
           <!-- Tarjeta 3 -->
           <button class="person-card reveal" type="button" aria-pressed="false">
-            <span class="person-card__inner">
-              <span class="person-card__face person-card__face--front">
-                <span class="person-card__avatar">R</span>
-                <strong>Rayen</strong><small>Temuco</small>
-              </span>
-              <span class="person-card__face person-card__face--back">
-                Conecta talleres, difusión y aprendizaje intercultural.
-              </span>
-            </span>
-            <span class="sr-only">Presiona para conocer su tarea</span>
-          </button>
+  <span class="person-card__inner">
+    <span class="person-card__face person-card__face--front">
+      <span class="person-card__avatar">
+        <img src="assets/img/prisci.jpeg" alt="Antü">
+      </span>
+      <strong>Antü</strong><small>Carahue</small>
+    </span>
+    <span class="person-card__face person-card__face--back">
+      Cuida semillas, acompaña siembras y comparte saberes de temporada.
+    </span>
+  </span>
+  <span class="sr-only">Presiona para conocer su tarea</span>
+</button>
           <!-- Tarjeta 4 -->
           <button class="person-card reveal" type="button" aria-pressed="false">
             <span class="person-card__inner">
@@ -225,8 +243,11 @@
       </div>
     </section>
 
-    <!-- Ecosistema Las Ñañas (Enlaces a Páginas Independientes) -->
+ <!-- Ecosistema Las Ñañas (Enlaces a Páginas Independientes) -->
     <section class="section-shell section section--ecosystem" id="ecosistema" aria-labelledby="ecosystem-title">
+      <!-- EFECTO DE ESTRELLAS: para quitarlo, borra este <canvas> y el bloque
+           .particles-canvas en el CSS (sección 18) y createStarField en el JS -->
+      <canvas class="particles-canvas" aria-hidden="true"></canvas>
       <div class="container">
         <div class="ecosystem-intro reveal">
           <p class="eyebrow">Ecosistema Las Ñañas</p>
@@ -260,7 +281,7 @@
         <h2 id="memorice-title">Juega y aprende con el territorio</h2>
 
         <!-- ========================================== -->
-        <!-- AQUI VA EL CÓDIGO HTML DE TU JUEGO         -->
+        <!--  CÓDIGO HTML DE TU JUEGO         -->
         <!-- ========================================== -->
         <div id="juego-memorice-container" style="min-height: 200px; display: grid; place-items: center; border-radius: 12px; background: rgba(0,0,0,0.2);">
           <p class="section-note" style="color: var(--orange-light)">Inserta tu código del Memorice aquí.</p>

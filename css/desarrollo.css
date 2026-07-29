@@ -2,10 +2,10 @@
    1. VARIABLES BASE (Colores, tipografías, sombras)
    ============================================================ */
 :root {
-  /* Fondos: Gris oscuro azulado (más oscuro) */
-  --bg: #0a0e13;
-  --surface: #131b24;
-  --surface-2: #17212c;
+  /* Fondos: Gris oscuro azulado */
+  --bg: #0f151c;
+  --surface: #17202b;
+  --surface-2: #1c2734;
   --text: #e2e8f0;
   --muted: #a0aec0;
 
@@ -20,8 +20,11 @@
   --line: rgba(226,232,240,.13);
   --shadow: 0 22px 60px rgba(0,0,0,.28);
   --font-body: "DM Sans", sans-serif;
-  --font-display: "Fraunces", serif;
+ --font-display: "Kaushan Script", cursive;
+
 }
+
+
 
 /* ============================================================
    2. RESET Y GLOBALES
@@ -64,7 +67,7 @@ button {
   position: relative;
 }
 .section {
-  padding: clamp(4.5rem, 9vw, 8rem) 0;
+  padding: clamp(2.5rem, 3vw, 3rem) 0;
 }
 .section:nth-of-type(odd):not(.hero) {
   background: linear-gradient(110deg, rgba(22,101,52,.1), transparent 55%);
@@ -103,7 +106,7 @@ button {
   height: 100vh;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.04;
+  opacity: 0.20;
   background-image: url('data:image/svg+xml;utf8,');
   background-size: 200px 200px;
   background-position: 0 0;
@@ -125,13 +128,13 @@ button {
   width: max-content;
   max-width: calc(100% - 2rem);
   padding: .75rem 1.1rem;
-  background: rgba(102, 218, 147, 0.95);
+  background: rgba(22,101,52,.95);
   border: 1px solid rgba(174,229,190,.3);
   border-radius: 999px;
   box-shadow: var(--shadow);
   font-weight: 700;
   transition: transform .65s ease;
-  color: #362905fb;
+  color: #fff;
 }
 .welcome-message.is-visible {
   transform: translate(-50%, 0);
@@ -173,10 +176,15 @@ button {
   white-space: nowrap;
 }
 .brand__mark {
-  display: block;
-  width: 70px;
-  height: 70px;
-  object-fit: contain;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  aspect-ratio: 1;
+  border: 1px solid var(--orange);
+  color: var(--orange-light);
+  border-radius: 50% 44% 50% 44%;
+  font: 700 .68rem var(--font-body);
+  letter-spacing: .06em;
 }
 .main-nav {
   display: flex;
@@ -255,7 +263,16 @@ button {
     radial-gradient(circle at 78% 70%, rgba(22,101,52,.35), transparent 25%);
 }
 .hero__content {
-  padding: 9rem 0 5rem;
+  padding: 2rem 0 5rem;
+  text-align: center;
+}
+
+.hero__content h1,
+.hero__content h2,
+.hero__lead {
+  margin-left: auto;
+  margin-right: auto;
+
 }
 .eyebrow {
   margin: 0 0 1rem;
@@ -264,6 +281,7 @@ button {
   font-weight: 700;
   letter-spacing: .14em;
   text-transform: uppercase;
+   text-align: left;
 }
 h1, h2, h3, p {
   margin-top: 0;
@@ -273,29 +291,33 @@ h1, h2, h3 {
   line-height: 1.05;
 }
 h1 {
-  max-width: 780px;
+  max-width: 650px;
   margin-bottom: 1.35rem;
-  font-size: clamp(3.15rem, 8vw, 6.8rem);
-  letter-spacing: -.05em;
+  font-size: clamp(2.8rem, 6vw, 3.5rem);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  font-weight: 400;
 }
 h1 em {
   color: var(--green-light);
-  font-weight: 500;
+  font-weight: 400;
 }
 h2 {
   max-width: 700px;
   margin-bottom: 1.2rem;
-  font-size: clamp(2.35rem, 4vw, 4rem);
-  letter-spacing: -.045em;
+  font-size: clamp(3rem, 5vw, 3rem);
+  letter-spacing: 0;
+  line-height: 1.15;
 }
 .hero__lead {
   max-width: 600px;
   color: #d1d8dd;
-  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  font-size: clamp(1.5rem, 4vw,1.7rem);
 }
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: .8rem;
   margin-top: 2rem;
 }
@@ -527,14 +549,6 @@ h2 {
   0%   { width: 100%; height: 100%; opacity: 1; border-width: 3px; }
   100% { width: 280%; height: 280%; opacity: 0; border-width: 1px; }
 }
-.pin--location span[aria-hidden] {
-  display: inline-block;
-  animation: pin-bounce 1.6s ease-in-out infinite;
-}
-@keyframes pin-bounce {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-4px); }
-}
 .map-detail {
   padding: 1rem .45rem;
   align-self: center;
@@ -570,7 +584,7 @@ h2 {
   gap: 1.2rem;
 }
 .person-card {
-  min-height: 250px;
+  min-height: 340px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -593,9 +607,11 @@ h2 {
   inset: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: end;
-  padding: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 2rem;
   border: 1px solid var(--line);
   border-radius: 20px;
   backface-visibility: hidden;
@@ -607,23 +623,29 @@ h2 {
 .person-card__face--front::after {
   content: "";
   position: absolute;
-  width: 150px;
+  width: 250px;
   aspect-ratio: 1;
   top: -40px;
   right: -30px;
-  border: 1px solid rgba(234,88,12,.5);
+  border: 1px solid rgba(5, 91, 77, 0.406);
   border-radius: 50%;
 }
 .person-card__avatar {
   display: grid;
   place-items: center;
-  width: 54px;
-  aspect-ratio: 1;
-  margin-bottom: auto;
-  border-radius: 50%;
+  width: 160px;
+  height: 160px;
+  border-radius: 10%;
   background: var(--orange);
-  color: #fff;
-  font: 700 1.3rem var(--font-display);
+  overflow: hidden;
+  margin-bottom: .5rem;
+  border: 4px solid rgba(255,255,255,.25);
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
+.person-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* la foto llena el círculo sin deformarse */
 }
 .person-card strong {
   position: relative;
@@ -637,10 +659,68 @@ h2 {
   justify-content: center;
   background: var(--orange);
   color: #fff;
-  font: 600 1.25rem/1.35 var(--font-display);
+  font: 300 1.25rem/1.35 var(--font-display);
   transform: rotateY(180deg);
 }
+/* ==========================================================
+   RESPONSIVE - TARJETAS LAS ÑAÑAS
+   ========================================================== */
 
+@media (max-width: 768px) {
+   
+  
+  .people-grid{
+    grid-template-columns:1fr;
+    gap:1.5rem;
+  }
+
+  .person-card{
+    min-height:340px;
+    height:340px;
+  }
+
+  .person-card__inner{
+    width:100%;
+    height:100%;
+  }
+
+  .person-card__face{
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:2rem;
+    gap:1rem;
+  }
+
+  .person-card__avatar{
+    width:160px !important;
+    height:160px !important;
+    min-width:160px;
+    min-height:160px;
+    max-width:160px;
+    max-height:160px;
+    aspect-ratio:1 / 1;
+    flex-shrink:0;
+    overflow:hidden;
+    border-radius:10%;
+  }
+
+  .person-card__avatar img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+  }
+
+  .person-card strong{
+    font-size:2rem;
+  }
+
+  .person-card small{
+    font-size:1.1rem;
+  }
+
+}
 /* ============================================================
    10. ECOSISTEMA (Menú a páginas internas)
    ============================================================ */
@@ -657,7 +737,7 @@ h2 {
   gap: 1rem;
 }
 .ecosystem-card {
-  min-height: 190px;
+  min-height: 250px;
   padding: 1.35rem;
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -1135,9 +1215,10 @@ h2 {
   overflow: hidden;
 }
 .logo-placeholder {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
 }
 .ethnic-footer .footer-copy {
   grid-column: 1 / -1;
@@ -1149,6 +1230,18 @@ h2 {
   font-size: .85rem;
 }
 
+.ethnic-border{
+    overflow:visible;
+}
+.ethnic-border img{
+    width:130%;
+    height:110%;
+    display:block;
+    object-fit:contain;
+}
+
+
+
 /* ============================================================
    16. ANIMACIÓN DE ENTRADA (Reveal / Scroll)
    ============================================================ */
@@ -1158,7 +1251,7 @@ h2 {
   transition: opacity .7s ease, transform .7s ease;
 }
 .reveal.is-visible {
-  opacity: 1;
+  opacity: 10;
   transform: none;
 }
 :focus-visible {
@@ -1258,4 +1351,16 @@ h2 {
   }
   .hero__video { display: none; }
   .hero { background: var(--surface); }
+}
+/* ============================================================
+   18. EFECTO DE PARTÍCULAS (Fondo de estrellas)
+   ============================================================ */
+.particles-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}.hero h1 {
+  font-family: "Kaushan Script", cursive !important;
+  
 }
