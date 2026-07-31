@@ -113,4 +113,11 @@
   .help-grid { grid-template-columns: 1fr; }
   .carousel-slide { flex-basis: 210px; }
   .carousel-slide img { height: 230px; }
+  .icono-gif {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin: 0 auto 1rem auto; /* El 'auto' a los lados lo centra perfectamente */
+  display: block;
+}
 }

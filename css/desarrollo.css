@@ -4,7 +4,7 @@
 :root {
   /* Fondos: Gris oscuro azulado */
   --bg: #0f151c;
-  --surface: #17202b;
+  --surface: #17202bde;
   --surface-2: #1c2734;
   --text: #e2e8f0;
   --muted: #a0aec0;
@@ -745,6 +745,13 @@ h2 {
   color: inherit;
   text-decoration: none;
   transition: transform .25s, background .25s, border-color .25s;
+  text-align: center; /* <-- Agrega solo esta línea aquí */
+  
+}
+.ecosystem-card h3 {
+  margin: .9rem 0 .5rem;
+  font-size: 1.45rem;
+  color: #ff9900; /* <-- Agrega esta línea con el color que quieras */
 }
 .ecosystem-card:hover {
   transform: translateY(-6px);
@@ -1362,5 +1369,121 @@ h2 {
   pointer-events: none;
 }.hero h1 {
   font-family: "Kaushan Script", cursive !important;
+}
+  /* ==========================================================
+   UBICACIÓN EXACTA DEL BOTÓN EN MÓVIL (SEGÚN IMAGEN)
+   ========================================================== */
+@media (max-width: 767px) {
+    /* Nos aseguramos de que el contenedor principal sea la referencia */
+    .header__inner {
+        position: relative; 
+    }
+
+    .header-ecosystem {
+        display: inline-flex !important; /* Forzamos a que aparezca */
+        position: absolute !important; /* Lo saca del flujo para moverlo libremente */
+        
+        /* === COORDENADAS PARA LA CRUZ NARANJA === */
+        right: 40px; /* Lo separa del borde derecho, dejándolo justo al lado del menú ☰ */
+        top: 90%; /* Lo empuja a la mitad de la altura de la barra */
+        transform: translateY(-40%); /* Lo centra verticalmente a la perfección */
+        
+        /* === AJUSTES DE TAMAÑO PARA QUE QUEPA === */
+        font-size: 1rem; /* Letra más pequeña */
+        padding: 4px 8px; /* Botón más compacto */
+        white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
+        z-index: 100; /* Lo mantiene por encima de cualquier otro elemento */
+    }
+    /* ==========================================================
+   SOLUCIÓN: PINES DEL MAPA RESPONSIVOS
+   ========================================================== */
+/* 1. Obligamos al contenedor a tener el mismo alto que la imagen */
+.map-stage {
+    position: relative;
+    width: 100%;
+    /* Display flex evita espacios "fantasma" debajo de las imágenes */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+}
+
+.map-stage img {
+    width: 100%;
+    height: auto; /* Mantiene la proporción perfecta del mapa */
+    display: block;
+    object-fit: contain;
+}
+
+/* 2. Aseguramos que los pines usen las coordenadas con exactitud */
+.map-pin {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    /* Esto es clave: centra el punto medio del pin exactamente en la coordenada */
+    transform: translate(-50%, -50%); 
+    z-index: 10;
+}
+
+/* 3. Ajuste UX para Celulares: Achicamos los pines para que no tapen el mapa */
+@media (max-width: 767px) {
+    .map-pin {
+        /* El !important obliga al navegador a usar la coordenada móvil sí o sí */
+        left: var(--x-movil, var(--x)) !important;
+        top: var(--y-movil, var(--y)) !important;
+        
+        /* Aseguramos que mantenga su tamaño ajustado */
+        transform: translate(-50%, -50%) scale(0.7) !important; 
+    }
+}
+/* =========================================
+   ESTILOS PARA LOS GIFS DEL ECOSISTEMA
+   ========================================= */
+
+.icono-gif {
+    width: 65px; /* Controla el tamaño exacto del GIF. Ajusta este número según prefieras */
+    height: auto;
+    margin-bottom: 1rem; /* Separa el GIF del título <h3> */
+    display: inline-block;
+    transition: transform 0.3s ease; /* Prepara el terreno para una animación suave al pasar el mouse */
+}
+
+/* Efecto extra: hace que el GIF crezca un poquito cuando el usuario pasa el mouse por la tarjeta */
+.ecosystem-card:hover .icono-gif {
+    transform: scale(1.15); 
+}
+}
   
+/* 1. Tamaño por defecto (Para Celulares) */
+.icono-gif {
+  width: 100px !important;
+  height: 100px !important;
+  object-fit: contain !important;
+  margin: 0 auto 1rem auto !important;
+  display: block !important;
+}
+
+/* 2. Tamaño para pantallas grandes (Para Computadores/Escritorio) */
+@media (min-width: 768px) {
+  .icono-gif {
+    width: 100px !important;
+    height: 10s0px !important;
+  }
+}
+/* REINICIAR Y PROTEGER EL HEADER */
+.site-header h1,
+.site-header h2,
+.site-header h3,
+.site-header p,
+.site-header span {
+  font-size: initial;
+}
+
+/* Forzar el tamaño correcto del título de la marca en el header */
+.site-header .brand span {
+  font-size: 1.15rem !important; /* Ajusta este valor si lo necesitas un poquito más grande o chico */
+}
+
+/* Forzar el tamaño de los enlaces del menú principal */
+.site-header .main-nav a {
+  font-size: 1rem !important;
 }

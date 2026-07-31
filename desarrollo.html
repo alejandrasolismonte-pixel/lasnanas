@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/desarrollo.css">
+<link rel="stylesheet" href="css/desarrollo.css?v=10">
   
 </head>
 <body>
@@ -108,7 +108,7 @@
           <p>Selecciona un pin para conocer iniciativas, lugares y aprendizajes que dan vida a Las Ñañas.</p>
         </div>
  
-        <div class="map-experience reveal" data-map-experience>
+       <div class="map-experience reveal" data-map-experience>
           <div class="map-toolbar" role="group" aria-label="Filtrar puntos del mapa">
             <button class="map-filter is-active" type="button" data-filter="all">Todos</button>
             <button class="map-filter" type="button" data-filter="nanas">Las Ñañas</button>
@@ -116,25 +116,74 @@
           </div>
           <div class="map-stage" aria-label="Mapa ilustrado de Wallmapu con puntos interactivos">
  
-            <!-- AQUI ESTÁ LA IMAGEN DEL MAPA (Revisa que se llame mapa-araucania.png) -->
+            <!-- AQUI ESTÁ LA IMAGEN DEL MAPA -->
             <img src="assets/img/mapa-araucania.png" alt="Mapa ilustrado de Wallmapu y La Araucanía">
  
-            <!-- Nodo Central VIVO (Temuco) - Pin de ubicación GPS -->
-            <button class="map-pin pin--nanas pin--location is-live" type="button" style="--x: 79.5%; --y: 54%;" data-category="nanas" data-title="Las Ñañas · Temuco" data-text="Conexiones, redes y actividades en Temuco." aria-label="Abrir información de Las Ñañas en Temuco"><span aria-hidden="true">✦</span></button>
+            <!-- =======================================================================
+                 PINES DE "LAS ÑAÑAS" (Naranjas)
+                 Cambia los valores de --x-movil y --y-movil para ajustar en celular
+                 ======================================================================= -->
+
+            <!-- Nodo Central VIVO (Temuco) -->
+            <button class="map-pin pin--nanas pin--location is-live" type="button" 
+            style="--x: 79.5%; --y: 54%; --x-movil: 82%; --y-movil: 50%;" 
+            data-category="nanas" data-title="Las Ñañas · Temuco" data-text="Conexiones, redes y actividades en Temuco." aria-label="Abrir información de Las Ñañas en Temuco"><span aria-hidden="true">✦</span></button>
  
-            <!-- Puntos verdes ajustados a la imagen -->
-            <button class="map-pin pin--nanas" type="button" style="--x: 76%; --y: 27%;" data-category="nanas" data-title="Las Ñañas · Renaico" data-text="Nodo territorial referencial en Renaico." aria-label="Abrir información de Las Ñañas en Renaico"><span aria-hidden="true">✦</span></button>
-            <button class="map-pin pin--nanas" type="button" style="--x: 33%; --y: 58%;" data-category="nanas" data-title="Las Ñañas · Sector Estero" data-text="Nodo territorial referencial junto al estero y las huertas." aria-label="Abrir información de Las Ñañas en Sector Estero"><span aria-hidden="true">✦</span></button>
-            <button class="map-pin pin--nanas" type="button" style="--x: 57%; --y: 76%;" data-category="nanas" data-title="Las Ñañas · Sector Fogón" data-text="Nodo territorial referencial junto a las plantas medicinales y el fogón." aria-label="Abrir información de Las Ñañas en Sector Fogón"><span aria-hidden="true">✦</span></button>
-            <button class="map-pin pin--nanas" type="button" style="--x: 80%; --y: 60%;" data-category="nanas" data-title="Las Ñañas · Padre Las Casas" data-text="Nodo territorial referencial en Padre Las Casas." aria-label="Abrir información de Las Ñañas en Padre Las Casas"><span aria-hidden="true">✦</span></button>
-            <button class="map-pin pin--nanas" type="button" style="--x: 70%; --y: 83%;" data-category="nanas" data-title="Las Ñañas · Villarrica" data-text="Encuentros territoriales en Villarrica." aria-label="Abrir información de Las Ñañas en Villarrica"><span aria-hidden="true">✦</span></button>
-            <button class="map-pin pin--nanas" type="button" style="--x: 90%; --y: 64%;" data-category="nanas" data-title="Las Ñañas · Lago Budi" data-text="Nodo territorial referencial junto al Lago Budi." aria-label="Abrir información de Las Ñañas en Lago Budi"><span aria-hidden="true">✦</span></button>
+            <!-- Renaico -->
+            <button class="map-pin pin--nanas" type="button" 
+            style="--x: 76%; --y: 27%; --x-movil: 76%; --y-movil: 27%;" 
+            data-category="nanas" data-title="Las Ñañas · Renaico" data-text="Nodo territorial referencial en Renaico." aria-label="Abrir información de Las Ñañas en Renaico"><span aria-hidden="true">✦</span></button>
+            
+            <!-- Sector Estero -->
+            <button class="map-pin pin--nanas" type="button" 
+            style="--x: 33%; --y: 58%; --x-movil: 33%; --y-movil: 58%;" 
+            data-category="nanas" data-title="Las Ñañas · Sector Estero" data-text="Nodo territorial referencial junto al estero y las huertas." aria-label="Abrir información de Las Ñañas en Sector Estero"><span aria-hidden="true">✦</span></button>
+            
+            <!-- Sector Fogón -->
+            <button class="map-pin pin--nanas" type="button" 
+            style="--x: 57%; --y: 76%; --x-movil: 57%; --y-movil: 76%;" 
+            data-category="nanas" data-title="Las Ñañas · Sector Fogón" data-text="Nodo territorial referencial junto a las plantas medicinales y el fogón." aria-label="Abrir información de Las Ñañas en Sector Fogón"><span aria-hidden="true">✦</span></button>
+            
+            <!-- Padre Las Casas -->
+            <button class="map-pin pin--nanas" type="button" 
+            style="--x: 80%; --y: 60%; --x-movil: 20%; --y-movil: 30%;" 
+            data-category="nanas" data-title="Las Ñañas · Padre Las Casas" data-text="Nodo territorial referencial en Padre Las Casas." aria-label="Abrir información de Las Ñañas en Padre Las Casas"><span aria-hidden="true">✦</span></button>
+            
+            <!-- Villarrica -->
+            <button class="map-pin pin--nanas" type="button" 
+            style="--x: 70%; --y: 20%; --x-movil: 70%; --y-movil: 83%;" 
+            data-category="nanas" data-title="Las Ñañas · Villarrica" data-text="Encuentros territoriales en Villarrica." aria-label="Abrir información de Las Ñañas en Villarrica"><span aria-hidden="true">✦</span></button>
+            
+            <!-- Lago Budi -->
+            <button class="map-pin pin--nanas" type="button" 
+            style="--x: 90%; --y: 64%; --x-movil: 90%; --y-movil: 64%;" 
+            data-category="nanas" data-title="Las Ñañas · Lago Budi" data-text="Nodo territorial referencial junto al Lago Budi." aria-label="Abrir información de Las Ñañas en Lago Budi"><span aria-hidden="true">✦</span></button>
  
-            <!-- Pines de Territorio -->
-            <button class="map-pin pin--territory" type="button" style="--x: 62.5%; --y: 28.5%;" data-category="territory" data-title="Rukas" data-text="Espacios de encuentro, abrigo y transmisión de saberes." aria-label="Abrir información sobre rukas"><span aria-hidden="true">⌂</span></button>
-            <button class="map-pin pin--territory" type="button" style="--x: 32%; --y: 15%;" data-category="territory" data-title="Flora y fauna" data-text="Observación y cuidado de especies nativas." aria-label="Abrir información sobre flora y fauna"><span aria-hidden="true">❋</span></button>
-            <button class="map-pin pin--territory" type="button" style="--x: 45%; --y: 15%;" data-category="territory" data-title="Observatorio intercultural" data-text="Mirar el territorio desde saberes diversos." aria-label="Abrir información sobre observatorio intercultural"><span aria-hidden="true">◉</span></button>
-            <button class="map-pin pin--territory" type="button" style="--x: 40%; --y: 70%;" data-category="territory" data-title="Faros agroecológicos" data-text="Espacios de aprendizaje, experimentación y producción." aria-label="Abrir información sobre faros agroecológicos"><span aria-hidden="true">♧</span></button>
+
+            <!-- =======================================================================
+                 PINES DE "TERRITORIO" (Verdes)
+                 Cambia los valores de --x-movil y --y-movil para ajustar en celular
+                 ======================================================================= -->
+
+            <!-- Rukas -->
+            <button class="map-pin pin--territory" type="button" 
+            style="--x: 62.5%; --y: 28.5%; --x-movil: 62.5%; --y-movil: 28.5%;" 
+            data-category="territory" data-title="Rukas" data-text="Espacios de encuentro, abrigo y transmisión de saberes." aria-label="Abrir información sobre rukas"><span aria-hidden="true">⌂</span></button>
+            
+            <!-- Flora y fauna -->
+            <button class="map-pin pin--territory" type="button" 
+            style="--x: 32%; --y: 15%; --x-movil: 32%; --y-movil: 15%;" 
+            data-category="territory" data-title="Flora y fauna" data-text="Observación y cuidado de especies nativas." aria-label="Abrir información sobre flora y fauna"><span aria-hidden="true">❋</span></button>
+            
+            <!-- Observatorio intercultural -->
+            <button class="map-pin pin--territory" type="button" 
+            style="--x: 40%; --y: 30%; --x-movil: 50%; --y-movil: 20%;" 
+            data-category="territory" data-title="Observatorio intercultural" data-text="Mirar el territorio desde saberes diversos." aria-label="Abrir información sobre observatorio intercultural"><span aria-hidden="true">◉</span></button>
+            
+            <!-- Faros agroecológicos -->
+            <button class="map-pin pin--territory" type="button" 
+            style="--x: 40%; --y: 70%; --x-movil: 40%; --y-movil: 70%;" 
+            data-category="territory" data-title="Faros agroecológicos" data-text="Espacios de aprendizaje, experimentación y producción." aria-label="Abrir información sobre faros agroecológicos"><span aria-hidden="true">♧</span></button>
           </div>
           <aside class="map-detail" aria-live="polite">
             <p class="map-detail__eyebrow">Explora el territorio</p>
@@ -146,104 +195,68 @@
     </section>
  
 
-    <!-- Las Ñañas (Tarjetas Flip) -->
-    <section class="section-shell section" id="nanas" aria-labelledby="nanas-title">
-      <div class="container">
-        <div class="section-heading section-heading--wide reveal">
-          <p class="eyebrow">Pu lamngen · comunidad</p>
-          <h2 id="nanas-title">Las Ñañas: una red que se sostiene entre muchas.</h2>
-          <p>Presiona las tarjetas para conocer la labor territorial de cada ñaña.</p>
-        </div>
-        <div class="people-grid">
-          <!-- Tarjeta 1 -->
-<button class="person-card reveal" type="button" aria-pressed="false">
-  <span class="person-card__inner">
-    <span class="person-card__face person-card__face--front">
-      <span class="person-card__avatar">
-        <img src="assets/img/vivi.jpeg" alt="viviana">
-      </span>
-      <strong>Viviana Catrileo Epul</strong><small>Tromen bajo, en el alto</small>
-    </span>
-    <span class="person-card__face person-card__face--back">
-     Profesora Intercultural, Cuida semillas, acompaña siembras y comparte saberes.
-    </span>
-  </span>
-  <span class="sr-only">Presiona para conocer su tarea</span>
-</button>
-          <!-- Tarjeta 2 -->
-         <button class="person-card reveal" type="button" aria-pressed="false">
-  <span class="person-card__inner">
-    <span class="person-card__face person-card__face--front">
-      <span class="person-card__avatar">
-        <img src="assets/img/machi.jpeg"alt="Antü">
-      </span>
-      <strong>Antü</strong><small>Carahue</small>
-    </span>
-    <span class="person-card__face person-card__face--back">
-      Cuida semillas, acompaña siembras y comparte saberes de temporada.
-    </span>
-  </span>
-  <span class="sr-only">Presiona para conocer su tarea</span>
-</button>
-          <!-- Tarjeta 3 -->
-          <button class="person-card reveal" type="button" aria-pressed="false">
-  <span class="person-card__inner">
-    <span class="person-card__face person-card__face--front">
-      <span class="person-card__avatar">
-        <img src="assets/img/prisci.jpeg" alt="Antü">
-      </span>
-      <strong>Antü</strong><small>Carahue</small>
-    </span>
-    <span class="person-card__face person-card__face--back">
-      Cuida semillas, acompaña siembras y comparte saberes de temporada.
-    </span>
-  </span>
-  <span class="sr-only">Presiona para conocer su tarea</span>
-</button>
-          <!-- Tarjeta 4 -->
-          <button class="person-card reveal" type="button" aria-pressed="false">
-            <span class="person-card__inner">
-              <span class="person-card__face person-card__face--front">
-                <span class="person-card__avatar">W</span>
-                <strong>Wenu</strong><small>Renaico</small>
-              </span>
-              <span class="person-card__face person-card__face--back">
-                Sostiene los vínculos con el norte del territorio y las rutas del río.
-              </span>
+  <!-- Las Ñañas (Tarjetas Flip) -->
+<section class="section-shell section" id="nanas" aria-labelledby="nanas-title">
+  <div class="container">
+    <div class="section-heading section-heading--wide reveal">
+      <p class="eyebrow">Pu lamngen · comunidad</p>
+      <h2 id="nanas-title">Las Ñañas: una red que se sostiene entre muchas.</h2>
+      <p>Presiona las tarjetas para conocer la labor territorial de cada ñaña.</p>
+    </div>
+    <div class="people-grid">
+      
+      <!-- Tarjeta 1 -->
+      <button class="person-card reveal" type="button" aria-pressed="false">
+        <span class="person-card__inner">
+          <span class="person-card__face person-card__face--front">
+            <span class="person-card__avatar">
+              <img src="assets/img/vivi.jpeg" alt="viviana">
             </span>
-            <span class="sr-only">Presiona para conocer su tarea</span>
-          </button>
-          <!-- Tarjeta 5 -->
-          <button class="person-card reveal" type="button" aria-pressed="false">
-            <span class="person-card__inner">
-              <span class="person-card__face person-card__face--front">
-                <span class="person-card__avatar">L</span>
-                <strong>Likan</strong><small>Villarrica</small>
-              </span>
-              <span class="person-card__face person-card__face--back">
-                Organiza encuentros junto al lago y acompaña a las productoras locales.
-              </span>
-            </span>
-            <span class="sr-only">Presiona para conocer su tarea</span>
-          </button>
-          <!-- Tarjeta 6 -->
-          <button class="person-card reveal" type="button" aria-pressed="false">
-            <span class="person-card__inner">
-              <span class="person-card__face person-card__face--front">
-                <span class="person-card__avatar">K</span>
-                <strong>Kallfü</strong><small>Lago Budi</small>
-              </span>
-              <span class="person-card__face person-card__face--back">
-                Vincula el trabajo costero e insular con la red de Las Ñañas.
-              </span>
-            </span>
-            <span class="sr-only">Presiona para conocer su tarea</span>
-          </button>
-        </div>
-      </div>
-    </section>
+            <strong>Viviana Catrileo Epul</strong><small>Tromen bajo, en el alto</small>
+          </span>
+          <span class="person-card__face person-card__face--back">
+           Profesora Intercultural, Cuida semillas, acompaña siembras y comparte saberes.
+          </span>
+        </span>
+        <span class="sr-only">Presiona para conocer su tarea</span>
+      </button>
 
- <!-- Ecosistema Las Ñañas (Enlaces a Páginas Independientes) -->
+      <!-- Tarjeta 2 -->
+      <button class="person-card reveal" type="button" aria-pressed="false">
+        <span class="person-card__inner">
+          <span class="person-card__face person-card__face--front">
+            <span class="person-card__avatar">
+              <img src="assets/img/machi.jpeg" alt="Antü">
+            </span>
+            <strong>Antü</strong><small>Carahue</small>
+          </span>
+          <span class="person-card__face person-card__face--back">
+            Cuida semillas, acompaña siembras y comparte saberes de temporada.
+          </span>
+        </span>
+        <span class="sr-only">Presiona para conocer su tarea</span>
+      </button> <!-- ¡Esta es la etiqueta que te faltaba! -->
+
+      <!-- Tarjeta 3 -->
+      <button class="person-card reveal" type="button" aria-pressed="false">
+        <span class="person-card__inner">
+          <span class="person-card__face person-card__face--front">
+            <span class="person-card__avatar">
+              <img src="assets/img/prisci.jpeg" alt="Antü">
+            </span>
+            <strong>Antü</strong><small>Carahue</small>
+          </span>
+          <span class="person-card__face person-card__face--back">
+            Cuida semillas, acompaña siembras y comparte saberes de temporada.
+          </span>
+        </span>
+        <span class="sr-only">Presiona para conocer su tarea</span>
+      </button>
+      
+    </div>
+  </div>
+</section>
+<!-- Ecosistema Las Ñañas (Enlaces a Páginas Independientes) -->
     <section class="section-shell section section--ecosystem" id="ecosistema" aria-labelledby="ecosystem-title">
       <!-- EFECTO DE ESTRELLAS: para quitarlo, borra este <canvas> y el bloque
            .particles-canvas en el CSS (sección 18) y createStarField en el JS -->
@@ -254,42 +267,34 @@
           <h2 id="ecosystem-title">Descubre nuestros productos agroecológicos con Sello Étnico, servicios técnicos y voluntariado.</h2>
         </div>
         <div class="ecosystem-grid">
-          <!-- Estos botones ahora enlazan a las páginas internas -->
+          
+          <!-- Tarjeta Voluntariado -->
           <a class="ecosystem-card reveal" href="pages/voluntariado.html">
-            <span aria-hidden="true" class="icon-mapuche">✦</span>
+            <!-- RECUERDA: Cambiar "ruta/a/tu/..." por la carpeta real donde guardes los GIFs -->
+            <img src="assets/icons/voluntariado.gif" alt="Ícono animado de Voluntariado" class="icono-gif" aria-hidden="true">
             <h3>Voluntariado</h3>
             <p>Aprender haciendo en comunidad.</p>
           </a>
+
+          <!-- Tarjeta Productos -->
           <a class="ecosystem-card reveal" href="pages/productos.html">
-            <span aria-hidden="true" class="icon-mapuche">◒</span>
+            <img src="assets/icons/productos.gif" alt="Ícono animado de Productos" class="icono-gif" aria-hidden="true">
             <h3>Productos</h3>
             <p>Del territorio a tu mesa.</p>
           </a>
+
+          <!-- Tarjeta Servicios -->
           <a class="ecosystem-card reveal" href="pages/servicios.html">
-            <span aria-hidden="true" class="icon-mapuche">⌁</span>
+            <img src="assets/icons/servicios.gif" alt="Ícono animado de Servicios Técnicos" class="icono-gif" aria-hidden="true">
             <h3>Servicios Técnicos</h3>
             <p>Tecnología con pertinencia territorial.</p>
           </a>
+
         </div>
       </div>
     </section>
 
-    <!-- Juego Memorice -->
-    <section class="section-shell section memorice-section" id="memorice" aria-labelledby="memorice-title">
-      <div class="container memorice-box reveal">
-        <p class="eyebrow">Memorice</p>
-        <h2 id="memorice-title">Juega y aprende con el territorio</h2>
-
-        <!-- ========================================== -->
-        <!--  CÓDIGO HTML DE TU JUEGO         -->
-        <!-- ========================================== -->
-        <div id="juego-memorice-container" style="min-height: 200px; display: grid; place-items: center; border-radius: 12px; background: rgba(0,0,0,0.2);">
-          <p class="section-note" style="color: var(--orange-light)">Inserta tu código del Memorice aquí.</p>
-        </div>
-
-      </div>
-    </section>
-
+   
     <!-- Preguntas Frecuentes (FAQ) -->
     <section class="section-shell section" id="preguntas" aria-labelledby="faq-title">
       <div class="container faq-layout">
@@ -395,6 +400,632 @@
       </div>
     </section>
   </main>
+   <!-- Juego Memorice -->    
+    <!-- ========================================== -->
+    <!-- 1. LIBRERÍAS EXTERNAS                      -->
+    <!-- ========================================== -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+
+    <!-- ========================================== -->
+    <!-- 2. CONFIGURACIÓN DE COLORES TAILWIND       -->
+    <!-- ========================================== -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nanas: {
+                            dark: '#0f141e',    
+                            green: '#43a047',   
+                            light: '#e2e8f0',
+                            accent: '#e85d22'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                        pacifico: ['Pacifico', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- ========================================== -->
+    <!-- 3. ESTILOS CSS PERSONALIZADOS (UI & UX)    -->
+    <!-- ========================================== -->
+    <style>
+        /* Fondo general */
+        body {
+            background-color: #0f141e;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.05), rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.05), rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.05), rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            color: #e2e8f0;
+            margin: 0; padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- SISTEMA DE CARTAS 3D --- */
+        .memory-game-container {
+            perspective: 1000px;
+        }
+
+        .memory-card {
+            position: relative;
+            transform-style: preserve-3d;
+            /* SE HIZO MÁS RÁPIDO: de 0.6s a 0.35s para mayor fluidez */
+            transition: transform 0.35s cubic-bezier(0.4, 0.2, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .memory-card.flip {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card-front, .memory-card-back {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* --- NUEVO REVERSO DE CARTA (Ligero, claro y sin imágenes pesadas) --- */
+        .memory-card-back {
+            background: linear-gradient(135deg, #1e293b 0%, #1e293b 100%); /* Verde pastel muy claro */
+            border: 2px solid #86efac; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .memory-card-back:hover {
+            border-color: #4ade80;
+            box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
+            transform: scale(1.02);
+        }
+
+        /* Ícono y texto del reverso */
+        .back-logo-icon {
+            font-size: 2rem; /* Tamaño equilibrado, 30% más pequeño que antes */
+            color: #c36d0ccb;
+            margin-bottom: 4px;
+        }
+        .back-logo-text {
+            font-family: 'Pacifico', cursive;
+            color: #166534;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        /* --- FRENTE DE LA CARTA (Donde va la palabra) --- */
+        .memory-card-front {
+            transform: rotateY(180deg);
+            background-color: #0d2425; /* Un poco más claro que el fondo para resaltar */
+            border: 2px solid #43a047;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: space-between;
+            text-align: center;
+        }
+        
+        .card-icon-container {
+            flex-grow: 1;
+            display: flex; align-items: center; justify-content: center;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .card-text-container {
+            width: 100%; padding: 20px 10px;
+            background-color: #1a2332;
+            border-top: 1px solid rgba(67, 160, 71, 0.3);
+        }
+
+        /* Animación de rebote del ícono al voltear (Más rápida) */
+        .memory-card.flip .card-icon {
+            animation: bounceIn 0.4s ease-out forwards;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        /* ==========================================================
+   MEMORICE RESPONSIVO
+   ========================================================== */
+
+/* ---------- Escritorio (1024px o más) ---------- */
+@media (min-width: 1024px) {
+
+    .back-logo-icon {
+        font-size: 2rem;
+    }
+
+    .back-logo-text {
+        font-size: 1rem;
+    }
+
+    .card-text-container {
+        padding: 20px 10px;
+    }
+
+    .card-icon {
+        font-size: 5rem !important;
+    }
+
+    .memory-card-front h3 {
+        font-size: 1.3rem;
+    }
+
+    .memory-card-front p {
+        font-size: 1rem;
+    }
+
+}
+
+/* ---------- Tablet (768px a 1023px) ---------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    .back-logo-icon {
+        font-size: 1.7rem;
+    }
+
+    .back-logo-text {
+        font-size: .9rem;
+    }
+
+    .card-text-container {
+        padding: 15px 8px;
+    }
+
+    .card-icon {
+        font-size: 2.5rem !important;
+    }
+
+    .memory-card-front h3 {
+        font-size: 1.1rem;
+    }
+
+    .memory-card-front p {
+        font-size: .9rem;
+    }
+
+}
+
+/* ---------- Celular (767px o menos) ---------- */
+@media (max-width: 767px) {
+
+    .back-logo-icon {
+        font-size: 1.8rem;
+    }
+
+    .back-logo-text {
+        font-size: .7rem;
+    }
+
+    .card-text-container {
+        padding: 15px 5px;
+    }
+
+    .card-icon {
+        font-size: 2rem !important;
+    }
+
+    .memory-card-front h3 {
+        font-size: .95rem;
+    }
+
+    .memory-card-front p {
+        font-size: .75rem;
+    }
+
+}
+
+        /* Estilo de carta adivinada (Match) */
+        .matched {
+            animation: pulseMatch 0.6s ease-in-out;
+            border-color: #ffd700 !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+        @keyframes pulseMatch {
+            0% { transform: rotateY(180deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.05); }
+            100% { transform: rotateY(180deg) scale(1); }
+        }
+        
+        /* --- PANEL DE JUGADORES (Turnos) --- */
+        .player-panel {
+            transition: all 0.3s ease;
+            opacity: 0.6;
+            border: 2px solid transparent;
+        }
+        .player-panel.active-turn {
+            opacity: 1;
+            border-color: #43a047; /* Verde activo */
+            box-shadow: 0 0 20px rgba(67, 160, 71, 0.2);
+            transform: translateY(-2px);
+            background-color: rgba(30, 41, 59, 0.8);
+        }
+
+        /* Botón general */
+        .btn-ecosistema {
+            background-color: #e85d22;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .btn-ecosistema:hover {
+            background-color: #d04d16; transform: translateY(-2px);
+        }
+
+        /* --- ANIMACIÓN DE FLORES Y HOJAS AL GANAR --- */
+        .particle {
+            position: fixed;
+            top: -10%;
+            z-index: 9999;
+            pointer-events: none;
+            animation: fall linear forwards;
+            font-size: 1.5rem;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- 4. ESTRUCTURA HTML DEL JUEGO               -->
+    <!-- ========================================== -->
+    <section id="juego-memorice" class="w-full mx-auto px-4 py-8 flex-grow flex flex-col items-center justify-center">
+        
+        <!-- Encabezado -->
+        <div class="text-center mb-6">
+            <h2 class="text-3xl md:text-4xl font-bold mb-2 tracking-wide text-white">
+                kimün <span class="text-nanas-green">conexiones.</span>
+            </h2>
+            <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+                Encuentra los pares. Si aciertas, mantienes tu turno.
+            </p>
+        </div>
+
+        <!-- Panel de Multijugador (Turnos y Puntaje) -->
+        <div class="flex justify-between items-center w-full max-w-2xl mb-6 gap-2 md:gap-4">
+            
+            <!-- Jugador 1 -->
+            <div id="panel-p1" class="player-panel flex-1 bg-gray-800 rounded-xl p-2 md:p-3 text-center active-turn">
+                <h3 class="font-bold text-sm md:text-lg text-white">Jugador 1</h3>
+                <p class="text-nanas-green text-xl md:text-2xl font-bold leading-none my-1"><span id="score-p1">0</span> <span class="text-xs text-gray-400 font-normal">pares</span></p>
+                <p class="text-[0.65rem] md:text-xs text-gray-400 uppercase tracking-wider">Victorias: <span id="wins-p1" class="text-white font-bold">0</span></p>
+            </div>
+
+            <!-- Botón Reiniciar en el centro -->
+            <button id="restart-btn" class="btn-ecosistema text-white font-bold h-10 w-10 md:h-12 md:w-auto md:px-4 rounded-full flex items-center justify-center gap-2 shadow-lg shrink-0" title="Reiniciar Juego">
+                <i class="fas fa-redo-alt"></i> <span class="hidden md:inline">Reiniciar</span>
+            </button>
+
+            <!-- Jugador 2 -->
+            <div id="panel-p2" class="player-panel flex-1 bg-gray-800 rounded-xl p-2 md:p-3 text-center">
+                <h3 class="font-bold text-sm md:text-lg text-white">Jugador 2</h3>
+                <p class="text-nanas-green text-xl md:text-2xl font-bold leading-none my-1"><span id="score-p2">0</span> <span class="text-xs text-gray-400 font-normal">pares</span></p>
+                <p class="text-[0.65rem] md:text-xs text-gray-400 uppercase tracking-wider">Victorias: <span id="wins-p2" class="text-white font-bold">0</span></p>
+            </div>
+            
+        </div>
+
+        <!-- Tablero del Juego (Tamaño ajustado max-w-3xl para que las cartas sean más equilibradas) -->
+        <div class="memory-game-container grid grid-cols-4 md:grid-cols-5 gap-2 md:gap-3 w-full max-w-3xl mx-auto" id="game-board">
+            <!-- Las cartas se generan dinámicamente en JS -->
+        </div>
+
+        <!-- Modal de Victoria -->
+        <div id="victory-message" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+            <div class="bg-gray-900 border-2 border-nanas-green rounded-2xl p-6 md:p-8 w-full max-w-sm text-center shadow-2xl">
+                <i class="fas fa-seedling text-5xl text-nanas-green mb-4" id="victory-icon"></i>
+                <h3 class="text-2xl md:text-3xl font-bold text-white mb-2" id="victory-title">¡Juego Terminado!</h3>
+                <p class="text-gray-300 mb-6 text-base" id="victory-text">Resultados de la cosecha.</p>
+                
+                <div class="flex justify-around bg-gray-800 p-3 rounded-lg mb-6">
+                    <div>
+                        <p class="text-xs text-gray-400">Jugador 1</p>
+                        <p class="text-xl font-bold text-white" id="final-score-p1">0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">Jugador 2</p>
+                        <p class="text-xl font-bold text-white" id="final-score-p2">0</p>
+                    </div>
+                </div>
+
+                <button onclick="resetGame()" class="btn-ecosistema text-white font-bold py-3 px-8 rounded-full shadow-lg text-lg w-full">
+                    Jugar Revancha
+                </button>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 5. SCRIPT: LÓGICA DEL JUEGO Y UX           -->
+    <!-- ========================================== -->
+    <script>
+        /* BASE DE DATOS DE CARTAS: Agregamos colores específicos a cada elemento para darles vida */
+        const palabrasData = [
+            { id: 1, mapu: 'Ruka', esp: 'Casa', icon: 'fa-house-chimney', color: '#d97706' }, // Naranja/Café
+            { id: 2, mapu: 'Tukukawe', esp: 'Huerta', icon: 'fa-seedling', color: '#22c55e' }, // Verde
+            { id: 3, mapu: 'Poyen', esp: 'Amor', icon: 'fa-heart', color: '#e11d48' }, // Rojo
+            { id: 4, mapu: 'Keyuwün', esp: 'Ayuda mutua', icon: 'fa-hands-holding-circle', color: '#0d9488' }, // Turquesa
+            { id: 5, mapu: 'Kimün', esp: 'Sabiduría', icon: 'fa-book-open', color: '#9333ea' }, // Morado
+            { id: 6, mapu: 'Mapu', esp: 'Tierra', icon: 'fa-earth-americas', color: '#854d0e' }, // Café tierra
+            { id: 7, mapu: 'Ixofill', esp: 'bosque', icon: 'fa-leaf', color: '#84cc16' }, // Verde lima
+            { id: 8, mapu: 'Ko', esp: 'Agua', icon: 'fa-droplet', color: '#3b82f6' }, // Azul
+            { id: 9, mapu: 'Antü', esp: 'Sol', icon: 'fa-sun', color: '#eab308' }, // Amarillo
+            { id: 10, mapu: 'Küyen', esp: 'Luna', icon: 'fa-moon', color: '#94a3b8' } // Plata
+        ];
+
+        // Variables de estado del tablero
+        let cardsArray = [];
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let totalPairs = palabrasData.length;
+        let matchedPairs = 0;
+
+        // Variables Multijugador
+        let currentPlayer = 1; // 1 o 2
+        let scoreP1 = 0;
+        let scoreP2 = 0;
+        let winsP1 = 0;
+        let winsP2 = 0;
+
+        // Referencias DOM
+        let boardElement, victoryMessage;
+        let scoreP1El, scoreP2El, panelP1El, panelP2El;
+
+        function initGame() {
+            boardElement = document.getElementById('game-board');
+            victoryMessage = document.getElementById('victory-message');
+            
+            scoreP1El = document.getElementById('score-p1');
+            scoreP2El = document.getElementById('score-p2');
+            panelP1El = document.getElementById('panel-p1');
+            panelP2El = document.getElementById('panel-p2');
+
+            // Barajar mazo
+            cardsArray = [...palabrasData, ...palabrasData];
+            cardsArray.sort(() => 0.5 - Math.random()); 
+            
+            renderBoard();
+            resetMatchStats();
+        }
+
+        // Renderizado del HTML de las cartas
+        function renderBoard() {
+            boardElement.innerHTML = '';
+            
+            cardsArray.forEach((item) => {
+                const cardElement = document.createElement('div');
+                // aspect ratio y w-full garantizan responsividad
+                cardElement.classList.add('memory-card', 'w-full', 'aspect-[3/4]');
+                cardElement.dataset.id = item.id;
+                
+                // NOTA: Se redujo el tamaño de text-4xl a text-2xl/3xl para equilibrar el tamaño
+                cardElement.innerHTML = `
+                    <div class="memory-card-back">
+                        <i class="fas fa-seedling back-logo-icon"></i>
+                        <div class="back-logo-text">Las Ñañas</div>
+                    </div>
+                    <div class="memory-card-front">
+                        <div class="card-icon-container">
+                            <i class="card-icon fas ${item.icon} opacity-0 text-2xl md:text-3xl" style="color: ${item.color};"></i>
+                        </div>
+                     <div class="card-text-container">
+                        <!-- Mapudungun súper destacado -->
+                        <h3 class="text-green-500 font-bold text-base md:text-xl leading-none mb-1">${item.mapu}</h3>
+                        <!-- Español más legible -->
+                        <p class="text-gray-300 text-sm md:text-base font-medium uppercase">${item.esp}</p>
+                    </div>
+                </div>
+                    </div>
+                `;
+
+                cardElement.addEventListener('click', flipCard);
+                boardElement.appendChild(cardElement);
+            });
+        }
+
+        // Lógica al hacer clic en una carta
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flip');
+
+            if (!hasFlippedCard) {
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            checkForMatch();
+        }
+
+        // Verificar si las dos cartas son iguales
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+            
+            if (isMatch) {
+                // Acierto: suma punto y mantiene turno
+                addScore();
+                disableCards();
+            } else {
+                // Falla: cambia el turno
+                unflipCards();
+            }
+        }
+
+        function addScore() {
+            if (currentPlayer === 1) {
+                scoreP1++;
+                scoreP1El.innerText = scoreP1;
+            } else {
+                scoreP2++;
+                scoreP2El.innerText = scoreP2;
+            }
+        }
+
+        function switchTurn() {
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            // Actualizar UI
+            if (currentPlayer === 1) {
+                panelP1El.classList.add('active-turn');
+                panelP2El.classList.remove('active-turn');
+            } else {
+                panelP2El.classList.add('active-turn');
+                panelP1El.classList.remove('active-turn');
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            
+            firstCard.querySelector('.memory-card-front').classList.add('matched');
+            secondCard.querySelector('.memory-card-front').classList.add('matched');
+
+            matchedPairs++;
+            resetBoardVars();
+
+            if (matchedPairs === totalPairs) {
+                setTimeout(showVictory, 600);
+            }
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+            // TIEMPO OPTIMIZADO: de 1000ms a 700ms para no aburrir al jugador
+            setTimeout(() => {
+                firstCard.classList.remove('flip');
+                secondCard.classList.remove('flip');
+                switchTurn(); // Cambia turno solo cuando se equivoca
+                resetBoardVars();
+            }, 700);
+        }
+
+        function resetBoardVars() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        function resetMatchStats() {
+            matchedPairs = 0;
+            scoreP1 = 0;
+            scoreP2 = 0;
+            scoreP1El.innerText = '0';
+            scoreP2El.innerText = '0';
+            currentPlayer = 1;
+            panelP1El.classList.add('active-turn');
+            panelP2El.classList.remove('active-turn');
+            victoryMessage.classList.add('hidden');
+        }
+
+        function updateWinsUI() {
+            document.getElementById('wins-p1').innerText = winsP1;
+            document.getElementById('wins-p2').innerText = winsP2;
+        }
+
+        // === FIN DEL JUEGO Y EFECTOS ===
+        function showVictory() {
+            let title = document.getElementById('victory-title');
+            let text = document.getElementById('victory-text');
+            
+            document.getElementById('final-score-p1').innerText = scoreP1;
+            document.getElementById('final-score-p2').innerText = scoreP2;
+
+            // Determinar ganador
+            if (scoreP1 > scoreP2) {
+                title.innerText = "¡Jugador 1 Gana!";
+                title.className = "text-2xl md:text-3xl font-bold text-nanas-green mb-2";
+                text.innerText = "Excelente memoria.";
+                winsP1++;
+            } else if (scoreP2 > scoreP1) {
+                title.innerText = "¡Jugador 2 Gana!";
+                title.className = "text-2xl md:text-3xl font-bold text-nanas-green mb-2";
+                text.innerText = "Excelente memoria.";
+                winsP2++;
+            } else {
+                title.innerText = "¡Es un Empate!";
+                title.className = "text-2xl md:text-3xl font-bold text-yellow-400 mb-2";
+                text.innerText = "Ambos tienen gran sabiduría.";
+            }
+
+            updateWinsUI();
+            victoryMessage.classList.remove('hidden');
+            lanzarHojasYFlores(); // Inicia animación de victoria
+        }
+
+        function resetGame() {
+            const cards = document.querySelectorAll('.memory-card');
+            cards.forEach(card => card.classList.remove('flip'));
+            setTimeout(() => { initGame(); }, 400);
+        }
+
+        // ==========================================
+        // SISTEMA DE PARTÍCULAS (Hojas y Flores)
+        // ==========================================
+        function lanzarHojasYFlores() {
+            const emojis = ['🌸', '🌼', '🍃', '🍂', '🌺', '🌱'];
+            const container = document.body;
+            
+            // Crea 40 partículas
+            for (let i = 0; i < 40; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    particle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                    
+                    // Posición horizontal aleatoria
+                    particle.style.left = Math.random() * 100 + 'vw';
+                    
+                    // Tamaño aleatorio
+                    const size = Math.random() * 1.5 + 0.8;
+                    particle.style.fontSize = size + 'rem';
+                    
+                    // Duración de caída aleatoria (entre 2 y 5 segundos)
+                    const duration = Math.random() * 3 + 2;
+                    particle.style.animationDuration = duration + 's';
+                    
+                    container.appendChild(particle);
+                    
+                    // Eliminar del DOM una vez que termine la animación
+                    setTimeout(() => {
+                        particle.remove();
+                    }, duration * 1000);
+                    
+                }, i * 50); // Retraso escalonado para que no caigan todas de golpe
+            }
+        }
+
+        // Inicializar al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
+            document.getElementById('restart-btn').addEventListener('click', resetGame);
+        });
+    </script>
+</body>
+</html>
+
 
   <!-- Nuevo Footer (Diseño Étnico y Centrado) -->
   <footer class="site-footer ethnic-footer">
