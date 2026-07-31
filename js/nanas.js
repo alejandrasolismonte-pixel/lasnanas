@@ -9,4 +9,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   prevButton?.addEventListener('click', () => track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
   nextButton?.addEventListener('click', () => track.scrollBy({ left: scrollAmount(), behavior: 'smooth' }));
+  
 });

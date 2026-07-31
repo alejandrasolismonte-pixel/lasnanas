@@ -172,5 +172,84 @@ document.addEventListener('DOMContentLoaded', () => {
     animate();
   }
 
+  /* ============================================================
+     LÓGICA DEL LIBRO 3D (Sección Quiénes Somos)
+     ============================================================ */
+  const leaves = document.querySelectorAll(".nanas-leaf");
+  
+  if (leaves.length > 0) {
+    const N = leaves.length;
+    let cur = 0;
+    let anim = false;
+    
+    const btnPrev = document.getElementById("book-prev");
+    const btnNext = document.getElementById("book-next");
+    const lblPg = document.getElementById("book-pg");
+
+    function updateBook() {
+      if(lblPg) lblPg.textContent = "Hoja " + (cur + 1) + " de " + (N + 1);
+      if(btnPrev) btnPrev.disabled = cur === 0;
+      if(btnNext) btnNext.disabled = cur >= N;
+    }
+    
+    function turnPage(d) {
+      if(anim) return;
+      if(d > 0 && cur >= N) return;
+      if(d < 0 && cur <= 0) return;
+      
+      anim = true;
+      const idx = d > 0 ? cur : cur - 1;
+      const leaf = leaves[idx];
+      
+      leaf.style.zIndex = d > 0 ? 99 : N + 10;
+      
+      if(d > 0) {
+          leaf.classList.add("flipped"); 
+      } else {
+          leaf.classList.remove("flipped");
+      }
+      
+      window.setTimeout(() => {
+        leaf.style.zIndex = d > 0 ? idx + 1 : N - idx;
+        cur += d;
+        anim = false;
+        updateBook();
+      }, 1080);
+    }
+    
+    // 1. Botones de abajo
+    if(btnPrev) btnPrev.addEventListener('click', () => turnPage(-1));
+    if(btnNext) btnNext.addEventListener('click', () => turnPage(1));
+    
+    // 2. Interacción al hacer clic/tocar las páginas
+    leaves.forEach((leaf, idx) => {
+      const front = leaf.querySelector('.nanas-face:not(.nanas-back)');
+      const back = leaf.querySelector('.nanas-back');
+      
+      // Tocar página derecha -> Avanzar
+      if (front) {
+        front.style.cursor = 'pointer';
+        front.addEventListener('click', (e) => {
+          if (e.target.closest('a') || e.target.closest('button')) return;
+          if (cur === idx) turnPage(1);
+        });
+      }
+      
+      // Tocar página izquierda -> Retroceder
+      if (back) {
+        back.style.cursor = 'pointer';
+        back.addEventListener('click', (e) => {
+          if (e.target.closest('a') || e.target.closest('button')) return;
+          if (cur === idx + 1) turnPage(-1);
+        });
+      }
+    });
+
+    updateBook();
+  }
+
+  /* ============================================================
+     INICIALIZACIÓN DE PARTÍCULAS
+     ============================================================ */
   document.querySelectorAll('.particles-canvas').forEach((canvas) => createStarField(canvas));
 });

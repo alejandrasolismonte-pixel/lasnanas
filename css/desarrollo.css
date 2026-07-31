@@ -144,6 +144,7 @@ button {
 }
 
 /* ============================================================
+ /* ============================================================
    5. HEADER Y NAVEGACIÓN
    ============================================================ */
 .site-header {
@@ -151,10 +152,11 @@ button {
   top: 0;
   z-index: 50;
   border-bottom: 1px solid transparent;
-  transition: background .3s, backdrop-filter .3s, border-color .3s, box-shadow .3s;
+  transition: background .3s, backdrop-filter .3s, -webkit-backdrop-filter .3s, border-color .3s, box-shadow .3s;
 }
 .site-header.is-scrolled {
   background: rgba(15,21,28,.9);
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   border-color: var(--line);
   box-shadow: 0 8px 30px rgba(0,0,0,.2);
@@ -195,7 +197,7 @@ button {
 .main-nav a, .footer-links a {
   color: var(--muted);
   text-decoration: none;
-  font-size: .88rem;
+  font-size: 1rem; /* Sincronizado al tamaño real deseado */
   transition: color .2s;
 }
 .main-nav a:hover, .main-nav a:focus-visible, .footer-links a:hover {
@@ -207,7 +209,7 @@ button {
   border-radius: 999px;
   color: #fff;
   font-weight: 700;
-  font-size: .78rem;
+  font-size: .9rem; /* Sincronizado al tamaño real deseado */
   text-decoration: none;
   white-space: nowrap;
   transition: transform .2s, background .2s;
@@ -230,7 +232,6 @@ button {
   background: #fff;
   transition: transform .2s, opacity .2s;
 }
-
 /* ============================================================
    6. HERO (Sección de inicio)
    ============================================================ */
@@ -311,8 +312,8 @@ h2 {
 }
 .hero__lead {
   max-width: 600px;
-  color: #d1d8dd;
-  font-size: clamp(1.5rem, 4vw,1.7rem);
+  color: #d1ddd2;
+  font-size: clamp(1em, 3vw,1rem);
 }
 .hero__actions {
   display: flex;
@@ -330,7 +331,7 @@ h2 {
   padding: .72rem 1.1rem;
   border: 1px solid transparent;
   border-radius: 10px;
-  color: #fff;
+  color: #ffffff;
   font-weight: 700;
   text-decoration: none;
   transition: transform .2s, box-shadow .2s, background .2s;
@@ -387,47 +388,190 @@ h2 {
 }
 
 /* ============================================================
-   7. QUIÉNES SOMOS
+   7. QUIÉNES SOMOS (Libro 3D - Versión Grande Alternada)
    ============================================================ */
-.split-grid {
-  display: grid;
-  grid-template-columns: .8fr 1.2fr;
-  gap: clamp(2rem, 7vw, 7rem);
-  align-items: start;
+.book-scene {
+  perspective: 2500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 3rem 0;
 }
-.split-grid--reverse {
-  grid-template-columns: .75fr 1.25fr;
+.nanas-book {
+  position: relative;
+  width: 650px;  /* 30% más grande */
+  height: 400px; /* 30% más grande */
+  box-shadow: 0 45px 70px rgba(0,0,0,.6);
 }
-.section-heading p:not(.eyebrow) {
-  max-width: 580px;
-  color: var(--muted);
+.nanas-cover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(145deg, #0f151c, #17202b);
+  border-radius: 14px 0 0 14px;
 }
-.surface-card {
-  padding: clamp(1.6rem, 4vw, 3rem);
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: linear-gradient(145deg, rgba(28,39,52,.94), rgba(23,32,43,.94));
-  box-shadow: var(--shadow);
+.nanas-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.2) 40%, rgba(0,0,0,.2) 60%, rgba(0,0,0,.6));
+  z-index: 50;
+  pointer-events: none;
 }
-.surface-card p {
-  color: #c4cdd4;
+.nanas-leaf {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 1.0s 0.1s cubic-bezier(0.645, 0.045, 0.355, 1.000);
 }
-.surface-card .lead-text {
-  color: #ecf2f4;
-  font: 500 clamp(1.3rem, 2.4vw, 1.8rem)/1.35 var(--font-display);
+.nanas-leaf.flipped {
+  transform: rotateY(-180deg);
 }
-.pill-list {
+.nanas-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  overflow: hidden;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.nanas-face:not(.nanas-back) {
+  border-radius: 0 14px 14px 0;
+  color: #fff;
+}
+.nanas-face.nanas-back {
+  transform: rotateY(180deg);
+  border-radius: 14px 0 0 14px;
+}
+
+/* Modificador para páginas que son solo imagen */
+.nanas-face.is-image {
+  padding: 0;
+  background: #000;
+}
+.nanas-face.is-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.95;
+}
+
+/* Textos dentro del libro */
+.nanas-face h3 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  margin: 0;
+}
+.nanas-face p {
+  font-size: 1.05rem;
+  opacity: .95;
+  line-height: 1.6;
+}
+
+/* Píldoras dentro del libro */
+.pill-list-book {
   display: flex;
   flex-wrap: wrap;
   gap: .5rem;
-  margin-top: 2rem;
+  margin-top: auto;
 }
-.pill-list span {
-  border: 1px solid rgba(45,135,78,.5);
+.pill-list-book span {
+  border: 1px solid rgba(255,255,255,.4);
   border-radius: 999px;
-  padding: .35rem .65rem;
-  color: var(--green-light);
-  font-size: .8rem;
+  padding: .4rem .8rem;
+  font-size: 0.85rem;
+  background: rgba(0,0,0,0.15);
+}
+
+/* Botón Llamado a la Acción (CTA) */
+.book-cta-btn {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  padding: 12px 20px;
+  background: var(--green);
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.book-cta-btn:hover {
+  background: var(--orange); /* Opcional: cambia a naranja al pasar el mouse */
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+/* Navegación del libro */
+.book-nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+.book-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: rgba(23,32,43,.8);
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.book-btn:hover:not(:disabled) {
+  background: var(--green);
+  color: #fff;
+}
+.book-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+#book-pg {
+  color: var(--muted);
+  font-size: 1rem;
+  min-width: 90px;
+  text-align: center;
+}
+
+/* Escalar el libro en celulares para el nuevo tamaño */
+@media (max-width: 768px) {
+  .nanas-book {
+    transform: scale(0.7); 
+    margin: -60px 0;
+  }
+}
+@media (max-width: 500px) {
+  .nanas-book {
+    transform: scale(0.65);
+    margin: -100px 0;
+
+  }
+}
+@media (max-width: 500px) {
+  .nanas-book {
+    transform: scale(0.5); 
+    margin: -100px 0;
+    width: 600px; /* Tu nuevo ancho */
+  }
+
+  .nanas-leaf {
+    width: 300px; /* La mitad del ancho */
+    left: 50%;    /* 👈 ESTA ES LA CLAVE: Fuerza al lomo a estar en el centro exacto */
+  }
 }
 
 /* ============================================================
@@ -1367,10 +1511,12 @@ h2 {
   inset: 0;
   z-index: 20;
   pointer-events: none;
-}.hero h1 {
+}
+.hero h1 {
   font-family: "Kaushan Script", cursive !important;
 }
-  /* ==========================================================
+
+/* ==========================================================
    UBICACIÓN EXACTA DEL BOTÓN EN MÓVIL (SEGÚN IMAGEN)
    ========================================================== */
 @media (max-width: 767px) {
@@ -1394,38 +1540,38 @@ h2 {
         white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
         z-index: 100; /* Lo mantiene por encima de cualquier otro elemento */
     }
+
     /* ==========================================================
-   SOLUCIÓN: PINES DEL MAPA RESPONSIVOS
-   ========================================================== */
-/* 1. Obligamos al contenedor a tener el mismo alto que la imagen */
-.map-stage {
-    position: relative;
-    width: 100%;
-    /* Display flex evita espacios "fantasma" debajo de las imágenes */
-    display: flex; 
-    justify-content: center;
-    align-items: center;
-}
+       SOLUCIÓN: PINES DEL MAPA RESPONSIVOS
+       ========================================================== */
+    /* 1. Obligamos al contenedor a tener el mismo alto que la imagen */
+    .map-stage {
+        position: relative;
+        width: 100%;
+        /* Display flex evita espacios "fantasma" debajo de las imágenes */
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+    }
 
-.map-stage img {
-    width: 100%;
-    height: auto; /* Mantiene la proporción perfecta del mapa */
-    display: block;
-    object-fit: contain;
-}
+    .map-stage img {
+        width: 100%;
+        height: auto; /* Mantiene la proporción perfecta del mapa */
+        display: block;
+        object-fit: contain;
+    }
 
-/* 2. Aseguramos que los pines usen las coordenadas con exactitud */
-.map-pin {
-    position: absolute;
-    top: var(--y);
-    left: var(--x);
-    /* Esto es clave: centra el punto medio del pin exactamente en la coordenada */
-    transform: translate(-50%, -50%); 
-    z-index: 10;
-}
+    /* 2. Aseguramos que los pines usen las coordenadas con exactitud */
+    .map-pin {
+        position: absolute;
+        top: var(--y);
+        left: var(--x);
+        /* Esto es clave: centra el punto medio del pin exactamente en la coordenada */
+        transform: translate(-50%, -50%); 
+        z-index: 10;
+    }
 
-/* 3. Ajuste UX para Celulares: Achicamos los pines para que no tapen el mapa */
-@media (max-width: 767px) {
+    /* 3. Ajuste UX para Celulares: Achicamos los pines para que no tapen el mapa */
     .map-pin {
         /* El !important obliga al navegador a usar la coordenada móvil sí o sí */
         left: var(--x-movil, var(--x)) !important;
@@ -1434,25 +1580,28 @@ h2 {
         /* Aseguramos que mantenga su tamaño ajustado */
         transform: translate(-50%, -50%) scale(0.7) !important; 
     }
+
+    /* =========================================
+       ESTILOS PARA LOS GIFS DEL ECOSISTEMA
+       ========================================= */
+    .icono-gif {
+        width: 65px; /* Controla el tamaño exacto del GIF. Ajusta este número según prefieras */
+        height: auto;
+        margin-bottom: 1rem; /* Separa el GIF del título <h3> */
+        display: inline-block;
+        transition: transform 0.3s ease; /* Prepara el terreno para una animación suave al pasar el mouse */
+    }
+
+    /* Efecto extra: hace que el GIF crezca un poquito cuando el usuario pasa el mouse por la tarjeta */
+    .ecosystem-card:hover .icono-gif {
+        transform: scale(1.15); 
+    }
 }
+
 /* =========================================
-   ESTILOS PARA LOS GIFS DEL ECOSISTEMA
+   ESTILOS FINALES: ECOSISTEMA Y HEADER
    ========================================= */
 
-.icono-gif {
-    width: 65px; /* Controla el tamaño exacto del GIF. Ajusta este número según prefieras */
-    height: auto;
-    margin-bottom: 1rem; /* Separa el GIF del título <h3> */
-    display: inline-block;
-    transition: transform 0.3s ease; /* Prepara el terreno para una animación suave al pasar el mouse */
-}
-
-/* Efecto extra: hace que el GIF crezca un poquito cuando el usuario pasa el mouse por la tarjeta */
-.ecosystem-card:hover .icono-gif {
-    transform: scale(1.15); 
-}
-}
-  
 /* 1. Tamaño por defecto (Para Celulares) */
 .icono-gif {
   width: 100px !important;
@@ -1465,25 +1614,32 @@ h2 {
 /* 2. Tamaño para pantallas grandes (Para Computadores/Escritorio) */
 @media (min-width: 768px) {
   .icono-gif {
-    width: 100px !important;
-    height: 10s0px !important;
+    width: 60px !important; 
+    height: 60px !important;
   }
 }
-/* REINICIAR Y PROTEGER EL HEADER */
-.site-header h1,
-.site-header h2,
-.site-header h3,
-.site-header p,
-.site-header span {
-  font-size: initial;
+
+/* ==========================================================
+   BLINDAJE Y PROTECCIÓN DEL HEADER
+   Esta es ahora la ÚNICA fuente de verdad para el tamaño de
+   letra del header. Si en el futuro el título se ve raro,
+   este es el único bloque que hay que revisar/editar.
+   ========================================================== */
+/* =========================================
+   TÍTULO HERO NUEVO Y LIMPIO
+   ========================================= */
+.titulo-nanas {
+  font-family: 'Kaushan Script', cursive !important;
+  font-size: 3.5rem !important;
+  line-height: 1.2 !important;
+  font-weight: 400 !important;
+  margin: 0 auto 1.35rem auto !important;
+  color: #ffffff !important;
+  letter-spacing: 0.01em !important;
+  transform: none !important; /* Evita que salte por animaciones */
 }
 
-/* Forzar el tamaño correcto del título de la marca en el header */
-.site-header .brand span {
-  font-size: 1.15rem !important; /* Ajusta este valor si lo necesitas un poquito más grande o chico */
-}
-
-/* Forzar el tamaño de los enlaces del menú principal */
-.site-header .main-nav a {
-  font-size: 1rem !important;
+.titulo-nanas .texto-verde {
+  color: var(--green-light) !important;
+  font-weight: 400 !important;
 }
