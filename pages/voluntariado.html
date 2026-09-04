@@ -5,20 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Voluntariado en Las Ñañas. Red de voluntariado y guardadores de semillas en Wallmapu.">
   <title>Voluntariado | Las Ñañas</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <!-- Ojo: Usamos ../ para salir de la carpeta pages y entrar a css -->
+  
+  <!-- Estilos base del proyecto -->
   <link rel="stylesheet" href="../css/desarrollo.css">
+  <!-- Estilos específicos para los efectos del Voluntariado (Planeta, Glow, Acordeón) -->
+  <link rel="stylesheet" href="../css/voluntariado.css">
 </head>
 <body>
   <div class="watermark-bg" aria-hidden="true"></div>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
+  <!-- ENCABEZADO / MENÚ -->
   <header class="site-header" data-header>
     <div class="header__inner container">
       <a class="brand" href="../desarrollo.html" aria-label="Las Ñañas, volver al inicio">
-       <img class="brand__mark" src="../assets/img/logo.png" alt="" aria-hidden="true">
+        <img class="brand__mark" src="../assets/img/logo.png" alt="" aria-hidden="true">
         <span>Las Ñañas</span>
       </a>
 
@@ -40,55 +45,210 @@
   </header>
 
   <main id="contenido">
-    <section class="section-shell section" aria-labelledby="volunteer-title">
-      <div class="container split-grid split-grid--reverse">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Red de voluntariado y guardadores</p>
-          <h1 id="volunteer-title" style="font-size: clamp(2.35rem,4vw,3.5rem); margin-bottom: 1rem;">Invitación a Participar</h1>
-          <p>Conviértete en parte del resguardo de las semillas libres y apoya las labores agrícolas en Wallmapu. Aprender haciendo en comunidad permite un intercambio cultural y territorial profundo. Elige la membresía que mejor represente tu nivel de compromiso.</p>
+    
+    <!-- 1. Estructura de precios y membresías de voluntariado -->
+    <section class="section-shell section participation" aria-labelledby="volunteer-title">
+      <div class="container participation__container">
+        <div class="participation__heading reveal">
+          <p class="eyebrow participation__eyebrow">RED DE VOLUNTARIADO · COMUNIDAD INTERNACIONAL</p>
+          <h1 id="volunteer-title">Súmate a una red que acciona desde el territorio.</h1>
+          <p>Participa desde cualquier lugar del mundo en una comunidad diversa que comparte saberes, cuida las semillas y construye experiencias rurales con respeto, colaboración y conciencia de género.</p>
         </div>
-        
+
+        <form class="membership-controls reveal" aria-label="Opciones para consultar los precios">
+          <fieldset class="membership-switch" data-price-control="billing">
+            <legend>Periodicidad</legend>
+            <label class="membership-switch__option">
+              <input type="radio" name="billing" value="monthly" checked>
+              <span>Mensual</span>
+            </label>
+            <label class="membership-switch__option">
+              <input type="radio" name="billing" value="yearly">
+              <span>Anual <small>· Ahorra 20 %</small></span>
+            </label>
+          </fieldset>
+
+          <fieldset class="membership-switch" data-price-control="currency">
+            <legend>Moneda</legend>
+            <label class="membership-switch__option">
+              <input type="radio" name="currency" value="clp" checked>
+              <span>CLP</span>
+            </label>
+            <label class="membership-switch__option">
+              <input type="radio" name="currency" value="usd">
+              <span>USD</span>
+            </label>
+          </fieldset>
+        </form>
+
         <div class="membership-grid reveal">
           <article class="membership-card">
-            <p>Plan 01</p>
-            <h3>Semilla</h3>
-            <ul>
-              <li>Participación extendida.</li>
-              <li>Alojamiento y actividades.</li>
-              <li>Experiencia inmersiva.</li>
-            </ul>
+            <!-- Icono del plan Guardianas: protección y cuidado de la red -->
+            <div class="membership-card__icon-slot" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 3 5.5 6v5c0 4.4 2.7 7.7 6.5 10 3.8-2.3 6.5-5.6 6.5-10V6L12 3Z"/>
+                <path d="M12 15.8s-3.2-1.8-3.2-4.1a1.9 1.9 0 0 1 3.2-1.4 1.9 1.9 0 0 1 3.2 1.4c0 2.3-3.2 4.1-3.2 4.1Z"/>
+              </svg>
+            </div>
+            <div class="membership-card__heading">
+              <h2>Guardianas</h2>
+              <p>Para acompañar la red desde cualquier lugar del mundo.</p>
+            </div>
+            <p class="membership-card__price" aria-live="polite">
+              <strong data-price data-monthly-clp="10000" data-yearly-clp="96000" data-monthly-usd="10" data-yearly-usd="96">$10.000</strong>
+              <span data-currency-label>CLP</span><small>/ <span data-period-label>mes</span></small>
+            </p>
+            <div class="membership-card__includes" tabindex="0">
+              <h3>Aporte contempla</h3>
+              <ul>
+                <li>Novedades de la red.</li>
+                <li>Charla introductoria en línea.</li>
+                <li>Prioridad para conocer convocatorias.</li>
+              </ul>
+            </div>
+            <a class="membership-card__button" href="#inscripcion">Sumarme como Guardiana</a>
           </article>
-          <article class="membership-card membership-card--featured">
-            <p>Plan 02</p>
-            <h3>Brote</h3>
-            <ul>
-              <li>Experiencia corta.</li>
-              <li>Recorrido y actividades específicas.</li>
-            </ul>
-          </article>
+
           <article class="membership-card">
-            <p>Plan 03</p>
-            <h3>Guardianas del territorio</h3>
-            <ul>
-              <li>Participación limitada.</li>
-              <li>Actividades introductorias.</li>
-            </ul>
+            <!-- Icono del plan Semilla: inicio y aprendizaje -->
+            <div class="membership-card__icon-slot" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 21v-9"/>
+                <path d="M12 14c-4.2 0-6.5-2.2-6.5-6.5 4.2 0 6.5 2.2 6.5 6.5Z"/>
+                <path d="M12 11.5C12 7.3 14.2 5 18.5 5c0 4.2-2.2 6.5-6.5 6.5Z"/>
+                <path d="M7 21h10"/>
+              </svg>
+            </div>
+            <div class="membership-card__heading">
+              <h2>Semilla</h2>
+              <p>Para participar, aprender y comenzar a vincularte con el territorio.</p>
+            </div>
+            <p class="membership-card__price" aria-live="polite">
+              <strong data-price data-monthly-clp="15000" data-yearly-clp="144000" data-monthly-usd="15" data-yearly-usd="144">$15.000</strong>
+              <span data-currency-label>CLP</span><small>/ <span data-period-label>mes</span></small>
+            </p>
+            <div class="membership-card__includes" tabindex="0">
+              <h3>Aporte contempla</h3>
+              <ul>
+                <li>Todo lo incluido en Guardianas.</li>
+                <li>Encuentros comunitarios en línea.</li>
+                <li>Prioridad para jornadas presenciales.</li>
+              </ul>
+            </div>
+            <a class="membership-card__button" href="#inscripcion">Sumarme como Semilla</a>
           </article>
+
+          <article class="membership-card">
+            <!-- Icono del plan Brote: crecimiento y vínculo territorial -->
+            <div class="membership-card__icon-slot" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M20 4.5C12 4.5 6.5 8.6 6.5 15c0 2.6 1.8 4.5 4.4 4.5C17.2 19.5 20 12.7 20 4.5Z"/>
+                <path d="M4 21c2.4-5.4 6.6-9.4 12.5-12"/>
+              </svg>
+            </div>
+            <div class="membership-card__heading">
+              <h2>Brote</h2>
+              <p>Para vivir una experiencia territorial más profunda y acompañada.</p>
+            </div>
+            <p class="membership-card__price" aria-live="polite">
+              <strong data-price data-monthly-clp="25000" data-yearly-clp="240000" data-monthly-usd="25" data-yearly-usd="240">$25.000</strong>
+              <span data-currency-label>CLP</span><small>/ <span data-period-label>mes</span></small>
+            </p>
+            <div class="membership-card__includes" tabindex="0">
+              <h3>Aporte contempla</h3>
+              <ul>
+                <li>Todo lo incluido en Semilla.</li>
+                <li>Orientación previa personalizada.</li>
+                <li>Acceso preferente según disponibilidad de cupos.</li>
+              </ul>
+            </div>
+            <a class="membership-card__button" href="#inscripcion">Sumarme como Brote</a>
+          </article>
+        </div>
+        <p class="membership-note">Las experiencias presenciales requieren inscripción previa y están sujetas a fechas y cupos. Traslado y alojamiento se informarán en cada convocatoria.</p>
+      </div>
+    </section>
+
+    <!-- Sección interactiva de experiencias de voluntariado con relatos de muestra reemplazables -->
+    <section class="section-shell section volunteer-experiences" aria-labelledby="experiences-title">
+      <!-- Encabezado editorial de las bitácoras -->
+      <div class="container">
+        <div class="volunteer-experiences__heading reveal">
+          <p class="eyebrow volunteer-experiences__eyebrow">VOLUNTARIADO · APRENDIZAJES COMPARTIDOS</p>
+          <h2 id="experiences-title">Experiencias que dejan huella en el territorio.</h2>
+          <p>Selecciona una bitácora para conocer cómo cada voluntaria llegó, compartió y se llevó un aprendizaje de Las Ñañas.</p>
+        </div>
+
+        <!-- Selector escalable de experiencias y panel de bitácoras asociado -->
+        <div class="volunteer-experiences__layout reveal">
+          <div class="volunteer-experiences__choices" role="tablist" aria-label="Seleccionar experiencia de voluntariado">
+            <!-- Selector de Alejandra activo al cargar -->
+            <button class="volunteer-person is-active" id="volunteer-tab-1" type="button" role="tab" aria-selected="true" aria-controls="volunteer-entry-1" tabindex="0" data-entry="volunteer-entry-1">
+              <span class="volunteer-person__portrait"><img src="../assets/img/Alejandra-voluntaria.jpeg" alt="Alejandra, voluntaria"></span>
+              <span class="volunteer-person__copy"><strong>Alejandra</strong><small>Territorio por confirmar · período por confirmar</small></span>
+            </button>
+
+            <!-- Selector de Ayla -->
+            <button class="volunteer-person" id="volunteer-tab-2" type="button" role="tab" aria-selected="false" aria-controls="volunteer-entry-2" tabindex="-1" data-entry="volunteer-entry-2">
+              <span class="volunteer-person__portrait"><img src="../assets/img/Ayla-voluntaria.jpeg" alt="Ayla, voluntaria"></span>
+              <span class="volunteer-person__copy"><strong>Ayla</strong><small>Territorio por confirmar · período por confirmar</small></span>
+            </button>
+
+            <!-- Selector de Carlos -->
+            <button class="volunteer-person" id="volunteer-tab-3" type="button" role="tab" aria-selected="false" aria-controls="volunteer-entry-3" tabindex="-1" data-entry="volunteer-entry-3">
+              <span class="volunteer-person__portrait"><img src="../assets/img/Carlos-voluntaria.jpeg" alt="Carlos, voluntario"></span>
+              <span class="volunteer-person__copy"><strong>Carlos</strong><small>Territorio por confirmar · período por confirmar</small></span>
+            </button>
+          </div>
+
+          <!-- Bitácora cálida que muestra una experiencia a la vez -->
+          <div class="volunteer-diary">
+            <span class="volunteer-diary__leaf" aria-hidden="true"></span>
+            <!-- Relato de muestra reemplazable de Alejandra -->
+            <article class="volunteer-entry is-active" id="volunteer-entry-1" role="tabpanel" aria-labelledby="volunteer-tab-1"><img class="volunteer-entry__image" src="../assets/img/Alejandra-voluntaria.jpeg" alt="Alejandra durante su experiencia de voluntariado"><p class="volunteer-entry__tag">Bitácora 01</p><h3>Un encuentro que se comparte</h3><blockquote>Relato de ejemplo reemplazable: aquí irá la experiencia autorizada de Alejandra sobre su llegada, lo que compartió y el aprendizaje que se llevó de Las Ñañas.</blockquote></article>
+            <!-- Relato de muestra reemplazable de Ayla -->
+            <article class="volunteer-entry" id="volunteer-entry-2" role="tabpanel" aria-labelledby="volunteer-tab-2" hidden><img class="volunteer-entry__image" src="../assets/img/Ayla-voluntaria.jpeg" alt="Ayla durante su experiencia de voluntariado"><p class="volunteer-entry__tag">Bitácora 02</p><h3>Aprender haciendo en comunidad</h3><blockquote>Relato de ejemplo reemplazable: aquí irá la experiencia autorizada de Ayla sobre los saberes compartidos, el territorio y su aprendizaje junto a la comunidad.</blockquote></article>
+            <!-- Relato de muestra reemplazable de Carlos -->
+            <article class="volunteer-entry" id="volunteer-entry-3" role="tabpanel" aria-labelledby="volunteer-tab-3" hidden><img class="volunteer-entry__image" src="../assets/img/Carlos-voluntaria.jpeg" alt="Carlos durante su experiencia de voluntariado"><p class="volunteer-entry__tag">Bitácora 03</p><h3>Una memoria para llevar</h3><blockquote>Relato de ejemplo reemplazable: aquí irá la experiencia autorizada de Carlos sobre su participación, los vínculos creados y aquello que aprendió en Las Ñañas.</blockquote></article>
+          </div>
+        </div>
+        <!-- Aviso editorial para evitar atribuir testimonios no autorizados -->
+        <p class="volunteer-experiences__note">Los relatos actuales son textos de ejemplo y deben reemplazarse por testimonios autorizados.</p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: SORTEO MENSUAL CON PLANETA ANIMADO Y ESTRELLAS (Intacta) -->
+    <section class="section-shell section sweepstakes-section reveal">
+      <canvas class="particles-canvas sweepstakes-stars" aria-hidden="true"></canvas>
+      <div class="container sweepstakes-container">
+        <div class="sweepstakes-content">
+          <p class="eyebrow sweepstakes-eyebrow">Beneficio Exclusivo</p>
+          <h2 class="sweepstakes-title">Sorteo Mensual Global</h2>
+          <p class="sweepstakes-text">Al ser parte de cualquier membresía de nuestro voluntariado, ingresas automáticamente a nuestro sorteo mensual. Queremos compartir nuestra cultura sin fronteras.</p>
+          <p class="highlight-text sweepstakes-highlight">Enviamos un regalo sorpresa con la esencia de Las Ñañas y el Wallmapu a <strong>cualquier lugar del planeta</strong>. ¡Tú podrías ser el próximo!</p>
+        </div>
+        <div class="sweepstakes-visual">
+          <div class="planet-wrapper">
+            <div class="planet"></div>
+            <div class="orbit">
+              <div class="gift-box">🎁</div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- SECCIÓN DE INSCRIPCIÓN / FORMULARIO -->
     <section class="section-shell section contact-section" id="inscripcion">
       <div class="container contact-grid">
         <div class="contact-copy reveal">
           <p class="eyebrow">Inscripción</p>
           <h2>Únete a la Red</h2>
           <p>Completa este formulario con tus datos para coordinar tu visita, intereses y estadía. Nos pondremos en contacto contigo a la brevedad.</p>
-          <a href="mailto:alejandra.solis.monte@gmail.com">equipolasnanas.aiep@gmail.com</a>
+          <a href="mailto:equipolasnanas.aiep@gmail.com">equipolasnanas.aiep@gmail.com</a>
         </div>
         
         <form class="contact-form reveal" data-contact-form>
-          <!-- Campos específicos para Voluntariado solicitados -->
           <label style="grid-column: 1 / -1;">Nombre completo<input name="nombre" type="text" autocomplete="name" required></label>
           <label>País<input name="pais" type="text" autocomplete="country-name" required></label>
           <label>Edad<input name="edad" type="number" min="18" max="99" required></label>
@@ -105,6 +265,7 @@
     </section>
   </main>
 
+  <!-- PIE DE PÁGINA -->
   <footer class="site-footer ethnic-footer">
     <div class="container">
       <div class="footer-content">
@@ -116,7 +277,7 @@
         <div class="footer-center">
           <div class="glowing-ring">
             <div class="ethnic-border">
-             <img class="logo-placeholder" src="../assets/img/logo.png" alt="Logo Las Ñañas">
+              <img class="logo-placeholder" src="../assets/img/logo.png" alt="Logo Las Ñañas">
             </div>
           </div>
         </div>
@@ -133,6 +294,8 @@
     </div>
   </footer>
 
+  <!-- SCRIPTS -->
   <script src="../js/desarrollo.js"></script>
+  <script src="../js/voluntariado.js"></script>
 </body>
 </html>

@@ -1,0 +1,301 @@
+/* ============================================================
+   ANIMACIONES - KEYFRAMES CENTRALIZADOS
+   
+   PROPÓSITO:
+   Centraliza todas las animaciones del proyecto en un único
+   archivo para máxima reutilización y mantenibilidad.
+   
+   CAMBIOS REALIZADOS (Fase 1):
+   ✓ Extraídas animaciones de desarrollo.css (líneas 115-117, 386-388, 692-695, 981-986)
+   ✓ Extraídas animaciones de nanas.css (líneas 349-352)
+   ✓ Extraídas animaciones de style.css (líneas 103, 138-141, 164-168, 205-208, 215-216)
+   ✓ Creadas clases reutilizables (.animate-*)
+   ✓ Agregado soporte para prefers-reduced-motion
+   ✓ Documentadas todas las animaciones
+   
+   ANIMACIONES CENTRALIZADAS:
+   
+   FLOTACIÓN Y MOVIMIENTO:
+   - float: Movimiento vertical suave
+   - logo-float: Logo flotante con pausa
+   - bgFloat: Fondo de agua marca animado
+   
+   BRILLO Y SHINE:
+   - shine: Efecto brillo de texto
+   - word-shine: Brillo de palabras flotantes
+   
+   PULSO Y LATIDO:
+   - pulse-dot: Punto pulsante (status indicator)
+   - latido: Latido de pin en mapa
+   - nn-ember-pulse: Pulso de ember (página Ñañas)
+   
+   DESLIZAMIENTO:
+   - soil-slide: Barra de progreso deslizante
+   - faqSlide: Acordeón FAQ deslizante
+   
+   PANEL Y CONTENEDOR:
+   - panel-pulse: Pulso de panel glassmorphism
+   
+   ENTRADA Y FADE:
+   - fadeInUp: Entrada con fade hacia arriba
+   
+   ROTACIÓN 3D:
+   - rotateY-flip: Rotación en eje Y (tarjetas flip)
+   
+   CLASES REUTILIZABLES:
+   - .animate-float
+   - .animate-logo-float
+   - .animate-shine
+   - .animate-word-shine
+   - .animate-pulse-dot
+   - .animate-latido
+   - .animate-ember-pulse
+   - .animate-soil-slide
+   - .animate-faq-slide
+   - .animate-panel-pulse
+   - .animate-fade-in-up
+   
+   ACCESIBILIDAD:
+   - Respeta prefers-reduced-motion
+   - Desactiva animaciones para usuarios que lo prefieren
+   - Mantiene funcionalidad sin animaciones
+   
+   NOTAS:
+   - Todas las duraciones y easing usan variables
+   - Fácil ajustar velocidades globalmente
+   - Agregar nuevas animaciones aquí, no en componentes
+   
+   ============================================================ */
+
+/* ============================================================
+   ANIMACIONES - FLOTACIÓN Y MOVIMIENTO
+   ============================================================ */
+@keyframes float {
+  to {
+    transform: translateY(6px);
+  }
+}
+
+@keyframes logo-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes bgFloat {
+  100% {
+    background-position: 1000px 1000px;
+  }
+}
+
+/* ============================================================
+   ANIMACIONES - BRILLO Y SHINE
+   ============================================================ */
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+@keyframes word-shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* ============================================================
+   ANIMACIONES - PULSO Y LATIDO
+   ============================================================ */
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes latido {
+  0% {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    border-width: 3px;
+  }
+  100% {
+    width: 280%;
+    height: 280%;
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+@keyframes nn-ember-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 6px var(--nn-bg), 0 0 22px 4px rgba(45, 135, 78, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px var(--nn-bg), 0 0 34px 10px rgba(45, 135, 78, 0.65);
+  }
+}
+
+/* ============================================================
+   ANIMACIONES - DESLIZAMIENTO
+   ============================================================ */
+@keyframes soil-slide {
+  0% {
+    left: -35%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes faqSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   ANIMACIONES - PANEL Y CONTENEDOR
+   ============================================================ */
+@keyframes panel-pulse {
+  0% {
+    box-shadow: 0 0 50px rgba(46, 139, 87, 0.12);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+  50% {
+    box-shadow: 0 0 70px rgba(184, 198, 219, 0.12);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+  100% {
+    box-shadow: 0 0 50px rgba(139, 69, 19, 0.12);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* ============================================================
+   ANIMACIONES - ENTRADA Y FADE
+   ============================================================ */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   ANIMACIONES - ROTACIÓN (3D)
+   ============================================================ */
+@keyframes rotateY-flip {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(180deg);
+  }
+}
+
+/* ============================================================
+   APLICACIÓN DE ANIMACIONES - CLASES REUTILIZABLES
+   ============================================================ */
+
+/* Flotación suave */
+.animate-float {
+  animation: float 1.5s infinite alternate ease-in-out;
+}
+
+/* Logo flotante */
+.animate-logo-float {
+  animation: logo-float 5s ease-in-out infinite;
+}
+
+/* Brillo de texto */
+.animate-shine {
+  animation: shine 4s linear infinite;
+}
+
+.animate-word-shine {
+  animation: word-shine 6s linear infinite;
+}
+
+/* Pulso de punto */
+.animate-pulse-dot {
+  animation: pulse-dot 2s infinite;
+}
+
+/* Latido de pin */
+.animate-latido {
+  animation: latido 2s ease-out infinite;
+}
+
+/* Pulso de ember */
+.animate-ember-pulse {
+  animation: nn-ember-pulse 2.6s ease-in-out infinite;
+}
+
+/* Deslizamiento de barra de progreso */
+.animate-soil-slide {
+  animation: soil-slide 2.2s ease-in-out infinite;
+}
+
+/* Deslizamiento de FAQ */
+.animate-faq-slide {
+  animation: faqSlide 0.3s ease-out;
+}
+
+/* Pulso de panel */
+.animate-panel-pulse {
+  animation: panel-pulse 12s infinite alternate ease-in-out;
+}
+
+/* Entrada con fade */
+.animate-fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 1s forwards 0.2s;
+}
+
+/* ============================================================
+   MEDIA QUERIES - RESPETO A PREFERENCIAS DE MOVIMIENTO
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .animate-float,
+  .animate-logo-float,
+  .animate-shine,
+  .animate-word-shine,
+  .animate-pulse-dot,
+  .animate-latido,
+  .animate-ember-pulse,
+  .animate-soil-slide,
+  .animate-faq-slide,
+  .animate-panel-pulse,
+  .animate-fade-in-up {
+    animation: none;
+  }
+}

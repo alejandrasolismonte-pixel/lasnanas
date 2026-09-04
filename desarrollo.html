@@ -53,11 +53,11 @@
                 <span></span><span></span><span></span>
             </button>
 
+            <!-- Menú principal sin la opción “Ñañas” en escritorio y celular. -->
             <nav class="main-nav" id="main-navigation" aria-label="Navegación principal">
                 <a href="#inicio">Inicio</a>
                 <a href="#quienes-somos">Quiénes somos</a>
                 <a href="#territorio">Territorio</a>
-                <a href="#ecosistema">Ñañas</a>
                 <a href="#preguntas">Preguntas frecuentes</a>
                 <a href="#contacto">Contacto</a>
             </nav>
@@ -97,71 +97,73 @@
             <h2 id="about-title">La tierra nos enseña a trabajar en red.</h2>
         </div>
 
-        <!-- Escena del Libro 3D -->
+        <!-- Libro reorganizado en una portada y cuatro aperturas temáticas. -->
         <div class="book-scene">
             <div class="nanas-book" id="nanas-book">
-                <div class="nanas-cover"></div>
+                <!-- El logotipo ocupa la mitad izquierda de la portada, junto al texto principal. -->
+                <div class="nanas-cover">
+                    <img class="nanas-book-logo" src="assets/img/logo%20-%20libro.png" alt="Logotipo de Las Ñañas">
+                </div>
                 <div class="nanas-spine"></div>
-                
-                <!-- Hoja 1 -->
-               <!-- Hoja 1 -->
-<div class="nanas-leaf" id="l0" style="z-index:3;">
-    <div class="nanas-face" style="background: linear-gradient(145deg, rgba(28,39,52,.94), rgba(23,32,43,.94)); border: 1px solid var(--line);">
-        <h3>Nuestro Origen</h3>
-        
-        <!-- NUEVA IMAGEN AQUÍ -->
-        <img src="assets/img/semilas.jpg" alt="Mujeres trabajando en la huerta" class="nanas-img">
-        
-        <p>Las Ñañas nace desde el vínculo con el territorio, la producción responsable de alimentos y la fuerza de la colaboración comunitaria en Wallmapu.</p>
-    </div>
-    
-    <div class="nanas-face nanas-back" style="background: var(--green); color: #fff;">
-        <h3>Nuestra Misión</h3>
-        
-        <!-- NUEVA IMAGEN AQUÍ -->
-        <img src="img/semillas.jpg" alt="Semillas nativas" class="nanas-img">
-        
-        <p>Defendemos la biodiversidad y acompañamos procesos de aprendizaje continuo.</p>
-    </div>
-</div>
-                
-                <!-- Hoja 2 -->
-                <div class="nanas-leaf" id="l1" style="z-index:2;">
-                    <div class="nanas-face" style="background: #1c2734; border: 1px solid var(--line);">
-                        <h3>El Kimün</h3>
-                        <p>Creamos caminos para que las semillas, los oficios y las historias sigan circulando de generación en generación.</p>
+
+                <!-- La primera hoja muestra la portada y revela la imagen de presentación. -->
+                <div class="nanas-leaf" id="l0" style="z-index:5;">
+                    <div class="nanas-face nanas-face--cover">
+                        <h3>Las Ñañas: trabajo colaborativo, territorio y saberes compartidos.</h3>
                     </div>
-                    <div class="nanas-face nanas-back" style="background: var(--orange); color: #fff;">
-                        <h3>Pilares</h3>
-                        <div class="pill-list-book">
-                            <span>Agroecología</span>
-                            <span>Semillas libres</span>
-                        </div>
+                    <div class="nanas-face nanas-back is-image">
+                        <!-- Viviana vuelve a acompañar la primera presentación al abrir la portada. -->
+                        <img src="assets/img/vivi.jpeg" alt="Integrante de Las Ñañas compartiendo su palabra">
                     </div>
                 </div>
 
-                <!-- Hoja 3 -->
-                <div class="nanas-leaf" id="l2" style="z-index:1;">
-                    <div class="nanas-face" style="background: linear-gradient(145deg, #17202b, #0f151c); border: 1px solid var(--line);">
-                        <h3>Comunidad</h3>
-                        <p>La autogestión y las redes de apoyo son nuestra herramienta principal para sostener el proyecto.</p>
-                        <div class="pill-list-book" style="margin-top: 10px;">
-                            <span>Autogestión</span>
-                            <span>Redes de apoyo</span>
-                        </div>
+                <!-- La segunda hoja completa la primera apertura y revela la imagen de la misión. -->
+                <div class="nanas-leaf" id="l1" style="z-index:4;">
+                    <div class="nanas-face nanas-face--text">
+                        <h3>Quiénes somos</h3>
+                        <p>Somos una red de mujeres que une experiencias, oficios y aprendizajes para cuidar la vida comunitaria desde Wallmapu.</p>
                     </div>
-                    <div class="nanas-face nanas-back" style="background: rgba(15,21,28,.9); color: var(--green-light);">
-                        <h3>Únete</h3>
-                        <p>Sé parte de las redes que florecen.</p>
+                    <div class="nanas-face nanas-back is-image">
+                        <img src="assets/img/semilas.jpg" alt="Mazorca con semillas de distintos colores cultivada en la huerta">
+                    </div>
+                </div>
+
+                <!-- La tercera hoja presenta la misión y revela la imagen de los sueños. -->
+                <div class="nanas-leaf" id="l2" style="z-index:3;">
+                    <div class="nanas-face nanas-face--text nanas-face--green">
+                        <h3>Nuestra misión</h3>
+                        <p>Fortalecemos la colaboración, resguardamos los saberes y acompañamos iniciativas que cuidan las semillas, la biodiversidad y el territorio.</p>
+                    </div>
+                    <div class="nanas-face nanas-back is-image">
+                        <img src="assets/img/prisci.jpeg" alt="Integrante de Las Ñañas en un encuentro comunitario">
+                    </div>
+                </div>
+
+                <!-- La cuarta hoja presenta los sueños y revela la imagen de la invitación final. -->
+                <div class="nanas-leaf" id="l3" style="z-index:2;">
+                    <div class="nanas-face nanas-face--text nanas-face--orange">
+                        <h3>Nuestros sueños</h3>
+                        <p>Soñamos con comunidades conectadas, autónomas y solidarias, donde los conocimientos circulen y cada generación pueda sembrar un futuro digno.</p>
+                    </div>
+                    <div class="nanas-face nanas-back is-image">
+                        <img src="assets/img/machi.jpeg" alt="Mujer mapuche rodeada de flores y vegetación">
+                    </div>
+                </div>
+
+                <!-- La quinta hoja cierra el recorrido con una invitación a participar. -->
+                <div class="nanas-leaf" id="l4" style="z-index:1;">
+                    <div class="nanas-face nanas-face--text nanas-face--invitation">
+                        <h3>Vivamos este viaje</h3>
+                        <p>Te invitamos a aprender, compartir y aportar junto a Las Ñañas, en una red que crece desde el cuidado y la reciprocidad.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Controles de navegación del libro -->
+        <!-- El contador parte en la portada y acompaña las cuatro aperturas. -->
         <nav class="book-nav">
             <button id="book-prev" class="book-btn" disabled>&larr; Volver</button>
-            <span id="book-pg">Página 1</span>
+            <span id="book-pg">Página 1 de 5</span>
             <button id="book-next" class="book-btn">Avanzar &rarr;</button>
         </nav>
 
@@ -306,43 +308,42 @@
                 </div>
             </div>
         </section>
-        <!-- Ecosistema Las Ñañas (Enlaces a Páginas Independientes) -->
-        <section class="section-shell section section--ecosystem" id="ecosistema" aria-labelledby="ecosystem-title">
-            <!-- EFECTO DE ESTRELLAS: para quitarlo, borra este <canvas> y el bloque
-           .particles-canvas en el CSS (sección 18) y createStarField en el JS -->
-            <canvas class="particles-canvas" aria-hidden="true"></canvas>
-            <div class="container">
-                <div class="ecosystem-intro reveal">
-                    <p class="eyebrow">Ecosistema Las Ñañas</p>
-                    <h2 id="ecosystem-title">Descubre nuestros productos agroecológicos con Sello Étnico, servicios técnicos y voluntariado.</h2>
-                </div>
-                <div class="ecosystem-grid">
+      
+  
 
-                    <!-- Tarjeta Voluntariado -->
-                    <a class="ecosystem-card reveal" href="pages/voluntariado.html">
-                        <!-- RECUERDA: Cambiar "ruta/a/tu/..." por la carpeta real donde guardes los GIFs -->
-                        <img src="assets/icons/voluntariado.gif" alt="Ícono animado de Voluntariado" class="icono-gif" aria-hidden="true">
-                        <h3>Voluntariado</h3>
-                        <p>Aprender haciendo en comunidad.</p>
-                    </a>
+<!-- BLOQUE 4: CAJAS ECOSISTEMA (VOLUNTARIADO, PRODUCTOS, SERVICIOS) -->
+<section class="section-shell section section--ecosystem" id="sumate" aria-labelledby="ecosystem-title">
+    <canvas class="particles-canvas" aria-hidden="true"></canvas>
+    <div class="container">
+        <div class="ecosystem-intro reveal">
+            <p class="eyebrow">ECOSISTEMA LAS ÑAÑAS</p>
+            <h2 id="ecosystem-title">Descubre nuestros productos, servicios técnicos y voluntariado.</h2>
+        </div>
+        
+        <div class="ecosystem-grid">
+            <!-- Tarjeta Voluntariado -->
+            <a class="ecosystem-card zoom-card" href="pages/voluntariado.html">
+                <img src="assets/icons/voluntariado.gif" alt="Ícono de Voluntariado" class="icono-gif" aria-hidden="true">
+                <h3>Voluntariado</h3>
+                <p>Aprender haciendo en comunidad. <strong>¡Empieza aquí!</strong></p>
+            </a>
 
-                    <!-- Tarjeta Productos -->
-                    <a class="ecosystem-card reveal" href="pages/productos.html">
-                        <img src="assets/icons/productos.gif" alt="Ícono animado de Productos" class="icono-gif" aria-hidden="true">
-                        <h3>Productos</h3>
-                        <p>Del territorio a tu mesa.</p>
-                    </a>
+            <!-- Tarjeta Productos -->
+            <a class="ecosystem-card zoom-card" href="pages/productos.html">
+                <img src="assets/icons/productos.gif" alt="Ícono de Productos" class="icono-gif" aria-hidden="true">
+                <h3>Productos</h3>
+                <p>Del territorio a tu mesa.</p>
+            </a>
 
-                    <!-- Tarjeta Servicios -->
-                    <a class="ecosystem-card reveal" href="pages/servicios.html">
-                        <img src="assets/icons/servicios.gif" alt="Ícono animado de Servicios Técnicos" class="icono-gif" aria-hidden="true">
-                        <h3>Servicios Técnicos</h3>
-                        <p>Tecnología con pertinencia territorial.</p>
-                    </a>
-
-                </div>
-            </div>
-        </section>
+            <!-- Tarjeta Servicios -->
+            <a class="ecosystem-card zoom-card" href="pages/servicios.html">
+                <img src="assets/icons/servicios.gif" alt="Ícono de Servicios" class="icono-gif" aria-hidden="true">
+                <h3>Servicios Técnicos</h3>
+                <p>Tecnología con pertinencia territorial.</p>
+            </a>
+        </div>
+    </div>
+</section>
 
 
         <!-- Preguntas Frecuentes (FAQ) -->

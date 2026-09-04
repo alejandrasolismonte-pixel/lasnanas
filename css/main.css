@@ -1,0 +1,168 @@
+/* ============================================================
+   MAIN.CSS - PUNTO DE ENTRADA PRINCIPAL
+   
+   PROPÓSITO:
+   Punto de entrada único que importa todos los módulos CSS
+   en orden correcto de especificidad y cascada.
+   
+   CAMBIOS REALIZADOS (Fase 1):
+   ✓ Creado archivo main.css como punto de entrada
+   ✓ Definido orden de importación correcto
+   ✓ Documentado plan de fases futuras
+   ✓ Agregados comentarios de arquitectura
+   
+   ORDEN DE IMPORTACIÓN (CRÍTICO):
+   1. Variables (debe ser primero - especificidad 0)
+   2. Reset y estilos globales (especificidad baja)
+   3. Utilidades (especificidad media)
+   4. Animaciones (especificidad media)
+   5. Componentes (especificidad media-alta)
+   6. Secciones (especificidad alta)
+   7. Páginas específicas (especificidad muy alta)
+   8. Media queries responsivas (sobrescriben según viewport)
+   
+   FASES DE IMPLEMENTACIÓN:
+   
+   FASE 1 (COMPLETADA):
+   ✓ Crear estructura de carpetas
+   ✓ Crear _variables.css unificado
+   ✓ Crear _reset.css
+   ✓ Crear _utilities.css
+   ✓ Crear _keyframes.css
+   ✓ Crear main.css
+   
+   FASE 2 (PRÓXIMA):
+   □ Desacoplar desarrollo.css en componentes y secciones
+   □ Desacoplar nanas.css en módulos específicos
+   □ Crear _header.css, _buttons.css, _cards.css, etc.
+   □ Crear _hero.css, _book.css, _territory.css, etc.
+   □ Crear _nanas-page.css
+   
+   FASE 3:
+   □ Refactorizar productos.css
+   □ Refactorizar voluntariado.css
+   □ Refactorizar servicios.css
+   
+   FASE 4:
+   □ Crear _media-queries.css centralizado
+   □ Optimizar breakpoints
+   
+   FASE 5:
+   □ Implementar bundler (Webpack/Vite)
+   □ Minificar y optimizar
+   □ Implementar source maps
+   
+   CÓMO USAR:
+   - Reemplazar links de CSS en HTML por: <link rel="stylesheet" href="css/main.css">
+   - Todos los estilos se cargarán en orden correcto
+   - Cambios en variables afectarán todo el proyecto
+   
+   BENEFICIOS:
+   ✓ Punto de entrada único y claro
+   ✓ Orden de cascada garantizado
+   ✓ Fácil agregar nuevos módulos
+   ✓ Documentación centralizada
+   ✓ Facilita transición a bundler
+   
+   NOTAS IMPORTANTES:
+   - NO editar este archivo para agregar estilos específicos
+   - Crear nuevos módulos en carpetas correspondientes
+   - Mantener este archivo como "tabla de contenidos" del CSS
+   - Actualizar comentarios cuando se agreguen nuevas fases
+   
+   ============================================================ */
+
+/* ============================================================
+   FASE 1: BASE - VARIABLES, RESET, UTILIDADES
+   ============================================================ */
+
+/* Variables globales unificadas */
+@import url("./base/_variables.css");
+
+/* Reset y estilos globales */
+@import url("./base/_reset.css");
+
+/* Clases utilitarias reutilizables */
+@import url("./base/_utilities.css");
+
+/* ============================================================
+   FASE 2: ANIMACIONES
+   ============================================================ */
+
+/* Keyframes centralizados */
+@import url("./animations/_keyframes.css");
+
+/* ============================================================
+   FASE 3: COMPONENTES (Fase 2)
+   ============================================================ */
+
+/* Componentes (Fase 2) */
+@import url("./components/_header.css");
+@import url("./components/_buttons.css");
+@import url("./components/_cards.css");
+@import url("./components/_forms.css");
+@import url("./components/_modals.css");
+
+/* ============================================================
+   FASE 4: SECCIONES (Fase 2)
+   ============================================================ */
+
+/* Secciones (Fase 2) */
+@import url("./sections/_hero.css");
+@import url("./sections/_book.css");
+@import url("./sections/_territory.css");
+@import url("./sections/_community.css");
+@import url("./sections/_ecosystem.css");
+@import url("./sections/_faq.css");
+@import url("./sections/_contact.css");
+
+/* ============================================================
+   FASE 5: PÁGINAS ESPECÍFICAS (Próxima fase)
+   ============================================================ */
+
+/* Estilos específicos de páginas serán importados aquí en la Fase 2
+   @import url("./pages/_nanas-page.css");
+   @import url("./pages/_productos-page.css");
+   @import url("./pages/_voluntariado-page.css");
+*/
+
+/* ============================================================
+   FASE 6: MEDIA QUERIES RESPONSIVAS (Próxima fase)
+   ============================================================ */
+
+/* Media queries centralizadas serán importadas aquí en la Fase 2
+   @import url("./responsive/_media-queries.css");
+*/
+
+/* ============================================================
+   NOTAS DE ARQUITECTURA
+   ============================================================ */
+
+/*
+   ESTRUCTURA MODULAR:
+   - Cada archivo tiene una responsabilidad clara
+   - Máximo 500 líneas por archivo
+   - Nomenclatura BEM 100% consistente
+   - Variables centralizadas para fácil mantenimiento
+
+   ORDEN DE CASCADA CSS:
+   1. Variables (especificidad 0)
+   2. Reset (especificidad baja)
+   3. Utilidades (especificidad media)
+   4. Componentes (especificidad media-alta)
+   5. Secciones (especificidad alta)
+   6. Páginas (especificidad muy alta)
+   7. Media queries (sobrescriben según viewport)
+
+   BENEFICIOS:
+   ✓ Modificabilidad: Fácil encontrar y editar estilos
+   ✓ Mantenibilidad: Cambios centralizados en variables
+   ✓ Escalabilidad: Agregar nuevas secciones sin conflictos
+   ✓ Performance: Mejor compresión y caching
+   ✓ Consistencia: Nomenclatura uniforme (BEM)
+
+   PRÓXIMAS FASES:
+   - Fase 2: Desacoplar desarrollo.css y nanas.css en componentes
+   - Fase 3: Refactorizar productos.css y otros
+   - Fase 4: Implementar bundler (Webpack/Vite) para optimización
+*/

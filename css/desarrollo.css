@@ -398,11 +398,21 @@ h2 {
   width: 100%;
   margin: 3rem 0;
 }
+/* Conserva la base usada por las escalas actuales de tablet y celular. */
 .nanas-book {
   position: relative;
-  width: 650px;  /* 30% más grande */
-  height: 400px; /* 30% más grande */
+  width: 650px;
+  height: 400px;
   box-shadow: 0 45px 70px rgba(0,0,0,.6);
+}
+/* Lleva el libro al ancho máximo seguro en escritorio y conserva su proporción original. */
+@media (min-width: 900px) {
+  .nanas-book {
+    width: 100%;
+    max-width: 1180px;
+    height: auto;
+    aspect-ratio: 13 / 8;
+  }
 }
 .nanas-cover {
   position: absolute;
@@ -410,8 +420,18 @@ h2 {
   top: 0;
   width: 50%;
   height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
   background: linear-gradient(145deg, #0f151c, #17202b);
   border-radius: 14px 0 0 14px;
+}
+/* Presenta el logotipo completo en la mitad izquierda de la portada. */
+.nanas-cover .nanas-book-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #49e1ff29;
 }
 .nanas-spine {
   position: absolute;
@@ -456,6 +476,29 @@ h2 {
   border-radius: 14px 0 0 14px;
 }
 
+/* Da identidad visual a la portada y a las cuatro páginas de texto nuevas. */
+.nanas-face--cover,
+.nanas-face--text {
+  justify-content: center;
+  background: linear-gradient(145deg, rgba(34, 107, 198, 0.98), rgba(15,21,28,.98));
+  border: 1px solid var(--line);
+}
+.nanas-face--cover {
+  text-align: center;
+  background: linear-gradient(145deg, #17202b, #0f151c);
+  border-color: rgba(234,88,12,.55);
+}
+.nanas-face--green {
+  background: linear-gradient(145deg, rgba(22,101,52,.96), rgba(15,70,38,.96));
+}
+.nanas-face--orange {
+  background: linear-gradient(145deg, rgba(234,88,12,.94), rgba(146,52,9,.96));
+}
+.nanas-face--invitation {
+  background: linear-gradient(145deg, rgba(23,32,43,.98), rgba(22,101,52,.88));
+  border-color: rgba(45,135,78,.75);
+}
+
 /* Modificador para páginas que son solo imagen */
 .nanas-face.is-image {
   padding: 0;
@@ -478,6 +521,16 @@ h2 {
   font-size: 1.05rem;
   opacity: .95;
   line-height: 1.6;
+}
+
+/* Conserva el aumento tipográfico aprobado para la experiencia de escritorio. */
+@media (min-width: 900px) {
+  .nanas-face h3 {
+    font-size: 2.16rem;
+  }
+  .nanas-face p {
+    font-size: 1.26rem;
+  }
 }
 
 /* Píldoras dentro del libro */
@@ -727,8 +780,9 @@ h2 {
   grid-template-columns: repeat(3,1fr);
   gap: 1.2rem;
 }
+/* Da espacio al aumento de las fotografías sin recortar los textos en escritorio. */
 .person-card {
-  min-height: 340px;
+  min-height: 380px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -754,8 +808,8 @@ h2 {
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 1rem;
-  padding: 2rem;
+  gap: .65rem;
+  padding: 1.75rem;
   border: 1px solid var(--line);
   border-radius: 20px;
   backface-visibility: hidden;
@@ -774,30 +828,36 @@ h2 {
   border: 1px solid rgba(5, 91, 77, 0.406);
   border-radius: 50%;
 }
+/* Amplía las fotografías un 30 % y conserva un recorte centrado sin deformarlas. */
 .person-card__avatar {
   display: grid;
   place-items: center;
-  width: 160px;
-  height: 160px;
+  width: 234px;
+  height: 234px;
   border-radius: 10%;
   background: var(--orange);
   overflow: hidden;
-  margin-bottom: .5rem;
+  margin-bottom: .55rem;
   border: 4px solid rgba(255,255,255,.25);
   box-shadow: 0 8px 20px rgba(0,0,0,.25);
 }
 .person-card__avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* la foto llena el círculo sin deformarse */
+  object-fit: cover;
+  object-position: center 18%;
 }
+/* Refuerza la jerarquía tipográfica y el contraste del texto secundario. */
 .person-card strong {
   position: relative;
-  font-size: 1.6rem;
+  font-size: clamp(1.5rem, 2vw, 1.6rem);
+  line-height: 1.15;
   z-index: 1;
 }
 .person-card small {
-  color: var(--muted);
+  color: #cbd5e1;
+  font-size: clamp(.9375rem, 1.2vw, 1rem);
+  line-height: 1.35;
 }
 .person-card__face--back {
   justify-content: center;
@@ -810,60 +870,36 @@ h2 {
    RESPONSIVE - TARJETAS LAS ÑAÑAS
    ========================================================== */
 
+/* Adapta fotografías, altura y tipografía al espacio disponible en tablet. */
+@media (max-width: 950px) {
+  .person-card {
+    min-height: 350px;
+  }
+  .person-card__face {
+    padding: 1.5rem;
+    gap: .6rem;
+  }
+  .person-card__avatar {
+    width: 208px;
+    height: 208px;
+  }
+  .person-card strong {
+    font-size: 1.4rem;
+  }
+  .person-card small {
+    font-size: .95rem;
+  }
+  .person-card__face--back {
+    font-size: 1.15rem;
+  }
+}
+
+/* Apila las tarjetas en tablets angostas sin alterar su composición interna. */
 @media (max-width: 768px) {
-   
-  
-  .people-grid{
-    grid-template-columns:1fr;
-    gap:1.5rem;
+  .people-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
-
-  .person-card{
-    min-height:340px;
-    height:340px;
-  }
-
-  .person-card__inner{
-    width:100%;
-    height:100%;
-  }
-
-  .person-card__face{
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    padding:2rem;
-    gap:1rem;
-  }
-
-  .person-card__avatar{
-    width:160px !important;
-    height:160px !important;
-    min-width:160px;
-    min-height:160px;
-    max-width:160px;
-    max-height:160px;
-    aspect-ratio:1 / 1;
-    flex-shrink:0;
-    overflow:hidden;
-    border-radius:10%;
-  }
-
-  .person-card__avatar img{
-    width:100%;
-    height:100%;
-    display:block;
-    object-fit:cover;
-  }
-
-  .person-card strong{
-    font-size:2rem;
-  }
-
-  .person-card small{
-    font-size:1.1rem;
-  }
-
 }
 /* ============================================================
    10. ECOSISTEMA (Menú a páginas internas)
@@ -1052,77 +1088,6 @@ h2 {
    14. ESTILOS COMPARTIDOS: VOLUNTARIADO, SERVICIOS, PRODUCTOS
    ============================================================ */
 
-/* --- 14.1 Voluntariado --- */
-.membership-grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: .8rem;
-  margin-top: 2rem;
-}
-.membership-card {
-  padding: 1.3rem;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--surface);
-}
-.membership-card--featured {
-  border-color: rgba(234,88,12,.8);
-  background: linear-gradient(160deg, var(--surface-2), var(--surface));
-}
-.membership-card p {
-  color: var(--orange-light);
-  font-size: .7rem;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  margin: 0 0 0.5rem 0;
-}
-.membership-card h3 {
-  font-size: 1.45rem;
-  margin: 0;
-}
-.membership-card ul {
-  margin: 1rem 0 0;
-  padding-left: 1.1rem;
-  color: var(--muted);
-  font-size: .87rem;
-}
-.membership-card li + li {
-  margin-top: .45rem;
-}
-
-/* --- 14.2 Servicios --- */
-.service-grid {
-  display: grid;
-  grid-template-columns: repeat(4,1fr);
-  gap: 1rem;
-}
-.service-card {
-  min-height: 210px;
-  padding: 1.35rem;
-  border-radius: 16px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  transition: transform .25s, box-shadow .25s;
-}
-.service-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow);
-  border-color: var(--green-light);
-}
-.service-card > span {
-  color: var(--orange-light);
-  font-size: 1.8rem;
-}
-.service-card h3 {
-  margin: 1rem 0 .6rem;
-  font-size: 1.42rem;
-}
-.service-card p {
-  color: var(--muted);
-  font-size: .88rem;
-  margin: 0;
-}
 
 /* --- 14.3 Productos --- */
 .product-filters {
@@ -1475,8 +1440,26 @@ h2 {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
+  /* Reduce proporcionalmente tarjetas, fotografías y textos en celulares. */
   .people-grid { grid-template-columns: 1fr; }
-  .person-card { min-height: 220px; }
+  .person-card { min-height: 320px; }
+  .person-card__face {
+    padding: 1.25rem;
+    gap: .55rem;
+  }
+  .person-card__avatar {
+    width: 182px;
+    height: 182px;
+  }
+  .person-card strong {
+    font-size: 1.25rem;
+  }
+  .person-card small {
+    font-size: .9rem;
+  }
+  .person-card__face--back {
+    font-size: 1.05rem;
+  }
 }
 
 /* --- Móviles pequeños (max 520px) --- */
@@ -1642,4 +1625,19 @@ h2 {
 .titulo-nanas .texto-verde {
   color: var(--green-light) !important;
   font-weight: 400 !important;
+}
+.ecosystem-card {
+  border: 2px solid var(--green);   /* si quieres el borde visible siempre, no solo en hover */
+  transition: transform .4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow .4s ease,
+              background .4s ease,
+              border-color .4s ease;
+}
+
+.ecosystem-card:hover {
+  transform: scale(1.06);                                   /* esto sí es zoom real */
+  box-shadow: 0 18px 45px rgba(101, 80, 22, 0.4);            /* sombra verde brillante */
+  background: rgba(22, 101, 52, 0.5);
+  border-color: var(--green-light);
+  z-index: 2;
 }

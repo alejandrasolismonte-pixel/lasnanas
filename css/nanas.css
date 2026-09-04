@@ -1,123 +1,746 @@
 /* ============================================================
-   PÁGINA ÑAÑAS: HERO, AYUDA/SABERES Y CARRUSEL
+   LAS ÑAÑAS — Página Ecosistema
+   Paleta alineada 1:1 con desarrollo.css (var(--bg), var(--orange),
+   var(--green), etc.), con fallback hex por si esta hoja se
+   carga sola. Prefijo --nn- solo para namespacing de layout.
    ============================================================ */
-.nanas-page-hero {
-  padding: clamp(6rem, 12vw, 9rem) 0 3rem;
-  text-align: center;
-}
-.nanas-page-hero h1 {
-  max-width: 820px;
-  margin: 0 auto 1rem;
-}
-.nanas-page-hero p {
-  max-width: 640px;
-  margin: 0 auto;
-  color: var(--muted);
+
+:root {
+  /* Superficies — heredadas de desarrollo.css */
+  --nn-bg: var(--bg, #0f151c);
+  --nn-surface: var(--surface, #17202bde);
+  --nn-surface-2: var(--surface-2, #1c2734);
+  --nn-line: var(--line, rgba(226, 232, 240, .13));
+
+  /* Texto */
+  --nn-text: var(--text, #e2e8f0);
+  --nn-muted: var(--muted, #a0aec0);
+
+  /* Acentos: naranjo (link/CTA secundario) + verde (CTA primario) */
+  --nn-ember: var(--orange, #ea580c);
+  --nn-ember-light: var(--orange-light, #ff7a24);
+  --nn-flame-gold: var(--green-light, #2d874e);
+  --nn-green: var(--green, #166534);
+
+  /* Tipografía del sitio */
+  --nn-font-display: var(--font-display, "Kaushan Script", cursive);
+  --nn-font-body: var(--font-body, "DM Sans", sans-serif);
+
+  /* Ritmo */
+  --nn-radius: 20px;
+  --nn-container: 1180px;
 }
 
-.help-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-.help-card {
-  padding: clamp(1.6rem, 3vw, 2.4rem);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(145deg, rgba(28,39,52,.94), rgba(23,32,43,.94));
-}
-.help-card h3 {
-  font-size: 1.6rem;
-  margin-bottom: .9rem;
-  color: var(--orange-light);
-}
-.help-card ul {
-  margin: 1rem 0 0;
-  padding-left: 1.1rem;
-  color: var(--muted);
-}
-.help-card li + li {
-  margin-top: .5rem;
+/* ============================================================
+   BASE DE SECCIÓN (alcance a esta página)
+   ============================================================ */
+.nanas-ecosystem-page {
+  background: var(--nn-bg);
+  color: var(--nn-text);
+  font-family: var(--nn-font-body);
 }
 
-/* Carrusel de Ñañas */
-.nanas-carousel {
+.nanas-ecosystem-page .container {
+  max-width: var(--nn-container);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.nanas-ecosystem-page h1,
+.nanas-ecosystem-page h2,
+.nanas-ecosystem-page h3 {
+  font-family: var(--nn-font-display);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+
+.nanas-ecosystem-page .eyebrow {
+  display: inline-block;
+  font-family: var(--nn-font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nn-ember-light);
+  margin-bottom: 0.75rem;
+}
+
+/* ============================================================
+   BLOQUE 1 — HERO CON VIDEO DE FUEGO
+   ============================================================ */
+.nn-hero {
   position: relative;
-  margin-top: 1rem;
-}
-.carousel-track {
+  isolation: isolate;
+  min-height: min(88vh, 780px);
   display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  padding-bottom: .5rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+    z-index: 2;    
+  padding: clamp(6rem, 14vw, 10rem) 0 6rem;
 }
-.carousel-track::-webkit-scrollbar {
-  height: 6px;
-}
-.carousel-track::-webkit-scrollbar-thumb {
-  background: var(--orange);
-  border-radius: 999px;
-}
-.carousel-slide {
-  flex: 0 0 260px;
-  scroll-snap-align: start;
-  border-radius: 20px;
+
+.nn-hero__video-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
   overflow: hidden;
-  border: 1px solid var(--line);
-  background: var(--surface);
+}
+
+.nn-hero__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Empuja el video un poco más cálido/brillante sin tocar el archivo fuente */
+  filter: saturate(1.15) brightness(0.85);
+}
+
+/* Overlay en dos capas: una para legibilidad, otra radial cálida
+   que simula el resplandor del fuego iluminando el centro */
+.nn-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 65%, rgba(234, 88, 12, 0.28), transparent 70%),
+    linear-gradient(180deg, rgba(20, 17, 14, 0.55) 0%, rgba(20, 17, 14, 0.72) 55%, rgba(20, 17, 14, 0.94) 100%);
+}
+
+.nn-hero__content {
+  position: relative;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.nn-hero__content h1 {
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  color: #0b7c2d;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+  margin: 0 0 1.1rem;
+}
+/*color subtitulo*/
+.nn-hero__content .hero-text {
+  max-width: 560px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.65;
+  color: #F3E9DA;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Franja inferior en forma de "borde tejido" — remite al telar,
+   quiebra la línea recta típica entre secciones */
+.nn-hero__seam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 46px;
+  z-index: 1;
+  background: var(--nn-bg);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none'%3E%3Cpath d='M0 20 L0 8 Q5 0 10 8 T20 8 T30 8 T40 8 T50 8 T60 8 T70 8 T80 8 T90 8 T100 8 T110 8 T120 8 L120 20 Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none'%3E%3Cpath d='M0 20 L0 8 Q5 0 10 8 T20 8 T30 8 T40 8 T50 8 T60 8 T70 8 T80 8 T90 8 T100 8 T110 8 T120 8 L120 20 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+/* CTA (boton verde)solapado físicamente entre Bloque 1 y Bloque 2 / aqui mover boton*/
+.nn-hero__cta-wrap {
+  position: absolute;
+  left: 70%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.nn-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1rem 2rem;
+  border-radius: 999px;
+  border: none;
+  font-family: var(--nn-font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--nn-green), var(--nn-flame-gold));
+  box-shadow: 0 10px 30px rgba(22, 101, 52, 0.4), 0 0 0 6px var(--nn-bg);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+.nn-btn:hover,
+.nn-btn:focus-visible {
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 16px 40px rgba(45, 135, 78, 0.5), 0 0 0 6px var(--nn-bg);
+}
+
+.nn-btn:focus-visible {
+  outline: 3px solid var(--nn-text);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   BLOQUE 2 — CARRUSEL "ROSTROS DEL TERRITORIO"
+   ============================================================ */
+.nn-faces {
+  padding: 2.5rem 0 4rem;
+  background: var(--nn-bg);
+}
+
+.nn-faces__heading {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 3rem;
+}
+
+.nn-faces__heading h2 {
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  color: var(--nn-text);
+}
+
+.nn-carousel {
+  position: relative;
+}
+
+/* ============================================================
+   KIMÜN · RECIPROCIDAD — cartillas 3 × 2 con cortina interactiva
+   ============================================================ */
+.reciprocity {
+  /* EDICIÓN RÁPIDA: colores, altura, espaciado y velocidad de la cortina. */
+  --reciprocity-bg: #0c141d;
+  --reciprocity-paper: #f7f3e9;
+  --reciprocity-text: #172319;
+  --reciprocity-muted: #b9c3c1;
+  --reciprocity-orange: #f26a21;
+  --reciprocity-green: #136b45;
+  --reciprocity-card-height: 360px;
+  --reciprocity-padding-y: 42px;
+  --reciprocity-transition: .68s;
+  position: relative;
+  padding: var(--reciprocity-padding-y) 0 54px;
+  overflow: hidden;
+  color: #eef2ec;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, .72) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 78% 66%, rgba(120, 217, 154, .5) 0 1px, transparent 1.5px),
+    var(--reciprocity-bg);
+  background-size: 137px 137px, 211px 211px, auto;
+}
+
+.reciprocity *, .reciprocity *::before, .reciprocity *::after { box-sizing: border-box; }
+
+/* ANCHO DEL CONJUNTO: cambia 80% o 1060px para ajustar su proporción. */
+.reciprocity__shell { width: 80%; max-width: 1060px; margin: 0 auto; }
+.reciprocity__kicker { margin: 0 0 10px; color: var(--reciprocity-orange); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-align: center; text-transform: uppercase; }
+.reciprocity h2 { max-width: 680px; margin: 0 auto 14px; color: #eef2ec; font-family: 'Fraunces', Georgia, serif; font-size: clamp(29px, 4vw, 44px); font-weight: 500; line-height: 1.06; text-align: center; }
+.reciprocity__intro { max-width: 640px; margin: 0 auto 32px; color: var(--reciprocity-muted); font-size: 14px; line-height: 1.55; text-align: center; }
+.reciprocity__group + .reciprocity__group { margin-top: 24px; }
+.reciprocity__group-title { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; color: #f5efe2; font-family: 'Fraunces', Georgia, serif; font-size: clamp(20px, 2.4vw, 27px); font-weight: 500; }
+.reciprocity__group-title::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, var(--reciprocity-orange), rgba(242, 106, 33, 0)); }
+.reciprocity__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; padding-bottom: 40px; }
+
+/* DESNIVEL: edita los translateY para variar la escalera de escritorio. */
+.reciprocity__group:first-of-type .reciprocity-card:nth-child(1) { transform: translateY(0); }
+.reciprocity__group:first-of-type .reciprocity-card:nth-child(2) { transform: translateY(20px); }
+.reciprocity__group:first-of-type .reciprocity-card:nth-child(3) { transform: translateY(40px); }
+.reciprocity__group:last-of-type .reciprocity-card:nth-child(1) { transform: translateY(40px); }
+.reciprocity__group:last-of-type .reciprocity-card:nth-child(2) { transform: translateY(20px); }
+.reciprocity__group:last-of-type .reciprocity-card:nth-child(3) { transform: translateY(0); }
+
+.reciprocity-card { position: relative; width: 100%; height: var(--reciprocity-card-height); padding: 0; overflow: hidden; isolation: isolate; color: var(--reciprocity-text); text-align: left; border: 0; border-radius: 3px; background: #17281e; box-shadow: 0 10px 24px rgba(0, 0, 0, .18); cursor: pointer; }
+.reciprocity-card:focus-visible { outline: 3px solid var(--reciprocity-orange); outline-offset: 4px; }
+
+/* ÁREA CLARA: height controla la ilustración inicialmente visible; padding, el aire del texto. */
+.reciprocity-card__copy { position: absolute; z-index: 3; inset: 0 0 auto; display: flex; height: 74%; padding: 22px 21px 17px; flex-direction: column; border-radius: 0 0 50% 50% / 0 0 9% 9%; background: var(--reciprocity-paper); box-shadow: 0 7px 14px rgba(10, 20, 14, .14); transition: transform var(--reciprocity-transition) cubic-bezier(.22, .82, .22, 1); }
+.reciprocity-card__number { margin-bottom: 10px; color: #c84b16; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
+.reciprocity-card__heading { display: block; margin: 0 0 9px; font-family: 'Fraunces', Georgia, serif; font-size: 21px; font-weight: 500; line-height: 1.08; }
+.reciprocity-card__body { display: block; color: #39453d; font-family: 'DM Sans', Arial, sans-serif; font-size: 13px; line-height: 1.43; }
+.reciprocity-card__extra { display: block; margin-top: 7px; color: var(--reciprocity-green); font-weight: 700; }
+.reciprocity-card__hint { margin-top: auto; padding-top: 10px; color: #16734a; font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.reciprocity-card__image { position: absolute; z-index: 2; inset: 0; overflow: hidden; transition: transform var(--reciprocity-transition) cubic-bezier(.22, .82, .22, 1); }
+.reciprocity-card__image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6, 15, 12, .02), rgba(6, 15, 12, .15)); }
+.reciprocity-card__image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.reciprocity-card__open-label { position: absolute; z-index: 4; left: 18px; bottom: 18px; padding: 8px 11px; color: #fff; font-size: 12px; font-weight: 700; border-radius: 99px; background: rgba(10, 24, 18, .82); opacity: 0; transform: translateY(8px); transition: opacity .28s ease, transform .28s ease; }
+.reciprocity-card:hover .reciprocity-card__image { transform: scale(1.025); }
+.reciprocity-card[aria-expanded="true"] .reciprocity-card__copy { pointer-events: none; transform: translateY(-108%); }
+.reciprocity-card[aria-expanded="true"] .reciprocity-card__image { transform: scale(1.035); }
+.reciprocity-card[aria-expanded="true"] .reciprocity-card__open-label { opacity: 1; transform: none; }
+
+/* RESPONSIVIDAD: tres columnas; dos bajo 680 px; una bajo 480 px. */
+@media (max-width: 900px) {
+  .reciprocity__shell { width: 94%; }
+  .reciprocity__grid { gap: 11px; }
+  .reciprocity-card__heading { font-size: 18px; }
+  .reciprocity-card__body { font-size: 12px; }
+  .reciprocity-card__copy { padding: 18px 16px 14px; }
+}
+
+@media (max-width: 680px) {
+  .reciprocity__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-bottom: 0; }
+  .reciprocity__group .reciprocity-card:nth-child(n) { transform: none; }
+  .reciprocity-card__heading { font-size: 21px; }
+  .reciprocity-card__body { font-size: 13px; }
+  .reciprocity-card__copy { padding: 22px 21px 17px; }
+  .reciprocity__group + .reciprocity__group { margin-top: 34px; }
+}
+
+@media (max-width: 480px) {
+  .reciprocity { --reciprocity-card-height: 350px; --reciprocity-padding-y: 34px; padding-bottom: 42px; }
+  .reciprocity__shell { width: calc(100% - 32px); }
+  .reciprocity__grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .reciprocity-card { min-width: 0; }
+  .reciprocity-card__copy { height: 73%; padding: 21px 20px 16px; }
+}
+
+/* ACCESIBILIDAD: elimina las transiciones si el sistema reduce movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  .reciprocity-card__copy, .reciprocity-card__image, .reciprocity-card__open-label { transition: none; }
+}
+
+/* Separa la cinta animada de los controles y contiene el desplazamiento horizontal. */
+.nn-carousel__viewport {
+  position: relative;
+  left: 50%;
+  width: min(130%, calc(100vw - 2rem), 1500px);
+  overflow: hidden;
+  transform: translateX(-50%);
+}
+
+/* Difuminado en los bordes para que el "cinta transportadora" no corte feo */
+.nn-carousel__viewport::before,
+.nn-carousel__viewport::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(2rem, 8vw, 6rem);
+  z-index: 2;
+  pointer-events: none;
+}
+.nn-carousel__viewport::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--nn-bg), transparent);
+}
+.nn-carousel__viewport::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--nn-bg), transparent);
+}
+
+.nanas-ecosystem-page .carousel-track {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch;
+  gap: 1.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.5rem;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  list-style: none;
   margin: 0;
 }
-.carousel-slide img {
-  width: 100%;
-  height: 280px;
-  object-fit: cover;
-  display: block;
+.nanas-ecosystem-page .carousel-track.is-dragging {
+  cursor: grabbing;
+  scroll-behavior: auto;
+  scroll-snap-type: none;
 }
-.carousel-slide figcaption {
-  padding: .9rem 1rem;
-  font-size: .9rem;
-  color: var(--muted);
-}
-.carousel-slide figcaption strong {
-  display: block;
-  color: var(--text);
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-}
-.carousel-controls {
-  display: flex;
-  justify-content: flex-end;
-  gap: .6rem;
-  margin-top: .8rem;
-}
-.carousel-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 1.1rem;
-  display: grid;
-  place-items: center;
-  transition: background .2s, border-color .2s;
-}
-.carousel-btn:hover {
-  background: var(--green);
-  border-color: var(--green);
+.nanas-ecosystem-page .carousel-track::-webkit-scrollbar {
+  display: none;
 }
 
-@media (max-width: 720px) {
-  .help-grid { grid-template-columns: 1fr; }
-  .carousel-slide { flex-basis: 210px; }
-  .carousel-slide img { height: 230px; }
-  .icono-gif {
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  margin: 0 auto 1rem auto; /* El 'auto' a los lados lo centra perfectamente */
-  display: block;
+/* Fotografías 16:9: dos visibles en computador y tablet. */
+.nanas-ecosystem-page .carousel-slide {
+  flex: 0 0 calc(50% - 0.625rem) !important;
+  width: calc(50% - 0.625rem);
+  height: auto;
+  /* Un 20 % más de altura, repartido visualmente desde el centro. */
+  aspect-ratio: 40 / 27;
+  border-radius: var(--nn-radius);
+  overflow: hidden;
+  border: 1px solid var(--nn-line);
+  background: var(--nn-surface);
+  position: relative;
+  margin: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
+
+/* Conserva el encuadre 16:9 y aplica un acercamiento sutil al interactuar. */
+.nanas-ecosystem-page .carousel-slide img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background: var(--nn-surface);
+  pointer-events: none;
+  transform: scale(1.001);
+  transition: transform .55s ease;
+}
+.carousel-slide:hover img,
+.carousel-slide:focus-within img {
+  transform: scale(1.035);
+}
+
+.carousel-slide figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1.25rem 1.25rem 1rem;
+  background: linear-gradient(180deg, transparent, rgba(20, 17, 14, 0.92) 75%);
+  color: var(--nn-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.carousel-slide figcaption strong {
+  font-family: var(--nn-font-display);
+  font-size: 1.15rem;
+  color: var(--nn-ember-light);
+}
+
+/* Coloca controles visibles debajo del carrusel para no cubrir las tarjetas. */
+.nn-carousel__controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .75rem;
+  margin-top: 1.25rem;
+}
+.nn-carousel__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  min-height: 44px;
+  padding: .65rem 1rem;
+  border: 1px solid var(--nn-line);
+  border-radius: 999px;
+  background: var(--nn-surface);
+  color: var(--nn-text);
+  font-weight: 700;
+  transition: transform .2s, background .2s, border-color .2s;
+}
+.nn-carousel__button:hover,
+.nn-carousel__button:focus-visible {
+  transform: translateY(-2px);
+  background: var(--nn-ember);
+  border-color: var(--nn-ember-light);
+}
+.nn-carousel__button--pause[aria-pressed="true"] {
+  background: var(--nn-ember);
+  border-color: var(--nn-ember-light);
+}
+
+@media (max-width: 620px) {
+  /* En celulares muestra una fotografía completa por vez. */
+  .nn-carousel__viewport {
+    left: auto;
+    width: 100%;
+    transform: none;
+  }
+  .nanas-ecosystem-page .carousel-slide {
+    flex: 0 0 100% !important;
+    width: 100%;
+  }
+  .nn-carousel__button {
+    flex: 1 1 88px;
+    min-width: 0;
+    padding-inline: .7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nanas-ecosystem-page .carousel-track { scroll-behavior: auto; }
+  .nanas-ecosystem-page .carousel-slide img,
+  .nn-carousel__button { transition: none; }
+  .carousel-slide:hover img,
+  .carousel-slide:focus-within img { transform: none; }
+}
+/* ============================================================
+   18. EFECTO DE PARTÍCULAS (Fondo de estrellas)
+   ============================================================ */
+.particles-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+.hero h1 {
+  font-family: "Kaushan Script", cursive !important;
+}
+
+/* ============================================================
+   BLOQUE 3 — "KIMÜN · RECIPROCIDAD" (Problema / Solución)
+   ============================================================ */
+.nn-reciprocity {
+  padding: 5rem 0;
+}
+
+.nn-reciprocity__heading {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 3rem;
+}
+
+.nanas-ecosystem-page .nn-reciprocity__grid {
+  display: grid !important;
+  grid-template-columns: 1fr auto 1fr;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  align-items: stretch;
+}
+
+/* Conector central: insignia circular con ícono, en vez de una
+   línea delgada — representa el intercambio (Kimün) entre ambas cajas */
+.nn-reciprocity__connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nn-reciprocity__connector-icon {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #1A1108;
+  background: linear-gradient(135deg, var(--nn-flame-gold), var(--nn-ember));
+  box-shadow: 0 0 0 6px var(--nn-bg), 0 0 30px 6px rgba(45, 135, 78, 0.45);
+  animation: nn-ember-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes nn-ember-pulse {
+  0%, 100% { box-shadow: 0 0 0 6px var(--nn-bg), 0 0 22px 4px rgba(45, 135, 78, 0.4); }
+  50%      { box-shadow: 0 0 0 6px var(--nn-bg), 0 0 34px 10px rgba(45, 135, 78, 0.65); }
+}
+
+@media (max-width: 860px) {
+  .nanas-ecosystem-page .nn-reciprocity__grid { grid-template-columns: 1fr !important; }
+  .nn-reciprocity__connector { padding: 0.5rem 0; }
+}
+
+/* Cajas: cabecera con ícono + barra superior de color, para que
+   se lean como tarjetas reales y no como columnas de texto suelto */
+.nn-card {
+  position: relative;
+  background: linear-gradient(160deg, var(--nn-surface-2), var(--nn-surface));
+  border: 1px solid var(--nn-line);
+  border-radius: var(--nn-radius);
+  padding: clamp(1.75rem, 3vw, 2.25rem);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.nn-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45);
+}
+
+.nn-card__top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--nn-ember), var(--nn-flame-gold));
+}
+
+.nn-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0.4rem 0 1.25rem;
+}
+
+.nn-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  font-size: 1.35rem;
+  background: rgba(234, 88, 12, 0.14);
+}
+
+.nn-card h3 {
+  font-size: 1.25rem;
+  color: var(--nn-ember-light);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.nn-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.nn-card li {
+  position: relative;
+  padding-left: 1.4rem;
+  color: var(--nn-text);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.nn-card li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nn-ember);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nn-reciprocity__connector-icon { animation: none; }
+}
+
+/* ============================================================
+   BLOQUE 4 — CAJAS DEL ECOSISTEMA (Conversión)
+   ============================================================ */
+.nn-ecosystem {
+  padding: 5rem 0 6rem;
+}
+
+.nn-ecosystem__heading {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 3rem;
+}
+
+/* Grid explícito de 3 columnas — evitamos auto-fit porque, si el
+   contenedor hereda un ancho o box-sizing conflictivo desde
+   desarrollo.css, auto-fit puede colapsar todo a 1 columna. */
+.nanas-ecosystem-page .nn-ecosystem__grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 1.75rem;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .nanas-ecosystem-page .nn-ecosystem__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .nanas-ecosystem-page .nn-ecosystem__grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.nanas-ecosystem-page .nn-eco-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2.5rem 1.5rem 2rem;
+  border-radius: var(--nn-radius);
+  background: var(--nn-surface);
+  text-align: center;
+  text-decoration: none;
+ border: 2px solid var(--nn-green);
+  min-width: 0;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.4s ease,
+              background 0.4s ease;
+              /* <-- Añadida transición para el borde */
+}
+
+.nn-eco-card__icon-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(234, 88, 12, 0.18), transparent 70%);
+  margin-bottom: 0.25rem;
+}
+
+.nn-eco-card .icono-gif {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.nn-eco-card h3 {
+  color: var(--nn-ember-light);
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.nn-eco-card p {
+  color: var(--nn-muted);
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.nn-eco-card__link {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--nn-ember-light);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: gap 0.25s ease;
+}
+
+.nn-eco-card:hover,
+.nn-eco-card:focus-visible {
+  transform: scale(1.05);
+  box-shadow: 0 18px 45px rgba(12, 134, 53, 0.35);
+  background: rgba(22,101,52,.5); /* <-- Fondo verde agregado */
+  border-color: var(--green-light); /* <-- Borde verde agregado */
+  z-index: 2;
+}
+
+.nn-eco-card:hover .nn-eco-card__link {
+  gap: 0.6rem;
+}
+
+
+.nn-eco-card:focus-visible {
+  outline: 3px solid var(--nn-ember-light);
+  outline-offset: 3px;
+}
+
+
+/* ============================================================
+   ACCESIBILIDAD — reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .nn-btn, .nn-eco-card, .nn-card { transition: none; }
 }

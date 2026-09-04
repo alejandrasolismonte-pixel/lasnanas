@@ -1,0 +1,66 @@
+/* ============================================================
+   COMPONENTE: BOTONES
+   
+   PROPÓSITO:
+   Estilos para los botones reutilizables en todo el sitio.
+   Define variaciones de estilo (primario, ghost, pequeño)
+   y estados (hover, disabled).
+   
+   CAMBIOS REALIZADOS (Fase 2):
+   ✓ Extraído de desarrollo.css (líneas 325-361)
+   ✓ Refactorizado con variables centralizadas
+   ✓ Nomenclatura BEM aplicada
+   
+   ESTRUCTURA BEM:
+   - .button: Bloque base del botón
+   - .button--primary: Modificador para botón primario
+   - .button--ghost: Modificador para botón ghost
+   - .button--small: Modificador para botón pequeño
+   
+   DEPENDENCIAS:
+   - _variables.css
+   - _utilities.css (para .is-disabled)
+   
+   NOTAS:
+   - Este archivo debe importarse en main.css
+   - Se pueden agregar más modificadores de botones aquí
+   
+   ============================================================ */
+
+.button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: .6rem;
+  min-height: 48px;
+  padding: .72rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #ffffff;
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+.button:hover {
+  transform: translateY(-3px);
+}
+.button--primary {
+  background: var(--green);
+  box-shadow: 0 8px 22px rgba(22,101,52,.25);
+}
+.button--primary:hover {
+  background: var(--green-light);
+  box-shadow: 0 12px 28px rgba(22,101,52,.38);
+}
+.button--ghost {
+  border-color: rgba(255,255,255,.42);
+  background: rgba(23,32,43,.2);
+}
+.button--ghost:hover {
+  background: rgba(255,255,255,.14);
+}
+.button--small {
+  min-height: 40px;
+  padding: .5rem .75rem;
+  font-size: .8rem;
+}

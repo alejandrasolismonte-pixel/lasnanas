@@ -1,0 +1,209 @@
+/* ============================================================
+   COMPONENTE: HEADER Y NAVEGACIÓN
+   
+   PROPÓSITO:
+   Estilos para el encabezado principal del sitio, incluyendo
+   la navegación, el logo y el botón de ecosistema.
+   
+   CAMBIOS REALIZADOS (Fase 2):
+   ✓ Extraído de desarrollo.css (líneas 148-234)
+   ✓ Refactorizado con variables centralizadas
+   ✓ Nomenclatura BEM aplicada
+   ✓ Adaptado para responsividad (menú hamburguesa)
+   
+   ESTRUCTURA BEM:
+   - .site-header: Bloque principal del encabezado
+   - .site-header__inner: Elemento interno del encabezado
+   - .brand: Bloque del logo/marca
+   - .brand__mark: Elemento del logo/marca
+   - .main-nav: Bloque de navegación principal
+   - .header-ecosystem: Bloque del botón de ecosistema
+   - .menu-toggle: Bloque del botón de menú hamburguesa
+   
+   DEPENDENCIAS:
+   - _variables.css
+   - _utilities.css (para .is-scrolled, .is-open)
+   - _keyframes.css (para animaciones de menú)
+   
+   NOTAS:
+   - Este archivo debe importarse en main.css
+   - Los estilos responsivos específicos del header se mantendrán aquí
+   
+   ============================================================ */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  border-bottom: 1px solid transparent;
+  transition: background var(--transition-base), backdrop-filter var(--transition-base), -webkit-backdrop-filter var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+.site-header.is-scrolled {
+  background: rgba(15,21,28,.9);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-color: var(--line);
+  box-shadow: 0 8px 30px rgba(0,0,0,.2);
+}
+.header__inner {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.brand, .footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 1.18rem;
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  aspect-ratio: 1;
+  border: 1px solid var(--orange);
+  color: var(--orange-light);
+  border-radius: 50% 44% 50% 44%;
+  font: var(--font-weight-bold) .68rem var(--font-body);
+  letter-spacing: .06em;
+}
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-left: auto;
+}
+.main-nav a, .footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 1rem; /* Sincronizado al tamaño real deseado */
+  transition: color var(--transition-fast);
+}
+.main-nav a:hover, .main-nav a:focus-visible, .footer-links a:hover {
+  color: var(--orange-light);
+}
+.header-ecosystem {
+  padding: .55rem .78rem;
+  background: var(--orange);
+  border-radius: var(--radius-full);
+  color: #fff;
+  font-weight: var(--font-weight-bold);
+  font-size: .9rem; /* Sincronizado al tamaño real deseado */
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+.header-ecosystem:hover {
+  background: var(--orange-light);
+  transform: translateY(-2px);
+}
+.menu-toggle {
+  display: none;
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+}
+.menu-toggle span:not(.sr-only) {
+  display: block;
+  width: 24px;
+  height: 2px;
+  margin: 5px;
+  background: #fff;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+/* Estilos responsivos específicos del header */
+@media (max-width: 950px) {
+  .main-nav { gap: .75rem; }
+  .main-nav a { font-size: .78rem; }
+  .header-ecosystem { font-size: .7rem; }
+}
+
+@media (max-width: 720px) {
+  html { scroll-padding-top: 68px; }
+  .container { width: min(100% - 28px, 1180px); }
+  .header__inner { min-height: 66px; }
+  .menu-toggle { display: block; }
+  .main-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: grid;
+    gap: 0;
+    padding: .5rem 14px 1rem;
+    background: rgba(15,21,28,.98);
+    border-bottom: 1px solid var(--line);
+    transform: translateY(-120%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+  }
+  .main-nav.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .main-nav a {
+    padding: .75rem 0;
+    font-size: .95rem;
+    border-bottom: 1px solid rgba(226,232,240,.07);
+  }
+  .header-ecosystem { margin-left: auto; }
+  .menu-toggle[aria-expanded="true"] span:nth-of-type(2) { opacity: 0; }
+  .menu-toggle[aria-expanded="true"] span:nth-of-type(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-toggle[aria-expanded="true"] span:nth-of-type(3) { transform: translateY(-7px) rotate(-45deg); }
+}
+
+@media (max-width: 520px) {
+  .header-ecosystem { display: none; }
+}
+
+/* UBICACIÓN EXACTA DEL BOTÓN EN MÓVIL (SEGÚN IMAGEN) */
+@media (max-width: 767px) {
+    /* Nos aseguramos de que el contenedor principal sea la referencia */
+    .header__inner {
+        position: relative; 
+    }
+
+    .header-ecosystem {
+        display: inline-flex !important; /* Forzamos a que aparezca */
+        position: absolute !important; /* Lo saca del flujo para moverlo libremente */
+        
+        /* === COORDENADAS PARA LA CRUZ NARANJA === */
+        right: 40px; /* Lo separa del borde derecho, dejándolo justo al lado del menú ☰ */
+        top: 90%; /* Lo empuja a la mitad de la altura de la barra */
+        transform: translateY(-40%); /* Lo centra verticalmente a la perfección */
+        
+        /* === AJUSTES DE TAMAÑO PARA QUE QUEPA === */
+        font-size: 1rem; /* Letra más pequeña */
+        padding: 4px 8px; /* Botón más compacto */
+        white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
+        z-index: 100; /* Lo mantiene por encima de cualquier otro elemento */
+    }
+}
+
+/* BLINDAJE Y PROTECCIÓN DEL HEADER */
+/* Esta es ahora la ÚNICA fuente de verdad para el tamaño de
+   letra del header. Si en el futuro el título se ve raro,
+   este es el único bloque que hay que revisar/editar. */
+.titulo-nanas {
+  font-family: 'Kaushan Script', cursive !important;
+  font-size: 3.5rem !important;
+  line-height: 1.2 !important;
+  font-weight: 400 !important;
+  margin: 0 auto 1.35rem auto !important;
+  color: #ffffff !important;
+  letter-spacing: 0.01em !important;
+  transform: none !important; /* Evita que salte por animaciones */
+}
+
+.titulo-nanas .texto-verde {
+  color: var(--green-light) !important;
+  font-weight: 400 !important;
+}

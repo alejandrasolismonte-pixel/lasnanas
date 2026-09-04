@@ -1,0 +1,104 @@
+/* ============================================================
+   COMPONENTE: FORMULARIOS
+   
+   PROPÓSITO:
+   Estilos para formularios reutilizables en todo el sitio,
+   incluyendo inputs, selects, textareas y estilos de estado.
+   
+   ESTRUCTURA BEM:
+   - .form: Bloque del formulario
+   - .form__input: Elemento del input
+   - .form__label: Elemento del label
+   - .form__error: Elemento del error
+   - .form__submit: Elemento del botón submit
+   - .form--valid: Modificador para formulario válido
+   - .form--invalid: Modificador para formulario inválido
+   
+   DEPENDENCIAS:
+   - _variables.css (para colores y tipografía)
+   - _utilities.css (para clases de estado)
+   
+   NOTAS:
+   - Este archivo debe importarse en main.css
+   - Los estilos específicos por página se manejarán en los archivos de sección
+   
+   ============================================================ */
+
+.form {
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+.form__group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form__label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text);
+}
+
+.form__input,
+.form__select,
+.form__textarea {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg);
+  border: 1px solid var(--muted);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form__input:focus,
+.form__select:focus,
+.form__textarea:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.15);
+}
+
+.form__input::placeholder,
+.form__textarea::placeholder {
+  color: var(--muted);
+}
+
+.form__error {
+  display: block;
+  margin-top: var(--spacing-xs);
+  font-size: 0.875rem;
+  color: var(--orange);
+}
+
+.form__submit {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-bold);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.form__submit:hover {
+  background: var(--green-light);
+}
+
+.form--valid .form__input,
+.form--valid .form__select,
+.form--valid .form__textarea {
+  border-color: var(--green);
+}
+
+.form--invalid .form__input,
+.form--invalid .form__select,
+.form--invalid .form__textarea {
+  border-color: var(--orange);
+}

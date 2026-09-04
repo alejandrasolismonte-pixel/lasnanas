@@ -1,0 +1,73 @@
+/* ============================================================
+   COMPONENTE: TARJETAS / CARDS
+   
+   PROPÓSITO:
+   Estilos para las tarjetas reutilizables en todo el sitio,
+   incluyendo cards de producto, membership cards, y nn-card.
+   
+   ESTRUCTURA BEM:
+   - .card: Bloque base de la tarjeta
+   - .card--primary: Modificador para tarjeta primaria
+   - .card--featured: Modificador para tarjeta destacada
+   - .card__title: Elemento del título
+   - .card__content: Elemento del contenido
+   - .card__action: Elemento de acción/btn
+   
+   DEPENDENCIAS:
+   - _variables.css
+   - _utilities.css
+   - _keyframes.css (para animaciones de hover)
+   
+   NOTAS:
+   - Este archivo debe importarse en main.css
+   - Las variaciones específicas de página (nn-card, product-card, etc.)
+     se manejarán en los archivos de sección correspondientes
+   
+   ============================================================ */
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.card--primary {
+  background: var(--green);
+}
+
+.card--primary:hover {
+  box-shadow: 0 12px 28px rgba(22, 101, 52, 0.38);
+}
+
+.card--featured {
+  border: 2px solid var(--orange);
+  background: var(--surface-2);
+}
+
+.card--featured:hover {
+  box-shadow: 0 18px 40px rgba(234, 88, 12, 0.4);
+}
+
+.card__title {
+  padding: var(--spacing-sm);
+  color: var(--text);
+  font-size: 1.25rem;
+}
+
+.card__content {
+  padding: var(--spacing-md);
+}
+
+.card__action {
+  padding: var(--spacing-sm);
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: flex-end;
+}

@@ -1,0 +1,88 @@
+/* ============================================================
+   SECCIÓN: FAQ - ACORDEÓN
+   
+   PROPÓSITO:
+   Estilos para el acordeón de preguntas frecuentes.
+   
+   ESTRUCTURA BEM:
+   - .faq-layout: Bloque del layout del FAQ
+   - .faq-list: Elemento de la lista de preguntas
+   - .faq-list__item: Elemento de ítem
+   - .faq-list__summary: Elemento del summary (pregunta)
+   - .faq-list__details: Elemento de los detalles (respuesta)
+   - .faq-list__trigger: Elemento trigger del acordeón
+   - .faq-list__icon: Elemento del icono de flecha
+   
+   DEPENDENCIAS:
+   - _variables.css (para colores)
+   - _utilities.css (para clases helper)
+   - _keyframes.css (para animaciones slide)
+   
+   NOTAS:
+   - Usa prefers-reduced-motion para accesibilidad
+   - El icono gira al abrir/cerrar
+   - Las animaciones son suaves (0.3s ease)
+   
+   ============================================================ */
+
+.faq-layout {
+  display: grid;
+  grid-template-columns: .65fr 1.35fr;
+  gap: clamp(2rem, 8vw, 7rem);
+}
+
+.faq-list {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq-list__item {
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.faq-list__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  font: 600 1.25rem/1.35 var(--font-display);
+  cursor: pointer;
+  list-style: none;
+  transition: color var(--transition-fast);
+}
+
+.faq-list__trigger:hover {
+  color: var(--orange-light);
+}
+
+.faq-list__trigger--open {
+  color: var(--orange-light);
+}
+
+.faq-list__icon {
+  flex: 0 0 auto;
+  color: var(--green-light);
+  font: 400 1.5rem var(--font-body);
+  transition: transform var(--transition-fast) ease;
+}
+
+.faq-list__trigger--open .faq-list__icon {
+  transform: rotate(180deg);
+}
+
+.faq-list__details {
+  padding-bottom: 1.2rem;
+  color: var(--muted);
+  animation: faqSlide var(--transition-base) var(--ease-in-out);
+}
+
+@keyframes faqSlide {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.faq-list__details p {
+  padding-bottom: 1.2rem;
+  color: var(--muted);
+}

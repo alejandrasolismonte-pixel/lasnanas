@@ -1,0 +1,146 @@
+/* ============================================================
+   VARIABLES GLOBALES UNIFICADAS
+   
+   PROPÓSITO:
+   Centraliza colores, tipografías, espaciado y sombras
+   de todo el proyecto para máxima consistencia y mantenibilidad.
+   
+   CAMBIOS REALIZADOS (Fase 1):
+   ✓ Unificadas variables de desarrollo.css, nanas.css y style.css
+   ✓ Agregadas variables de espaciado (spacing scale)
+   ✓ Agregadas variables de bordes (radius scale)
+   ✓ Agregadas variables de sombras (shadow levels)
+   ✓ Agregadas variables de transiciones (duration + easing)
+   ✓ Agregadas variables de z-index (stacking context)
+   ✓ Agregadas variables de breakpoints (media queries)
+   
+   BENEFICIOS:
+   - Cambios globales en un único archivo
+   - Consistencia de diseño garantizada
+   - Fácil mantenimiento y escalabilidad
+   - Reutilización en todos los módulos CSS
+   
+   ============================================================ */
+
+:root {
+  /* ============================================================
+     PALETA DE COLORES - FONDOS
+     ============================================================ */
+  --bg: #0f151c;
+  --bg-dark: #07080a;
+  --surface: #17202bde;
+  --surface-2: #1c2734;
+  --surface-alt: #111820;
+
+  /* ============================================================
+     PALETA DE COLORES - TEXTO
+     ============================================================ */
+  --text: #e2e8f0;
+  --text-light: #F3E9DA;
+  --muted: #a0aec0;
+  --muted-dark: #94a3b8;
+
+  /* ============================================================
+     PALETA DE COLORES - ACENTOS PRIMARIOS
+     ============================================================ */
+  /* Verde (CTA Primario, Botones principales) */
+  --green: #166534;
+  --green-light: #2d874e;
+  --green-alt: #0b7c2d;
+
+  /* Naranja (Links, Acentos, Footer, CTA Secundario) */
+  --orange: #ea580c;
+  --orange-light: #ff7a24;
+
+  /* ============================================================
+     PALETA DE COLORES - ELEMENTOS DECORATIVOS
+     ============================================================ */
+  --line: rgba(226, 232, 240, 0.13);
+  --line-alt: rgba(255, 255, 255, 0.08);
+  --line-light: rgba(255, 255, 255, 0.2);
+
+  /* ============================================================
+     TIPOGRAFÍA - FAMILIAS DE FUENTES
+     ============================================================ */
+  --font-body: "DM Sans", sans-serif;
+  --font-display: "Kaushan Script", cursive;
+  --font-heading: "Playfair Display", serif;
+  --font-rustic: "Fraunces", serif;
+
+  /* ============================================================
+     TIPOGRAFÍA - PESOS
+     ============================================================ */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ============================================================
+     ESPACIADO - ESCALA
+     ============================================================ */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 2.5rem;
+  --spacing-3xl: 3rem;
+
+  /* ============================================================
+     CONTENEDOR - ANCHO MÁXIMO
+     ============================================================ */
+  --container-max: 1180px;
+  --container-padding: clamp(1.25rem, 4vw, 2.5rem);
+
+  /* ============================================================
+     BORDES - RADIO
+     ============================================================ */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 20px;
+  --radius-full: 999px;
+
+  /* ============================================================
+     SOMBRAS
+     ============================================================ */
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 22px rgba(22, 101, 52, 0.25);
+  --shadow-lg: 0 22px 60px rgba(0, 0, 0, 0.28);
+  --shadow-xl: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --shadow-2xl: 0 24px 50px rgba(0, 0, 0, 0.45);
+  --shadow-inset: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+
+  /* ============================================================
+     TRANSICIONES - DURACIÓN
+     ============================================================ */
+  --transition-fast: 0.2s;
+  --transition-base: 0.3s;
+  --transition-slow: 0.6s;
+
+  /* ============================================================
+     TRANSICIONES - EASING
+     ============================================================ */
+  --ease-linear: linear;
+  --ease-in-out: ease-in-out;
+  --ease-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* ============================================================
+     Z-INDEX - ESCALA
+     ============================================================ */
+  --z-base: 1;
+  --z-dropdown: 10;
+  --z-sticky: 50;
+  --z-fixed: 100;
+  --z-modal: 1000;
+
+  /* ============================================================
+     BREAKPOINTS - MEDIA QUERIES
+     ============================================================ */
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 900px;
+  --breakpoint-xl: 1180px;
+}

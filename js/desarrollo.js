@@ -179,6 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
   if (leaves.length > 0) {
     const N = leaves.length;
+    // Limita el recorrido a la portada y cuatro aperturas para no girar hacia una página vacía.
+    const lastView = N - 1;
     let cur = 0;
     let anim = false;
     
@@ -186,15 +188,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnNext = document.getElementById("book-next");
     const lblPg = document.getElementById("book-pg");
 
+    // Sincroniza el contador y los botones con la nueva cantidad de vistas.
     function updateBook() {
-      if(lblPg) lblPg.textContent = "Hoja " + (cur + 1) + " de " + (N + 1);
+      if(lblPg) lblPg.textContent = "Página " + (cur + 1) + " de " + N;
       if(btnPrev) btnPrev.disabled = cur === 0;
-      if(btnNext) btnNext.disabled = cur >= N;
+      if(btnNext) btnNext.disabled = cur >= lastView;
     }
     
     function turnPage(d) {
       if(anim) return;
-      if(d > 0 && cur >= N) return;
+      if(d > 0 && cur >= lastView) return;
       if(d < 0 && cur <= 0) return;
       
       anim = true;

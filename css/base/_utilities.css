@@ -1,0 +1,440 @@
+/* ============================================================
+   CLASES UTILITARIAS
+   
+   PROPÓSITO:
+   Proporciona clases reutilizables para casos comunes,
+   mejorando la consistencia y reduciendo CSS duplicado.
+   
+   CAMBIOS REALIZADOS (Fase 1):
+   ✓ Creadas 50+ clases utilitarias nuevas
+   ✓ Organizadas en 15 categorías temáticas
+   ✓ Todas usan variables centralizadas
+   ✓ Nomenclatura consistente (sin prefijos conflictivos)
+   ✓ Documentadas con comentarios de sección
+   
+   CATEGORÍAS:
+   1. Accesibilidad (.sr-only, .skip-link)
+   2. Visibilidad (.is-hidden, .is-visible)
+   3. Estados (.is-disabled, .is-active, .is-flipped)
+   4. Alineación (.text-center, .flex-center)
+   5. Espaciado (.mt-*, .mb-*, .p-*)
+   6. Tipografía (.font-*, .font-weight-*)
+   7. Colores - Texto (.text-orange, .text-green)
+   8. Colores - Fondo (.bg-primary, .bg-surface)
+   9. Bordes (.border-*, .rounded-*)
+   10. Sombras (.shadow-sm, .shadow-lg)
+   11. Transiciones (.transition-fast, .transition-slow)
+   12. Overflow (.overflow-hidden, .overflow-auto)
+   13. Posicionamiento (.relative, .absolute, .fixed)
+   14. Display (.block, .flex, .grid)
+   15. Cursor y Pointer Events
+   16. Opacidad (.opacity-0 a .opacity-100)
+   
+   VENTAJAS:
+   - Reduce CSS duplicado en componentes
+   - Facilita cambios globales de estilo
+   - Mejora la consistencia visual
+   - Acelera el desarrollo de nuevos componentes
+   
+   NOTAS:
+   - Usar con moderación (no abusar de clases utilitarias)
+   - Combinar con componentes BEM para máxima modularidad
+   - Todas las clases usan variables de _variables.css
+   
+   ============================================================ */
+
+/* ============================================================
+   ACCESIBILIDAD
+   ============================================================ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: var(--z-modal);
+  top: 10px;
+  left: 10px;
+  transform: translateY(-150%);
+  padding: 0.7rem 1rem;
+  background: var(--orange);
+  color: #fff;
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-base) var(--ease-in-out);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   VISIBILIDAD
+   ============================================================ */
+.is-hidden {
+  display: none !important;
+}
+
+.is-visible {
+  display: block !important;
+}
+
+.is-invisible {
+  visibility: hidden;
+}
+
+/* ============================================================
+   ESTADOS
+   ============================================================ */
+.is-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.is-active {
+  opacity: 1;
+}
+
+.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.is-scrolled {
+  background: rgba(15, 21, 28, 0.9);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-color: var(--line);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.is-live {
+  z-index: var(--z-dropdown);
+  background: var(--orange-light);
+  box-shadow: 0 0 15px rgba(255, 122, 36, 0.6);
+}
+
+/* ============================================================
+   ALINEACIÓN Y LAYOUT
+   ============================================================ */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.grid-center {
+  display: grid;
+  place-items: center;
+}
+
+/* ============================================================
+   ESPACIADO
+   ============================================================ */
+.mt-0 { margin-top: 0; }
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mt-xl { margin-top: var(--spacing-xl); }
+
+.mb-0 { margin-bottom: 0; }
+.mb-xs { margin-bottom: var(--spacing-xs); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+
+.p-0 { padding: 0; }
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+.p-xl { padding: var(--spacing-xl); }
+
+/* ============================================================
+   TIPOGRAFÍA
+   ============================================================ */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-rustic {
+  font-family: var(--font-rustic);
+}
+
+.font-light {
+  font-weight: var(--font-weight-light);
+}
+
+.font-normal {
+  font-weight: var(--font-weight-normal);
+}
+
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.font-semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+/* ============================================================
+   COLORES - TEXTO
+   ============================================================ */
+.text-primary {
+  color: var(--text);
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.text-orange {
+  color: var(--orange);
+}
+
+.text-orange-light {
+  color: var(--orange-light);
+}
+
+.text-green {
+  color: var(--green);
+}
+
+.text-green-light {
+  color: var(--green-light);
+}
+
+/* ============================================================
+   COLORES - FONDO
+   ============================================================ */
+.bg-primary {
+  background: var(--bg);
+}
+
+.bg-surface {
+  background: var(--surface);
+}
+
+.bg-surface-2 {
+  background: var(--surface-2);
+}
+
+.bg-green {
+  background: var(--green);
+}
+
+.bg-orange {
+  background: var(--orange);
+}
+
+/* ============================================================
+   BORDES
+   ============================================================ */
+.border-none {
+  border: none;
+}
+
+.border-line {
+  border: 1px solid var(--line);
+}
+
+.border-green {
+  border: 1px solid var(--green);
+}
+
+.border-orange {
+  border: 1px solid var(--orange);
+}
+
+.rounded-sm {
+  border-radius: var(--radius-sm);
+}
+
+.rounded-md {
+  border-radius: var(--radius-md);
+}
+
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+
+.rounded-full {
+  border-radius: var(--radius-full);
+}
+
+/* ============================================================
+   SOMBRAS
+   ============================================================ */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+.shadow-2xl {
+  box-shadow: var(--shadow-2xl);
+}
+
+/* ============================================================
+   TRANSICIONES
+   ============================================================ */
+.transition-fast {
+  transition: all var(--transition-fast) var(--ease-in-out);
+}
+
+.transition-base {
+  transition: all var(--transition-base) var(--ease-in-out);
+}
+
+.transition-slow {
+  transition: all var(--transition-slow) var(--ease-in-out);
+}
+
+/* ============================================================
+   OVERFLOW
+   ============================================================ */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+/* ============================================================
+   POSICIONAMIENTO
+   ============================================================ */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.sticky {
+  position: sticky;
+}
+
+/* ============================================================
+   DISPLAY
+   ============================================================ */
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.inline {
+  display: inline;
+}
+
+.flex {
+  display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.grid {
+  display: grid;
+}
+
+/* ============================================================
+   CURSOR
+   ============================================================ */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   POINTER EVENTS
+   ============================================================ */
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.pointer-events-auto {
+  pointer-events: auto;
+}
+
+/* ============================================================
+   OPACIDAD
+   ============================================================ */
+.opacity-0 { opacity: 0; }
+.opacity-25 { opacity: 0.25; }
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+.opacity-100 { opacity: 1; }

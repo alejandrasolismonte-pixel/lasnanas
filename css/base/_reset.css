@@ -1,0 +1,177 @@
+/* ============================================================
+   RESET Y ESTILOS GLOBALES
+   
+   PROPÓSITO:
+   Normaliza comportamientos por defecto del navegador
+   y establece estilos base para todo el proyecto.
+   
+   CAMBIOS REALIZADOS (Fase 1):
+   ✓ Extraído del archivo desarrollo.css (líneas 29-96)
+   ✓ Refactorizado con variables centralizadas
+   ✓ Agregados comentarios de secciones
+   ✓ Mejorada legibilidad y organización
+   ✓ Reemplazados valores hardcodeados por variables
+   
+   ESTRUCTURA:
+   1. Reset universal (box-sizing, scroll behavior)
+   2. Elementos semánticos (a, button, input)
+   3. Tipografía (headings, párrafos)
+   4. Contenedor principal
+   5. Secciones
+   6. Accesibilidad
+   7. Utilidades globales
+   
+   NOTAS:
+   - Este archivo debe importarse DESPUÉS de _variables.css
+   - Proporciona la base para todos los demás módulos
+   - No contiene estilos específicos de componentes
+   
+   ============================================================ */
+
+/* ============================================================
+   RESET UNIVERSAL
+   ============================================================ */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 92px;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  position: relative;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+/* ============================================================
+   ELEMENTOS SEMÁNTICOS
+   ============================================================ */
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ============================================================
+   TIPOGRAFÍA - HEADINGS
+   ============================================================ */
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.05;
+}
+
+h1 {
+  max-width: 650px;
+  margin-bottom: 1.35rem;
+  font-size: clamp(2.8rem, 6vw, 3.5rem);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  font-weight: var(--font-weight-normal);
+}
+
+h1 em {
+  color: var(--green-light);
+  font-weight: var(--font-weight-normal);
+}
+
+h2 {
+  max-width: 700px;
+  margin-bottom: 1.2rem;
+  font-size: clamp(3rem, 5vw, 3rem);
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+h3 {
+  font-size: 1.6rem;
+}
+
+/* ============================================================
+   CONTENEDOR PRINCIPAL
+   ============================================================ */
+.container {
+  width: min(var(--container-max), calc(100% - 40px));
+  margin-inline: auto;
+  z-index: var(--z-base);
+  position: relative;
+}
+
+/* ============================================================
+   SECCIONES
+   ============================================================ */
+.section-shell {
+  position: relative;
+}
+
+.section {
+  padding: clamp(2.5rem, 3vw, 3rem) 0;
+}
+
+.section:nth-of-type(odd):not(.hero) {
+  background: linear-gradient(110deg, rgba(22, 101, 52, 0.1), transparent 55%);
+}
+
+/* ============================================================
+   ACCESIBILIDAD
+   ============================================================ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: var(--z-modal);
+  top: 10px;
+  left: 10px;
+  transform: translateY(-150%);
+  padding: 0.7rem 1rem;
+  background: var(--orange);
+  color: #fff;
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-base) var(--ease-in-out);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   UTILIDADES GLOBALES
+   ============================================================ */
+.is-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
