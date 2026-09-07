@@ -1513,8 +1513,8 @@ h2 {
         position: absolute !important; /* Lo saca del flujo para moverlo libremente */
         
         /* === COORDENADAS PARA LA CRUZ NARANJA === */
-        right: 40px; /* Lo separa del borde derecho, dejándolo justo al lado del menú ☰ */
-        top: 90%; /* Lo empuja a la mitad de la altura de la barra */
+        right: 30px; /* Lo separa del borde derecho, dejándolo justo al lado del menú ☰ */
+        top: 70px;%; /* Lo empuja a la mitad de la altura de la barra */
         transform: translateY(-40%); /* Lo centra verticalmente a la perfección */
         
         /* === AJUSTES DE TAMAÑO PARA QUE QUEPA === */
@@ -2218,11 +2218,7 @@ h2 {
   width: min(72vw, 560px);
 }
 
-/* Servicios se centra en su bloque propio, sin desplazamiento lateral interno. */
-.section-sign--servicios {
-  --section-sign-shift: 0px;
-  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
-}
+.section-sign--servicios { margin-bottom: clamp(1.5rem, 3vw, 2.25rem); }
 .section-sign--productos { margin-bottom: 1rem; }
 
 @media (max-width: 620px) {
@@ -2232,13 +2228,12 @@ h2 {
   .section-sign--productos .section-sign__image { width: min(90vw, 100%); }
 }
 
-/* Servicios en tablet y ventanas PC angostas: conserva el bloque centrado. */
+/* Servicios en tablet y ventanas PC angostas: desplazamiento visible hacia arriba. */
 @media (min-width: 621px) and (max-width: 1099px) {
   .section-sign--servicios {
     position: relative;
-    top: 0;
-    left: 0;
-    margin-bottom: 0;
+    top: -5rem;
+    margin-bottom: -3rem;
   }
 }
 
@@ -2268,14 +2263,8 @@ h2 {
     text-align: left;
   }
 
-  /* Servicios ocupa una fila propia: se centra y elimina el espacio desplazado. */
-  .services-showcase__heading.section-sign {
-    top: 0;
-    left: 0;
-    align-items: center;
-    justify-self: center;
-    text-align: center;
-  }
+  /* AJUSTE VERTICAL DE SERVICIOS: un valor más negativo lo sube todavía más. */
+  .section-sign--servicios { top: -5rem; }
 
   .section-sign--servicios .eyebrow,
   .section-sign--productos .eyebrow {
@@ -2300,11 +2289,8 @@ h2 {
     align-items: start;
   }
 
-  /* Servicios usa dos filas: letrero arriba y carrusel con todo el ancho debajo. */
-  .services-showcase__container {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 0;
-  }
+  /* Las columnas laterales respetan el ancho derivado de la altura del PNG. */
+  .services-showcase__container { grid-template-columns: 392px minmax(0, 1fr); }
   .section--products > .container { grid-template-columns: 390px minmax(0, 1fr); }
 
   .services-showcase__heading,
@@ -2317,9 +2303,6 @@ h2 {
   .section--products .product-filters,
   .section--products .product-grid,
   .section--products .cart-panel { grid-column: 2; }
-
-  /* El carrusel deja de compartir fila con el letrero y recupera el ancho completo. */
-  .services-showcase__carousel { grid-column: 1; }
 
   /* Las flechas permanecen fuera del escenario; sólo las tarjetas se recortan. */
   .services-showcase__carousel {
@@ -2365,14 +2348,8 @@ h2 {
     text-align: left;
   }
 
-  /* Servicios ocupa una fila propia: centrado y sin hueco vertical artificial. */
-  .services-showcase__heading.section-sign {
-    top: 0;
-    left: 0;
-    align-items: center;
-    justify-self: center;
-    text-align: center;
-  }
+  /* AJUSTE VERTICAL DE SERVICIOS: independiente de los otros dos letreros. */
+  .section-sign--servicios { top: -5rem; }
 
   /* El texto naranja acompaña el techo del letrero y se desplaza junto con él. */
   .section-sign .eyebrow {
@@ -2412,11 +2389,11 @@ h2 {
   .participation .membership-note { grid-column: 2; }
   .participation .membership-controls { margin-top: 0; }
 
-  /* Servicios: letrero en un bloque superior y escenario 3D a ancho completo. */
+  /* Servicios: conserva el escenario 3D completo en la columna principal. */
   .services-showcase__container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 0;
+    grid-template-columns: 510px minmax(0, 1fr);
+    column-gap: clamp(4rem, 5vw, 5rem);
     align-items: start;
   }
 
@@ -2426,7 +2403,7 @@ h2 {
   }
 
   .services-showcase__carousel {
-    grid-column: 1;
+    grid-column: 2;
     grid-template-columns: 52px minmax(0, 1fr) 52px;
     gap: 1rem;
     overflow: visible;
@@ -2460,47 +2437,5 @@ h2 {
   .section-sign__image {
     animation: none;
     transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(-7deg);
-  }
-}
-
-/* ============================================================
-   ECOSISTEMA ÑAÑAS · MÓVIL HORIZONTAL
-   Libera la altura visual y conserva sólo el acceso al ecosistema.
-   ============================================================ */
-@media (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
-  .site-header,
-  .site-header.is-scrolled {
-    position: absolute !important;
-    height: 0;
-    min-height: 0;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
-  .header__inner {
-    width: 100%;
-    height: 0;
-    min-height: 0;
-  }
-
-  .header__inner > .brand,
-  .header__inner > .menu-toggle,
-  .header__inner > .main-nav {
-    display: none !important;
-  }
-
-  /* Único control persistente; respeta las zonas seguras del teléfono. */
-  .header-ecosystem {
-    position: fixed !important;
-    z-index: 80;
-    top: max(.55rem, env(safe-area-inset-top)) !important;
-    right: max(.75rem, env(safe-area-inset-right)) !important;
-    left: auto !important;
-    display: inline-flex !important;
-    margin: 0 !important;
-    transform: none !important;
   }
 }

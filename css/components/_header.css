@@ -88,19 +88,51 @@
   color: var(--orange-light);
 }
 .header-ecosystem {
-  padding: .55rem .78rem;
-  background: var(--orange);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  min-height: 44px;
+  padding: .45rem .5rem .45rem 1rem;
+  border: 1px solid rgba(255,255,255,.24);
+  background: linear-gradient(135deg, var(--orange-light), var(--orange));
   border-radius: var(--radius-full);
   color: #fff;
   font-weight: var(--font-weight-bold);
-  font-size: .9rem; /* Sincronizado al tamaño real deseado */
+  font-size: .9rem;
+  line-height: 1;
   text-decoration: none;
   white-space: nowrap;
+  box-shadow: 0 7px 18px rgba(234,88,12,.3), inset 0 1px rgba(255,255,255,.2);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+.header-ecosystem__label { letter-spacing: .01em; }
+.header-ecosystem__icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(15,21,28,.22);
+  font-size: 1.15rem;
   transition: transform var(--transition-fast), background var(--transition-fast);
 }
 .header-ecosystem:hover {
-  background: var(--orange-light);
   transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 10px 24px rgba(234,88,12,.42), inset 0 1px rgba(255,255,255,.24);
+}
+.header-ecosystem:hover .header-ecosystem__icon {
+  transform: translateX(2px);
+  background: rgba(15,21,28,.32);
+}
+.header-ecosystem:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(234,88,12,.3), inset 0 1px rgba(255,255,255,.18);
+}
+.header-ecosystem:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
 }
 .menu-toggle {
   display: none;
@@ -121,14 +153,14 @@
 @media (max-width: 950px) {
   .main-nav { gap: .75rem; }
   .main-nav a { font-size: .78rem; }
-  .header-ecosystem { font-size: .7rem; }
+  .header-ecosystem { font-size: .78rem; }
 }
 
 @media (max-width: 720px) {
   html { scroll-padding-top: 68px; }
   .container { width: min(100% - 28px, 1180px); }
   .header__inner { min-height: 66px; }
-  .menu-toggle { display: block; }
+  .menu-toggle { display: block; margin-left: 0; }
   .main-nav {
     position: absolute;
     top: 100%;
@@ -154,37 +186,34 @@
     font-size: .95rem;
     border-bottom: 1px solid rgba(226,232,240,.07);
   }
-  .header-ecosystem { margin-left: auto; }
+  .header-ecosystem {
+    margin-left: auto;
+    min-height: 42px;
+    padding: .4rem .45rem .4rem .85rem;
+  }
   .menu-toggle[aria-expanded="true"] span:nth-of-type(2) { opacity: 0; }
   .menu-toggle[aria-expanded="true"] span:nth-of-type(1) { transform: translateY(7px) rotate(45deg); }
   .menu-toggle[aria-expanded="true"] span:nth-of-type(3) { transform: translateY(-7px) rotate(-45deg); }
 }
 
 @media (max-width: 520px) {
-  .header-ecosystem { display: none; }
+  .header-ecosystem__name { display: none; }
 }
 
-/* UBICACIÓN EXACTA DEL BOTÓN EN MÓVIL (SEGÚN IMAGEN) */
+/* Ubicación compacta del CTA en móvil. */
 @media (max-width: 767px) {
-    /* Nos aseguramos de que el contenedor principal sea la referencia */
     .header__inner {
         position: relative; 
     }
 
     .header-ecosystem {
-        display: inline-flex !important; /* Forzamos a que aparezca */
-        position: absolute !important; /* Lo saca del flujo para moverlo libremente */
-        
-        /* === COORDENADAS PARA LA CRUZ NARANJA === */
-        right: 40px; /* Lo separa del borde derecho, dejándolo justo al lado del menú ☰ */
-        top: 90%; /* Lo empuja a la mitad de la altura de la barra */
-        transform: translateY(-40%); /* Lo centra verticalmente a la perfección */
-        
-        /* === AJUSTES DE TAMAÑO PARA QUE QUEPA === */
-        font-size: 1rem; /* Letra más pequeña */
-        padding: 4px 8px; /* Botón más compacto */
-        white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
-        z-index: 100; /* Lo mantiene por encima de cualquier otro elemento */
+        display: inline-flex !important;
+        position: absolute !important;
+        right: 40px;
+        top: 90%;
+        transform: translateY(-40%);
+        white-space: nowrap;
+        z-index: 100;
     }
 }
 
