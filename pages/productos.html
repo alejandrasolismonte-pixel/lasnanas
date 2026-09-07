@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/desarrollo.css">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=35">
 </head>
 <body>
   <div class="watermark-bg" aria-hidden="true"></div>
@@ -41,10 +41,11 @@
   <main id="contenido">
     <section class="section-shell section section--products" aria-labelledby="products-title">
       <div class="container">
-        <div class="section-heading section-heading--wide reveal">
+        <!-- Letrero visual de Productos; el título textual sigue accesible. -->
+        <div class="section-heading section-heading--wide section-sign section-sign--productos reveal">
           <p class="eyebrow">Mogelei · lo que crece</p>
-          <h1 id="products-title" style="font-size: clamp(2.35rem,4vw,3.5rem); margin-bottom: 1rem;">Productos con historia, estación y territorio.</h1>
-          <p>La canasta es una demostración interactiva: podrás sumar productos para generar un mensaje automático. Las compras se realizan mediante transferencia directa previo contacto.</p>
+          <h1 class="sr-only" id="products-title">Productos con historia, estación y territorio.</h1>
+          <img class="section-sign__image" src="../assets/img/letreros/productos.png" alt="" aria-hidden="true" width="1428" height="1102">
         </div>
         
         <div class="product-filters" role="group" aria-label="Filtrar productos">

@@ -1641,3 +1641,866 @@ h2 {
   border-color: var(--green-light);
   z-index: 2;
 }
+
+/* ============================================================
+   CARRUSEL 3D DE SERVICIOS
+   Bloque aislado para no alterar otras tarjetas o carruseles.
+   ============================================================ */
+.services-showcase {
+  overflow: clip;
+  padding-block: clamp(4.5rem, 7vw, 7rem);
+  background: #090d14 !important;
+  border-block: 1px solid var(--line);
+  isolation: isolate;
+}
+
+.services-showcase__container {
+  width: min(1380px, calc(100% - 32px));
+}
+
+.services-showcase__heading {
+  width: min(760px, 100%);
+  margin: 0 auto clamp(2.25rem, 4vw, 3.5rem);
+  text-align: center;
+}
+
+.services-showcase__heading h1,
+.services-showcase__heading h2 {
+  margin: .35rem 0 .8rem;
+  color: var(--text);
+  font-family: "Fraunces", serif;
+  font-size: clamp(2.1rem, 4vw, 4rem);
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.services-showcase__heading > p:last-child {
+  margin: 0 auto;
+  max-width: 700px;
+  color: var(--muted);
+  font-size: clamp(.98rem, 1.3vw, 1.12rem);
+}
+
+/* La rejilla deja las flechas fuera del escenario sin restar profundidad. */
+.services-showcase__carousel {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 52px;
+  align-items: center;
+  gap: clamp(.5rem, 1.5vw, 1.25rem);
+  width: 100%;
+}
+
+.services-showcase__stage {
+  position: relative;
+  min-width: 0;
+  height: 680px;
+  perspective: 1350px;
+  perspective-origin: 50% 47%;
+  transform-style: preserve-3d;
+  outline: none;
+  touch-action: pan-y pinch-zoom;
+}
+
+.services-showcase__stage:focus-visible {
+  border-radius: 24px;
+  box-shadow: 0 0 0 3px var(--orange-light);
+}
+
+.services-showcase__cards {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.services-showcase__card {
+  --card-accent: var(--green-light);
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  display: grid;
+  grid-template-rows: 65% 35%;
+  width: min(430px, 42vw);
+  height: 580px;
+  overflow: hidden;
+  color: var(--text);
+  background: #0d111b;
+  border: 1px solid rgba(226, 232, 240, .12);
+  border-radius: 25px;
+  box-shadow: 0 26px 68px rgba(0, 0, 0, .42);
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  backface-visibility: hidden;
+  transition: transform 1650ms cubic-bezier(.65, 0, .35, 1),
+              opacity 1450ms cubic-bezier(.65, 0, .35, 1),
+              border-color 1300ms ease-in-out,
+              box-shadow 1300ms ease-in-out;
+  will-change: transform, opacity;
+}
+
+.services-showcase__card[data-category="Arriendo"] { --card-accent: var(--orange); }
+
+.services-showcase__card--active {
+  z-index: 3;
+  opacity: 1;
+  pointer-events: auto;
+  border: 2px solid var(--card-accent);
+  transform: translate3d(-50%, 0, 145px) rotateY(0deg) scale(1);
+  box-shadow: 0 34px 82px rgba(0, 0, 0, .58), 0 0 28px color-mix(in srgb, var(--card-accent) 18%, transparent);
+}
+
+.services-showcase__card--previous {
+  z-index: 2;
+  opacity: .82;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate3d(calc(-50% - 350px), 36px, -180px) rotateY(49deg) scale(.87);
+}
+
+.services-showcase__card--next {
+  z-index: 2;
+  opacity: .82;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate3d(calc(-50% + 350px), 36px, -180px) rotateY(-49deg) scale(.87);
+}
+
+.services-showcase__card--hidden {
+  z-index: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(-50%, 52px, -420px) scale(.72);
+}
+
+.services-showcase__media {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.services-showcase__media::after {
+  content: "";
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(to bottom, transparent, rgba(13, 17, 27, .72));
+  pointer-events: none;
+}
+
+.services-showcase__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1650ms cubic-bezier(.65, 0, .35, 1);
+}
+
+.services-showcase__card--active .services-showcase__media img { transform: scale(1.025); }
+
+.services-showcase__badge {
+  position: absolute;
+  z-index: 1;
+  top: 18px;
+  left: 18px;
+  padding: .42rem .72rem;
+  color: #fff;
+  background: var(--card-accent);
+  background: color-mix(in srgb, var(--card-accent) 86%, #0d111b);
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.services-showcase__content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 1.35rem 1.7rem 3.4rem;
+  background: #0d111b;
+}
+
+.services-showcase__content h3 {
+  margin: 0 0 .45rem;
+  color: var(--text);
+  font-family: "Fraunces", serif;
+  font-size: clamp(1.3rem, 2vw, 1.65rem);
+  line-height: 1.12;
+}
+
+.services-showcase__content p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: .9rem;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.services-showcase__detail {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: .25rem 0;
+  color: var(--card-accent);
+  background: transparent;
+  border: 0;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.services-showcase__detail:hover { text-decoration: underline; text-underline-offset: 4px; }
+.services-showcase__card:not(.services-showcase__card--active) .services-showcase__detail { pointer-events: none; }
+
+.services-showcase__arrow {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0 0 3px;
+  color: var(--text);
+  background: rgba(226, 232, 240, .08);
+  border: 1px solid rgba(226, 232, 240, .13);
+  border-radius: 50%;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .25);
+  font-size: 2rem;
+  line-height: 1;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.services-showcase__arrow:hover {
+  background: var(--green);
+  border-color: var(--green-light);
+  transform: scale(1.06);
+}
+
+.services-showcase__dots {
+  position: absolute;
+  z-index: 6;
+  bottom: 20px;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  transform: translateX(-50%);
+}
+
+.services-showcase__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  background: rgba(226, 232, 240, .25);
+  border: 0;
+  border-radius: 999px;
+  transition: width .25s ease, background .25s ease;
+}
+
+.services-showcase__dot[aria-current="true"] { width: 24px; background: var(--green-light); }
+
+/* Control discreto para detener o reanudar el avance automático. */
+.services-showcase__autoplay {
+  position: absolute;
+  z-index: 7;
+  bottom: 10px;
+  left: calc(50% + 92px);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--text);
+  background: rgba(226, 232, 240, .08);
+  border: 1px solid rgba(226, 232, 240, .2);
+  border-radius: 50%;
+  font-size: .72rem;
+  line-height: 1;
+}
+
+.services-showcase__autoplay:hover { background: var(--green); }
+.services-showcase__autoplay:disabled { cursor: not-allowed; opacity: .45; }
+
+/* El diálogo nativo aporta bloqueo del fondo y gestión accesible de la capa superior. */
+.services-showcase__modal {
+  width: min(590px, calc(100% - 32px));
+  max-height: min(760px, calc(100dvh - 32px));
+  padding: 0;
+  overflow: auto;
+  color: var(--text);
+  background: #0d111b;
+  border: 1px solid var(--green-light);
+  border-radius: 24px;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, .72);
+}
+
+.services-showcase__modal::backdrop { background: rgba(5, 8, 13, .82); backdrop-filter: blur(7px); }
+.services-showcase__modal-panel { position: relative; padding: clamp(1.6rem, 5vw, 2.8rem); }
+
+.services-showcase__modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0 0 3px;
+  color: var(--text);
+  background: rgba(226, 232, 240, .08);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.services-showcase__modal-category {
+  margin: 0 3rem .5rem 0;
+  color: var(--green-light);
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.services-showcase__modal h3 {
+  margin: 0 3rem .8rem 0;
+  font-family: "Fraunces", serif;
+  font-size: clamp(1.8rem, 5vw, 2.65rem);
+  line-height: 1.08;
+}
+
+.services-showcase__modal h4 { margin: 1.5rem 0 .5rem; font-family: "Fraunces", serif; font-size: 1.1rem; }
+.services-showcase__modal p, .services-showcase__modal li { color: var(--muted); }
+.services-showcase__modal ul { margin: .5rem 0 1.8rem; padding-left: 1.25rem; }
+.services-showcase__modal li::marker { color: var(--orange); }
+.services-showcase__whatsapp { width: 100%; justify-content: center; text-align: center; background: var(--orange); border-color: var(--orange); }
+
+@media (max-width: 1050px) {
+  .services-showcase__stage { height: 650px; perspective: 1250px; }
+  .services-showcase__card { width: min(390px, 45vw); height: 550px; }
+  .services-showcase__card--previous { transform: translate3d(calc(-50% - 280px), 34px, -165px) rotateY(40deg) scale(.86); }
+  .services-showcase__card--next { transform: translate3d(calc(-50% + 280px), 34px, -165px) rotateY(-40deg) scale(.86); }
+  .services-showcase__content { padding-inline: 1.35rem; }
+  .services-showcase__content p { font-size: .84rem; }
+}
+
+@media (max-width: 680px) {
+  .services-showcase { padding-block: 4rem; }
+  .services-showcase__container { width: min(100% - 20px, 1380px); }
+  .services-showcase__heading { padding-inline: 6px; margin-bottom: 1.75rem; }
+  .services-showcase__carousel { position: relative; display: block; }
+  .services-showcase__stage { height: 620px; perspective: none; }
+  .services-showcase__card { top: 0; width: min(420px, calc(100% - 44px)); height: 552px; border-radius: 22px; }
+  .services-showcase__card--active { transform: translate3d(-50%, 0, 0) scale(1); }
+  .services-showcase__card--previous {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(calc(-50% - 100vw), 0, 0) scale(.96);
+  }
+  .services-showcase__card--next {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(calc(-50% + 100vw), 0, 0) scale(.96);
+  }
+  .services-showcase__content { padding: 1.2rem 1.3rem 3.25rem; }
+  /* Evita la línea intermitente producida por el redondeo subpíxel entre foto y contenido. */
+  .services-showcase__content {
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 -3px 0 #0d111b;
+  }
+  /* En móvil la tarjeta ya se desplaza; se desactiva el zoom interno para evitar capas en conflicto. */
+  .services-showcase__media img,
+  .services-showcase__card--active .services-showcase__media img {
+    transform: scale(1.01);
+    transition: none;
+  }
+  .services-showcase__content h3 { font-size: 1.35rem; }
+  .services-showcase__content p { font-size: .83rem; }
+  .services-showcase__arrow {
+    position: absolute;
+    z-index: 8;
+    top: 246px;
+    width: 42px;
+    height: 42px;
+    background: rgba(13, 17, 27, .88);
+  }
+  .services-showcase__arrow--prev { left: 0; }
+  .services-showcase__arrow--next { right: 0; }
+  .services-showcase__dots { bottom: 20px; }
+  .services-showcase__autoplay { bottom: 10px; left: calc(50% + 87px); }
+}
+
+@media (max-width: 380px) {
+  .services-showcase__stage { height: 585px; }
+  .services-showcase__card { width: calc(100% - 34px); height: 518px; grid-template-rows: 62% 38%; }
+  .services-showcase__arrow { top: 225px; width: 38px; height: 38px; font-size: 1.7rem; }
+  .services-showcase__content { padding: 1rem 1.1rem 3rem; }
+  .services-showcase__content h3 { font-size: 1.2rem; }
+  .services-showcase__content p { -webkit-line-clamp: 3; font-size: .78rem; }
+  .services-showcase__dots { bottom: 20px; gap: 5px; }
+  .services-showcase__autoplay { bottom: 10px; left: calc(50% + 76px); }
+  .services-showcase__dot { width: 7px; height: 7px; }
+  .services-showcase__dot[aria-current="true"] { width: 20px; }
+}
+
+/* Celular horizontal: el menú se desplaza hacia arriba y la tarjeta se adapta a la altura útil. */
+@media (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
+  .services-page .site-header {
+    position: relative;
+  }
+
+  .services-page .services-showcase {
+    padding-block: 1.25rem;
+  }
+
+  .services-page .services-showcase__heading {
+    margin-bottom: 1rem;
+  }
+
+  .services-page .services-showcase__heading h1 {
+    margin-block: .2rem .45rem;
+    font-size: clamp(1.65rem, 5vw, 2.3rem);
+  }
+
+  .services-page .services-showcase__heading > p:last-child {
+    max-width: 620px;
+    font-size: .8rem;
+    line-height: 1.4;
+  }
+
+  .services-page .services-showcase__carousel {
+    --services-landscape-card-height: clamp(300px, calc(100svh - 54px), 380px);
+    position: relative;
+    display: block;
+  }
+
+  .services-page .services-showcase__stage {
+    height: calc(var(--services-landscape-card-height) + 48px);
+    perspective: 1100px;
+    perspective-origin: 50% 46%;
+  }
+
+  .services-page .services-showcase__card {
+    top: 0;
+    grid-template-rows: 55% 45%;
+    width: min(340px, calc(100% - 64px));
+    height: var(--services-landscape-card-height);
+    border-radius: 20px;
+  }
+
+  .services-page .services-showcase__card--active {
+    z-index: 3;
+    opacity: 1;
+    transform: translate3d(-50%, 0, 90px) rotateY(0deg) scale(1);
+  }
+
+  .services-page .services-showcase__card--previous {
+    z-index: 2;
+    opacity: .8;
+    pointer-events: auto;
+    transform: translate3d(calc(-50% - clamp(205px, 28vw, 245px)), 12px, -150px) rotateY(48deg) scale(.82);
+  }
+
+  .services-page .services-showcase__card--next {
+    z-index: 2;
+    opacity: .8;
+    pointer-events: auto;
+    transform: translate3d(calc(-50% + clamp(205px, 28vw, 245px)), 12px, -150px) rotateY(-48deg) scale(.82);
+  }
+
+  .services-page .services-showcase__content {
+    position: relative;
+    z-index: 2;
+    padding: .65rem 1rem 2.4rem;
+    box-shadow: 0 -3px 0 #0d111b;
+  }
+
+  .services-page .services-showcase__content h3 {
+    margin-bottom: .25rem;
+    font-size: 1.08rem;
+  }
+
+  .services-page .services-showcase__content p {
+    font-size: .74rem;
+    line-height: 1.3;
+    -webkit-line-clamp: 2;
+  }
+
+  .services-page .services-showcase__detail {
+    font-size: .8rem;
+  }
+
+  .services-page .services-showcase__media img,
+  .services-page .services-showcase__card--active .services-showcase__media img {
+    transform: scale(1.01);
+    transition: none;
+  }
+
+  .services-page .services-showcase__arrow {
+    position: absolute;
+    z-index: 8;
+    top: calc((var(--services-landscape-card-height) - 42px) / 2);
+    width: 42px;
+    height: 42px;
+    background: rgba(13, 17, 27, .88);
+  }
+
+  .services-page .services-showcase__arrow--prev { left: 6px; }
+  .services-page .services-showcase__arrow--next { right: 6px; }
+  .services-page .services-showcase__dots { bottom: 16px; }
+  .services-page .services-showcase__autoplay { bottom: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services-showcase__card,
+  .services-showcase__media img,
+  .services-showcase__dot,
+  .services-showcase__arrow { transition: none !important; }
+}
+
+/* ============================================================
+   LETREROS RÚSTICOS DE ENCABEZADOS
+   Estructura común y tamaños independientes según cada proporción.
+   ============================================================ */
+.section-sign,
+.section-sign.section-heading--wide {
+  --section-sign-shift: clamp(-6rem, -8vw, -1.25rem);
+  display: flex;
+  width: 100%;
+  max-width: 780px;
+  margin-inline: auto;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  perspective: 1200px;
+}
+
+.section-sign__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: .2rem auto 0;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .18));
+  transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(-6deg) translateZ(0);
+  transform-origin: center;
+  backface-visibility: hidden;
+  will-change: transform;
+  animation: sectionSignDepth 6s ease-in-out infinite alternate;
+}
+
+/* Movimiento perpendicular sutil: un extremo avanza y el opuesto retrocede. */
+@keyframes sectionSignDepth {
+  from {
+    transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(-6deg) translateZ(0);
+  }
+  to {
+    transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(-9deg) translateZ(12px);
+  }
+}
+
+/* Reduce los tres letreros un 20 % y equilibra su distancia con el contenido siguiente. */
+.section-sign--voluntariado .section-sign__image {
+  width: min(62.4vw, 288px);
+}
+
+.section-sign--servicios .section-sign__image {
+  width: min(72vw, 592px);
+}
+
+.section-sign--productos .section-sign__image {
+  width: min(72vw, 560px);
+}
+
+/* Servicios se centra en su bloque propio, sin desplazamiento lateral interno. */
+.section-sign--servicios {
+  --section-sign-shift: 0px;
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+.section-sign--productos { margin-bottom: 1rem; }
+
+@media (max-width: 620px) {
+  /* AJUSTE MANUAL MÓVIL: cambia estos anchos sin superar 90vw para evitar overflow. */
+  .section-sign--voluntariado .section-sign__image { width: min(48vw, 224px); }
+  .section-sign--servicios .section-sign__image,
+  .section-sign--productos .section-sign__image { width: min(90vw, 100%); }
+}
+
+/* Servicios en tablet y ventanas PC angostas: conserva el bloque centrado. */
+@media (min-width: 621px) and (max-width: 1099px) {
+  .section-sign--servicios {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 0;
+  }
+}
+
+/* PC compacto: el ancho disponible permite la composición lateral desde 1100 px. */
+@media (min-width: 1100px) and (max-width: 1279px) {
+  /* AJUSTE MANUAL PC COMPACTO: height cambia el tamaño y left la posición horizontal. */
+  .section-sign--servicios {
+    --section-sign-height: 353px;
+    --section-sign-left: -30%;
+  }
+
+  .section-sign--productos {
+    --section-sign-height: 361px;
+    --section-sign-left: -30%;
+  }
+
+  .section-sign--servicios,
+  .section-sign--productos {
+    --section-sign-shift: 0px;
+    position: relative;
+    left: var(--section-sign-left);
+    /* AJUSTE MANUAL VERTICAL PC COMPACTO: aumenta el valor para bajarlos. */
+    top: clamp(2.5rem, 5vw, 4rem);
+    z-index: 4;
+    align-items: flex-start;
+    margin: 0;
+    text-align: left;
+  }
+
+  /* Servicios ocupa una fila propia: se centra y elimina el espacio desplazado. */
+  .services-showcase__heading.section-sign {
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-self: center;
+    text-align: center;
+  }
+
+  .section-sign--servicios .eyebrow,
+  .section-sign--productos .eyebrow {
+    width: 100%;
+    margin-bottom: .25rem;
+    text-align: center;
+  }
+
+  .section-sign--servicios .section-sign__image,
+  .section-sign--productos .section-sign__image {
+    width: auto;
+    max-width: none;
+    height: var(--section-sign-height);
+  }
+
+  .services-showcase__container,
+  .section--products > .container {
+    display: grid;
+    width: min(1380px, calc(100% - 24px));
+    max-width: 1380px;
+    column-gap: clamp(3rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  /* Servicios usa dos filas: letrero arriba y carrusel con todo el ancho debajo. */
+  .services-showcase__container {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0;
+  }
+  .section--products > .container { grid-template-columns: 390px minmax(0, 1fr); }
+
+  .services-showcase__heading,
+  .section-sign--productos {
+    grid-column: 1;
+    margin: 0;
+  }
+
+  .services-showcase__carousel,
+  .section--products .product-filters,
+  .section--products .product-grid,
+  .section--products .cart-panel { grid-column: 2; }
+
+  /* El carrusel deja de compartir fila con el letrero y recupera el ancho completo. */
+  .services-showcase__carousel { grid-column: 1; }
+
+  /* Las flechas permanecen fuera del escenario; sólo las tarjetas se recortan. */
+  .services-showcase__carousel {
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
+    gap: 1rem;
+    overflow: visible;
+  }
+  .services-showcase__stage { overflow: clip; }
+  .section-sign--productos { grid-row: 1 / span 3; }
+  .section--products .product-filters { margin-top: 0; }
+  .section--products .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* En escritorio, el letrero ocupa una esquina lateral y el contenido continúa a su derecha. */
+@media (min-width: 1280px) {
+  /* AJUSTE MANUAL ESCRITORIO:
+     height controla la altura; left negativo mueve hacia la izquierda. */
+  .section-sign--voluntariado {
+    --section-sign-height: 432px;
+    --section-sign-left: -30%;
+  }
+
+  .section-sign--servicios {
+    --section-sign-height: 460px;
+    --section-sign-left: -30%;
+  }
+
+  .section-sign--productos {
+    --section-sign-height: 440px;
+    --section-sign-left: -30%;
+  }
+
+  .section-sign,
+  .section-sign.section-heading--wide {
+    --section-sign-shift: 0px;
+    position: relative;
+    left: var(--section-sign-left);
+    /* AJUSTE MANUAL VERTICAL ESCRITORIO: centra visualmente el letrero junto al contenido. */
+    top: clamp(3.5rem, 5vw, 5rem);
+    z-index: 4;
+    align-items: flex-start;
+    margin: 0;
+    text-align: left;
+  }
+
+  /* Servicios ocupa una fila propia: centrado y sin hueco vertical artificial. */
+  .services-showcase__heading.section-sign {
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-self: center;
+    text-align: center;
+  }
+
+  /* El texto naranja acompaña el techo del letrero y se desplaza junto con él. */
+  .section-sign .eyebrow {
+    width: 100%;
+    margin-bottom: .25rem;
+    text-align: center;
+  }
+  .section-sign__image {
+    width: auto;
+    max-width: 100%;
+    height: var(--section-sign-height);
+  }
+
+  /* Servicios y Productos crecen hacia la izquierda sin ensanchar su columna. */
+  .section-sign--servicios .section-sign__image,
+  .section-sign--productos .section-sign__image { max-width: none; }
+
+  /* Voluntariado: cartel lateral junto a controles, planes y nota. */
+  .participation .participation__container {
+    display: grid;
+    width: min(1380px, calc(100% - 32px));
+    max-width: 1380px;
+    grid-template-columns: minmax(240px, 288px) minmax(0, 1fr);
+    column-gap: clamp(5rem, 7vw, 7rem);
+    align-items: start;
+  }
+
+  .participation__heading.section-sign {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    margin: 0;
+    text-align: left;
+  }
+
+  .participation .membership-controls,
+  .participation .membership-grid,
+  .participation .membership-note { grid-column: 2; }
+  .participation .membership-controls { margin-top: 0; }
+
+  /* Servicios: letrero en un bloque superior y escenario 3D a ancho completo. */
+  .services-showcase__container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0;
+    align-items: start;
+  }
+
+  .services-showcase__heading {
+    grid-column: 1;
+    margin: 0;
+  }
+
+  .services-showcase__carousel {
+    grid-column: 1;
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
+    gap: 1rem;
+    overflow: visible;
+  }
+  .services-showcase__stage { overflow: clip; }
+
+  /* Productos: el letrero queda en la esquina y la tienda mantiene su estructura. */
+  .section--products > .container {
+    display: grid;
+    width: min(1380px, calc(100% - 32px));
+    max-width: 1380px;
+    grid-template-columns: 476px minmax(0, 1fr);
+    column-gap: clamp(4rem, 5vw, 5rem);
+    align-items: start;
+  }
+
+  .section-sign--productos {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+  }
+
+  .section--products .product-filters,
+  .section--products .product-grid,
+  .section--products .cart-panel { grid-column: 2; }
+  .section--products .product-filters { margin-top: 0; }
+  .section--products .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Conserva la orientación solicitada, pero elimina el movimiento continuo. */
+  .section-sign__image {
+    animation: none;
+    transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(-7deg);
+  }
+}
+
+/* ============================================================
+   ECOSISTEMA ÑAÑAS · MÓVIL HORIZONTAL
+   Libera la altura visual y conserva sólo el acceso al ecosistema.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
+  .site-header,
+  .site-header.is-scrolled {
+    position: absolute !important;
+    height: 0;
+    min-height: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .header__inner {
+    width: 100%;
+    height: 0;
+    min-height: 0;
+  }
+
+  .header__inner > .brand,
+  .header__inner > .menu-toggle,
+  .header__inner > .main-nav {
+    display: none !important;
+  }
+
+  /* Único control persistente; respeta las zonas seguras del teléfono. */
+  .header-ecosystem {
+    position: fixed !important;
+    z-index: 80;
+    top: max(.55rem, env(safe-area-inset-top)) !important;
+    right: max(.75rem, env(safe-area-inset-right)) !important;
+    left: auto !important;
+    display: inline-flex !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+}

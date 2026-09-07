@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/desarrollo.css">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=35">
 </head>
-<body>
+<body class="services-page">
   <div class="watermark-bg" aria-hidden="true"></div>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
@@ -39,37 +39,43 @@
   </header>
 
   <main id="contenido">
-    <section class="section-shell section" aria-labelledby="services-title">
-      <div class="container">
-        <div class="section-heading reveal">
-          <p class="eyebrow">TecnoAgro</p>
-          <h1 id="services-title" style="font-size: clamp(2.35rem,4vw,3.5rem); margin-bottom: 1rem;">Tecnología y oficios al servicio de la tierra.</h1>
-          <p>Contratación de servicios técnicos y sitios web con pertinencia territorial orientados al cuidado y eficiencia agrícola.</p>
-        </div>
-        
-        <div class="service-grid" style="margin-top: 3rem;">
-          <article class="service-card reveal">
-            <span aria-hidden="true">◈</span>
-            <h3>Sensores IoT y Riego Inteligente</h3>
-            <p>Asesoría e implementación de sensores IoT para control de humedad, riego inteligente y microclima en huertas.</p>
-          </article>
-          <article class="service-card reveal">
-            <span aria-hidden="true">⌁</span>
-            <h3>Diseño Agroecológico</h3>
-            <p>Planificación predial basada en permacultura, captación de aguas lluvias, corredores biológicos y bosque comestible.</p>
-          </article>
-          <article class="service-card reveal">
-            <span aria-hidden="true">✳</span>
-            <h3>Chipeadora en terreno</h3>
-            <p>Servicio de chipeado en terreno de restos vegetales y poda para la generación de compost y mulching protector.</p>
-          </article>
-          <article class="service-card reveal">
-            <span aria-hidden="true">◐</span>
-            <h3>Motocultor</h3>
-            <p>Preparación agroecológica de suelos con maquinarias adaptadas para no alterar la estructura ni la microbiología profunda.</p>
-          </article>
+    <!-- Carrusel de servicios: sustituye solamente la antigua cuadrícula de esta página. -->
+    <section class="section-shell section services-showcase" aria-labelledby="services-showcase-title">
+      <div class="container services-showcase__container">
+        <!-- Letrero visual de Servicios; el h1 conserva la estructura semántica. -->
+        <header class="services-showcase__heading section-sign section-sign--servicios reveal">
+          <p class="eyebrow">Servicios · Oficios · Kimün</p>
+          <h1 class="sr-only" id="services-showcase-title">Tecnología y oficios al servicio de la tierra</h1>
+          <img class="section-sign__image" src="../assets/img/letreros/servicios.png" alt="" aria-hidden="true" width="1448" height="1086">
+        </header>
+
+        <!-- Escenario 3D con controles accesibles y contenido generado dinámicamente. -->
+        <div class="services-showcase__carousel" data-services-carousel aria-roledescription="carrusel" aria-label="Servicios y talleres">
+          <button class="services-showcase__arrow services-showcase__arrow--prev" type="button" data-services-prev aria-label="Ver servicio anterior"><span aria-hidden="true">‹</span></button>
+          <div class="services-showcase__stage" data-services-stage tabindex="0">
+            <div class="services-showcase__cards" data-services-cards></div>
+            <div class="services-showcase__dots" data-services-dots aria-label="Seleccionar servicio"></div>
+            <button class="services-showcase__autoplay" type="button" data-services-autoplay aria-label="Pausar movimiento automático" title="Pausar movimiento automático">
+              <span aria-hidden="true">Ⅱ</span>
+            </button>
+          </div>
+          <button class="services-showcase__arrow services-showcase__arrow--next" type="button" data-services-next aria-label="Ver servicio siguiente"><span aria-hidden="true">›</span></button>
+          <p class="sr-only" data-services-live aria-live="polite" aria-atomic="true"></p>
         </div>
       </div>
+
+      <!-- El diálogo reutiliza el contenido del arreglo y conserva el foco al cerrarse. -->
+      <dialog class="services-showcase__modal" data-services-modal role="dialog" aria-modal="true" aria-labelledby="services-modal-title" aria-describedby="services-modal-description">
+        <div class="services-showcase__modal-panel">
+          <button class="services-showcase__modal-close" type="button" data-services-modal-close aria-label="Cerrar detalle">×</button>
+          <p class="services-showcase__modal-category" data-services-modal-category></p>
+          <h3 id="services-modal-title" data-services-modal-title></h3>
+          <p id="services-modal-description" data-services-modal-description></p>
+          <h4>¿Qué incluye?</h4>
+          <ul data-services-modal-details></ul>
+          <a class="button button--primary services-showcase__whatsapp" data-services-whatsapp target="_blank" rel="noopener noreferrer">Consultar por WhatsApp <span aria-hidden="true">→</span></a>
+        </div>
+      </dialog>
     </section>
 
     <section class="section-shell section contact-section" id="contacto">
@@ -118,6 +124,6 @@
     </div>
   </footer>
 
-  <script src="../js/desarrollo.js"></script>
+  <script src="../js/desarrollo.js?v=14"></script>
 </body>
 </html>

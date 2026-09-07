@@ -11,9 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
   
   <!-- Estilos base del proyecto -->
-  <link rel="stylesheet" href="../css/desarrollo.css">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=35">
   <!-- Estilos específicos para los efectos del Voluntariado (Planeta, Glow, Acordeón) -->
-  <link rel="stylesheet" href="../css/voluntariado.css">
+  <link rel="stylesheet" href="../css/voluntariado.css?v=5">
 </head>
 <body>
   <div class="watermark-bg" aria-hidden="true"></div>
@@ -45,14 +45,41 @@
   </header>
 
   <main id="contenido">
+
+    <!-- APERTURA: sorteo mensual visible inmediatamente bajo el encabezado -->
+    <section class="section-shell section sweepstakes-section sweepstakes-section--intro" aria-labelledby="sweepstakes-title">
+      <canvas class="particles-canvas sweepstakes-stars" aria-hidden="true"></canvas>
+      <div class="container sweepstakes-container">
+        <div class="sweepstakes-content">
+          <p class="eyebrow sweepstakes-eyebrow">Beneficio para todas las membresías</p>
+          <p class="sweepstakes-text">Ingresas automáticamente con la inscripción de cualquier membresía.</p>
+        </div>
+        <div class="sweepstakes-visual">
+          <div class="planet-wrapper">
+            <div class="planet">
+              <h2 class="sweepstakes-title" id="sweepstakes-title"><span>Sorteo</span> mensual</h2>
+            </div>
+            <div class="orbit">
+              <div class="sweepstakes-prize">
+                <img src="../assets/img/sorteo/joya-artesanal-plata-web.png" alt="Joya artesanal de plata, premio del sorteo mensual">
+                <span>Podrías ser tú</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- En móvil vertical este mensaje se ubica después del planeta. -->
+        <p class="highlight-text sweepstakes-highlight">Compartimos nuestra cultura sin fronteras, con el newen de Las Ñañas desde Wallmapu. <strong>¡Chaltumay!</strong></p>
+      </div>
+    </section>
     
     <!-- 1. Estructura de precios y membresías de voluntariado -->
     <section class="section-shell section participation" aria-labelledby="volunteer-title">
       <div class="container participation__container">
-        <div class="participation__heading reveal">
+        <!-- Letrero visual de Voluntariado; el h1 permanece disponible para lectores de pantalla. -->
+        <div class="participation__heading section-sign section-sign--voluntariado reveal">
           <p class="eyebrow participation__eyebrow">RED DE VOLUNTARIADO · COMUNIDAD INTERNACIONAL</p>
-          <h1 id="volunteer-title">Súmate a una red que acciona desde el territorio.</h1>
-          <p>Participa desde cualquier lugar del mundo en una comunidad diversa que comparte saberes, cuida las semillas y construye experiencias rurales con respeto, colaboración y conciencia de género.</p>
+          <h1 class="sr-only" id="volunteer-title">Súmate a una red que acciona desde el territorio.</h1>
+          <img class="section-sign__image" src="../assets/img/letreros/voluntariado.png" alt="" aria-hidden="true" width="1024" height="1536">
         </div>
 
         <form class="membership-controls reveal" aria-label="Opciones para consultar los precios">
@@ -175,7 +202,7 @@
       <div class="container">
         <div class="volunteer-experiences__heading reveal">
           <p class="eyebrow volunteer-experiences__eyebrow">VOLUNTARIADO · APRENDIZAJES COMPARTIDOS</p>
-          <h2 id="experiences-title">Experiencias que dejan huella en el territorio.</h2>
+          <h2 id="experiences-title">Experiencias que dejan huellas…</h2>
           <p>Selecciona una bitácora para conocer cómo cada voluntaria llegó, compartió y se llevó un aprendizaje de Las Ñañas.</p>
         </div>
 
@@ -214,27 +241,6 @@
         </div>
         <!-- Aviso editorial para evitar atribuir testimonios no autorizados -->
         <p class="volunteer-experiences__note">Los relatos actuales son textos de ejemplo y deben reemplazarse por testimonios autorizados.</p>
-      </div>
-    </section>
-
-    <!-- SECCIÓN: SORTEO MENSUAL CON PLANETA ANIMADO Y ESTRELLAS (Intacta) -->
-    <section class="section-shell section sweepstakes-section reveal">
-      <canvas class="particles-canvas sweepstakes-stars" aria-hidden="true"></canvas>
-      <div class="container sweepstakes-container">
-        <div class="sweepstakes-content">
-          <p class="eyebrow sweepstakes-eyebrow">Beneficio Exclusivo</p>
-          <h2 class="sweepstakes-title">Sorteo Mensual Global</h2>
-          <p class="sweepstakes-text">Al ser parte de cualquier membresía de nuestro voluntariado, ingresas automáticamente a nuestro sorteo mensual. Queremos compartir nuestra cultura sin fronteras.</p>
-          <p class="highlight-text sweepstakes-highlight">Enviamos un regalo sorpresa con la esencia de Las Ñañas y el Wallmapu a <strong>cualquier lugar del planeta</strong>. ¡Tú podrías ser el próximo!</p>
-        </div>
-        <div class="sweepstakes-visual">
-          <div class="planet-wrapper">
-            <div class="planet"></div>
-            <div class="orbit">
-              <div class="gift-box">🎁</div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 

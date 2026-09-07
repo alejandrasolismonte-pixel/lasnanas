@@ -127,7 +127,7 @@
 /* Encabezado editorial y textos introductorios */
 .volunteer-experiences__heading { max-width: 780px; margin-bottom: clamp(2.4rem,6vw,4rem); }
 .volunteer-experiences__eyebrow { color: #ff6816; }
-.volunteer-experiences__heading h2 { max-width: 760px; margin: 0 0 1rem; font-family: 'Fraunces',serif; font-size: clamp(2.35rem,5.5vw,4.75rem); font-style: italic; line-height: 1.05; }
+.volunteer-experiences__heading h2 { max-width: 760px; margin: 0 0 1rem; font-family: 'Fraunces',serif; font-size: clamp(1.9rem,4vw,3.25rem); font-style: italic; line-height: 1.08; }
 .volunteer-experiences__heading > p:last-child { max-width: 620px; color: #c7d1d4; font-size: 1.05rem; line-height: 1.65; }
 
 /* Distribución de selectores a la izquierda y bitácora a la derecha */
@@ -274,23 +274,18 @@
 @media (prefers-reduced-motion: reduce) { .volunteer-person, .volunteer-person__portrait, .volunteer-person__portrait img, .volunteer-entry { animation: none; transition: none; } }
 
 /* ============================================================
-   3. SECCIÓN SORTEO MENSUAL (Planeta y Regalo) - INTACTO
+   3. SECCIÓN SORTEO MENSUAL (Planeta y joya artesanal)
    ============================================================ */
-.sweepstakes-section {
-  background: var(--surface-2);
-  border-radius: 24px;
-  padding: 4rem 2rem;
-  margin: 4rem 0;
-  border: 1px solid var(--line);
-  overflow: hidden;
-}
-
 .sweepstakes-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 3rem;
 }
+
+.sweepstakes-content { grid-column: 1; grid-row: 1; }
+.sweepstakes-visual { grid-column: 2; grid-row: 1 / span 2; }
+.sweepstakes-highlight { grid-column: 1; grid-row: 2; }
 
 @media (max-width: 768px) {
   .sweepstakes-container {
@@ -316,54 +311,134 @@
   }
 }
 
-/* Animación del Planeta y Regalo */
+/* Planeta editorial: el beneficio se entiende antes de leer el detalle. */
 .sweepstakes-visual {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 250px;
+  min-height: 390px;
 }
 
 .planet-wrapper {
   position: relative;
-  width: 180px;
-  height: 180px;
+  width: 210px;
+  height: 210px;
 }
 
 .planet {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
   width: 100%;
   height: 100%;
+  padding: 2rem;
   border-radius: 50%;
-  /* Patrón estilo planeta tierra */
-  background: radial-gradient(circle at 30% 30%, #0b1e5c, #166534);
-  box-shadow: 
-    inset -20px -20px 40px rgba(0, 0, 0, 0.5), 
-    0 0 30px rgba(52, 211, 153, 0.4);
-  animation: floatPlanet 6s ease-in-out infinite;
+  background:
+    radial-gradient(ellipse at 30% 28%, rgba(89, 184, 118, .82) 0 12%, transparent 13%),
+    radial-gradient(ellipse at 67% 61%, rgba(39, 122, 76, .88) 0 17%, transparent 18%),
+    radial-gradient(circle at 32% 27%, #2b7da1, #123f67 58%, #071a31 100%);
+  box-shadow:
+    inset -24px -22px 42px rgba(0, 0, 0, .58),
+    inset 12px 10px 24px rgba(163, 230, 203, .14),
+    0 0 34px rgba(52, 211, 153, .36);
+  animation: floatPlanet 8s ease-in-out infinite;
+}
+
+.sweepstakes-title {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #eef3f7 !important;
+  background: linear-gradient(180deg, #ffffff 0%, #d7dde2 38%, #929da5 68%, #f3f6f8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(1.6rem, 2.7vw, 2rem);
+  font-style: italic;
+  font-weight: 700;
+  line-height: .98;
+  text-align: center;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 7px rgba(0, 0, 0, .9));
+}
+
+.sweepstakes-title span {
+  display: block;
+  margin-bottom: .12rem;
+  color: #dce3e8;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.28em;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: none;
+  -webkit-text-fill-color: #edf2f5;
 }
 
 .orbit {
   position: absolute;
+  z-index: 3;
   top: 50%;
   left: 50%;
-  width: 260px;
-  height: 260px;
-  margin-top: -130px;
-  margin-left: -130px;
+  width: 310px;
+  height: 310px;
+  margin-top: -155px;
+  margin-left: -155px;
   border-radius: 50%;
-  border: 2px dashed rgba(234, 88, 12, 0.3);
-  animation: spinOrbit 10s linear infinite;
+  border: 1px dashed rgba(242, 153, 74, .48);
+  animation: spinOrbit 22s linear infinite;
 }
 
-.gift-box {
+.sweepstakes-prize {
   position: absolute;
-  top: -15px; /* Lo sitúa en el borde de la órbita */
+  top: -62px;
   left: 50%;
-  margin-left: -15px;
-  font-size: 2rem;
-  filter: drop-shadow(0 5px 10px rgba(234, 88, 12, 0.6));
-  /* Contra-rotación para que el regalo no se ponga de cabeza */
-  animation: counterSpin 10s linear infinite, floatGift 2s ease-in-out infinite;
+  display: flex;
+  width: 112px;
+  margin-left: -56px;
+  flex-direction: column;
+  align-items: center;
+  gap: .25rem;
+  animation: counterSpin 22s linear infinite, floatPrize 3.6s ease-in-out infinite;
+}
+
+.sweepstakes-prize img {
+  display: block;
+  width: 76px;
+  height: 96px;
+  object-fit: contain;
+  filter: drop-shadow(0 7px 10px rgba(0, 0, 0, .62));
+}
+
+.sweepstakes-prize span {
+  position: relative;
+  padding: .46rem .64rem .44rem 1.05rem;
+  color: #392315;
+  background:
+    repeating-linear-gradient(0deg, rgba(95, 55, 28, .05) 0 1px, transparent 1px 4px),
+    linear-gradient(135deg, #f0d6aa, #c99b62);
+  border: 0;
+  border-radius: 2px;
+  clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  line-height: 1;
+  white-space: nowrap;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .5));
+  transform: rotate(-4deg);
+}
+
+.sweepstakes-prize span::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 7px;
+  width: 4px;
+  height: 4px;
+  background: #694326;
+  border-radius: 50%;
+  transform: translateY(-50%);
 }
 
 /* Keyframes */
@@ -377,22 +452,48 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
-@keyframes floatGift {
+@keyframes floatPrize {
   0%, 100% { margin-top: 0; }
-  50% { margin-top: -10px; }
+  50% { margin-top: -6px; }
 }
 /* ============================================================
    AJUSTES PARA EL FONDO DE ESTRELLAS EN EL SORTEO
    ============================================================ */
 .sweepstakes-section {
-  /* Fondo oscuro tipo "espacio profundo" para que resalten las estrellas */
-  background: linear-gradient(135deg, #1e1f22, #010207) !important;
-  border-radius: 24px;
+  background:
+    radial-gradient(circle at 76% 42%, rgba(31, 109, 76, .14), transparent 30%),
+    linear-gradient(135deg, #171d24, #0b121b) !important;
+  border-radius: 0;
   padding: 4rem 2rem;
-  margin: 4rem 0;
+  margin: 0;
   border: 1px solid var(--line);
+  border-bottom: 0;
   overflow: hidden;
   position: relative; /* Crucial para posicionar el canvas de estrellas */
+}
+
+/* Une visualmente el sorteo con las membresías, sin salto ni esquinas enfrentadas. */
+.sweepstakes-section + .participation {
+  border-radius: 0 0 1.5rem 1.5rem;
+}
+
+/* Se despliega suavemente desde el header cada vez que carga la página. */
+.sweepstakes-section--intro {
+  transform-origin: top center;
+  animation: sweepstakesSectionReveal 1.15s cubic-bezier(.22, .78, .25, 1) both;
+}
+
+@keyframes sweepstakesSectionReveal {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: translateY(0);
+  }
 }
 
 /* El lienzo (canvas) donde se dibujan las estrellas */
@@ -412,24 +513,64 @@
   z-index: 1;
 }
 
+.sweepstakes-content { max-width: 570px; }
+.sweepstakes-text { max-width: 520px; font-size: clamp(1.05rem, 1.8vw, 1.22rem); line-height: 1.55; }
+
 /* Ajustes de color de texto para el fondo oscuro espacial */
 .sweepstakes-eyebrow {
   color: #34d399 !important; /* Verde claro brillante */
 }
 
-.sweepstakes-title,
 .sweepstakes-text {
   color: #f8fafc !important; /* Texto blanco/gris muy claro */
 }
 
 .sweepstakes-highlight {
   color: #f8fafc !important;
-  border-left: 4px solid #313b50 !important; /* Borde verde brillante */
+  border-left: 4px solid #bfc8cf !important;
+  line-height: 1.55;
 }
 
 @media (max-width: 768px) {
+  .sweepstakes-section { padding: 3rem 1rem; }
+  .sweepstakes-container { gap: 2rem; }
+  .sweepstakes-content { max-width: 620px; margin-inline: auto; }
+  .sweepstakes-text { margin-inline: auto; }
+  .sweepstakes-content { grid-column: 1; grid-row: 1; }
+  .sweepstakes-visual { grid-column: 1; grid-row: 2; min-height: 330px; }
+  .sweepstakes-highlight { grid-column: 1; grid-row: 3; margin: 0 auto; }
+  .planet-wrapper { width: 180px; height: 180px; }
+  .orbit { width: 270px; height: 270px; margin-top: -135px; margin-left: -135px; }
+  .sweepstakes-prize { top: -52px; width: 100px; margin-left: -50px; }
+  .sweepstakes-prize img { width: 64px; height: 80px; }
   .sweepstakes-highlight {
     border-left: none !important;
-    border-bottom: 4px solid #4434d3 !important;
+    border-bottom: 4px solid #bfc8cf !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
+  .sweepstakes-section { padding-block: 2rem; }
+  .sweepstakes-container { grid-template-columns: 1fr 1fr; gap: 1.5rem; text-align: left; }
+  .sweepstakes-content { grid-column: 1; grid-row: 1; }
+  .sweepstakes-highlight { grid-column: 1; grid-row: 2; border-left: 4px solid #bfc8cf !important; border-bottom: 0 !important; }
+  .sweepstakes-visual { grid-column: 2; grid-row: 1 / span 2; min-height: 275px; }
+  .planet-wrapper { width: 150px; height: 150px; }
+  .orbit { width: 224px; height: 224px; margin-top: -112px; margin-left: -112px; }
+  .sweepstakes-prize { top: -46px; width: 88px; margin-left: -44px; }
+  .sweepstakes-prize img { width: 54px; height: 67px; }
+  .sweepstakes-prize span { font-size: .62rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .planet,
+  .orbit,
+  .sweepstakes-prize,
+  .sweepstakes-section--intro { animation: none; }
+
+  .sweepstakes-section--intro {
+    opacity: 1;
+    clip-path: none;
+    transform: none;
   }
 }

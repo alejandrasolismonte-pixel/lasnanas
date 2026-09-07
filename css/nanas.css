@@ -195,7 +195,9 @@
 .nn-faces__heading {
   text-align: center;
   max-width: 640px;
-  margin: 0 auto 3rem;
+  /* AJUSTE MANUAL: cambia .75rem para separar el título de la ventana.
+     Un valor menor los acerca; un valor mayor los separa. */
+  margin: 0 auto .75rem;
 }
 
 .nn-faces__heading h2 {
@@ -213,11 +215,11 @@
 .reciprocity {
   /* EDICIÓN RÁPIDA: colores, altura, espaciado y velocidad de la cortina. */
   --reciprocity-bg: #0c141d;
-  --reciprocity-paper: #f7f3e9;
-  --reciprocity-text: #172319;
+  --reciprocity-paper: #c8955c;
+  --reciprocity-text: #241208;
   --reciprocity-muted: #b9c3c1;
   --reciprocity-orange: #f26a21;
-  --reciprocity-green: #136b45;
+  --reciprocity-green: #173d29;
   --reciprocity-card-height: 360px;
   --reciprocity-padding-y: 42px;
   --reciprocity-transition: .68s;
@@ -239,7 +241,8 @@
 .reciprocity__kicker { margin: 0 0 10px; color: var(--reciprocity-orange); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-align: center; text-transform: uppercase; }
 .reciprocity h2 { max-width: 680px; margin: 0 auto 14px; color: #eef2ec; font-family: 'Fraunces', Georgia, serif; font-size: clamp(29px, 4vw, 44px); font-weight: 500; line-height: 1.06; text-align: center; }
 .reciprocity__intro { max-width: 640px; margin: 0 auto 32px; color: var(--reciprocity-muted); font-size: 14px; line-height: 1.55; text-align: center; }
-.reciprocity__group + .reciprocity__group { margin-top: 24px; }
+/* Separa visualmente las necesidades del bloque de saberes que se transmiten. */
+.reciprocity__group + .reciprocity__group { margin-top: clamp(56px, 6vw, 80px); }
 .reciprocity__group-title { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; color: #f5efe2; font-family: 'Fraunces', Georgia, serif; font-size: clamp(20px, 2.4vw, 27px); font-weight: 500; }
 .reciprocity__group-title::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, var(--reciprocity-orange), rgba(242, 106, 33, 0)); }
 .reciprocity__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; padding-bottom: 40px; }
@@ -248,20 +251,54 @@
 .reciprocity__group:first-of-type .reciprocity-card:nth-child(1) { transform: translateY(0); }
 .reciprocity__group:first-of-type .reciprocity-card:nth-child(2) { transform: translateY(20px); }
 .reciprocity__group:first-of-type .reciprocity-card:nth-child(3) { transform: translateY(40px); }
-.reciprocity__group:last-of-type .reciprocity-card:nth-child(1) { transform: translateY(40px); }
+.reciprocity__group:last-of-type .reciprocity-card:nth-child(1) { transform: translateY(0); }
 .reciprocity__group:last-of-type .reciprocity-card:nth-child(2) { transform: translateY(20px); }
-.reciprocity__group:last-of-type .reciprocity-card:nth-child(3) { transform: translateY(0); }
+.reciprocity__group:last-of-type .reciprocity-card:nth-child(3) { transform: translateY(40px); }
 
 .reciprocity-card { position: relative; width: 100%; height: var(--reciprocity-card-height); padding: 0; overflow: hidden; isolation: isolate; color: var(--reciprocity-text); text-align: left; border: 0; border-radius: 3px; background: #17281e; box-shadow: 0 10px 24px rgba(0, 0, 0, .18); cursor: pointer; }
 .reciprocity-card:focus-visible { outline: 3px solid var(--reciprocity-orange); outline-offset: 4px; }
 
-/* ÁREA CLARA: height controla la ilustración inicialmente visible; padding, el aire del texto. */
-.reciprocity-card__copy { position: absolute; z-index: 3; inset: 0 0 auto; display: flex; height: 74%; padding: 22px 21px 17px; flex-direction: column; border-radius: 0 0 50% 50% / 0 0 9% 9%; background: var(--reciprocity-paper); box-shadow: 0 7px 14px rgba(10, 20, 14, .14); transition: transform var(--reciprocity-transition) cubic-bezier(.22, .82, .22, 1); }
-.reciprocity-card__number { margin-bottom: 10px; color: #c84b16; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
+/* CORTINA DE MADERA: sólo cambia color y textura; conserva medidas y movimiento. */
+.reciprocity-card__copy {
+  position: absolute;
+  z-index: 3;
+  inset: 0 0 auto;
+  display: flex;
+  height: 74%;
+  padding: 22px 21px 17px;
+  flex-direction: column;
+  border-radius: 0 0 50% 50% / 0 0 9% 9%;
+  background:
+    radial-gradient(ellipse at 18% 28%, rgba(75, 36, 14, .22) 0 2px, transparent 3px 10px, rgba(92, 47, 19, .12) 11px 12px, transparent 13px),
+    radial-gradient(ellipse at 82% 68%, rgba(80, 38, 14, .18) 0 2px, transparent 3px 9px, rgba(255, 226, 174, .12) 10px 12px, transparent 13px),
+    repeating-linear-gradient(2deg, rgba(83, 42, 17, .09) 0 1px, transparent 1px 7px),
+    linear-gradient(102deg, #b97b40 0%, #d7a66c 24%, var(--reciprocity-paper) 50%, #dda96d 72%, #ad6f36 100%);
+  background-size: 180px 130px, 210px 145px, 100% 12px, auto;
+  box-shadow: 0 7px 14px rgba(10, 20, 14, .14);
+  transition: transform var(--reciprocity-transition) cubic-bezier(.22, .82, .22, 1);
+}
+.reciprocity-card__number { margin-bottom: 10px; color: #3d1b0b; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
 .reciprocity-card__heading { display: block; margin: 0 0 9px; font-family: 'Fraunces', Georgia, serif; font-size: 21px; font-weight: 500; line-height: 1.08; }
-.reciprocity-card__body { display: block; color: #39453d; font-family: 'DM Sans', Arial, sans-serif; font-size: 13px; line-height: 1.43; }
+.reciprocity-card__body { display: block; color: #2d1a0f; font-family: 'DM Sans', Arial, sans-serif; font-size: 13px; line-height: 1.43; }
 .reciprocity-card__extra { display: block; margin-top: 7px; color: var(--reciprocity-green); font-weight: 700; }
-.reciprocity-card__hint { margin-top: auto; padding-top: 10px; color: #16734a; font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.reciprocity-card__hint { margin-top: auto; padding-top: 10px; color: #173d29; font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+
+/* SEGUNDO GRUPO: madera nogal oscura para distinguir los saberes que se transmiten. */
+.reciprocity__group:last-of-type .reciprocity-card__copy {
+  color: #fff4df;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(20, 8, 3, .38) 0 2px, transparent 3px 10px, rgba(231, 174, 104, .12) 11px 12px, transparent 13px),
+    radial-gradient(ellipse at 80% 66%, rgba(22, 9, 3, .34) 0 2px, transparent 3px 9px, rgba(245, 196, 128, .1) 10px 12px, transparent 13px),
+    repeating-linear-gradient(2deg, rgba(24, 9, 3, .2) 0 1px, transparent 1px 7px),
+    linear-gradient(102deg, #4a2513 0%, #70401f 24%, #5b3018 50%, #774622 72%, #3d1d0f 100%);
+  background-size: 180px 130px, 210px 145px, 100% 12px, auto;
+}
+
+.reciprocity__group:last-of-type .reciprocity-card__number { color: #ffd39a; }
+.reciprocity__group:last-of-type .reciprocity-card__body { color: #f8ead5; }
+.reciprocity__group:last-of-type .reciprocity-card__extra { color: #bfe8c9; }
+.reciprocity__group:last-of-type .reciprocity-card__hint { color: #d8f2df; }
+
 .reciprocity-card__image { position: absolute; z-index: 2; inset: 0; overflow: hidden; transition: transform var(--reciprocity-transition) cubic-bezier(.22, .82, .22, 1); }
 .reciprocity-card__image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6, 15, 12, .02), rgba(6, 15, 12, .15)); }
 .reciprocity-card__image img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -286,7 +323,8 @@
   .reciprocity-card__heading { font-size: 21px; }
   .reciprocity-card__body { font-size: 13px; }
   .reciprocity-card__copy { padding: 22px 21px 17px; }
-  .reciprocity__group + .reciprocity__group { margin-top: 34px; }
+  /* En móvil deja respirar el segundo título respecto de la última tarjeta clara. */
+  .reciprocity__group + .reciprocity__group { margin-top: 64px; }
 }
 
 @media (max-width: 480px) {
@@ -302,13 +340,32 @@
   .reciprocity-card__copy, .reciprocity-card__image, .reciprocity-card__open-label { transition: none; }
 }
 
-/* Separa la cinta animada de los controles y contiene el desplazamiento horizontal. */
+/* Separa la cinta animada de los controles y reserva aire sólo para el marco decorativo. */
 .nn-carousel__viewport {
   position: relative;
   left: 50%;
   width: min(130%, calc(100vw - 2rem), 1500px);
+  /* Compensa el borde transparente del PNG y acerca el marco de madera al título. */
+  margin-top: clamp(-4rem, -4vw, -1.5rem);
+  padding-block: clamp(5.5rem, 10vw, 9.5rem);
   overflow: hidden;
   transform: translateX(-50%);
+}
+
+/* La ventana permanece inmóvil sobre la cinta; su transparencia deja libre el hueco central. */
+.nn-carousel__window-frame {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: auto;
+  max-width: none;
+  height: calc(100% - .75rem);
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
 }
 
 /* Difuminado en los bordes para que el "cinta transportadora" no corte feo */
@@ -447,22 +504,38 @@
   background: var(--nn-ember);
   border-color: var(--nn-ember-light);
 }
+.nn-carousel__button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
 
 @media (max-width: 620px) {
-  /* En celulares muestra una fotografía completa por vez. */
+  /* En celulares prioriza la abertura y permite recortar las hojas laterales. */
   .nn-carousel__viewport {
     left: auto;
     width: 100%;
+    padding-block: 5.5rem;
     transform: none;
   }
   .nanas-ecosystem-page .carousel-slide {
     flex: 0 0 100% !important;
     width: 100%;
   }
+  .carousel-slide figcaption {
+    left: clamp(1.6rem, 9vw, 2.75rem);
+    right: clamp(1.6rem, 9vw, 2.75rem);
+  }
   .nn-carousel__button {
     flex: 1 1 88px;
     min-width: 0;
     padding-inline: .7rem;
+  }
+}
+
+/* MÓVIL VERTICAL: la foto gana altura para llenar mejor la abertura de la ventana. */
+@media (max-width: 620px) and (orientation: portrait) {
+  .nanas-ecosystem-page .carousel-slide {
+    aspect-ratio: 6 / 5;
   }
 }
 
