@@ -155,6 +155,15 @@
   z-index: 3;
 }
 
+@media (max-width: 620px) {
+  /* Centra el CTA completo para que ninguna letra ni hoja quede fuera de pantalla. */
+  .nn-hero__cta-wrap {
+    left: 50%;
+    width: max-content;
+    max-width: calc(100% - 24px);
+  }
+}
+
 .nn-btn {
   display: inline-flex;
   align-items: center;
@@ -188,7 +197,8 @@
    BLOQUE 2 — CARRUSEL "ROSTROS DEL TERRITORIO"
    ============================================================ */
 .nn-faces {
-  padding: 2.5rem 0 4rem;
+  /* ESPACIO ENTRE SECCIONES: reduce el aire después de la ventana. */
+  padding: 2.5rem 0 .5rem;
   background: var(--nn-bg);
 }
 
@@ -221,7 +231,7 @@
   --reciprocity-orange: #f26a21;
   --reciprocity-green: #173d29;
   --reciprocity-card-height: 360px;
-  --reciprocity-padding-y: 42px;
+  --reciprocity-padding-y: 28px;
   --reciprocity-transition: .68s;
   position: relative;
   padding: var(--reciprocity-padding-y) 0 54px;
@@ -472,41 +482,32 @@
   color: var(--nn-ember-light);
 }
 
-/* Coloca controles visibles debajo del carrusel para no cubrir las tarjetas. */
-.nn-carousel__controls {
+/* Puntos compactos: sustituyen los tres botones sin reservar su altura. */
+.nn-carousel__dots {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: .75rem;
-  margin-top: 1.25rem;
-}
-.nn-carousel__button {
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: .55rem;
-  min-height: 44px;
-  padding: .65rem 1rem;
-  border: 1px solid var(--nn-line);
+  min-height: 14px;
+  margin-top: .35rem;
+}
+
+.nn-carousel__dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .2);
+  box-shadow: 0 0 0 0 rgba(242, 106, 33, 0);
+  transition: width .3s ease, background-color .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+
+.nn-carousel__dot.is-active {
+  width: 22px;
+  border-color: var(--nn-ember-light);
   border-radius: 999px;
-  background: var(--nn-surface);
-  color: var(--nn-text);
-  font-weight: 700;
-  transition: transform .2s, background .2s, border-color .2s;
-}
-.nn-carousel__button:hover,
-.nn-carousel__button:focus-visible {
-  transform: translateY(-2px);
   background: var(--nn-ember);
-  border-color: var(--nn-ember-light);
-}
-.nn-carousel__button--pause[aria-pressed="true"] {
-  background: var(--nn-ember);
-  border-color: var(--nn-ember-light);
-}
-.nn-carousel__button:disabled {
-  cursor: not-allowed;
-  opacity: .55;
+  box-shadow: 0 0 10px rgba(242, 106, 33, .45);
 }
 
 @media (max-width: 620px) {
@@ -525,11 +526,7 @@
     left: clamp(1.6rem, 9vw, 2.75rem);
     right: clamp(1.6rem, 9vw, 2.75rem);
   }
-  .nn-carousel__button {
-    flex: 1 1 88px;
-    min-width: 0;
-    padding-inline: .7rem;
-  }
+  .nn-carousel__dots { margin-top: .15rem; }
 }
 
 /* MÓVIL VERTICAL: la foto gana altura para llenar mejor la abertura de la ventana. */
@@ -542,7 +539,7 @@
 @media (prefers-reduced-motion: reduce) {
   .nanas-ecosystem-page .carousel-track { scroll-behavior: auto; }
   .nanas-ecosystem-page .carousel-slide img,
-  .nn-carousel__button { transition: none; }
+  .nn-carousel__dot { transition: none; }
   .carousel-slide:hover img,
   .carousel-slide:focus-within img { transform: none; }
 }
@@ -710,6 +707,13 @@
   margin: 0 auto 3rem;
 }
 
+.nn-ecosystem__heading h2 {
+  max-width: 620px;
+  margin: 0 auto;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  line-height: 1.15;
+}
+
 /* Grid explícito de 3 columnas — evitamos auto-fit porque, si el
    contenedor hereda un ancho o box-sizing conflictivo desde
    desarrollo.css, auto-fit puede colapsar todo a 1 columna. */
@@ -727,6 +731,35 @@
 }
 
 @media (max-width: 620px) {
+  /* TIPOGRAFÍA MÓVIL: evita que el título del ecosistema domine toda la pantalla. */
+  .nn-hero {
+    min-height: auto;
+    padding: 5.75rem 0 4.75rem;
+  }
+
+  .nn-ecosystem {
+    width: 100%;
+    padding: 2rem 0 3.5rem;
+  }
+
+  .nn-ecosystem__heading {
+    max-width: 100%;
+    margin-bottom: 1.75rem;
+  }
+
+  .nn-ecosystem__heading .eyebrow {
+    max-width: 28ch;
+    font-size: .68rem;
+    line-height: 1.45;
+    letter-spacing: .11em;
+  }
+
+  .nn-ecosystem__heading h2 {
+    max-width: 18ch;
+    font-size: clamp(1.75rem, 8vw, 2.1rem);
+    line-height: 1.18;
+  }
+
   .nanas-ecosystem-page .nn-ecosystem__grid {
     grid-template-columns: 1fr !important;
   }

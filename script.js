@@ -1,4 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.querySelector('.landing-menu-toggle');
+    const navigation = document.querySelector('.landing-nav');
+
+    const closeMenu = () => {
+        if (!menuToggle || !navigation) return;
+        menuToggle.setAttribute('aria-expanded', 'false');
+        navigation.classList.remove('is-open');
+    };
+
+    menuToggle?.addEventListener('click', () => {
+        const willOpen = menuToggle.getAttribute('aria-expanded') !== 'true';
+        menuToggle.setAttribute('aria-expanded', String(willOpen));
+        navigation?.classList.toggle('is-open', willOpen);
+    });
+
+    navigation?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+    document.addEventListener('click', event => {
+        if (!event.target.closest('[data-landing-header]')) closeMenu();
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+            closeMenu();
+            menuToggle?.focus();
+        }
+    });
+
     const container = document.getElementById('floating-environment');
     const esMovil = window.innerWidth <= 600;
 

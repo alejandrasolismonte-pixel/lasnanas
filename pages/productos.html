@@ -8,9 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/desarrollo.css?v=36">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=68">
+  <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
 </head>
-<body>
+<body class="products-page">
   <div class="watermark-bg" aria-hidden="true"></div>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
@@ -34,28 +35,48 @@
         <a href="voluntariado.html">Voluntariado</a>
       </nav>
 
-      <a class="header-ecosystem" href="nanas.html" aria-label="Explorar el Ecosistema Las Ñañas">
-        <span class="header-ecosystem__label">Ecosistema <span class="header-ecosystem__name">Las Ñañas</span></span>
-        <span class="header-ecosystem__icon" aria-hidden="true">→</span>
+      <a class="header-ecosystem luxury-btn" href="nanas.html" aria-label="Explorar el Ecosistema Las Ñañas">
+        <svg preserveAspectRatio="none" viewBox="0 0 100 100" class="luxury-btn__border" aria-hidden="true" focusable="false"><path fill="none" d="M5,20 Q50,5 95,20 Q95,50 95,80 Q50,95 5,80 Q5,50 5,20 Z" class="luxury-btn__border-path"></path></svg>
+        <svg viewBox="0 0 15 15" class="luxury-btn__ornament-left" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path><circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle></svg>
+        <span class="luxury-btn__text">Ecosistema Ñañas</span>
+        <svg viewBox="0 0 15 15" class="luxury-btn__ornament-right" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path><circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle></svg>
+        <svg preserveAspectRatio="none" viewBox="0 0 100 100" class="luxury-btn__shine" aria-hidden="true" focusable="false"><defs><linearGradient y2="0%" x2="100%" y1="0%" x1="0%" id="ecosystemShineGradient"><stop stop-color="transparent" offset="0%"></stop><stop stop-color="#fff" stop-opacity=".22" offset="50%"></stop><stop stop-color="transparent" offset="100%"></stop></linearGradient></defs><path fill="url(#ecosystemShineGradient)" d="M0,0 L100,0 L100,100 L0,100Z"></path></svg>
       </a>
     </div>
   </header>
 
   <main id="contenido">
+    <!-- Hero de fuego compartido con Inicio y Ecosistema. -->
+    <section class="page-fire-hero page-fire-hero--productos" aria-labelledby="products-title">
+      <div class="page-fire-hero__video-wrap" aria-hidden="true">
+        <video src="../assets/videos/video-header.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      </div>
+      <div class="page-fire-hero__overlay" aria-hidden="true"></div>
+      <div class="page-fire-hero__content">
+        <p class="eyebrow">Mogelei · lo que crece</p>
+        <h1 class="sr-only" id="products-title">Productos con historia, estación y territorio.</h1>
+        <img class="page-fire-hero__sign" src="../assets/img/letreros/productos.png" alt="" aria-hidden="true" width="1428" height="1102">
+      </div>
+      <div class="page-fire-hero__cta">
+        <a class="plant-cta" href="voluntariado.html">
+          <span class="plant-cta__label">Súmate como voluntaria/o</span>
+          <span class="plant-cta__leaf plant-cta__leaf--1" aria-hidden="true"><svg viewBox="0 0 208.52 511.88"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-1"></use></svg></span>
+          <span class="plant-cta__leaf plant-cta__leaf--2" aria-hidden="true"><svg viewBox="0 0 420.62 554.38"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-2"></use></svg></span>
+          <span class="plant-cta__leaf plant-cta__leaf--3" aria-hidden="true"><svg viewBox="0 0 313.64 405.79"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-3"></use></svg></span>
+          <span class="plant-cta__leaf plant-cta__leaf--4" aria-hidden="true"><svg viewBox="0 0 359.65 724.72"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-4"></use></svg></span>
+          <span class="plant-cta__leaf plant-cta__leaf--5" aria-hidden="true"><svg viewBox="0 0 513.57 1042.57"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-5"></use></svg></span>
+        </a>
+      </div>
+      <div class="page-fire-hero__seam" aria-hidden="true"></div>
+    </section>
+
     <section class="section-shell section section--products" aria-labelledby="products-title">
       <div class="container">
-        <!-- Letrero visual de Productos; el título textual sigue accesible. -->
-        <div class="section-heading section-heading--wide section-sign section-sign--productos reveal">
-          <p class="eyebrow">Mogelei · lo que crece</p>
-          <h1 class="sr-only" id="products-title">Productos con historia, estación y territorio.</h1>
-          <img class="section-sign__image" src="../assets/img/letreros/productos.png" alt="" aria-hidden="true" width="1428" height="1102">
-        </div>
-        
         <div class="product-filters" role="group" aria-label="Filtrar productos">
-          <button class="product-filter is-active" type="button" data-product-filter="all">Todos</button>
-          <button class="product-filter" type="button" data-product-filter="mermeladas">Mermeladas</button>
-          <button class="product-filter" type="button" data-product-filter="chocolates">Chocolates artesanales mapuches</button>
-          <button class="product-filter" type="button" data-product-filter="nanas">Productos Ñañas</button>
+          <button class="product-filter filter-choice filter-choice--all is-active" type="button" data-product-filter="all" aria-pressed="true">Todos</button>
+          <button class="product-filter filter-choice filter-choice--jams" type="button" data-product-filter="mermeladas" aria-pressed="false">Mermeladas</button>
+          <button class="product-filter filter-choice filter-choice--chocolate" type="button" data-product-filter="chocolates" aria-pressed="false">Chocolate mapuche</button>
+          <button class="product-filter filter-choice filter-choice--nanas" type="button" data-product-filter="nanas" aria-pressed="false">Productos Ñañas</button>
         </div>
         
         <div class="product-grid">
@@ -117,7 +138,8 @@
           <a href="mailto:equipolasnanas.aiep@gmail.com">equipolasnanas.aiep@gmail.com</a>
         </div>
         
-        <form class="contact-form reveal" data-contact-form>
+        <form class="contact-form reveal" data-contact-form action="https://formspree.io/f/xyeynlka" method="POST">
+          <input type="hidden" name="subject" value="Las Ñañas | Productos">
           <label>Nombre<input name="nombre" type="text" autocomplete="name" required></label>
           <label>Ciudad de envío<input name="pais" type="text" required></label>
           <label>Correo electrónico<input name="email" type="email" autocomplete="email" required></label>
@@ -154,6 +176,7 @@
     </div>
   </footer>
 
-  <script src="../js/desarrollo.js"></script>
+  <script src="../js/desarrollo.js?v=20"></script>
+  <script src="../js/whatsapp-floating.js?v=3"></script>
 </body>
 </html>

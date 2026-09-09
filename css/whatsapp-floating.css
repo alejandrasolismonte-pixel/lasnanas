@@ -1,0 +1,168 @@
+/* Botón flotante de WhatsApp inspirado en Uiverse.io por Gaurang7717. */
+.whatsapp-floating {
+  --whatsapp-green: #00d757; /* COLOR DEL BOTÓN: edita este valor para cambiar el verde. */
+  --whatsapp-white: #fff;
+  position: fixed;
+  right: max(32px, calc(env(safe-area-inset-right, 0px) + 20px));
+  bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 32px));
+  z-index: 45;
+  display: flex;
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  overflow: hidden;
+  align-items: center;
+  justify-content: flex-start;
+  border: 0;
+  border-radius: 50%;
+  background: var(--whatsapp-green);
+  color: var(--whatsapp-white);
+  font-family: inherit;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, .2);
+  cursor: pointer;
+  isolation: isolate;
+  transition: width .3s ease, border-radius .3s ease, transform .3s ease,
+    opacity .3s ease, box-shadow .3s ease;
+}
+
+.whatsapp-floating,
+.whatsapp-floating * {
+  box-sizing: border-box;
+}
+
+.whatsapp-floating__sign {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  transition: width .3s ease, padding-left .3s ease;
+}
+
+.whatsapp-floating__sign svg {
+  display: block;
+  width: 25px;
+  height: 25px;
+}
+
+.whatsapp-floating__sign path {
+  fill: var(--whatsapp-white);
+}
+
+.whatsapp-floating__label {
+  position: absolute;
+  right: 0;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  color: var(--whatsapp-white);
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: width .3s ease, padding-right .3s ease, opacity .3s ease;
+}
+
+.whatsapp-floating:is(.is-expanded, :focus-visible) {
+  width: 150px;
+  border-radius: 40px;
+  box-shadow: 2px 4px 14px rgba(0, 0, 0, .26);
+}
+
+.whatsapp-floating:is(.is-expanded, :focus-visible) .whatsapp-floating__sign {
+  width: 30%;
+  padding-left: 10px;
+}
+
+.whatsapp-floating:is(.is-expanded, :focus-visible) .whatsapp-floating__label {
+  width: 70%;
+  padding-right: 10px;
+  opacity: 1;
+}
+
+/* El hover sólo se activa en dispositivos con puntero preciso; así no queda pegado en móvil. */
+@media (hover: hover) and (pointer: fine) {
+  .whatsapp-floating:hover {
+    width: 150px;
+    border-radius: 40px;
+    box-shadow: 2px 4px 14px rgba(0, 0, 0, .26);
+  }
+
+  .whatsapp-floating:hover .whatsapp-floating__sign {
+    width: 30%;
+    padding-left: 10px;
+  }
+
+  .whatsapp-floating:hover .whatsapp-floating__label {
+    width: 70%;
+    padding-right: 10px;
+    opacity: 1;
+  }
+}
+
+.whatsapp-floating:focus-visible {
+  outline: 3px solid var(--whatsapp-white);
+  outline-offset: 4px;
+}
+
+.whatsapp-floating:active {
+  transform: translate(2px, 2px);
+}
+
+body.menu-open .whatsapp-floating,
+body:has(dialog[open]) .whatsapp-floating {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.whatsapp-floating.is-near-form {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+}
+
+/* ESCRITORIO: tamaño y ubicación aproximados a la referencia marcada. */
+@media (min-width: 601px) {
+  .whatsapp-floating {
+    right: clamp(90px, 7.5vw, 140px);
+    bottom: clamp(96px, 12vh, 130px);
+    width: 72px;
+    height: 72px;
+  }
+
+  .whatsapp-floating__sign svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .whatsapp-floating:is(.is-expanded, :focus-visible) {
+    width: 210px;
+  }
+
+  .whatsapp-floating__label {
+    font-size: 1.15rem;
+  }
+}
+
+@media (min-width: 601px) and (hover: hover) and (pointer: fine) {
+  .whatsapp-floating:hover {
+    width: 210px;
+  }
+}
+
+@media (max-width: 600px) {
+  .whatsapp-floating {
+    right: max(14px, calc(env(safe-area-inset-right, 0px) + 10px));
+    bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-floating,
+  .whatsapp-floating__sign,
+  .whatsapp-floating__label {
+    transition: none;
+  }
+}

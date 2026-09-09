@@ -4,11 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!carousel || !track) return;
 
   const originalSlides = Array.from(track.children);
-  const prevButton = carousel.querySelector('[data-carousel-prev]');
-  const nextButton = carousel.querySelector('[data-carousel-next]');
-  const toggleButton = carousel.querySelector('[data-carousel-toggle]');
-  const toggleIcon = carousel.querySelector('[data-carousel-toggle-icon]');
-  const toggleLabel = carousel.querySelector('[data-carousel-toggle-label]');
+  const dots = Array.from(carousel.querySelectorAll('.nn-carousel__dot'));
   const status = carousel.querySelector('[data-carousel-status]');
 
   /* VELOCIDAD DEL MOVIMIENTO HACIA LA IZQUIERDA:
@@ -30,11 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let position = 0;
   let previousTime;
-  let isPaused = false;
   let isDragging = false;
   let dragStartX = 0;
   let dragStartPosition = 0;
   let autoPauseUntil = 0;
+  let activeIndex = -1;
 
   const getLoopWidth = () => track.scrollWidth / 3;
 
@@ -49,18 +45,29 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderPosition() {
     normalizePosition();
     track.scrollLeft = position;
+    updateActiveIndicator();
   }
 
-  // Mantiene coherente el control cuando el sistema solicita reducir el movimiento.
-  function updateMotionPreferenceControl() {
-    if (!toggleButton) return;
-    toggleButton.disabled = reducedMotion.matches;
-    if (reducedMotion.matches) {
-      toggleButton.setAttribute('aria-label', 'Movimiento automático desactivado por preferencia del sistema');
-    } else {
-      toggleButton.setAttribute('aria-label', isPaused
-        ? 'Reanudar movimiento automático'
-        : 'Pausar movimiento automático');
+  // Marca el punto correspondiente a la fotografía más cercana al centro de la ventana.
+  function updateActiveIndicator() {
+    const viewportCenter = position + (track.clientWidth / 2);
+    let closestIndex = 0;
+    let closestDistance = Infinity;
+
+    Array.from(track.children).forEach((slide, index) => {
+      const slideCenter = slide.offsetLeft + (slide.offsetWidth / 2);
+      const distance = Math.abs(slideCenter - viewportCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index % originalSlides.length;
+      }
+    });
+
+    if (closestIndex === activeIndex) return;
+    activeIndex = closestIndex;
+    dots.forEach((dot, index) => dot.classList.toggle('is-active', index === activeIndex));
+    if (status) {
+      status.textContent = `Fotografía ${activeIndex + 1} de ${originalSlides.length}.`;
     }
   }
 
@@ -83,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const elapsedSeconds = Math.min((currentTime - previousTime) / 1000, 0.05);
     previousTime = currentTime;
 
-    if (!isPaused && !isDragging && !reducedMotion.matches && currentTime >= autoPauseUntil) {
+    if (!isDragging && !reducedMotion.matches && currentTime >= autoPauseUntil) {
       const distance = VELOCIDAD_HACIA_LA_IZQUIERDA * elapsedSeconds;
       const nextCenteredPosition = getNextCenteredPosition();
 
@@ -98,42 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.requestAnimationFrame(animate);
   }
-
-  function getSlideStep() {
-    const firstSlide = originalSlides[0];
-    const secondSlide = originalSlides[1];
-    if (!firstSlide) return 0;
-    return secondSlide
-      ? secondSlide.offsetLeft - firstSlide.offsetLeft
-      : firstSlide.getBoundingClientRect().width;
-  }
-
-  prevButton?.addEventListener('click', () => {
-    autoPauseUntil = 0;
-    position -= getSlideStep();
-    renderPosition();
-  });
-
-  nextButton?.addEventListener('click', () => {
-    autoPauseUntil = 0;
-    position += getSlideStep();
-    renderPosition();
-  });
-
-  toggleButton?.addEventListener('click', () => {
-    isPaused = !isPaused;
-    toggleButton.setAttribute('aria-pressed', String(isPaused));
-    toggleButton.setAttribute('aria-label', isPaused
-      ? 'Reanudar movimiento automático'
-      : 'Pausar movimiento automático');
-    if (toggleIcon) toggleIcon.textContent = isPaused ? '▶' : 'Ⅱ';
-    if (toggleLabel) toggleLabel.textContent = isPaused ? 'Reanudar' : 'Pausar';
-    if (status) status.textContent = isPaused
-      ? 'Movimiento automático pausado.'
-      : 'Movimiento automático reanudado.';
-    previousTime = undefined;
-    autoPauseUntil = 0;
-  });
 
   track.addEventListener('pointerdown', event => {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
@@ -167,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
   reducedMotion.addEventListener('change', () => {
     previousTime = undefined;
     autoPauseUntil = 0;
-    updateMotionPreferenceControl();
   });
 
   window.requestAnimationFrame(() => {
@@ -181,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
       .find(candidate => candidate >= loopWidth && candidate < loopWidth * 2);
     position = centeredStart ?? loopWidth;
     autoPauseUntil = performance.now() + PAUSA_CENTRAL_MS;
-    updateMotionPreferenceControl();
     renderPosition();
     window.requestAnimationFrame(animate);
   });

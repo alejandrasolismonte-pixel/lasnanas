@@ -11,9 +11,10 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
   
   <!-- Estilos base del proyecto -->
-  <link rel="stylesheet" href="../css/desarrollo.css?v=36">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=68">
   <!-- Estilos específicos para los efectos del Voluntariado (Planeta, Glow, Acordeón) -->
   <link rel="stylesheet" href="../css/voluntariado.css?v=5">
+  <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
 </head>
 <body>
   <div class="watermark-bg" aria-hidden="true"></div>
@@ -40,9 +41,12 @@
         <a href="servicios.html">Servicios</a>
       </nav>
 
-      <a class="header-ecosystem" href="nanas.html" aria-label="Explorar el Ecosistema Las Ñañas">
-        <span class="header-ecosystem__label">Ecosistema <span class="header-ecosystem__name">Las Ñañas</span></span>
-        <span class="header-ecosystem__icon" aria-hidden="true">→</span>
+      <a class="header-ecosystem luxury-btn" href="nanas.html" aria-label="Explorar el Ecosistema Las Ñañas">
+        <svg preserveAspectRatio="none" viewBox="0 0 100 100" class="luxury-btn__border" aria-hidden="true" focusable="false"><path fill="none" d="M5,20 Q50,5 95,20 Q95,50 95,80 Q50,95 5,80 Q5,50 5,20 Z" class="luxury-btn__border-path"></path></svg>
+        <svg viewBox="0 0 15 15" class="luxury-btn__ornament-left" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path><circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle></svg>
+        <span class="luxury-btn__text">Ecosistema Ñañas</span>
+        <svg viewBox="0 0 15 15" class="luxury-btn__ornament-right" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path><circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle></svg>
+        <svg preserveAspectRatio="none" viewBox="0 0 100 100" class="luxury-btn__shine" aria-hidden="true" focusable="false"><defs><linearGradient y2="0%" x2="100%" y1="0%" x1="0%" id="ecosystemShineGradient"><stop stop-color="transparent" offset="0%"></stop><stop stop-color="#fff" stop-opacity=".22" offset="50%"></stop><stop stop-color="transparent" offset="100%"></stop></linearGradient></defs><path fill="url(#ecosystemShineGradient)" d="M0,0 L100,0 L100,100 L0,100Z"></path></svg>
       </a>
     </div>
   </header>
@@ -56,6 +60,16 @@
         <div class="sweepstakes-content">
           <p class="eyebrow sweepstakes-eyebrow">Beneficio para todas las membresías</p>
           <p class="sweepstakes-text">Ingresas automáticamente con la inscripción de cualquier membresía.</p>
+          <div class="volunteer-opening-cta-wrap">
+          <a class="plant-cta volunteer-opening-cta" href="#membresias">
+            <span class="plant-cta__label">Súmate como voluntaria/o</span>
+            <span class="plant-cta__leaf plant-cta__leaf--1" aria-hidden="true"><svg viewBox="0 0 208.52 511.88"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-1"></use></svg></span>
+            <span class="plant-cta__leaf plant-cta__leaf--2" aria-hidden="true"><svg viewBox="0 0 420.62 554.38"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-2"></use></svg></span>
+            <span class="plant-cta__leaf plant-cta__leaf--3" aria-hidden="true"><svg viewBox="0 0 313.64 405.79"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-3"></use></svg></span>
+            <span class="plant-cta__leaf plant-cta__leaf--4" aria-hidden="true"><svg viewBox="0 0 359.65 724.72"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-4"></use></svg></span>
+            <span class="plant-cta__leaf plant-cta__leaf--5" aria-hidden="true"><svg viewBox="0 0 513.57 1042.57"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-5"></use></svg></span>
+          </a>
+          </div>
         </div>
         <div class="sweepstakes-visual">
           <div class="planet-wrapper">
@@ -76,7 +90,7 @@
     </section>
     
     <!-- 1. Estructura de precios y membresías de voluntariado -->
-    <section class="section-shell section participation" aria-labelledby="volunteer-title">
+    <section class="section-shell section participation" id="membresias" aria-labelledby="volunteer-title">
       <div class="container participation__container">
         <!-- Letrero visual de Voluntariado; el h1 permanece disponible para lectores de pantalla. -->
         <div class="participation__heading section-sign section-sign--voluntariado reveal">
@@ -257,7 +271,8 @@
           <a href="mailto:equipolasnanas.aiep@gmail.com">equipolasnanas.aiep@gmail.com</a>
         </div>
         
-        <form class="contact-form reveal" data-contact-form>
+        <form class="contact-form reveal" data-contact-form action="https://formspree.io/f/xyeynlka" method="POST">
+          <input type="hidden" name="subject" value="Las Ñañas | Voluntariado">
           <label style="grid-column: 1 / -1;">Nombre completo<input name="nombre" type="text" autocomplete="name" required></label>
           <label>País<input name="pais" type="text" autocomplete="country-name" required></label>
           <label>Edad<input name="edad" type="number" min="18" max="99" required></label>
@@ -304,7 +319,8 @@
   </footer>
 
   <!-- SCRIPTS -->
-  <script src="../js/desarrollo.js"></script>
+  <script src="../js/desarrollo.js?v=20"></script>
   <script src="../js/voluntariado.js"></script>
+  <script src="../js/whatsapp-floating.js?v=3"></script>
 </body>
 </html>

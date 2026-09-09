@@ -11,9 +11,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@500;600&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="css/whatsapp-floating.css?v=3">
 </head>
 <body>
+
+    <a class="landing-skip-link" href="#contenido">Saltar al contenido</a>
+
+    <header class="landing-header" data-landing-header>
+        <div class="landing-header__inner">
+            <a class="landing-brand" href="desarrollo.html#inicio" aria-label="Las Ñañas, ir al inicio">
+                <img src="assets/img/logo.png" alt="" aria-hidden="true">
+                <span>Las Ñañas</span>
+            </a>
+
+            <button class="landing-menu-toggle" type="button" aria-expanded="false" aria-controls="landing-navigation">
+                <span class="landing-sr-only">Abrir menú</span>
+                <span></span><span></span><span></span>
+            </button>
+
+            <nav class="landing-nav" id="landing-navigation" aria-label="Navegación principal">
+                <a href="desarrollo.html#inicio">Inicio</a>
+                <a href="desarrollo.html#quienes-somos">Quiénes somos</a>
+                <a href="pages/servicios.html">Servicios</a>
+                <a href="pages/productos.html">Productos</a>
+                <a href="pages/voluntariado.html">Voluntariado</a>
+            </nav>
+
+            <a class="landing-ecosystem" href="pages/nanas.html">Ecosistema Ñañas</a>
+        </div>
+    </header>
 
     <!-- Fondo oscuro sólido -->
     <div class="dark-background"></div>
@@ -22,7 +49,7 @@
     <div id="floating-environment" aria-hidden="true"></div>
 
     <!-- Contenido Principal -->
-    <main class="main-container">
+    <main class="main-container" id="contenido">
         <!-- Recuadro central -->
         <article class="glass-panel fade-in">
 
@@ -66,6 +93,7 @@
     </main>
 
     <!-- JavaScript Vanilla -->
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
+    <script src="js/whatsapp-floating.js?v=3"></script>
 </body>
 </html>

@@ -95,6 +95,78 @@ button {
   transform: translateY(0);
 }
 
+/* BOTÓN VOLVER ARRIBA: contrapunto discreto al WhatsApp del lado derecho. */
+.back-to-top {
+  position: fixed;
+  left: clamp(24px, 4vw, 64px);
+  bottom: clamp(96px, 12vh, 130px);
+  z-index: 45;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  place-items: center;
+  border: 1.5px solid var(--orange);
+  border-radius: 50%;
+  background: rgba(15, 21, 28, .8);
+  color: #fff;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, .28);
+  backdrop-filter: blur(9px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity .25s ease, visibility .25s ease, transform .25s ease,
+    background-color .25s ease, box-shadow .25s ease;
+}
+
+.back-to-top svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: rgba(234, 88, 12, .9);
+  box-shadow: 0 9px 24px rgba(234, 88, 12, .3);
+  transform: translateY(-3px);
+}
+
+.back-to-top:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+body.menu-open .back-to-top,
+body:has(dialog[open]) .back-to-top {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .back-to-top {
+    left: max(14px, calc(env(safe-area-inset-left, 0px) + 10px));
+    bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+    width: 46px;
+    height: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top { transition: none; }
+}
+
 /* ============================================================
    3. FONDO MARCA DE AGUA MAPUCHE
    ============================================================ */
@@ -116,34 +188,6 @@ button {
   100% { background-position: 1000px 1000px; }
 }
 
-/* ============================================================
-   4. POPUP DE BIENVENIDA ("Mari mari...")
-   ============================================================ */
-.welcome-message {
-  position: fixed;
-  z-index: 100;
-  top: 1rem;
-  left: 50%;
-  transform: translate(-50%, -180%);
-  width: max-content;
-  max-width: calc(100% - 2rem);
-  padding: .75rem 1.1rem;
-  background: rgba(22,101,52,.95);
-  border: 1px solid rgba(174,229,190,.3);
-  border-radius: 999px;
-  box-shadow: var(--shadow);
-  font-weight: 700;
-  transition: transform .65s ease;
-  color: #fff;
-}
-.welcome-message.is-visible {
-  transform: translate(-50%, 0);
-}
-.welcome-message span {
-  color: var(--orange-light);
-}
-
-/* ============================================================
  /* ============================================================
    5. HEADER Y NAVEGACIÓN
    ============================================================ */
@@ -204,19 +248,247 @@ button {
   color: var(--orange-light);
 }
 .header-ecosystem {
-  padding: .55rem .78rem;
-  background: var(--orange);
-  border-radius: 999px;
   color: #fff;
   font-weight: 700;
-  font-size: .9rem; /* Sincronizado al tamaño real deseado */
+  font-size: .984rem;
+  line-height: 1;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform .2s, background .2s;
 }
-.header-ecosystem:hover {
-  background: var(--orange-light);
+.luxury-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 240px;
+  padding: 18px 36px;
+  border: none;
+  border-radius: 0;
+  background: linear-gradient(135deg, #b93808 0%, var(--orange) 55%, #ff7a24 100%);
+  color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+  transform: translateY(0);
+  box-shadow: 0 4.4px 16.5px rgba(234,88,12,.31), 0 2px 7px rgba(0,0,0,.2);
+  transition: transform .2s, box-shadow .2s, background .3s;
+  animation: ecosystem-float-pulse 3.2s ease-in-out infinite;
+}
+@keyframes ecosystem-float-pulse {
+  0%, 100% {
+    translate: 0 0;
+    scale: 1;
+    box-shadow: 0 4.4px 16.5px rgba(234,88,12,.31), 0 2px 7px rgba(0,0,0,.2);
+  }
+  50% {
+    translate: 0 -4px;
+    scale: 1.025;
+    box-shadow: 0 13px 29px rgba(234,88,12,.48), 0 7px 15px rgba(0,0,0,.3);
+  }
+}
+.luxury-btn__text {
+  position: relative;
+  z-index: 2;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.luxury-btn__border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+.luxury-btn__border-path {
+  stroke: #fff;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 0 1000;
+  stroke-dashoffset: 0;
+  opacity: 0;
+}
+.luxury-btn.is-activating .luxury-btn__border-path {
+  animation: ecosystem-border-draw .62s cubic-bezier(.22,.61,.36,1) forwards;
+}
+@keyframes ecosystem-border-draw {
+  0% { stroke-dasharray: 0 1000; opacity: 0; }
+  12% { opacity: .7; }
+  100% { stroke-dasharray: 1000 0; opacity: 1; }
+}
+.luxury-btn__ornament-left,
+.luxury-btn__ornament-right {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  z-index: 2;
+  color: #ffe0c2;
+  transition: transform .3s;
+}
+.luxury-btn__ornament-left { left: 18px; }
+.luxury-btn__ornament-right { right: 18px; }
+.luxury-btn:hover .luxury-btn__ornament-left {
+  transform: translateY(-50%) rotate(-180deg);
+}
+.luxury-btn:hover .luxury-btn__ornament-right {
+  transform: translateY(-50%) rotate(180deg);
+}
+.luxury-btn__shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  animation: ecosystem-shine-effect 4.2s ease-in-out infinite;
+}
+@keyframes ecosystem-shine-effect {
+  0% { transform: translateX(0%); opacity: 0; }
+  10% { opacity: .22; }
+  50% { transform: translateX(200%); opacity: .22; }
+  100% { transform: translateX(200%); opacity: 0; }
+}
+.luxury-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 8.8px 22px rgba(234,88,12,.44), 0 3px 9px rgba(0,0,0,.22);
+  background: linear-gradient(135deg, #c94108 0%, #f46319 55%, #ff914d 100%);
+}
+.luxury-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2.2px 11px rgba(234,88,12,.22), 0 1px 4px rgba(0,0,0,.18);
+  background: linear-gradient(135deg, #9f3007 0%, #d9480b 100%);
+}
+.luxury-btn.is-activating {
+  animation: none;
+  translate: 0 -2px;
+  scale: 1.01;
+}
+.luxury-btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .luxury-btn,
+  .luxury-btn__ornament-left,
+  .luxury-btn__ornament-right { transition: none; }
+  .luxury-btn { animation: none; }
+  .luxury-btn__shine,
+  .luxury-btn.is-activating .luxury-btn__border-path { animation: none; }
+  .luxury-btn.is-activating .luxury-btn__border-path {
+    stroke-dasharray: 1000 0;
+    opacity: 1;
+  }
+}
+
+/* Botones con giro 3D, adaptados del diseño de Uiverse.io de Damithkumara.
+   data-label permite reutilizar el efecto sin perder el texto real y accesible. */
+.uiverse-flip-button.uiverse-flip-button.uiverse-flip-button {
+  /* EDITAR AQUÍ: color del borde de los botones con efecto 3D. */
+  --flip-button-border: var(--orange);
+  /* EDITAR AQUÍ: color de las letras de los botones con efecto 3D. */
+  --flip-button-text: var(--orange);
+  /* EDITAR AQUÍ: cambia este color para modificar el fondo de todos los botones con efecto 3D. */
+  --flip-button-background: #fbfbfc;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: .9em 1.8em;
+  overflow: hidden;
+  color: transparent;
+  background: transparent;
+  border: 3px solid var(--flip-button-border);
+  border-radius: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  line-height: 1.2;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.uiverse-flip-button.uiverse-flip-button.uiverse-flip-button:hover {
+  transform: none;
+}
+
+.uiverse-flip-button.uiverse-flip-button.uiverse-flip-button::before,
+.uiverse-flip-button.uiverse-flip-button.uiverse-flip-button::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 0 .55em;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  color: var(--flip-button-text);
+  background-color: var(--flip-button-background);
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: 1.15;
+  text-align: center;
+  white-space: normal;
+  transition: all 2s;
+}
+
+.uiverse-flip-button.uiverse-flip-button.uiverse-flip-button::after {
+  left: -100%;
+  opacity: 0;
+  transform: scale(0) rotateY(0deg);
+}
+
+.uiverse-flip-button.uiverse-flip-button.uiverse-flip-button:hover::before,
+.uiverse-flip-button.uiverse-flip-button.uiverse-flip-button:focus-visible::before {
+  left: 100%;
+  opacity: 0;
+  transform: scale(0) rotateY(360deg);
+}
+
+.uiverse-flip-button.uiverse-flip-button.uiverse-flip-button:hover::after,
+.uiverse-flip-button.uiverse-flip-button.uiverse-flip-button:focus-visible::after {
+  left: 0;
+  opacity: 1;
+  transform: scale(1) rotateY(360deg);
+}
+
+.uiverse-flip-button:focus-visible {
+  outline: 3px solid var(--flip-button-border);
+  outline-offset: 3px;
+}
+
+.uiverse-flip-button:disabled {
+  cursor: not-allowed;
+  opacity: .35;
+}
+
+@media (max-width: 620px) {
+  .uiverse-flip-button.uiverse-flip-button.uiverse-flip-button {
+    min-width: 0;
+    padding: .8em .75em;
+    font-size: .7rem;
+    letter-spacing: 2px;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uiverse-flip-button.uiverse-flip-button.uiverse-flip-button::before,
+  .uiverse-flip-button.uiverse-flip-button.uiverse-flip-button::after {
+    transition: none;
+  }
 }
 .menu-toggle {
   display: none;
@@ -396,8 +668,15 @@ h2 {
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin: 3rem 0;
+  /* Sin los botones inferiores, el contador puede quedar más cerca del libro. */
+  margin: 1.8rem 0 .8rem;
 }
+/* Compacta el contador y acerca esta sección a la siguiente. */
+#quienes-somos > .container {
+  gap: .75rem !important;
+}
+#quienes-somos.section { padding-bottom: 1.5rem; }
+#nanas.section { padding-top: 1.5rem; }
 /* Conserva la base usada por las escalas actuales de tablet y celular. */
 .nanas-book {
   position: relative;
@@ -523,6 +802,106 @@ h2 {
   line-height: 1.6;
 }
 
+/* Señal visual y táctil que descubre el giro de cada hoja activa. */
+.book-turn-cue {
+  position: absolute;
+  right: clamp(10px, 2vw, 22px);
+  bottom: clamp(10px, 2vw, 22px);
+  z-index: 12;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  isolation: isolate;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.book-turn-cue[hidden] {
+  display: none;
+}
+.book-turn-cue--previous {
+  right: auto;
+  left: clamp(10px, 2vw, 22px);
+  flex-direction: row-reverse;
+}
+.book-turn-cue__label {
+  padding: .35rem .62rem;
+  /* COLOR DE "TOCA": fondo verde y letras negras. */
+  border: 1px solid var(--green-light);
+  border-radius: 999px;
+  background: var(--green-light);
+  color: #050807;
+  box-shadow: 0 4px 14px rgba(22,101,52,.38);
+  font-family: var(--font-sans);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  line-height: 1;
+  text-transform: uppercase;
+  backdrop-filter: blur(5px);
+}
+.book-turn-cue__dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  /* COLOR DEL BOTÓN: fondo blanco, borde y flecha naranjos. */
+  border: 2px solid var(--orange);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--orange);
+  box-shadow: 0 5px 18px rgba(234,88,12,.48);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.book-turn-cue__dot::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  margin-left: -3px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.book-turn-cue--previous .book-turn-cue__dot::before {
+  margin-right: -3px;
+  margin-left: 0;
+  transform: rotate(-135deg);
+}
+.book-turn-cue__dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  border: 2px solid rgba(234,88,12,.72);
+  border-radius: inherit;
+  animation: book-turn-pulse 2.4s ease-out infinite;
+}
+.book-turn-cue:hover .book-turn-cue__dot {
+  transform: scale(1.08);
+  box-shadow: 0 7px 22px rgba(234,88,12,.62);
+}
+.book-turn-cue:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+  border-radius: 999px;
+}
+.nanas-book.is-turning .book-turn-cue {
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes book-turn-pulse {
+  0% { opacity: .75; transform: scale(.82); }
+  70%, 100% { opacity: 0; transform: scale(1.35); }
+}
+
 /* Conserva el aumento tipográfico aprobado para la experiencia de escritorio. */
 @media (min-width: 900px) {
   .nanas-face h3 {
@@ -571,27 +950,9 @@ h2 {
 /* Navegación del libro */
 .book-nav {
   display: flex;
-  gap: 1rem;
   align-items: center;
   justify-content: center;
-}
-.book-btn {
-  padding: 10px 24px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: rgba(23,32,43,.8);
-  color: var(--muted);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.book-btn:hover:not(:disabled) {
-  background: var(--green);
-  color: #fff;
-}
-.book-btn:disabled {
-  opacity: .35;
-  cursor: not-allowed;
+  line-height: 1;
 }
 #book-pg {
   color: var(--muted);
@@ -624,6 +985,120 @@ h2 {
   .nanas-leaf {
     width: 300px; /* La mitad del ancho */
     left: 50%;    /* 👈 ESTA ES LA CLAVE: Fuerza al lomo a estar en el centro exacto */
+  }
+}
+
+/* Móvil vertical: ambas hojas ocupan exactamente la mitad del libro. */
+@media (max-width: 768px) and (orientation: portrait) {
+  /* Reduce un 40% el aire superior e inferior exclusivo de la sección del libro. */
+  #quienes-somos.section { padding: 2.4rem 0 1.4rem; }
+
+  .book-scene {
+    width: 100%;
+    /* Mantiene la misma reducción proporcional en móvil vertical. */
+    margin: .24rem 0 -.675rem;
+  }
+
+  .nanas-book {
+    width: min(100%, calc(100vw - 32px));
+    height: auto;
+    aspect-ratio: 13 / 8;
+    margin: 0;
+    transform: none;
+  }
+
+  .nanas-cover {
+    left: 0;
+    right: 50%;
+    width: auto;
+    height: 100%;
+  }
+
+  .nanas-leaf {
+    left: 50%;
+    right: 0;
+    width: auto;
+    height: 100%;
+  }
+
+  .nanas-face {
+    padding: clamp(14px, 4vw, 22px);
+    gap: 8px;
+  }
+
+  .nanas-face h3 {
+    font-size: clamp(.9rem, 4vw, 1.2rem);
+    line-height: 1.18;
+  }
+
+  .nanas-face p {
+    font-size: clamp(.7rem, 2.8vw, .88rem);
+    line-height: 1.4;
+  }
+
+  .pill-list-book {
+    gap: .3rem;
+  }
+
+  .pill-list-book span {
+    padding: .25rem .45rem;
+    font-size: .62rem;
+  }
+
+  .book-turn-cue {
+    right: 6px;
+    bottom: 6px;
+    gap: 2px;
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: flex-end;
+  }
+
+  .book-turn-cue--previous {
+    right: auto;
+    left: 6px;
+    justify-content: flex-start;
+  }
+
+  .book-turn-cue__label {
+    padding: .18rem .28rem;
+    font-size: .4rem;
+  }
+
+  .book-turn-cue__dot {
+    width: 23px;
+    height: 23px;
+    flex-basis: 23px;
+    border-width: 1px;
+  }
+
+  .book-turn-cue__dot::before {
+    width: 5px;
+    height: 5px;
+    border-width: 1.5px 1.5px 0 0;
+  }
+
+  .book-turn-cue__dot::after {
+    inset: -3px;
+    border-width: 1px;
+  }
+
+  #book-pg {
+    min-width: 72px;
+    font-size: .68rem;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book-turn-cue,
+  .book-turn-cue__dot {
+    transition: none;
+  }
+
+  .book-turn-cue__dot::after {
+    animation: none;
+    opacity: .35;
   }
 }
 
@@ -663,21 +1138,8 @@ h2 {
   grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
-  gap: .5rem;
-}
-.map-filter {
-  border: 1px solid var(--line);
-  padding: .48rem .75rem;
-  color: var(--muted);
-  background: var(--bg);
-  border-radius: 999px;
-  font-size: .8rem;
-  transition: all .2s;
-}
-.map-filter:hover, .map-filter.is-active {
-  background: var(--green);
-  border-color: var(--green);
-  color: #fff;
+  gap: .9rem;
+  padding: .35rem 0 .25rem .45rem;
 }
 
 /* --- Mapa y pines vivos --- */
@@ -715,8 +1177,9 @@ h2 {
   outline: 0;
 }
 .map-pin.is-hidden {
-  opacity: .18;
+  opacity: .08;
   pointer-events: none;
+  filter: grayscale(1);
 }
 .pin--nanas {
   background: var(--orange);
@@ -989,11 +1452,13 @@ h2 {
   justify-content: space-between;
   gap: 1rem;
   padding: 1.1rem 0;
-  font: 600 1.25rem/1.35 var(--font-display);
+  /* PESO DE LAS PREGUNTAS: 400 evita la negrita sintética. */
+  font: 400 1.25rem/1.35 var(--font-display);
   cursor: pointer;
   list-style: none;
   transition: color .2s;
 }
+#faq-title { font-weight: 400; }
 .faq-list summary:hover {
   color: var(--orange-light);
 }
@@ -1093,22 +1558,130 @@ h2 {
 .product-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: .5rem;
+  justify-content: center;
+  gap: .9rem;
   margin: 2rem 0 1.5rem;
+  padding-left: .45rem;
 }
-.product-filter {
-  border: 1px solid var(--line);
-  padding: .48rem .75rem;
-  color: var(--muted);
-  background: var(--surface);
-  border-radius: 999px;
-  font-size: .8rem;
-  transition: all .2s;
+
+/* ============================================================
+   FILTROS TIPO RADIO: mapa y catálogo de productos
+   Cada variante relaciona el color del filtro con su contenido.
+   ============================================================ */
+.filter-choice {
+  --filter-rest: rgba(17, 24, 34, .66);
+  --filter-active: rgba(22, 101, 52, .82);
+  --filter-border: rgba(134, 239, 172, .72);
+  --filter-dot: #86efac;
+  position: relative;
+  display: inline-flex;
+  min-height: 44px;
+  padding: .68rem 1rem .68rem 1.15rem;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--filter-border);
+  border-radius: 8px;
+  background: var(--filter-rest);
+  color: rgba(255, 255, 255, .9);
+  font-size: .9rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .015em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 5px 14px rgba(0, 0, 0, .14);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: transform .25s ease, background-color .25s ease,
+    border-color .25s ease, box-shadow .25s ease, color .25s ease;
 }
-.product-filter:hover, .product-filter.is-active {
-  background: var(--green);
-  border-color: var(--green);
+
+.filter-choice::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--filter-border);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .82);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .28);
+  transform: translate(-50%, -50%);
+  transition: top .25s ease, background-color .25s ease, box-shadow .25s ease;
+}
+
+.filter-choice:hover {
   color: #fff;
+  background: color-mix(in srgb, var(--filter-active) 55%, transparent);
+  transform: translateY(-2px);
+}
+
+.filter-choice:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.filter-choice.is-active {
+  border-color: var(--filter-border);
+  background: var(--filter-active);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16),
+    0 8px 20px color-mix(in srgb, var(--filter-active) 42%, transparent);
+  animation: filterChoiceSelect .5s ease-in-out;
+}
+
+.filter-choice.is-active::before {
+  top: 0;
+  background: var(--filter-dot);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .16), 0 0 12px var(--filter-dot);
+}
+
+/* Todos: verde semitransparente con borde y punto naranjos. */
+.filter-choice--all {
+  --filter-rest: rgba(22, 101, 52, .28);
+  --filter-active: rgba(22, 101, 52, .84);
+  --filter-border: #f97316;
+  --filter-dot: #fb923c;
+}
+
+/* Ñañas mantiene el mismo naranja de sus pines en el mapa. */
+.filter-choice--nanas {
+  --filter-rest: rgba(234, 88, 12, .25);
+  --filter-active: rgba(234, 88, 12, .84);
+  --filter-border: #fb923c;
+  --filter-dot: #fff3e8;
+}
+
+/* Experiencias comparte el verde de los pines territoriales. */
+.filter-choice--experiences {
+  --filter-rest: rgba(22, 101, 52, .25);
+  --filter-active: rgba(22, 101, 52, .84);
+  --filter-border: #86efac;
+  --filter-dot: #bbf7d0;
+}
+
+/* Categorías del catálogo: fruto, cacao e identidad Ñañas. */
+.filter-choice--jams {
+  --filter-rest: rgba(159, 41, 66, .22);
+  --filter-active: rgba(159, 41, 66, .84);
+  --filter-border: #fb7185;
+  --filter-dot: #fecdd3;
+}
+
+.filter-choice--chocolate {
+  --filter-rest: rgba(107, 63, 36, .28);
+  --filter-active: rgba(107, 63, 36, .88);
+  --filter-border: #d6a36b;
+  --filter-dot: #f1d0a7;
+}
+
+@keyframes filterChoiceSelect {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-choice { transition: none; }
+  .filter-choice.is-active { animation: none; }
 }
 .product-grid {
   display: grid;
@@ -1435,7 +2008,25 @@ h2 {
   .menu-toggle[aria-expanded="true"] span:nth-of-type(1) { transform: translateY(7px) rotate(45deg); }
   .menu-toggle[aria-expanded="true"] span:nth-of-type(3) { transform: translateY(-7px) rotate(-45deg); }
   .hero { min-height: 700px; }
-  .hero__content { padding-top: 8rem; }
+  .hero__content { padding: 7rem 0 4rem; }
+  /* TIPOGRAFÍA MÓVIL DEL HERO: mantiene cada bloque dentro del ancho útil. */
+  .hero__content .location-tag {
+    max-width: 30ch;
+    margin-inline: auto;
+    font-size: .68rem;
+    line-height: 1.45;
+    letter-spacing: .11em;
+  }
+  .hero__content .titulo-nanas {
+    max-width: 100%;
+    font-size: clamp(2.15rem, 10vw, 2.65rem) !important;
+    line-height: 1.12 !important;
+  }
+  .hero__content .hero__lead {
+    max-width: 32ch;
+    font-size: clamp(.92rem, 4.2vw, 1rem);
+    line-height: 1.55;
+  }
   .split-grid, .split-grid--reverse, .faq-layout, .contact-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -1465,6 +2056,7 @@ h2 {
 /* --- Móviles pequeños (max 520px) --- */
 @media (max-width: 520px) {
   .header-ecosystem { display: none; }
+  .header-ecosystem__name { display: none; }
   .hero__scroll { right: 14px; }
   .section { padding: 4rem 0; }
   .map-stage { min-height: 250px; }
@@ -1514,15 +2106,26 @@ h2 {
         
         /* === COORDENADAS PARA LA CRUZ NARANJA === */
         right: 30px; /* Lo separa del borde derecho, dejándolo justo al lado del menú ☰ */
-        top: 70px;%; /* Lo empuja a la mitad de la altura de la barra */
+        top: 70px; /* Posición vertical elegida para móvil */
         transform: translateY(-40%); /* Lo centra verticalmente a la perfección */
         
         /* === AJUSTES DE TAMAÑO PARA QUE QUEPA === */
-        font-size: 1rem; /* Letra más pequeña */
-        padding: 4px 8px; /* Botón más compacto */
+        min-width: 170px;
+        min-height: 41px;
+        font-size: .696rem;
+        padding: 10px 24px;
         white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
         z-index: 100; /* Lo mantiene por encima de cualquier otro elemento */
     }
+
+    .luxury-btn__text { letter-spacing: 1.2px; }
+    .luxury-btn__ornament-left,
+    .luxury-btn__ornament-right {
+        width: 14px;
+        height: 14px;
+    }
+    .luxury-btn__ornament-left { left: 12px; }
+    .luxury-btn__ornament-right { right: 12px; }
 
     /* ==========================================================
        SOLUCIÓN: PINES DEL MAPA RESPONSIVOS
@@ -2171,6 +2774,9 @@ h2 {
 .section-sign,
 .section-sign.section-heading--wide {
   --section-sign-shift: clamp(-6rem, -8vw, -1.25rem);
+  --section-sign-angle-start: -6deg;
+  --section-sign-angle-end: -9deg;
+  --section-sign-angle-rest: -7deg;
   display: flex;
   width: 100%;
   max-width: 780px;
@@ -2188,7 +2794,7 @@ h2 {
   margin: .2rem auto 0;
   object-fit: contain;
   filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .18));
-  transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(-6deg) translateZ(0);
+  transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(var(--section-sign-angle-start)) translateZ(0);
   transform-origin: center;
   backface-visibility: hidden;
   will-change: transform;
@@ -2198,10 +2804,10 @@ h2 {
 /* Movimiento perpendicular sutil: un extremo avanza y el opuesto retrocede. */
 @keyframes sectionSignDepth {
   from {
-    transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(-6deg) translateZ(0);
+    transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(var(--section-sign-angle-start)) translateZ(0);
   }
   to {
-    transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(-9deg) translateZ(12px);
+    transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(var(--section-sign-angle-end)) translateZ(12px);
   }
 }
 
@@ -2436,6 +3042,315 @@ h2 {
   /* Conserva la orientación solicitada, pero elimina el movimiento continuo. */
   .section-sign__image {
     animation: none;
-    transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(-7deg);
+    transform: translateX(var(--section-sign-shift)) perspective(1200px) rotateY(var(--section-sign-angle-rest));
   }
+}
+
+/* ============================================================
+   HERO DE FUEGO — SERVICIOS Y PRODUCTOS
+   Replica la primera sección visual de Inicio/Ecosistema y coloca el letrero
+   como título protagonista sobre el video a ancho completo.
+   ============================================================ */
+.page-fire-hero {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-height: min(88vh, 780px);
+  overflow: hidden;
+  place-items: center;
+  isolation: isolate;
+}
+
+.page-fire-hero__video-wrap,
+.page-fire-hero__overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.page-fire-hero__video-wrap { z-index: -2; }
+
+.page-fire-hero__video-wrap video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(1.15) brightness(.84);
+}
+
+.page-fire-hero__overlay {
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 62% 54% at 50% 60%, rgba(234, 88, 12, .2), transparent 72%),
+    linear-gradient(180deg, rgba(9, 13, 20, .38), rgba(9, 13, 20, .62) 58%, rgba(9, 13, 20, .95));
+}
+
+.page-fire-hero__content {
+  width: min(760px, calc(100% - 32px));
+  padding-block: clamp(6.5rem, 12vw, 9rem) 5.5rem;
+  text-align: center;
+  perspective: 1400px;
+}
+
+.page-fire-hero__content .eyebrow {
+  margin-bottom: clamp(.5rem, 1.5vw, 1rem);
+  color: var(--orange-light);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .8);
+}
+
+.page-fire-hero__sign {
+  display: block;
+  width: min(100%, 660px);
+  height: auto;
+  margin-inline: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 24px 24px rgba(0, 0, 0, .46)) drop-shadow(0 0 18px rgba(234, 88, 12, .13));
+  transform-origin: 48% 70%;
+  backface-visibility: hidden;
+  will-change: transform;
+  animation: pageFireSignDepth 8s ease-in-out infinite alternate;
+}
+
+/* Perspectiva hacia el lado opuesto de los letreros interiores anteriores. */
+@keyframes pageFireSignDepth {
+  from { transform: perspective(1400px) rotateY(6deg) translateZ(0); }
+  to { transform: perspective(1400px) rotateY(9deg) translateZ(14px); }
+}
+
+.page-fire-hero__seam {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  z-index: 3;
+  height: 46px;
+  background: #090d14;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none'%3E%3Cpath d='M0 20 L0 8 Q5 0 10 8 T20 8 T30 8 T40 8 T50 8 T60 8 T70 8 T80 8 T90 8 T100 8 T110 8 T120 8 L120 20 Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none'%3E%3Cpath d='M0 20 L0 8 Q5 0 10 8 T20 8 T30 8 T40 8 T50 8 T60 8 T70 8 T80 8 T90 8 T100 8 T110 8 T120 8 L120 20 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+/* El contenido vuelve a ocupar todo el ancho debajo del hero. */
+.services-page .services-showcase__container,
+.products-page .section--products > .container {
+  display: block;
+  width: min(1180px, calc(100% - 32px));
+  max-width: 1180px;
+}
+
+.services-page .services-showcase__carousel {
+  width: 100%;
+  max-width: 1080px;
+  margin-inline: auto;
+}
+
+.products-page .section--products .product-filters,
+.products-page .section--products .product-grid,
+.products-page .section--products .cart-panel {
+  grid-column: auto;
+}
+
+.products-page .section--products .product-filters {
+  justify-content: center;
+  margin-top: 0;
+}
+
+@media (max-width: 620px) {
+  .page-fire-hero { min-height: min(72svh, 620px); }
+  .page-fire-hero__content { width: min(94%, 560px); padding-block: 5.5rem 4rem; }
+  .page-fire-hero__sign { width: min(100%, 520px); }
+}
+
+@media (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
+  .page-fire-hero { min-height: 100svh; }
+  .page-fire-hero__content { width: min(64vw, 560px); padding-block: 2rem; }
+}
+
+@media (min-width: 1280px) {
+  .products-page .section--products .product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-fire-hero__video-wrap video { display: none; }
+  .page-fire-hero__video-wrap {
+    background: radial-gradient(circle at 50% 65%, rgba(234, 88, 12, .32), transparent 45%), #11151b;
+  }
+  .page-fire-hero__sign {
+    animation: none;
+    transform: perspective(1400px) rotateY(7deg);
+  }
+}
+
+/* ============================================================
+   CTA VEGETAL DE VOLUNTARIADO
+   Adaptación reutilizable del botón de Uiverse.io de Shell0110, con las
+   hojas SVG aportadas por MuhammadHasann y el verde original del sitio.
+   ============================================================ */
+.plant-cta {
+  position: relative;
+  z-index: 4;
+  display: inline-flex;
+  min-height: 64px;
+  padding: 16px 44px;
+  overflow: visible;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+  background: rgba(255, 255, 255, .86);
+  border: 3px solid var(--green-light);
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .28), inset 0 0 0 1px rgba(45, 135, 78, .1);
+  font-family: var(--font-body);
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.35;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  transition: color .3s ease-in-out, background .3s ease-in-out, border-radius .3s ease-in-out, box-shadow .3s ease-in-out, padding .3s ease-in-out, transform .3s ease-in-out;
+}
+
+.plant-cta__label {
+  position: relative;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.plant-cta__leaf {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  z-index: 1;
+  display: block;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0);
+  transform-origin: 50% 100%;
+  transition: top .5s ease-in-out, left .5s ease-in-out, width .5s ease-in-out, height .5s ease-in-out;
+}
+
+.plant-cta__leaf svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: currentColor;
+}
+
+.plant-cta__leaf--1 { --leaf-sway: 5deg; --leaf-settle: 1deg; color: #7b9b3a; }
+.plant-cta__leaf--2 { --leaf-sway: 10deg; --leaf-settle: 4deg; color: #556729; }
+.plant-cta__leaf--3 { --leaf-sway: -3deg; --leaf-settle: -1deg; color: #556729; }
+.plant-cta__leaf--4,
+.plant-cta__leaf--5 { --leaf-sway: -4deg; --leaf-settle: -1deg; color: #3c4819; }
+
+.plant-cta:is(:hover, :focus-visible, .is-blooming) {
+  padding-inline: 32px;
+  color: #f0ede8;
+  background: linear-gradient(#795738, #5b3c11);
+  border-radius: 8px 8px 24px 24px;
+  box-shadow: 2px 2px 5px #000, inset 2px 2px 10px #5b3c11;
+  transform: translateY(2px);
+}
+
+.plant-cta:is(:hover, :focus-visible, .is-blooming) .plant-cta__leaf {
+  animation: plantLeafSway 1s ease .45s forwards;
+}
+
+.plant-cta:is(:hover, :focus-visible, .is-blooming) .plant-cta__leaf--1 {
+  top: -250%;
+  left: 50%;
+  width: 50px;
+  height: 123px;
+}
+
+.plant-cta:is(:hover, :focus-visible, .is-blooming) .plant-cta__leaf--2 {
+  top: -200%;
+  left: 90%;
+  width: 75px;
+  height: 99px;
+}
+
+.plant-cta:is(:hover, :focus-visible, .is-blooming) .plant-cta__leaf--3 {
+  top: -130%;
+  left: 20%;
+  width: 60px;
+  height: 78px;
+}
+
+.plant-cta:is(:hover, :focus-visible, .is-blooming) .plant-cta__leaf--4 {
+  top: -300%;
+  left: 10%;
+  width: 85px;
+  height: 171px;
+}
+
+.plant-cta:is(:hover, :focus-visible, .is-blooming) .plant-cta__leaf--5 {
+  top: -350%;
+  left: 90%;
+  width: 85px;
+  height: 173px;
+}
+
+@keyframes plantLeafSway {
+  0%, 100% { transform: translate(-50%, 0) rotate(0deg); }
+  38% { transform: translate(-50%, 0) rotate(var(--leaf-sway)); }
+  68% { transform: translate(-50%, 0) rotate(var(--leaf-settle)); }
+}
+
+.page-fire-hero__cta {
+  position: absolute;
+  right: clamp(7rem, 12vw, 13.5rem);
+  bottom: clamp(10rem, 24vh, 13rem);
+  z-index: 5;
+  margin: 0;
+}
+
+.volunteer-opening-cta-wrap {
+  display: flex;
+  margin-top: 1.25rem;
+  justify-content: center;
+  transform: translateX(clamp(1rem, 3vw, 2.5rem));
+}
+
+@media (max-width: 620px) {
+  .page-fire-hero { overflow: visible; }
+
+  .plant-cta {
+    min-height: 56px;
+    padding: 13px 28px;
+    font-size: 1rem;
+  }
+  .plant-cta:is(:hover, :focus-visible, .is-blooming) { padding-inline: 23px; }
+  .page-fire-hero__cta {
+    right: auto;
+    bottom: -1rem;
+    left: 50%;
+    width: max-content;
+    max-width: calc(100% - 24px);
+    transform: translateX(-50%);
+  }
+  .volunteer-opening-cta-wrap {
+    margin-top: 1.5rem;
+    transform: none;
+  }
+}
+
+/* En escritorio recoge las hojas derechas para conservar el margen visual. */
+@media (min-width: 621px) {
+  .page-fire-hero__cta .plant-cta:is(:hover, :focus-visible, .is-blooming) .plant-cta__leaf--2,
+  .page-fire-hero__cta .plant-cta:is(:hover, :focus-visible, .is-blooming) .plant-cta__leaf--5 {
+    left: 78%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plant-cta,
+  .plant-cta__leaf { transition: none; }
+  .plant-cta__leaf { display: none; }
 }

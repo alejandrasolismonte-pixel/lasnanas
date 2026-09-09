@@ -8,9 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Kaushan+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/desarrollo.css?v=36">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=68">
   <!-- Versión de caché actualizada para mostrar inmediatamente el ajuste de la ventana. -->
-  <link rel="stylesheet" href="../css/nanas.css?v=7">
+  <link rel="stylesheet" href="../css/nanas.css?v=10">
+  <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
 </head>
 <body class="nanas-ecosystem-page">
   <div class="watermark-bg" aria-hidden="true"></div>
@@ -38,9 +39,12 @@
         <a href="../desarrollo.html#contacto">Contacto</a>
       </nav>
 
-      <a class="header-ecosystem" href="nanas.html" aria-label="Ecosistema Las Ñañas, página actual" aria-current="page">
-        <span class="header-ecosystem__label">Ecosistema <span class="header-ecosystem__name">Las Ñañas</span></span>
-        <span class="header-ecosystem__icon" aria-hidden="true">→</span>
+      <a class="header-ecosystem luxury-btn" href="nanas.html" aria-label="Ecosistema Ñañas, página actual" aria-current="page">
+        <svg preserveAspectRatio="none" viewBox="0 0 100 100" class="luxury-btn__border" aria-hidden="true" focusable="false"><path fill="none" d="M5,20 Q50,5 95,20 Q95,50 95,80 Q50,95 5,80 Q5,50 5,20 Z" class="luxury-btn__border-path"></path></svg>
+        <svg viewBox="0 0 15 15" class="luxury-btn__ornament-left" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path><circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle></svg>
+        <span class="luxury-btn__text">Ecosistema Ñañas</span>
+        <svg viewBox="0 0 15 15" class="luxury-btn__ornament-right" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path><circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle></svg>
+        <svg preserveAspectRatio="none" viewBox="0 0 100 100" class="luxury-btn__shine" aria-hidden="true" focusable="false"><defs><linearGradient y2="0%" x2="100%" y1="0%" x1="0%" id="ecosystemShineGradient"><stop stop-color="transparent" offset="0%"></stop><stop stop-color="#fff" stop-opacity=".22" offset="50%"></stop><stop stop-color="transparent" offset="100%"></stop></linearGradient></defs><path fill="url(#ecosystemShineGradient)" d="M0,0 L100,0 L100,100 L0,100Z"></path></svg>
       </a>
     </div>
   </header>
@@ -71,7 +75,7 @@
   <div class="container">
     <div class="nn-ecosystem__heading reveal">
       <p class="eyebrow">Ecosistema Las Ñañas</p>
-      <h2 id="ecosystem-title-page">Descubre nuestros productos agroecológicos con Sello Étnico, servicios técnicos y voluntariado.</h2>
+      <h2 id="ecosystem-title-page">Descubre nuestro ecosistema agroecológico y mapuche.</h2>
     </div>
 
     <div class="nn-ecosystem__grid reveal">
@@ -101,8 +105,13 @@
 
       <div class="nn-hero__seam" aria-hidden="true"></div>
       <div class="nn-hero__cta-wrap">
-        <a class="nn-btn" href="voluntariado.html">
-          Sé voluntaria <span aria-hidden="true">→</span>
+        <a class="plant-cta" href="voluntariado.html">
+          <span class="plant-cta__label">Súmate como voluntaria/o</span>
+          <span class="plant-cta__leaf plant-cta__leaf--1" aria-hidden="true"><svg viewBox="0 0 208.52 511.88"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-1"></use></svg></span>
+          <span class="plant-cta__leaf plant-cta__leaf--2" aria-hidden="true"><svg viewBox="0 0 420.62 554.38"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-2"></use></svg></span>
+          <span class="plant-cta__leaf plant-cta__leaf--3" aria-hidden="true"><svg viewBox="0 0 313.64 405.79"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-3"></use></svg></span>
+          <span class="plant-cta__leaf plant-cta__leaf--4" aria-hidden="true"><svg viewBox="0 0 359.65 724.72"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-4"></use></svg></span>
+          <span class="plant-cta__leaf plant-cta__leaf--5" aria-hidden="true"><svg viewBox="0 0 513.57 1042.57"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-5"></use></svg></span>
         </a>
       </div>
     </section>
@@ -155,18 +164,15 @@
             <img class="nn-carousel__window-frame" src="../assets/img/marcos/ventana-rustica-transparente.png" alt="" aria-hidden="true" draggable="false">
           </div>
 
-          <!-- Controles del carrusel: navegación manual y pausa del avance automático. -->
-          <div class="nn-carousel__controls" aria-label="Controles del carrusel">
-            <button class="nn-carousel__button" type="button" data-carousel-prev aria-label="Ver imagen anterior">
-              <span aria-hidden="true">←</span> Anterior
-            </button>
-            <button class="nn-carousel__button nn-carousel__button--pause" type="button" data-carousel-toggle aria-pressed="false" aria-label="Pausar movimiento automático">
-              <span data-carousel-toggle-icon aria-hidden="true">Ⅱ</span>
-              <span data-carousel-toggle-label>Pausar</span>
-            </button>
-            <button class="nn-carousel__button" type="button" data-carousel-next aria-label="Ver imagen siguiente">
-              Siguiente <span aria-hidden="true">→</span>
-            </button>
+          <!-- Indicadores visuales del avance automático: un punto por fotografía. -->
+          <div class="nn-carousel__dots" data-carousel-dots aria-hidden="true">
+            <span class="nn-carousel__dot is-active"></span>
+            <span class="nn-carousel__dot"></span>
+            <span class="nn-carousel__dot"></span>
+            <span class="nn-carousel__dot"></span>
+            <span class="nn-carousel__dot"></span>
+            <span class="nn-carousel__dot"></span>
+            <span class="nn-carousel__dot"></span>
           </div>
           <p class="sr-only" data-carousel-status aria-live="polite"></p>
         </div>
@@ -231,13 +237,14 @@
       <div class="container contact-grid">
         <div class="contact-copy reveal">
           <p class="eyebrow">Conectemos · Ruka</p>
-          <h2 id="contact-title">Contacto &amp; Ruka</h2>
+          <h2 id="contact-title">Contacto con Wallmapu</h2>
           <p>¿Tienes dudas, quieres comercializar tus semillas o necesitas contratar nuestros servicios técnicos? Escríbenos directamente.</p>
           <a href="mailto:equipolasnanas.aiep@gmail.com">equipolasnanas.aiep@gmail.com</a>
           <p>Región de La Araucanía, Chile<br>lasñañas.cl</p>
         </div>
 
-        <form class="contact-form" data-contact-form>
+        <form class="contact-form reveal" data-contact-form action="https://formspree.io/f/xyeynlka" method="POST">
+          <input type="hidden" name="subject" value="Las Ñañas | Ecosistema">
           <label>Nombre<input name="nombre" type="text" autocomplete="name" required></label>
           <label>País<input name="pais" type="text" autocomplete="country-name" required></label>
           <label>Correo electrónico<input name="email" type="email" autocomplete="email" required></label>
@@ -281,7 +288,8 @@
     </div>
   </footer>
 
-  <script src="../js/desarrollo.js"></script>
-  <script src="../js/nanas.js"></script>
+  <script src="../js/desarrollo.js?v=20"></script>
+  <script src="../js/nanas.js?v=3"></script>
+  <script src="../js/whatsapp-floating.js?v=3"></script>
 </body>
 </html>
