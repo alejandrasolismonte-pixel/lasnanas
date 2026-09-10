@@ -1,76 +1,78 @@
-/* FLUJO PÚBLICO DE INSCRIPCIÓN
-   Abre el acceso desde las tarjetas existentes y entrega el plan al portal.
-   La sesión de demostración usa sessionStorage: no sustituye una base de datos. */
+/* ACCESO REAL DE VOLUNTARIADO
+   Supabase Auth administra contraseñas y sesiones. Este archivo solo conserva
+   temporalmente la selección visual; RLS y el servidor autorizan los datos. */
 document.addEventListener('DOMContentLoaded', () => {
   const dialog = document.querySelector('[data-membership-auth]');
   const planButtons = [...document.querySelectorAll('[data-membership-plan]')];
   const controls = document.querySelector('.membership-controls');
+  const supabase = window.LasNanasSupabase?.client;
+  const loader = window.LasNanasLoader;
   if (!dialog || !planButtons.length) return;
 
-  const DEMO_ACCOUNTS = 'lasnanas_demo_accounts_v2';
-  const DEMO_SESSION = 'lasnanas_demo_session_v2';
-  let selection = { plan: 'keyuwün', billing: 'monthly' };
+  let selection = { plan: 'keyuwün', billing: 'monthly', currency: 'CLP' };
   let opener = null;
   let dirty = false;
-  const readAccounts = () => { try { return JSON.parse(sessionStorage.getItem(DEMO_ACCOUNTS) || '[]'); } catch (_) { return []; } };
-  const saveAccounts = accounts => sessionStorage.setItem(DEMO_ACCOUNTS, JSON.stringify(accounts));
-  const normalizedEmail = value => value.trim().toLowerCase();
-  const portalUrl = () => `mi-voluntariado.html?plan=${encodeURIComponent(selection.plan)}&billing=${selection.billing}`;
-  const status = (selector, message) => { const node = dialog.querySelector(selector); if (node) node.textContent = message; };
-  const setError = (form, field, id, message) => {
-    form.elements[field]?.setAttribute('aria-invalid', message ? 'true' : 'false');
-    const target = document.getElementById(id); if (target) target.textContent = message;
+  const normalizeEmail = value => value.trim().toLowerCase();
+  const portalUrl = () => new URL(`mi-voluntariado.html?plan=${encodeURIComponent(selection.plan)}&billing=${selection.billing}&currency=${selection.currency}`, window.location.href).href;
+  const callbackUrl = () => new URL('auth-callback.html', window.location.href).href;
+  const recoveryUrl = () => new URL('actualizar-contrasena.html', window.location.href).href;
+  const status = (selector, message, error = false) => { const node = dialog.querySelector(selector); if (node) { node.textContent = message; node.style.color = error ? '#a11b13' : ''; } };
+  // ESPERA ACCESIBLE: bloquea dobles envíos y muestra el loader solo en registro.
+  const busy = (form, enabled) => {
+    form.querySelectorAll('button,input,select').forEach(control => { control.disabled = enabled; });
+    form.setAttribute('aria-busy', String(enabled));
+    const label = form.querySelector('[data-submit-label]');
+    if (label) label.textContent = enabled ? 'Creando cuenta…' : 'Crear cuenta y continuar';
+    if (enabled) loader?.show(form.matches('[data-register-form]') ? 'Creando tu cuenta…' : 'Ingresando a tu espacio…');
+    else loader?.hide();
   };
-  const clearErrors = form => {
-    form.querySelectorAll('.field-error').forEach(node => { node.textContent = ''; });
-    form.querySelectorAll('[aria-invalid]').forEach(node => node.setAttribute('aria-invalid', 'false'));
-  };
-  const goToPortal = email => {
-    sessionStorage.setItem(DEMO_SESSION, email);
-    sessionStorage.setItem('lasnanas_pending_selection_v2', JSON.stringify(selection));
-    window.location.assign(portalUrl());
-  };
+  const setError = (form, field, id, message) => { form.elements[field]?.setAttribute('aria-invalid', message ? 'true' : 'false'); const node = document.getElementById(id); if (node) node.textContent = message; };
+  const clearErrors = form => { form.querySelectorAll('.field-error').forEach(node => { node.textContent = ''; }); form.querySelectorAll('[aria-invalid]').forEach(node => node.setAttribute('aria-invalid', 'false')); };
+  const saveUiSelection = () => sessionStorage.setItem('lasnanas_pending_selection_v3', JSON.stringify(selection));
+  const goToPortal = () => { saveUiSelection(); window.location.assign(portalUrl()); };
 
-  // Sincroniza el resumen del modal con la tarjeta y periodicidad elegidas.
   const updateSummary = () => {
     dialog.querySelector('[data-auth-plan]').textContent = selection.plan;
     dialog.querySelector('[data-auth-billing]').textContent = selection.billing === 'yearly' ? 'anual' : 'mensual';
   };
   const activateTab = name => {
-    dialog.querySelectorAll('[data-auth-tab]').forEach(tab => {
-      const active = tab.dataset.authTab === name;
-      tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1;
-    });
+    dialog.querySelectorAll('[data-auth-tab]').forEach(tab => { const active = tab.dataset.authTab === name; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; });
     dialog.querySelectorAll('[data-auth-panel]').forEach(panel => { panel.hidden = panel.dataset.authPanel !== name; });
     dialog.querySelector(`[data-auth-panel="${name}"] input`)?.focus();
   };
+  const requireClient = formSelector => {
+    if (supabase) return true;
+    status(formSelector, window.LasNanasSupabase?.error || 'No se pudo iniciar Supabase.', true);
+    return false;
+  };
 
-  planButtons.forEach(button => button.addEventListener('click', event => {
+  planButtons.forEach(button => button.addEventListener('click', async event => {
     event.preventDefault(); opener = button;
-    selection = { plan: button.dataset.membershipPlan, billing: controls?.elements?.billing?.value === 'yearly' ? 'yearly' : 'monthly' };
-    // Una sesión existente pasa directamente a revisar el plan seleccionado.
-    if (sessionStorage.getItem(DEMO_SESSION)) { goToPortal(sessionStorage.getItem(DEMO_SESSION)); return; }
-    updateSummary(); dialog.showModal();
-    dialog.querySelector('[data-auth-tab][aria-selected="true"]')?.focus();
+    selection = {
+      plan: button.dataset.membershipPlan,
+      billing: controls?.elements?.billing?.value === 'yearly' ? 'yearly' : 'monthly',
+      currency: controls?.elements?.currency?.value === 'usd' ? 'USD' : 'CLP'
+    };
+    saveUiSelection(); updateSummary();
+    if (!supabase) { dialog.showModal(); status('[data-register-status]', window.LasNanasSupabase?.error || 'Falta la configuración de Supabase.', true); return; }
+    // getUser consulta Auth y evita confiar en una sesión manipulada localmente.
+    loader?.show('Comprobando tu sesión…');
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (!error && data.user) { goToPortal(); return; }
+    } finally { loader?.hide(); }
+    dialog.showModal(); dialog.querySelector('[data-auth-tab][aria-selected="true"]')?.focus();
   }));
 
   dialog.querySelectorAll('[data-auth-tab]').forEach(tab => {
     tab.addEventListener('click', () => activateTab(tab.dataset.authTab));
-    tab.addEventListener('keydown', event => {
-      if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
-      event.preventDefault(); activateTab(tab.dataset.authTab === 'create' ? 'login' : 'create');
-    });
+    tab.addEventListener('keydown', event => { if (!['ArrowLeft','ArrowRight'].includes(event.key)) return; event.preventDefault(); activateTab(tab.dataset.authTab === 'create' ? 'login' : 'create'); });
   });
-  const closeDialog = () => {
-    if (dirty && !window.confirm('Hay datos sin guardar. ¿Quieres cerrar igualmente?')) return;
-    dialog.close();
-  };
+  const closeDialog = () => { if (dirty && !window.confirm('Hay datos sin enviar. ¿Quieres cerrar igualmente?')) return; dialog.close(); };
   dialog.querySelector('[data-auth-close]').addEventListener('click', closeDialog);
   dialog.addEventListener('cancel', event => { event.preventDefault(); closeDialog(); });
   dialog.addEventListener('close', () => opener?.focus());
   dialog.querySelectorAll('input,select').forEach(field => field.addEventListener('input', () => { dirty = true; }));
-
-  // Mantiene el foco dentro del modal para navegación por teclado.
   dialog.addEventListener('keydown', event => {
     if (event.key !== 'Tab') return;
     const items = [...dialog.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[href]')].filter(item => !item.closest('[hidden]'));
@@ -78,43 +80,57 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.shiftKey && document.activeElement === items[0]) { event.preventDefault(); items.at(-1).focus(); }
     else if (!event.shiftKey && document.activeElement === items.at(-1)) { event.preventDefault(); items[0].focus(); }
   });
-  dialog.querySelectorAll('[data-toggle-password]').forEach(button => button.addEventListener('click', () => {
-    const field = button.parentElement.querySelector('input');
-    field.type = field.type === 'password' ? 'text' : 'password';
-    button.textContent = field.type === 'password' ? 'Mostrar' : 'Ocultar'; field.focus();
-  }));
+  dialog.querySelectorAll('[data-toggle-password]').forEach(button => button.addEventListener('click', () => { const field = button.parentElement.querySelector('input'); field.type = field.type === 'password' ? 'text' : 'password'; button.textContent = field.type === 'password' ? 'Mostrar' : 'Ocultar'; field.focus(); }));
 
   const register = dialog.querySelector('[data-register-form]');
-  register.addEventListener('submit', event => {
-    event.preventDefault(); clearErrors(register);
-    const firstName = register.elements.firstName.value.trim();
-    const lastName = register.elements.lastName.value.trim();
-    const email = normalizedEmail(register.elements.email.value);
-    const password = register.elements.password.value;
+  register.addEventListener('submit', async event => {
+    event.preventDefault(); clearErrors(register); status('[data-register-status]', '');
+    if (!requireClient('[data-register-status]')) return;
+    const firstName = register.elements.firstName.value.trim(); const lastName = register.elements.lastName.value.trim();
+    const email = normalizeEmail(register.elements.email.value); const password = register.elements.password.value; const country = register.elements.country.value;
     let valid = true;
-    if (firstName.length < 2) { setError(register, 'firstName', 'register-name-error', 'Escribe tu nombre.'); valid = false; }
-    if (lastName.length < 2) { setError(register, 'lastName', 'register-last-name-error', 'Escribe tu apellido.'); valid = false; }
-    if (!register.elements.email.validity.valid) { setError(register, 'email', 'register-email-error', 'Escribe un correo válido.'); valid = false; }
-    if (!register.elements.country.value) { setError(register, 'country', 'register-country-error', 'Selecciona tu país.'); valid = false; }
-    if (password.length < 12) { setError(register, 'password', 'register-password-error', 'Usa al menos 12 caracteres.'); valid = false; }
+    if (firstName.length < 2) { setError(register,'firstName','register-name-error','Escribe tu nombre.'); valid=false; }
+    if (lastName.length < 2) { setError(register,'lastName','register-last-name-error','Escribe tu apellido.'); valid=false; }
+    if (!register.elements.email.validity.valid) { setError(register,'email','register-email-error','Escribe un correo válido.'); valid=false; }
+    if (!country) { setError(register,'country','register-country-error','Selecciona tu país.'); valid=false; }
+    if (password.length < 12 || password.length > 256) { setError(register,'password','register-password-error','Usa entre 12 y 256 caracteres.'); valid=false; }
     if (!valid) { register.querySelector('[aria-invalid="true"]')?.focus(); return; }
-    const accounts = readAccounts();
-    if (accounts.some(account => account.email === email)) { setError(register, 'email', 'register-email-error', 'La cuenta ya existe en esta demostración. Inicia sesión.'); return; }
-    // La contraseña no se persiste localmente; Supabase Auth la administrará al conectarse.
-    accounts.push({ id: crypto.randomUUID(), firstName, lastName, email, country: register.elements.country.value });
-    saveAccounts(accounts); dirty = false; goToPortal(email);
+    busy(register,true); status('[data-register-status]','Creando la cuenta…');
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: callbackUrl(), data: { first_name:firstName, last_name:lastName, country_code:country, selected_plan:selection.plan, selected_billing:selection.billing, selected_currency:selection.currency } } });
+      if (error) throw error;
+      dirty=false; register.elements.password.value=''; saveUiSelection();
+      if (data.session) goToPortal();
+      else status('[data-register-status]','Revisa tu correo para confirmar la cuenta. Conservaremos el plan seleccionado al regresar.');
+    } catch (error) {
+      const message = /already|registered|exists/i.test(error.message) ? 'Este correo ya tiene una cuenta. Utiliza “Ya tengo cuenta”.' : error.message;
+      status('[data-register-status]',message || 'No se pudo crear la cuenta.',true);
+    } finally { busy(register,false); }
   });
 
   const login = dialog.querySelector('[data-login-form]');
-  login.addEventListener('submit', event => {
-    event.preventDefault(); clearErrors(login);
-    const email = normalizedEmail(login.elements.email.value);
-    const account = readAccounts().find(item => item.email === email);
-    if (!login.elements.email.validity.valid || !account) { setError(login, 'email', 'login-email-error', 'No encontramos esta cuenta en la sesión de demostración.'); return; }
-    if (!login.elements.password.value) { setError(login, 'password', 'login-password-error', 'Escribe tu contraseña.'); return; }
-    dirty = false; goToPortal(email);
+  login.addEventListener('submit', async event => {
+    event.preventDefault(); clearErrors(login); status('[data-login-status]','');
+    if (!requireClient('[data-login-status]')) return;
+    const email=normalizeEmail(login.elements.email.value); const password=login.elements.password.value;
+    if (!login.elements.email.validity.valid) { setError(login,'email','login-email-error','Escribe un correo válido.'); return; }
+    if (!password) { setError(login,'password','login-password-error','Escribe tu contraseña.'); return; }
+    busy(login,true); status('[data-login-status]','Iniciando sesión…');
+    try { const { error }=await supabase.auth.signInWithPassword({email,password}); if(error) throw error; dirty=false; login.elements.password.value=''; goToPortal(); }
+    catch(error){ status('[data-login-status]',/confirm/i.test(error.message)?'Debes confirmar tu correo antes de ingresar.':'Correo o contraseña incorrectos.',true); }
+    finally{ busy(login,false); }
   });
 
-  // La recuperación real se activará con Supabase Auth; nunca se simula un envío exitoso.
-  dialog.querySelector('[data-demo-recovery]').addEventListener('click', () => status('[data-login-status]', 'Recuperación pendiente de conectar a Supabase. No se envió ningún correo.'));
+  // El mensaje es deliberadamente neutro para evitar revelar si un correo existe.
+  dialog.querySelector('[data-demo-recovery]').addEventListener('click', async () => {
+    if (!requireClient('[data-login-status]')) return;
+    const email=normalizeEmail(login.elements.email.value);
+    if (!login.elements.email.validity.valid) { setError(login,'email','login-email-error','Escribe primero un correo válido.'); return; }
+    status('[data-login-status]','Solicitando recuperación…');
+    loader?.show('Preparando la recuperación de acceso…');
+    try {
+      const { error }=await supabase.auth.resetPasswordForEmail(email,{redirectTo:recoveryUrl()});
+      status('[data-login-status]',error ? 'No se pudo solicitar la recuperación. Intenta nuevamente.' : 'Si el correo pertenece a una cuenta, recibirás instrucciones.',Boolean(error));
+    } finally { loader?.hide(); }
+  });
 });

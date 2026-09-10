@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Espacio personal y privado de voluntariado de Las Ñañas">
   <title>Mi voluntariado · Las Ñañas</title>
-  <link rel="stylesheet" href="../css/mi-voluntariado.css?v=1">
+  <link rel="stylesheet" href="../css/mi-voluntariado.css?v=2">
+  <!-- CARGA GLOBAL: indicador central para esperas que bloquean el portal. -->
+  <link rel="stylesheet" href="../css/loading-overlay.css?v=1">
 </head>
 <body>
   <!-- AVISO: desaparece cuando la aplicación se conecta a Supabase. -->
-  <div class="demo-bar" data-connection-banner>Demostración local · los datos duran solamente durante esta pestaña · no realiza cobros</div>
+  <div class="demo-bar" data-connection-banner>Conectando con tu espacio privado…</div>
 
   <header class="portal-head">
     <a class="brand" href="voluntariado.html" aria-label="Volver a voluntariado"><span>Ñ</span><strong>Las Ñañas</strong></a>
@@ -94,6 +96,11 @@
       </div>
     </div>
   </main>
-  <script src="../js/mi-voluntariado.js?v=1"></script>
+  <!-- SUPABASE: solamente URL y clave publicable; RLS protege cada consulta. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/supabase-client.js?v=1"></script>
+  <script src="../js/loading-overlay.js?v=1"></script>
+  <script src="../js/mi-voluntariado.js?v=3"></script>
 </body>
 </html>

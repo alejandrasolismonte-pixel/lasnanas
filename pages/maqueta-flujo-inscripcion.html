@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Maqueta visual del flujo de inscripción y membresías de Las Ñañas">
+  <title>Las Ñañas · Maqueta de inscripción</title>
+  <style>
+    :root{
+      --turquoise:#79c6c5;--turquoise-deep:#55acab;--ink:#102f35;--muted:#45646a;
+      --paper:#fbfdfb;--paper-soft:#f2f8f6;--line:#bad9d5;--green:#17633f;
+      --green-2:#248252;--orange:#e85c16;--cream:#fff7ea;--danger:#9f2f2f;
+      --shadow:0 22px 60px rgba(14,56,61,.19);--radius:24px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);background:var(--turquoise);font:16px/1.52 system-ui,-apple-system,"Segoe UI",sans-serif}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #073b4c;outline-offset:3px}
+    .serif{font-family:Georgia,"Times New Roman",serif}
+    .shell{max-width:1220px;margin:auto;padding:0 24px}
+    .demo-bar{background:#0d353a;color:#fff;text-align:center;padding:8px 16px;font-size:.86rem;letter-spacing:.02em}
+    .site-head{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+    .brand{display:flex;gap:12px;align-items:center;font-family:Georgia,serif;font-size:1.55rem;font-weight:700}
+    .brand-mark{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--paper);border:2px solid var(--orange);color:var(--green);font:700 1.1rem Georgia,serif}
+    .head-actions{display:flex;gap:10px;align-items:center}
+    .btn{border:0;border-radius:13px;padding:12px 18px;font-weight:750;transition:.2s transform,.2s background,.2s box-shadow;min-height:46px}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--green);color:#fff;box-shadow:0 8px 18px rgba(23,99,63,.2)}
+    .btn-primary:hover{background:#104c31}
+    .btn-orange{background:var(--orange);color:#fff;width:100%}
+    .btn-orange:hover{background:#c9470d}
+    .btn-ghost{background:rgba(255,255,255,.5);border:1px solid rgba(16,47,53,.22);color:var(--ink)}
+    .btn-danger{background:#fff1f1;color:var(--danger);border:1px solid #e8b9b9}
+    .btn:disabled{opacity:.48;cursor:not-allowed;transform:none;box-shadow:none}
+    .plans-head{text-align:center;max-width:710px;margin:26px auto 28px}
+    .eyebrow{margin:0 0 7px;color:#9b3b0d;font-size:.78rem;font-weight:850;text-transform:uppercase;letter-spacing:.14em}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(2rem,5vw,3.55rem);line-height:1.04;margin-bottom:12px}
+    .lead{font-size:1.08rem;color:#204b51}
+    .switches{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:25px 0}
+    .segmented{display:flex;padding:4px;background:rgba(255,255,255,.58);border:1px solid rgba(16,47,53,.18);border-radius:999px}
+    .segmented button{border:0;background:transparent;padding:9px 16px;border-radius:999px;color:var(--muted);font-weight:750}
+    .segmented button[aria-pressed="true"]{background:var(--green);color:#fff}
+    .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding-bottom:26px}
+    .plan{background:rgba(251,253,251,.94);border:1px solid rgba(16,47,53,.15);border-radius:var(--radius);padding:26px;box-shadow:0 15px 40px rgba(19,82,86,.12);display:flex;flex-direction:column;min-height:480px;position:relative;overflow:hidden}
+    .plan.featured{border:2px solid var(--orange);transform:translateY(-8px)}
+    .tag{position:absolute;right:18px;top:16px;background:#fff1e7;color:#9b3b0d;padding:5px 9px;border-radius:999px;font-size:.75rem;font-weight:850}
+    .plan-icon{width:52px;height:52px;border-radius:16px;background:#e2f4ef;color:var(--green);display:grid;place-items:center;font-size:1.35rem;font-weight:800}
+    .plan h2{font-size:1.75rem;margin:18px 0 6px}
+    .plan-copy{color:var(--muted);min-height:50px}
+    .price{font-size:2.18rem;line-height:1;color:var(--green);font-weight:850;margin:16px 0 7px}
+    .price small{font-size:.85rem;color:var(--muted);font-weight:600}
+    .annual-note{height:22px;color:var(--muted);font-size:.82rem}
+    .benefits{list-style:none;padding:16px 0;margin:10px 0 20px;border-top:1px solid var(--line);display:grid;gap:10px;color:#294d52}
+    .benefits li{display:flex;gap:9px}
+    .benefits li::before{content:"✓";font-weight:900;color:var(--green)}
+    .plan .btn{margin-top:auto}
+    .territory-note{max-width:800px;margin:5px auto 54px;text-align:center;color:#294f55;background:rgba(255,255,255,.36);padding:15px 20px;border-radius:16px}
+
+    dialog{border:0;padding:0;background:transparent;max-width:none;max-height:none}
+    dialog::backdrop{background:rgba(4,23,28,.68);backdrop-filter:blur(5px)}
+    .modal{width:min(500px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;background:var(--paper);border-radius:22px;box-shadow:var(--shadow);padding:25px}
+    .modal-top{display:flex;justify-content:space-between;gap:18px;align-items:start}
+    .modal h2{font-size:1.75rem;margin-bottom:4px}
+    .close{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:1.3rem;flex:none}
+    .selected-line{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#e7f5f2;border:1px solid #c2e1db;padding:10px 12px;border-radius:12px;margin:16px 0}
+    .selected-line strong{color:var(--green)}
+    .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:#eaf2f0;border-radius:12px;padding:4px;margin-bottom:18px}
+    .auth-tabs button{border:0;border-radius:9px;padding:9px;background:transparent;font-weight:750;color:var(--muted)}
+    .auth-tabs button[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 2px 8px rgba(16,47,53,.1)}
+    .field{display:grid;gap:6px;margin:13px 0}
+    label{font-weight:750}
+    .help{color:var(--muted);font-size:.79rem}
+    input,select,textarea{width:100%;border:1px solid #9fbfbb;border-radius:11px;background:#fff;color:var(--ink);padding:12px 13px;min-height:47px}
+    textarea{min-height:95px;resize:vertical}
+    .password-wrap{position:relative}
+    .password-wrap input{padding-right:70px}
+    .show-pass{position:absolute;right:7px;top:7px;border:0;background:#edf5f3;border-radius:8px;padding:7px;color:var(--ink)}
+    .form-actions{display:grid;gap:10px;margin-top:20px}
+    .link-btn{border:0;background:none;color:var(--green);text-decoration:underline;padding:5px;font-weight:700}
+    .error{display:none;color:var(--danger);background:#fff0f0;border-radius:10px;padding:9px 11px;font-size:.88rem;margin-top:10px}
+
+    #portal{display:none;min-height:100vh;background:#e8f4f2}
+    .portal-head{background:var(--turquoise);border-bottom:1px solid rgba(16,47,53,.15)}
+    .portal-head .shell{display:flex;justify-content:space-between;align-items:center;padding-top:15px;padding-bottom:15px}
+    .user-chip{display:flex;align-items:center;gap:10px}
+    .avatar{width:38px;height:38px;border-radius:50%;background:var(--green);color:white;display:grid;place-items:center;font-weight:850}
+    .portal-wrap{max-width:1180px;margin:auto;padding:26px 24px 60px}
+    .progress-card{background:#fff;border-radius:20px;padding:20px;box-shadow:0 8px 25px rgba(16,47,53,.08);margin-bottom:22px}
+    .progress-top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}
+    .progress-top h1{font-size:1.75rem;margin:0}
+    .status-pill{border-radius:999px;padding:6px 11px;background:#fff2dc;color:#7b4b00;font-size:.82rem;font-weight:800;white-space:nowrap}
+    .steps{display:grid;grid-template-columns:repeat(5,1fr);position:relative;gap:8px}
+    .steps::before{content:"";height:2px;background:#d5e4e1;position:absolute;top:16px;left:8%;right:8%}
+    .step{position:relative;text-align:center;color:#708286;font-size:.78rem;font-weight:700}
+    .step span{display:grid;place-items:center;width:34px;height:34px;margin:0 auto 6px;background:#e6efed;border:2px solid #d2e2df;border-radius:50%;position:relative;z-index:1}
+    .step.done,.step.current{color:var(--ink)}
+    .step.done span{background:var(--green);border-color:var(--green);color:#fff}
+    .step.current span{background:#fff;border-color:var(--orange);color:var(--orange)}
+    .portal-grid{display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px}
+    .side-nav{background:#fff;border-radius:18px;padding:10px;height:max-content;position:sticky;top:18px}
+    .side-nav button{width:100%;border:0;background:transparent;border-radius:11px;padding:12px;text-align:left;color:var(--muted);font-weight:750;margin:2px 0}
+    .side-nav button.active{background:#e4f2ed;color:var(--green)}
+    .content-card{background:#fff;border-radius:20px;padding:clamp(20px,4vw,34px);box-shadow:0 8px 25px rgba(16,47,53,.07)}
+    .content-card h2{font-size:1.75rem;margin-bottom:7px}
+    .subtle{color:var(--muted)}
+    .notice{border-left:4px solid var(--green);background:#edf7f3;border-radius:10px;padding:13px 15px;margin:18px 0}
+    .notice.orange{border-color:var(--orange);background:#fff5ed}
+    .review-plan{display:flex;justify-content:space-between;gap:20px;align-items:start;background:var(--paper-soft);border:1px solid var(--line);padding:18px;border-radius:16px;margin:18px 0}
+    .review-price{font-size:1.6rem;color:var(--green);font-weight:850;white-space:nowrap}
+    .mini-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+    .mini-plan{border:1px solid var(--line);background:#fff;border-radius:13px;padding:14px;text-align:left}
+    .mini-plan.selected{border:2px solid var(--green);background:#eef8f4}
+    .mini-plan strong{display:block;font-size:1.05rem}
+    .checks{display:grid;gap:10px;margin:18px 0}
+    .check{display:flex;gap:10px;align-items:flex-start;background:#f7faf9;padding:11px;border-radius:10px}
+    .check input{width:19px;height:19px;min-height:0;margin-top:2px}
+    .button-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+    .timeline{display:grid;gap:10px;margin:20px 0}
+    .timeline-item{display:grid;grid-template-columns:14px 1fr;gap:11px}
+    .timeline-item i{width:12px;height:12px;border-radius:50%;background:#c5d6d3;margin-top:6px}
+    .timeline-item.active i{background:var(--orange);box-shadow:0 0 0 5px #ffeadb}
+    .demo-panel{margin-top:22px;border:1px dashed #9a6e30;background:#fff9ed;border-radius:16px;padding:16px}
+    .demo-panel summary{cursor:pointer;font-weight:850;color:#6b4410}
+    .demo-panel .button-row{margin-top:14px}
+    .payment-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+    .payment-option{border:1px solid var(--line);border-radius:15px;padding:16px;background:#fff;text-align:left;min-height:120px}
+    .payment-option.selected{border:2px solid var(--green);background:#eef8f4}
+    .locked{display:flex;gap:12px;align-items:start;background:#f4f6f6;color:#617276;padding:16px;border-radius:13px}
+    .doc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+    .doc{border:1px solid var(--line);border-radius:15px;padding:17px;background:#fbfdfc}
+    .doc h3{margin-bottom:5px}
+    .doc .btn{margin-top:12px}
+    .credential{max-width:520px;background:linear-gradient(135deg,#0f5037,#197d50);border-radius:20px;color:#fff;padding:24px;margin:18px 0;position:relative;overflow:hidden;box-shadow:0 15px 28px rgba(23,99,63,.22)}
+    .credential::after{content:"";position:absolute;width:180px;height:180px;border:35px solid rgba(255,255,255,.08);border-radius:50%;right:-70px;bottom:-80px}
+    .credential-top{display:flex;justify-content:space-between;gap:12px;position:relative;z-index:1}
+    .credential-profile{display:flex;gap:16px;align-items:center;margin-top:22px;position:relative;z-index:1}
+    .photo{width:80px;height:80px;border-radius:50%;border:3px solid #fff;background:#dcedea;display:grid;place-items:center;color:var(--green);overflow:hidden;font-weight:850}
+    .photo img{width:100%;height:100%;object-fit:cover}
+    .hidden{display:none!important}
+    .footer-note{text-align:center;color:#315d62;padding:26px}
+    .toast{position:fixed;right:20px;bottom:20px;z-index:20;max-width:360px;background:#0d353a;color:#fff;padding:13px 16px;border-radius:12px;box-shadow:var(--shadow);font-weight:700}
+    @media(max-width:850px){
+      .plan-grid{grid-template-columns:1fr}.plan{min-height:auto}.plan.featured{transform:none}.portal-grid{grid-template-columns:1fr}.side-nav{display:flex;overflow:auto;position:static}.side-nav button{min-width:max-content}.mini-plans,.doc-grid{grid-template-columns:1fr}.portal-head .brand span:last-child{display:none}
+    }
+    @media(max-width:560px){
+      .shell,.portal-wrap{padding-left:15px;padding-right:15px}.head-actions .btn-ghost{display:none}.plans-head{margin-top:10px}.plan{padding:22px}.modal{padding:20px}.steps{gap:2px}.step{font-size:.67rem}.step span{width:30px;height:30px}.steps::before{top:14px}.progress-top{align-items:flex-start}.review-plan{display:block}.review-price{margin-top:12px}.payment-grid{grid-template-columns:1fr}.user-chip .user-text{display:none}.content-card{border-radius:16px}
+    }
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="demo-bar">Maqueta visual · datos ficticios · no crea cuentas ni realiza cobros reales</div>
+  <main id="plansPage" aria-hidden="true">
+    <header class="shell site-head"><div class="brand"><span class="brand-mark">Ñ</span><span>Las Ñañas</span></div></header>
+    <section class="shell plans-head">
+      <p class="eyebrow">Continuación desde la página de voluntariado</p>
+      <h1 class="serif">Inscripción a Las Ñañas</h1>
+      <p class="lead">Esta maqueta comienza en el modal que se abre después de elegir un plan.</p>
+      <button class="btn btn-primary" id="reopenAuth">Abrir inscripción nuevamente</button>
+    </section>
+  </main>
+
+  <dialog id="authDialog" aria-labelledby="authTitle">
+    <div class="modal">
+      <div class="modal-top"><div><p class="eyebrow">Tu cuenta Las Ñañas</p><h2 id="authTitle" class="serif">Crea tu cuenta</h2><p class="subtle" id="authIntro">Primero guarda tu inscripción. Puedes decidir sobre el plan después.</p></div><button class="close" aria-label="Cerrar">×</button></div>
+      <div class="selected-line"><span>Plan elegido</span><strong id="modalPlan">kimün · mensual</strong></div>
+      <div class="auth-tabs" role="tablist" aria-label="Acceso">
+        <button role="tab" id="registerTab" aria-selected="true">Crear cuenta</button>
+        <button role="tab" id="loginTab" aria-selected="false">Ya tengo cuenta</button>
+      </div>
+      <form id="authForm" novalidate>
+        <div id="registerFields">
+          <div class="field"><label for="name">Nombre o nombre de uso</label><input id="name" name="name" autocomplete="name" minlength="2" maxlength="80" required><span class="help">Entre 2 y 80 caracteres.</span></div>
+          <div class="field"><label for="country">País</label><select id="country" name="country" required><option value="">Selecciona tu país</option><option value="CL">Chile</option><option value="AR">Argentina</option><option value="BR">Brasil</option><option value="CO">Colombia</option><option value="MX">México</option><option value="PE">Perú</option><option value="OTHER">Otro país</option></select></div>
+        </div>
+        <div class="field"><label for="email">Correo electrónico</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+        <div class="field"><label for="password">Contraseña</label><div class="password-wrap"><input id="password" name="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required><button class="show-pass" type="button" aria-label="Mostrar contraseña">Ver</button></div><span class="help" id="passHelp">Usa 12 caracteres o más. Puedes utilizar una frase.</span></div>
+        <p class="error" id="formError" role="alert">Revisa los campos destacados.</p>
+        <div class="form-actions"><button class="btn btn-primary" type="submit" id="authSubmit">Crear cuenta y continuar</button><button class="link-btn hidden" type="button" id="recover">Olvidé mi contraseña</button></div>
+      </form>
+    </div>
+  </dialog>
+
+  <main id="portal">
+    <header class="portal-head"><div class="shell"><div class="brand"><span class="brand-mark">Ñ</span><span>Mi voluntariado</span></div><div class="user-chip"><span class="avatar" id="avatar">A</span><span class="user-text" id="userName">Alejandra</span><button class="btn btn-ghost" id="logout">Salir</button></div></div></header>
+    <div class="portal-wrap">
+      <section class="progress-card" aria-labelledby="portalTitle"><div class="progress-top"><div><p class="eyebrow">Tu espacio personal</p><h1 id="portalTitle" class="serif">Tu inscripción está guardada</h1></div><span class="status-pill" id="statusPill">Cuenta creada</span></div><div class="steps" id="steps"><div class="step current"><span>1</span>Cuenta</div><div class="step"><span>2</span>Solicitud</div><div class="step"><span>3</span>Revisión</div><div class="step"><span>4</span>Pago</div><div class="step"><span>5</span>Activa</div></div></section>
+      <div class="portal-grid">
+        <nav class="side-nav" aria-label="Mi voluntariado"><button class="active" data-view="membership">Mi inscripción</button><button data-view="documents">Mis documentos</button><button data-view="profile">Mi perfil y credencial</button></nav>
+        <div>
+          <section class="content-card" id="membershipView"></section>
+          <section class="content-card hidden" id="documentsView"></section>
+          <section class="content-card hidden" id="profileView"></section>
+        </div>
+      </div>
+    </div>
+    <footer class="footer-note">Maqueta para revisar la experiencia · sin conexión a base de datos o pagos</footer>
+  </main>
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const plans={
+      'keyuwün':{monthly:10000,benefits:['Novedades de la red','Charla introductoria en línea','Prioridad para conocer convocatorias']},
+      'kimün':{monthly:15000,benefits:['Todo lo incluido en keyuwün','Encuentros comunitarios en línea','Prioridad para jornadas presenciales','PDF de experiencias territoriales']},
+      'pülli':{monthly:25000,benefits:['Todo lo incluido en kimün','Orientación previa personalizada','Acceso preferente según cupos','Directorio autorizado de ñañas']}
+    };
+    const initial={plan:'kimün',period:'monthly',name:'',email:'',country:'',stage:'account',verified:false,application:'draft',payment:'none',active:false,photo:null};
+    let state={...initial}; let authMode='register'; let lastTrigger=null;
+    const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+    const money=n=>new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(n);
+    function total(){return state.period==='annual'?plans[state.plan].monthly*12*.8:plans[state.plan].monthly}
+    function periodLabel(){return state.period==='annual'?'anual':'mensual'}
+    function updatePrices(){
+      $$('.price').forEach(el=>{const monthly=+el.dataset.monthly;const note=el.nextElementSibling;if(state.period==='annual'){el.innerHTML=`${money(monthly*12*.8)} <small>CLP / año</small>`;note.textContent=`Ahorro referencial: ${money(monthly*12*.2)} al año`;}else{el.innerHTML=`${money(monthly)} <small>CLP / mes</small>`;note.textContent='';}});
+      $$('[data-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.period===state.period)));
+    }
+    $$('[data-period]').forEach(b=>b.addEventListener('click',()=>{state.period=b.dataset.period;updatePrices()}));
+    function openAuth(plan,mode='register',trigger=null){state.plan=plan||state.plan;lastTrigger=trigger;setAuthMode(mode);$('#modalPlan').textContent=`${state.plan} · ${periodLabel()}`;$('#authDialog').showModal();setTimeout(()=>mode==='register'?$('#name').focus():$('#email').focus(),30)}
+    $$('.join').forEach(b=>b.addEventListener('click',()=>openAuth(b.dataset.plan,'register',b)));
+    $('#reopenAuth').addEventListener('click',()=>openAuth(state.plan,'register',$('#reopenAuth')));
+    function setAuthMode(mode){authMode=mode;const reg=mode==='register';$('#registerFields').classList.toggle('hidden',!reg);$('#registerTab').setAttribute('aria-selected',String(reg));$('#loginTab').setAttribute('aria-selected',String(!reg));$('#authTitle').textContent=reg?'Crea tu cuenta':'Bienvenida nuevamente';$('#authIntro').textContent=reg?'Primero guarda tu inscripción. Puedes decidir sobre el plan después.':'Ingresa para continuar donde quedaste.';$('#authSubmit').textContent=reg?'Crear cuenta y continuar':'Iniciar sesión';$('#recover').classList.toggle('hidden',reg);$('#password').autocomplete=reg?'new-password':'current-password';$('#passHelp').textContent=reg?'Usa 12 caracteres o más. Puedes utilizar una frase.':'Ingresa la contraseña de tu cuenta.';$('#formError').style.display='none'}
+    $('#registerTab').addEventListener('click',()=>setAuthMode('register'));$('#loginTab').addEventListener('click',()=>setAuthMode('login'));
+    $('.close').addEventListener('click',()=>$('#authDialog').close());
+    $('#authDialog').addEventListener('close',()=>lastTrigger?.focus());
+    $('#authDialog').addEventListener('cancel',e=>{if($('#authForm').querySelector('input:not([value=""])')){} });
+    $('.show-pass').addEventListener('click',()=>{const p=$('#password');p.type=p.type==='password'?'text':'password';$('.show-pass').textContent=p.type==='password'?'Ver':'Ocultar';$('.show-pass').setAttribute('aria-label',p.type==='password'?'Mostrar contraseña':'Ocultar contraseña')});
+    let toastTimer;function toast(message){const box=$('#toast');box.textContent=message;box.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>box.classList.add('hidden'),3200)}
+    $('#recover').addEventListener('click',()=>{toast('En producción se enviará un enlace seguro para recuperar el acceso.')});
+    $('#authForm').addEventListener('submit',e=>{
+      e.preventDefault();const name=$('#name'),country=$('#country'),email=$('#email'),pass=$('#password');
+      const ok=email.validity.valid&&pass.value.length>=12&&(authMode==='login'||(name.validity.valid&&country.value));
+      if(!ok){$('#formError').style.display='block';return}
+      if(authMode==='register'){state.name=name.value.trim();state.country=country.value;state.email=email.value.trim();}else{state.name=state.name||'Voluntaria';state.email=email.value.trim()}
+      $('#authDialog').close();showPortal();
+    });
+    function showPortal(){$('#plansPage').style.display='none';$('#portal').style.display='block';$('#userName').textContent=state.name;$('#avatar').textContent=(state.name[0]||'V').toUpperCase();renderAll();window.scrollTo(0,0)}
+    $('#logout').addEventListener('click',()=>{$('#portal').style.display='none';$('#plansPage').style.display='block';window.scrollTo(0,0)});
+    $$('.side-nav button').forEach(b=>b.addEventListener('click',()=>{$$('.side-nav button').forEach(x=>x.classList.toggle('active',x===b));['membership','documents','profile'].forEach(v=>$(`#${v}View`).classList.toggle('hidden',v!==b.dataset.view))}));
+    function stageIndex(){if(state.active)return 5;if(state.payment!=='none')return 4;if(['review','clarify','approved','rejected'].includes(state.application))return 3;if(state.application==='submitted')return 2;return 1}
+    function updateProgress(){const i=stageIndex();$$('#steps .step').forEach((s,n)=>{s.classList.toggle('done',n+1<i);s.classList.toggle('current',n+1===i)});const labels={draft:'Cuenta creada',submitted:'Solicitud enviada',review:'En revisión',clarify:'Necesita aclaración',approved:'Solicitud aceptada',rejected:'Solicitud rechazada'};$('#statusPill').textContent=state.active?'Membresía activa':state.payment==='pending'?'Pago pendiente':labels[state.application]||'Cuenta creada';$('#portalTitle').textContent=state.active?'Tu membresía está activa':state.application==='draft'?'Tu inscripción está guardada':'Revisa el estado de tu proceso'}
+    function membershipHTML(){
+      if(state.application==='draft')return `<button class="link-btn back-step" data-back="auth">← Volver al paso anterior</button><p class="eyebrow">Paso siguiente</p><h2 class="serif">Revisa tu membresía</h2><p class="subtle">Tu cuenta ya existe. Aún no se realizará ningún cobro.</p><div class="notice">Plan preseleccionado desde la página: <strong>${state.plan}</strong>. Puedes cambiarlo antes de enviar.</div><div class="mini-plans">${Object.keys(plans).map(p=>`<button class="mini-plan ${p===state.plan?'selected':''}" data-pick="${p}"><strong>${p}</strong><span>${money(plans[p].monthly)} / mes</span></button>`).join('')}</div><div class="field"><label for="portalPeriod">Periodicidad</label><select id="portalPeriod"><option value="monthly" ${state.period==='monthly'?'selected':''}>Mensual</option><option value="annual" ${state.period==='annual'?'selected':''}>Anual · 20 % de ahorro referencial</option></select></div><div class="review-plan"><div><strong>Resumen</strong><p class="subtle">${state.plan} · ${periodLabel()}</p><ul>${plans[state.plan].benefits.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="review-price">${money(total())}</div></div><div class="checks"><label class="check"><input id="respect" type="checkbox"> <span>Me comprometo a participar con respeto y cuidar la privacidad de la comunidad.</span></label><label class="check"><input id="coordination" type="checkbox"> <span>Entiendo que visitas, fechas, traslados y alojamiento se coordinan directamente y no están reservados por la membresía.</span></label></div><div class="button-row"><button class="btn btn-primary" id="submitApplication">Enviar solicitud al equipo</button><button class="btn btn-ghost" id="saveLater">Guardar y continuar después</button></div>`;
+      if(state.application==='submitted'||state.application==='review')return `<button class="link-btn back-step" data-back="draft">← Volver al paso anterior</button><p class="eyebrow">Solicitud recibida</p><h2 class="serif">El equipo está revisando tu solicitud</h2><p class="subtle">No debes pagar todavía. Te avisaremos si necesitamos alguna aclaración.</p><div class="timeline"><div class="timeline-item"><i></i><div><strong>Cuenta creada</strong><br><span class="subtle">Tu inscripción permanece guardada.</span></div></div><div class="timeline-item active"><i></i><div><strong>Solicitud en revisión</strong><br><span class="subtle">Plan ${state.plan} · ${periodLabel()}.</span></div></div><div class="timeline-item"><i></i><div><strong>Pago</strong><br><span class="subtle">Disponible después de la aprobación.</span></div></div></div>${demoControls()}`;
+      if(state.application==='clarify')return `<button class="link-btn back-step" data-back="review">← Volver al paso anterior</button><p class="eyebrow">Acción necesaria</p><h2 class="serif">El equipo necesita una aclaración</h2><div class="notice orange"><strong>Mensaje de coordinación:</strong><br>Cuéntanos brevemente qué tipo de actividades generales te interesan.</div><div class="field"><label for="clarification">Tu respuesta</label><textarea id="clarification" placeholder="Escribe aquí tu respuesta"></textarea></div><button class="btn btn-primary" id="sendClarification">Enviar respuesta</button>${demoControls()}`;
+      if(state.application==='rejected')return `<button class="link-btn back-step" data-back="review">← Volver al paso anterior</button><p class="eyebrow">Estado de la solicitud</p><h2 class="serif">No podremos continuar con esta solicitud</h2><p>Tu cuenta permanece disponible y no se ha realizado ningún cobro. Si necesitas orientación, puedes comunicarte directamente con el equipo.</p>${demoControls()}`;
+      if(state.application==='approved'&&state.payment==='none')return `<button class="link-btn back-step" data-back="review">← Volver al paso anterior</button><p class="eyebrow">Solicitud aceptada</p><h2 class="serif">Revisa las condiciones antes de pagar</h2><div class="review-plan"><div><strong>Plan ${state.plan}</strong><p class="subtle">Modalidad ${periodLabel()} · vigencia pendiente de definición contractual</p></div><div class="review-price">${money(total())}</div></div><div class="notice orange">Las condiciones definitivas de renovación, cancelación y devolución deben ser validadas por Las Ñañas antes de habilitar cobros reales.</div><label class="check"><input id="terms" type="checkbox"> <span>He leído y acepto las condiciones de membresía correspondientes a esta versión de demostración.</span></label><h3>Método de pago</h3><div class="payment-grid"><button class="payment-option selected" data-payment="gateway"><strong>Pasarela de pago</strong><br><span class="subtle">Pago seguro en el sitio oficial del proveedor.</span></button><button class="payment-option" data-payment="transfer"><strong>Transferencia bancaria</strong><br><span class="subtle">Requiere verificación del equipo.</span></button></div><div id="paymentInfo" class="notice">La pasarela real se abrirá después de conectar un proveedor. Esta maqueta no solicita datos de tarjeta.</div><button class="btn btn-primary" id="continuePayment" disabled>Continuar al pago de demostración</button>`;
+      if(state.payment==='pending'&&!state.active)return `<button class="link-btn back-step" data-back="conditions">← Volver al paso anterior</button><p class="eyebrow">Pago pendiente</p><h2 class="serif">Esperando confirmación</h2><p>Tu membresía aún no está activa. Informar una transferencia o iniciar un pago no desbloquea documentos.</p><div class="locked"><span aria-hidden="true">🔒</span><div><strong>Documentos protegidos</strong><br>Se habilitarán cuando el pago haya sido verificado.</div></div>${demoControls(true)}`;
+      return `<button class="link-btn back-step" data-back="pending">← Volver al paso anterior</button><p class="eyebrow">Membresía activa</p><h2 class="serif">Tu participación está confirmada</h2><p>Ya puedes revisar los contenidos disponibles para el plan <strong>${state.plan}</strong> y descargar tu credencial.</p><div class="notice">Pago de demostración confirmado · ${money(total())} · ${periodLabel()}</div><div class="button-row"><button class="btn btn-primary" data-open-view="documents">Ver mis documentos</button><button class="btn btn-ghost" data-open-view="profile">Preparar mi credencial</button></div>`;
+    }
+    function demoControls(payment=false){return `<details class="demo-panel"><summary>Controles de demostración — coordinación</summary><p class="subtle">Solo sirven para recorrer visualmente los estados.</p><div class="button-row">${payment?'<button class="btn btn-primary" data-demo="confirmPayment">Confirmar pago</button><button class="btn btn-danger" data-demo="rejectPayment">Rechazar pago</button>':'<button class="btn btn-ghost" data-demo="clarify">Pedir aclaración</button><button class="btn btn-primary" data-demo="approve">Aceptar solicitud</button><button class="btn btn-danger" data-demo="reject">Rechazar</button>'}</div></details>`}
+    function renderMembership(){const root=$('#membershipView');root.innerHTML=membershipHTML();
+      $$('[data-pick]').forEach(b=>b.onclick=()=>{state.plan=b.dataset.pick;renderAll()});
+      $('#portalPeriod')?.addEventListener('change',e=>{state.period=e.target.value;renderAll()});
+      $('#submitApplication')?.addEventListener('click',()=>{if(!$('#respect').checked||!$('#coordination').checked){toast('Marca los dos acuerdos para enviar la solicitud.');return}state.application='submitted';renderAll()});
+      $('#saveLater')?.addEventListener('click',()=>toast('Tu cuenta y la selección quedan guardadas en esta demostración.'));
+      $('#sendClarification')?.addEventListener('click',()=>{if(!$('#clarification').value.trim()){toast('Escribe una respuesta antes de enviarla.');return}state.application='review';renderAll()});
+      $$('[data-demo]').forEach(b=>b.onclick=()=>{const a=b.dataset.demo;if(a==='clarify')state.application='clarify';if(a==='approve')state.application='approved';if(a==='reject')state.application='rejected';if(a==='confirmPayment'){state.payment='confirmed';state.active=true}if(a==='rejectPayment')state.payment='rejected';renderAll()});
+      let payMethod='gateway';$$('[data-payment]').forEach(b=>b.onclick=()=>{payMethod=b.dataset.payment;$$('[data-payment]').forEach(x=>x.classList.toggle('selected',x===b));$('#paymentInfo').textContent=payMethod==='gateway'?'La pasarela real se abrirá después de conectar un proveedor. Esta maqueta no solicita datos de tarjeta.':'Los datos bancarios deben ser confirmados por Las Ñañas. Avisar una transferencia no activa la membresía.'});
+      $('#terms')?.addEventListener('change',e=>$('#continuePayment').disabled=!e.target.checked);
+      $('#continuePayment')?.addEventListener('click',()=>{state.payment='pending';renderAll()});
+      $$('.back-step').forEach(b=>b.onclick=()=>goBack(b.dataset.back));
+      $$('[data-open-view]').forEach(b=>b.onclick=()=>{$(`.side-nav [data-view="${b.dataset.openView}"]`).click()});
+    }
+    function goBack(target){
+      if(target==='auth'){state.application='draft';$('#portal').style.display='none';$('#plansPage').style.display='block';openAuth(state.plan,'register',$('#reopenAuth'));return}
+      if(target==='draft'){state.application='draft';state.payment='none';state.active=false}
+      if(target==='review'){state.application='review';state.payment='none';state.active=false}
+      if(target==='conditions'){state.application='approved';state.payment='none';state.active=false}
+      if(target==='pending'){state.application='approved';state.payment='pending';state.active=false}
+      renderAll();window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function renderDocuments(){const root=$('#documentsView');if(!state.active){root.innerHTML='<p class="eyebrow">Mis documentos</p><h2 class="serif">Aún no hay documentos disponibles</h2><div class="locked"><span aria-hidden="true">🔒</span><div><strong>Contenido protegido</strong><br>Se habilita únicamente después de aprobar la solicitud y confirmar el pago.</div></div>';return}
+      const extras=state.plan==='keyuwün'?'':`<article class="doc"><h3>Experiencias y actividades</h3><p class="subtle">Material de muestra para el plan ${state.plan}.</p><button class="btn btn-ghost" data-download="experiencias">Descargar muestra</button></article>`+(state.plan==='pülli'?`<article class="doc"><h3>Directorio autorizado</h3><p class="subtle">Solo información preparada para compartir.</p><button class="btn btn-ghost" data-download="directorio">Descargar muestra</button></article>`:'');
+      root.innerHTML=`<p class="eyebrow">Acceso habilitado</p><h2 class="serif">Mis documentos</h2><p class="subtle">Material disponible para tu plan ${state.plan}.</p><div class="doc-grid"><article class="doc"><h3>Comprobante de pago</h3><p class="subtle">Referencia DEMO-2026 · ${money(total())}.</p><button class="btn btn-ghost" data-download="comprobante">Descargar muestra</button></article><article class="doc"><h3>Información de bienvenida</h3><p class="subtle">Coordinación y próximos pasos.</p><button class="btn btn-ghost" data-download="bienvenida">Descargar muestra</button></article>${extras}</div>`;
+      $$('[data-download]').forEach(b=>b.onclick=()=>downloadText(b.dataset.download));
+    }
+    function renderProfile(){const root=$('#profileView');root.innerHTML=`<p class="eyebrow">Mi perfil</p><h2 class="serif">Credencial de voluntariado</h2><p class="subtle">La fotografía es opcional y no autoriza su difusión.</p><div class="field"><label for="photoInput">Fotografía opcional</label><input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp"><span class="help">Para esta maqueta: JPG, PNG o WebP. No se envía a ningún servidor.</span></div><div class="credential" id="credential"><div class="credential-top"><div><small>LAS ÑAÑAS</small><br><strong>Red de voluntariado</strong></div><strong>DEMO</strong></div><div class="credential-profile"><div class="photo" id="photoPreview">${state.photo?`<img src="${state.photo}" alt="Fotografía de la credencial">`:(state.name[0]||'V').toUpperCase()}</div><div><small>Nombre de uso</small><h3>${state.name}</h3><small>Plan</small><br><strong>${state.plan}</strong> · ${periodLabel()}</div></div></div><div class="button-row"><button class="btn btn-primary" id="downloadCredential">Descargar credencial de muestra</button>${state.photo?'<button class="btn btn-ghost" id="removePhoto">Quitar fotografía</button>':''}</div>`;
+      $('#photoInput').onchange=e=>{const f=e.target.files[0];if(!f)return;if(f.size>4*1024*1024){toast('La imagen supera 4 MB. Elige una más liviana.');return}const reader=new FileReader();reader.onload=()=>{state.photo=reader.result;renderProfile()};reader.readAsDataURL(f)};
+      $('#removePhoto')?.addEventListener('click',()=>{state.photo=null;renderProfile()});$('#downloadCredential').onclick=downloadCredential;
+    }
+    function renderAll(){updateProgress();renderMembership();renderDocuments();renderProfile()}
+    function downloadText(kind){const content=`LAS ÑAÑAS — DOCUMENTO DE DEMOSTRACIÓN\n\nTipo: ${kind}\nNombre: ${state.name}\nPlan: ${state.plan}\nPeriodicidad: ${periodLabel()}\nImporte: ${money(total())}\n\nEste archivo es una muestra visual y no acredita un pago ni una membresía real.`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:'text/plain;charset=utf-8'}));a.download=`las-nanas-${kind}-muestra.txt`;a.click();URL.revokeObjectURL(a.href)}
+    function downloadCredential(){const safe=(state.name||'Voluntaria').replace(/[<>&]/g,'');const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600"><rect width="1000" height="600" rx="45" fill="#17633f"/><circle cx="910" cy="520" r="180" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="70"/><text x="70" y="90" fill="#fff" font-family="Arial" font-size="28">LAS ÑAÑAS · RED DE VOLUNTARIADO</text><text x="875" y="90" fill="#fff" font-family="Arial" font-size="28">DEMO</text><circle cx="160" cy="315" r="85" fill="#dcedea" stroke="#fff" stroke-width="8"/><text x="160" y="338" text-anchor="middle" fill="#17633f" font-family="Arial" font-size="66" font-weight="700">${safe[0]||'V'}</text><text x="290" y="245" fill="#dcedea" font-family="Arial" font-size="24">NOMBRE DE USO</text><text x="290" y="300" fill="#fff" font-family="Arial" font-size="46" font-weight="700">${safe}</text><text x="290" y="370" fill="#dcedea" font-family="Arial" font-size="24">PLAN</text><text x="290" y="420" fill="#fff" font-family="Arial" font-size="40" font-weight="700">${state.plan} · ${periodLabel()}</text><text x="70" y="535" fill="#fff" fill-opacity=".75" font-family="Arial" font-size="22">Credencial visual de muestra · sin validez</text></svg>`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));a.download='credencial-las-nanas-muestra.svg';a.click();URL.revokeObjectURL(a.href)}
+    updatePrices();
+    window.addEventListener('DOMContentLoaded',()=>openAuth('kimün','register',$('#reopenAuth')));
+  </script>
+</body>
+</html>

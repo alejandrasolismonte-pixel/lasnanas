@@ -1,0 +1,102 @@
+/* CARGADOR GLOBAL: espera visible, centrada y reutilizable en los flujos de Supabase. */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  /* FONDO: turquesa suave de la inscripción, translúcido para conservar contexto. */
+  background: rgba(121, 198, 197, .72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.loading-overlay[hidden] { display: none !important; }
+
+.loading-overlay__content {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  max-width: 320px;
+  color: #111;
+  text-align: center;
+}
+
+.loading-overlay__loader {
+  width: clamp(96px, 15vw, 136px);
+  height: clamp(96px, 15vw, 136px);
+  color: #111;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .18));
+}
+
+.loading-overlay__loader svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-origin: center;
+}
+
+.loading-overlay__loader path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform-origin: center;
+}
+
+.loading-overlay__loader .loader-path {
+  stroke: #111;
+  stroke-dasharray: 220;
+  stroke-dashoffset: 220;
+  animation: global-loader-draw 1.8s cubic-bezier(.65,.05,.36,1) infinite,
+             global-loader-breathe 1.8s ease-in-out infinite;
+}
+
+.loading-overlay__loader .loader-inner {
+  stroke: #777;
+  stroke-width: 2;
+  opacity: .45;
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: global-loader-inner-draw 1.8s cubic-bezier(.65,.05,.36,1) infinite,
+             global-loader-pulse 1.8s ease-in-out infinite;
+}
+
+.loading-overlay__message {
+  margin: 0;
+  color: #333;
+  font-weight: 700;
+}
+
+@keyframes global-loader-draw {
+  0% { stroke-dashoffset: 220; }
+  45%, 70% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -220; }
+}
+
+@keyframes global-loader-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes global-loader-inner-draw {
+  0% { stroke-dashoffset: 120; }
+  50% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -120; }
+}
+
+@keyframes global-loader-pulse {
+  0%, 100% { opacity: .25; }
+  50% { opacity: .8; }
+}
+
+/* ACCESIBILIDAD: presenta el símbolo sin animarlo cuando se reduce el movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  .loading-overlay__loader .loader-path,
+  .loading-overlay__loader .loader-inner {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

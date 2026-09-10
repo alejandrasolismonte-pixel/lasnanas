@@ -2,3 +2,6 @@
 .env
 .env.*
 !.env.example
+
+# CONFIGURACIÓN GENERADA: contiene únicamente URL y clave publicable, pero no se versiona.
+js/supabase-config.js

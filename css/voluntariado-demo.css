@@ -207,6 +207,13 @@
 .field-message { color: var(--demo-green); }
 
 .auth-form > .button { width: 100%; margin-top: .45rem; }
+
+/* ESPERA DE REGISTRO: conserva el texto centrado mientras actúa la capa global. */
+.auth-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 .membership-auth__recover,
 .membership-auth__recovery {
   width: fit-content;

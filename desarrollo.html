@@ -126,16 +126,18 @@
         <!-- Libro reorganizado en una portada y cuatro aperturas temáticas. -->
         <div class="book-scene">
             <div class="nanas-book" id="nanas-book">
-                <!-- El logotipo ocupa la mitad izquierda de la portada, junto al texto principal. -->
+                <!-- CAMBIO: el texto inicial ahora ocupa la mitad izquierda que antes contenía el logo. -->
                 <div class="nanas-cover">
-                    <img class="nanas-book-logo" src="assets/img/logo%20-%20libro.png" alt="Logotipo de Las Ñañas">
+                    <div class="nanas-cover-text">
+                        <h3>Las Ñañas: trabajo colaborativo, territorio y saberes compartidos.</h3>
+                    </div>
                 </div>
                 <div class="nanas-spine"></div>
 
-                <!-- La primera hoja muestra la portada y revela la imagen de presentación. -->
+                <!-- CAMBIO: la portada con el logo ahora está en la hoja derecha y conserva el giro 3D. -->
                 <div class="nanas-leaf" id="l0" style="z-index:5;">
-                    <div class="nanas-face nanas-face--cover">
-                        <h3>Las Ñañas: trabajo colaborativo, territorio y saberes compartidos.</h3>
+                    <div class="nanas-face nanas-face--cover is-logo">
+                        <img class="nanas-book-logo" src="assets/img/logo%20-%20libro.png" alt="Logotipo de Las Ñañas">
                     </div>
                     <div class="nanas-face nanas-back is-image">
                         <!-- Viviana vuelve a acompañar la primera presentación al abrir la portada. -->

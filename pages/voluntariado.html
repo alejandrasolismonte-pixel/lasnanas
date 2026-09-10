@@ -16,7 +16,9 @@
   <!-- CAMBIO: versión actualizada para cargar sin caché el nuevo hero de voluntariado. -->
   <link rel="stylesheet" href="../css/voluntariado.css?v=8">
   <!-- ETAPA 1: estilos aislados del flujo demostrativo de inscripción y membresía. -->
-  <link rel="stylesheet" href="../css/voluntariado-demo.css?v=1">
+  <link rel="stylesheet" href="../css/voluntariado-demo.css?v=2">
+  <!-- CARGA GLOBAL: indicador central para esperas de autenticación y navegación. -->
+  <link rel="stylesheet" href="../css/loading-overlay.css?v=1">
   <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
 </head>
 <body>
@@ -337,7 +339,10 @@
           <label>Contraseña<span class="password-field"><input name="password" type="password" minlength="12" maxlength="256" autocomplete="new-password" aria-describedby="register-password-help register-password-error" required><button type="button" data-toggle-password>Mostrar</button></span></label>
           <p class="field-help" id="register-password-help">Usa una frase larga de al menos 12 caracteres. Puedes pegarla o usar tu gestor de contraseñas.</p>
           <p class="field-error" id="register-password-error"></p>
-          <button class="button button--primary" type="submit">Crear cuenta y continuar</button>
+          <!-- ESPERA: el cargador global evita dobles envíos mientras se crea la cuenta. -->
+          <button class="button button--primary auth-submit" type="submit" data-register-submit>
+            <span data-submit-label>Crear cuenta y continuar</span>
+          </button>
           <p class="field-message" data-register-status aria-live="polite"></p>
         </form>
       </section>
@@ -388,8 +393,13 @@
   <!-- SCRIPTS -->
   <script src="../js/desarrollo.js?v=20"></script>
   <script src="../js/voluntariado.js"></script>
+  <!-- SUPABASE: cliente público; la autorización real continúa en RLS. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/supabase-client.js?v=1"></script>
+  <script src="../js/loading-overlay.js?v=1"></script>
   <!-- ETAPA 1: lógica demostrativa separada de la futura autenticación y autorización reales. -->
-  <script src="../js/voluntariado-demo.js?v=2"></script>
+  <script src="../js/voluntariado-demo.js?v=4"></script>
   <script src="../js/whatsapp-floating.js?v=3"></script>
 </body>
 </html>
