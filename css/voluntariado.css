@@ -40,13 +40,14 @@
 
 /* Estilos de los controles deslizables de periodicidad y moneda */
 .membership-controls { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; margin: 2rem 0 2.5rem; }
-.membership-switch { display: flex; min-width: 0; margin: 0; padding: .25rem; border: 1px solid rgba(226, 232, 240, .16); border-radius: 999px; background: rgba(17, 29, 41, .9); }
+.membership-switch { display: flex; min-width: 0; margin: 0; padding: .25rem; border: 1px solid rgba(255, 122, 36, .72); border-radius: 999px; background: rgba(17, 29, 41, .9); }
 .membership-switch legend { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .membership-switch__option { position: relative; cursor: pointer; }
 .membership-switch__option input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
-.membership-switch__option span { display: flex; min-height: 44px; padding: .65rem 1rem; align-items: center; justify-content: center; color: var(--membership-copy-soft); border-radius: 999px; line-height: 1.15; white-space: nowrap; transition: color .2s ease, background-color .2s ease, box-shadow .2s ease; }
+.membership-switch__option span { display: flex; min-height: 44px; padding: .65rem 1rem; align-items: center; justify-content: center; color: var(--membership-copy-soft); border: 1px solid transparent; border-radius: 999px; line-height: 1.15; white-space: nowrap; transition: color .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease; }
 .membership-switch__option small { font: inherit; }
-.membership-switch__option input:checked + span { color: #f6fff8; background: var(--green, #166534); box-shadow: 0 0 22px rgba(120, 217, 154, .18); }
+/* CAMBIO: el borde naranja identifica con claridad la opción de precio seleccionada. */
+.membership-switch__option input:checked + span { color: #f6fff8; border-color: var(--orange-light, #ff7a24); background: var(--green, #166534); box-shadow: 0 0 22px rgba(255, 122, 36, .2); }
 .membership-switch__option input:focus-visible + span { outline: 3px solid var(--orange-light, #ff7a24); outline-offset: 2px; }
 
 /* 2. Estilos de las tarjetas de membresía */
@@ -573,4 +574,185 @@
     clip-path: none;
     transform: none;
   }
+}
+
+/* ============================================================
+   4. HERO DE VOLUNTARIADO CON VIDEO DE FUEGO
+   CAMBIO: distribuye el contenido conservado en tres zonas equilibradas:
+   texto a la izquierda, premio al centro y llamada a la acción a la derecha.
+   ============================================================ */
+.volunteer-fire-hero.sweepstakes-section {
+  min-height: min(88vh, 780px);
+  padding: 0;
+  border: 0;
+  background: #090d14 !important;
+}
+
+/* Oscurece los extremos para que el texto y el botón mantengan contraste sobre el fuego. */
+.volunteer-fire-hero__overlay {
+  background:
+    linear-gradient(90deg, rgba(7, 12, 18, .86), rgba(7, 12, 18, .34) 38%, rgba(7, 12, 18, .3) 62%, rgba(7, 12, 18, .82)),
+    linear-gradient(180deg, rgba(7, 12, 18, .26), rgba(7, 12, 18, .62) 72%, rgba(7, 12, 18, .96));
+}
+
+.volunteer-fire-hero .sweepstakes-container {
+  display: grid;
+  width: min(1560px, calc(100% - 80px));
+  max-width: none;
+  padding-block: clamp(7.5rem, 12vh, 9rem) clamp(5.5rem, 9vh, 7rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(2rem, 4vw, 5rem);
+  align-items: center;
+  text-align: left;
+}
+
+.volunteer-fire-hero .sweepstakes-content {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  max-width: 430px;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, .18);
+  border-radius: 1.35rem;
+  /* CAMBIO: transparencia inspirada en los controles de moneda y periodicidad. */
+  background: rgba(17, 29, 41, .56);
+  box-shadow:
+    0 1.5rem 3.5rem rgba(0, 0, 0, .26),
+    inset 0 1px 0 rgba(255, 255, 255, .08);
+  -webkit-backdrop-filter: blur(10px) saturate(1.08);
+  backdrop-filter: blur(10px) saturate(1.08);
+}
+
+/* CAMBIO: acento cálido que vincula la tarjeta con el video de fuego. */
+.volunteer-fire-hero .sweepstakes-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green-light), var(--orange-light), transparent 88%);
+}
+
+/* Organiza la lectura de la tarjeta en etiqueta, explicación y cierre cultural. */
+.volunteer-fire-hero .sweepstakes-eyebrow {
+  margin: 0 0 .85rem;
+  font-size: clamp(.72rem, 1vw, .82rem);
+  line-height: 1.45;
+}
+
+.volunteer-fire-hero .sweepstakes-text {
+  margin: 0;
+  font-size: clamp(1.08rem, 1.55vw, 1.28rem);
+  line-height: 1.6;
+}
+
+.volunteer-fire-hero .sweepstakes-visual {
+  grid-column: 2;
+  grid-row: 1;
+  min-height: 390px;
+}
+
+.sweepstakes-action {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  min-width: 0;
+  justify-content: center;
+}
+
+.volunteer-fire-hero .volunteer-opening-cta-wrap {
+  margin: 0;
+  justify-content: center;
+  transform: none;
+}
+
+.volunteer-fire-hero .sweepstakes-highlight {
+  margin: clamp(1.35rem, 3vh, 1.8rem) 0 0;
+  padding: 1.2rem 0 0;
+  color: rgba(248, 250, 252, .82) !important;
+  border-top: 1px solid rgba(191, 200, 207, .25);
+  border-right: 0;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
+  font-size: clamp(.94rem, 1.25vw, 1.04rem);
+  line-height: 1.6;
+}
+
+.volunteer-fire-hero .sweepstakes-highlight strong {
+  color: var(--green-light);
+}
+
+/* En tablet la acción acompaña al texto y el planeta conserva una columna propia. */
+@media (max-width: 1100px) {
+  .volunteer-fire-hero .sweepstakes-container {
+    width: min(960px, calc(100% - 48px));
+    grid-template-columns: minmax(0, 1fr) minmax(280px, .9fr);
+    gap: 2rem 3rem;
+  }
+
+  .volunteer-fire-hero .sweepstakes-content {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .volunteer-fire-hero .sweepstakes-visual {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .volunteer-fire-hero .sweepstakes-action {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+}
+
+/* CAMBIO responsive: en móvil las tres zonas se apilan sin perder contenido ni animación. */
+@media (max-width: 768px) {
+  .volunteer-fire-hero.sweepstakes-section {
+    min-height: auto;
+    overflow: hidden;
+  }
+
+  .volunteer-fire-hero .sweepstakes-container {
+    width: min(100% - 32px, 620px);
+    padding-block: 6.5rem 5.5rem;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .volunteer-fire-hero .sweepstakes-content,
+  .volunteer-fire-hero .sweepstakes-visual,
+  .volunteer-fire-hero .sweepstakes-action {
+    grid-column: 1;
+  }
+
+  .volunteer-fire-hero .sweepstakes-content { grid-row: 1; }
+  .volunteer-fire-hero .sweepstakes-visual { grid-row: 2; min-height: 330px; }
+  .volunteer-fire-hero .sweepstakes-action { grid-row: 3; justify-content: center; }
+
+  .volunteer-fire-hero .sweepstakes-highlight {
+    margin-top: 2rem;
+  }
+}
+
+/* Conserva una composición compacta en teléfonos usados horizontalmente. */
+@media (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
+  .volunteer-fire-hero .sweepstakes-container {
+    width: min(920px, calc(100% - 48px));
+    padding-block: 5rem 3rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 2rem;
+    text-align: left;
+  }
+
+  .volunteer-fire-hero .sweepstakes-content { grid-column: 1; grid-row: 1; }
+  .volunteer-fire-hero .sweepstakes-visual { grid-column: 2; grid-row: 1 / span 2; min-height: 260px; }
+  .volunteer-fire-hero .sweepstakes-action { grid-column: 1; grid-row: 2; justify-content: flex-start; }
+  .volunteer-fire-hero .sweepstakes-highlight { margin-top: 1rem; }
 }

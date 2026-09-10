@@ -13,7 +13,10 @@
   <!-- Estilos base del proyecto -->
   <link rel="stylesheet" href="../css/desarrollo.css?v=68">
   <!-- Estilos específicos para los efectos del Voluntariado (Planeta, Glow, Acordeón) -->
-  <link rel="stylesheet" href="../css/voluntariado.css?v=5">
+  <!-- CAMBIO: versión actualizada para cargar sin caché el nuevo hero de voluntariado. -->
+  <link rel="stylesheet" href="../css/voluntariado.css?v=8">
+  <!-- ETAPA 1: estilos aislados del flujo demostrativo de inscripción y membresía. -->
+  <link rel="stylesheet" href="../css/voluntariado-demo.css?v=1">
   <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
 </head>
 <body>
@@ -53,24 +56,23 @@
 
   <main id="contenido">
 
-    <!-- APERTURA: sorteo mensual visible inmediatamente bajo el encabezado -->
-    <section class="section-shell section sweepstakes-section sweepstakes-section--intro" aria-labelledby="sweepstakes-title">
+    <!-- CAMBIO: el contenido original del sorteo ahora vive dentro del hero compartido con video de fuego. -->
+    <section class="page-fire-hero page-fire-hero--voluntariado volunteer-fire-hero sweepstakes-section sweepstakes-section--intro" aria-labelledby="sweepstakes-title">
+      <div class="page-fire-hero__video-wrap" aria-hidden="true">
+        <video src="../assets/videos/video-header.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      </div>
+      <div class="page-fire-hero__overlay volunteer-fire-hero__overlay" aria-hidden="true"></div>
       <canvas class="particles-canvas sweepstakes-stars" aria-hidden="true"></canvas>
-      <div class="container sweepstakes-container">
+
+      <!-- CAMBIO: tres zonas editoriales: texto, imagen central y acción principal. -->
+      <div class="page-fire-hero__content sweepstakes-container">
         <div class="sweepstakes-content">
-          <p class="eyebrow sweepstakes-eyebrow">Beneficio para todas las membresías</p>
+          <!-- CAMBIO: título solicitado para la nueva tarjeta informativa del hero. -->
+          <p class="eyebrow sweepstakes-eyebrow">Incluido todas las membresías</p>
           <p class="sweepstakes-text">Ingresas automáticamente con la inscripción de cualquier membresía.</p>
-          <div class="volunteer-opening-cta-wrap">
-          <a class="plant-cta volunteer-opening-cta" href="#membresias">
-            <span class="plant-cta__label">Súmate como voluntaria/o</span>
-            <span class="plant-cta__leaf plant-cta__leaf--1" aria-hidden="true"><svg viewBox="0 0 208.52 511.88"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-1"></use></svg></span>
-            <span class="plant-cta__leaf plant-cta__leaf--2" aria-hidden="true"><svg viewBox="0 0 420.62 554.38"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-2"></use></svg></span>
-            <span class="plant-cta__leaf plant-cta__leaf--3" aria-hidden="true"><svg viewBox="0 0 313.64 405.79"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-3"></use></svg></span>
-            <span class="plant-cta__leaf plant-cta__leaf--4" aria-hidden="true"><svg viewBox="0 0 359.65 724.72"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-4"></use></svg></span>
-            <span class="plant-cta__leaf plant-cta__leaf--5" aria-hidden="true"><svg viewBox="0 0 513.57 1042.57"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-5"></use></svg></span>
-          </a>
-          </div>
+          <p class="highlight-text sweepstakes-highlight">Compartimos nuestra cultura sin fronteras, con el newen de Las Ñañas desde Wallmapu. <strong>¡Chaltumay!</strong></p>
         </div>
+
         <div class="sweepstakes-visual">
           <div class="planet-wrapper">
             <div class="planet">
@@ -84,9 +86,21 @@
             </div>
           </div>
         </div>
-        <!-- En móvil vertical este mensaje se ubica después del planeta. -->
-        <p class="highlight-text sweepstakes-highlight">Compartimos nuestra cultura sin fronteras, con el newen de Las Ñañas desde Wallmapu. <strong>¡Chaltumay!</strong></p>
+
+        <div class="sweepstakes-action">
+          <div class="volunteer-opening-cta-wrap">
+          <a class="plant-cta volunteer-opening-cta" href="#membresias">
+            <span class="plant-cta__label">Súmate como voluntaria/o</span>
+            <span class="plant-cta__leaf plant-cta__leaf--1" aria-hidden="true"><svg viewBox="0 0 208.52 511.88"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-1"></use></svg></span>
+            <span class="plant-cta__leaf plant-cta__leaf--2" aria-hidden="true"><svg viewBox="0 0 420.62 554.38"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-2"></use></svg></span>
+            <span class="plant-cta__leaf plant-cta__leaf--3" aria-hidden="true"><svg viewBox="0 0 313.64 405.79"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-3"></use></svg></span>
+            <span class="plant-cta__leaf plant-cta__leaf--4" aria-hidden="true"><svg viewBox="0 0 359.65 724.72"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-4"></use></svg></span>
+            <span class="plant-cta__leaf plant-cta__leaf--5" aria-hidden="true"><svg viewBox="0 0 513.57 1042.57"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-5"></use></svg></span>
+          </a>
+          </div>
+        </div>
       </div>
+      <div class="page-fire-hero__seam" aria-hidden="true"></div>
     </section>
     
     <!-- 1. Estructura de precios y membresías de voluntariado -->
@@ -119,6 +133,7 @@
               <span>CLP</span>
             </label>
             <label class="membership-switch__option">
+              <!-- CAMBIO: selector USD habilitado porque sus precios mensuales y anuales ya están definidos. -->
               <input type="radio" name="currency" value="usd">
               <span>USD</span>
             </label>
@@ -127,7 +142,7 @@
 
         <div class="membership-grid reveal">
           <article class="membership-card">
-            <!-- Icono del plan Guardianas: protección y cuidado de la red -->
+            <!-- Icono del plan keyuwün: protección y cuidado de la red -->
             <div class="membership-card__icon-slot" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false">
                 <path d="M12 3 5.5 6v5c0 4.4 2.7 7.7 6.5 10 3.8-2.3 6.5-5.6 6.5-10V6L12 3Z"/>
@@ -135,7 +150,7 @@
               </svg>
             </div>
             <div class="membership-card__heading">
-              <h2>Guardianas</h2>
+              <h2>keyuwün</h2>
               <p>Para acompañar la red desde cualquier lugar del mundo.</p>
             </div>
             <p class="membership-card__price" aria-live="polite">
@@ -150,11 +165,12 @@
                 <li>Prioridad para conocer convocatorias.</li>
               </ul>
             </div>
-            <a class="membership-card__button" href="#inscripcion">Sumarme como Guardiana</a>
+            <!-- ETAPA 1: conserva el botón existente y conecta el plan con el flujo de cuenta. -->
+            <a class="membership-card__button" href="mi-voluntariado.html?plan=keyuw%C3%BCn" data-membership-plan="keyuwün">Sumarme como keyuwün</a>
           </article>
 
           <article class="membership-card">
-            <!-- Icono del plan Semilla: inicio y aprendizaje -->
+            <!-- Icono del plan kimün: inicio y aprendizaje -->
             <div class="membership-card__icon-slot" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false">
                 <path d="M12 21v-9"/>
@@ -164,7 +180,7 @@
               </svg>
             </div>
             <div class="membership-card__heading">
-              <h2>Semilla</h2>
+              <h2>kimün</h2>
               <p>Para participar, aprender y comenzar a vincularte con el territorio.</p>
             </div>
             <p class="membership-card__price" aria-live="polite">
@@ -179,11 +195,12 @@
                 <li>Prioridad para jornadas presenciales.</li>
               </ul>
             </div>
-            <a class="membership-card__button" href="#inscripcion">Sumarme como Semilla</a>
+            <!-- ETAPA 1: conserva el botón existente y conecta el plan con el flujo de cuenta. -->
+            <a class="membership-card__button" href="mi-voluntariado.html?plan=kim%C3%BCn" data-membership-plan="kimün">Sumarme como kimün</a>
           </article>
 
           <article class="membership-card">
-            <!-- Icono del plan Brote: crecimiento y vínculo territorial -->
+            <!-- Icono del plan pülli: crecimiento y vínculo territorial -->
             <div class="membership-card__icon-slot" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false">
                 <path d="M20 4.5C12 4.5 6.5 8.6 6.5 15c0 2.6 1.8 4.5 4.4 4.5C17.2 19.5 20 12.7 20 4.5Z"/>
@@ -191,7 +208,7 @@
               </svg>
             </div>
             <div class="membership-card__heading">
-              <h2>Brote</h2>
+              <h2>pülli</h2>
               <p>Para vivir una experiencia territorial más profunda y acompañada.</p>
             </div>
             <p class="membership-card__price" aria-live="polite">
@@ -206,7 +223,8 @@
                 <li>Acceso preferente según disponibilidad de cupos.</li>
               </ul>
             </div>
-            <a class="membership-card__button" href="#inscripcion">Sumarme como Brote</a>
+            <!-- ETAPA 1: conserva el botón existente y conecta el plan con el flujo de cuenta. -->
+            <a class="membership-card__button" href="mi-voluntariado.html?plan=p%C3%BClli" data-membership-plan="pülli">Sumarme como pülli</a>
           </article>
         </div>
         <p class="membership-note">Las experiencias presenciales requieren inscripción previa y están sujetas a fechas y cupos. Traslado y alojamiento se informarán en cada convocatoria.</p>
@@ -274,6 +292,8 @@
         <form class="contact-form reveal" data-contact-form action="https://formspree.io/f/xyeynlka" method="POST">
           <input type="hidden" name="subject" value="Las Ñañas | Voluntariado">
           <label style="grid-column: 1 / -1;">Nombre completo<input name="nombre" type="text" autocomplete="name" required></label>
+          <!-- CAMBIO: correo de contacto incorporado al único formulario de envío que no lo solicitaba. -->
+          <label style="grid-column: 1 / -1;">Correo electrónico<input name="email" type="email" autocomplete="email" required></label>
           <label>País<input name="pais" type="text" autocomplete="country-name" required></label>
           <label>Edad<input name="edad" type="number" min="18" max="99" required></label>
           <label>Oficio o Profesión<input name="oficio" type="text" required></label>
@@ -288,6 +308,53 @@
       </div>
     </section>
   </main>
+
+  <!-- ETAPA 1: modal compacto que se abre inmediatamente desde cualquiera de los tres planes. -->
+  <dialog class="membership-auth" data-membership-auth aria-labelledby="auth-dialog-title">
+    <div class="membership-auth__surface">
+      <button class="membership-auth__close" type="button" data-auth-close aria-label="Cerrar ventana">×</button>
+      <p class="demo-badge">Demostración · sin pagos reales</p>
+      <h2 id="auth-dialog-title">Accede a Mi voluntariado</h2>
+      <p class="membership-auth__plan">Plan elegido: <strong data-auth-plan>—</strong> · <span data-auth-billing>—</span></p>
+      <p class="membership-auth__warning">Utiliza únicamente datos ficticios para probar este prototipo.</p>
+
+      <div class="membership-auth__tabs" role="tablist" aria-label="Acceso a la cuenta">
+        <button type="button" role="tab" id="create-account-tab" aria-controls="create-account-panel" aria-selected="true" data-auth-tab="create">Crear cuenta</button>
+        <button type="button" role="tab" id="login-account-tab" aria-controls="login-account-panel" aria-selected="false" tabindex="-1" data-auth-tab="login">Ya tengo cuenta</button>
+      </div>
+
+      <section id="create-account-panel" role="tabpanel" aria-labelledby="create-account-tab" data-auth-panel="create">
+        <form class="auth-form" data-register-form novalidate>
+          <!-- CAMBIO: nombre y apellido se capturan por separado para el perfil real. -->
+          <label>Nombre<input name="firstName" type="text" minlength="2" maxlength="60" autocomplete="given-name" aria-describedby="register-name-error" required></label>
+          <p class="field-error" id="register-name-error"></p>
+          <label>Apellido<input name="lastName" type="text" minlength="2" maxlength="60" autocomplete="family-name" aria-describedby="register-last-name-error" required></label>
+          <p class="field-error" id="register-last-name-error"></p>
+          <label>Correo electrónico<input name="email" type="email" maxlength="254" autocomplete="email" aria-describedby="register-email-error" required></label>
+          <p class="field-error" id="register-email-error"></p>
+          <label>País<select name="country" autocomplete="country" aria-describedby="register-country-error" required><option value="">Selecciona un país</option><option value="CL">Chile</option><option value="AR">Argentina</option><option value="BO">Bolivia</option><option value="BR">Brasil</option><option value="CO">Colombia</option><option value="EC">Ecuador</option><option value="MX">México</option><option value="PE">Perú</option><option value="UY">Uruguay</option><option value="VE">Venezuela</option><option value="CA">Canadá</option><option value="US">Estados Unidos</option><option value="ES">España</option><option value="DE">Alemania</option><option value="FR">Francia</option><option value="GB">Reino Unido</option><option value="OTHER">Otro país</option></select></label>
+          <p class="field-error" id="register-country-error"></p>
+          <label>Contraseña<span class="password-field"><input name="password" type="password" minlength="12" maxlength="256" autocomplete="new-password" aria-describedby="register-password-help register-password-error" required><button type="button" data-toggle-password>Mostrar</button></span></label>
+          <p class="field-help" id="register-password-help">Usa una frase larga de al menos 12 caracteres. Puedes pegarla o usar tu gestor de contraseñas.</p>
+          <p class="field-error" id="register-password-error"></p>
+          <button class="button button--primary" type="submit">Crear cuenta y continuar</button>
+          <p class="field-message" data-register-status aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section id="login-account-panel" role="tabpanel" aria-labelledby="login-account-tab" data-auth-panel="login" hidden>
+        <form class="auth-form" data-login-form novalidate>
+          <label>Correo electrónico<input name="email" type="email" maxlength="254" autocomplete="email" aria-describedby="login-email-error" required></label>
+          <p class="field-error" id="login-email-error"></p>
+          <label>Contraseña<span class="password-field"><input name="password" type="password" maxlength="256" autocomplete="current-password" aria-describedby="login-password-error" required><button type="button" data-toggle-password>Mostrar</button></span></label>
+          <p class="field-error" id="login-password-error"></p>
+          <button class="membership-auth__recovery" type="button" data-demo-recovery>Recuperar el acceso</button>
+          <button class="button button--primary" type="submit">Iniciar sesión</button>
+          <p class="field-message" data-login-status aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+  </dialog>
 
   <!-- PIE DE PÁGINA -->
   <footer class="site-footer ethnic-footer">
@@ -321,6 +388,8 @@
   <!-- SCRIPTS -->
   <script src="../js/desarrollo.js?v=20"></script>
   <script src="../js/voluntariado.js"></script>
+  <!-- ETAPA 1: lógica demostrativa separada de la futura autenticación y autorización reales. -->
+  <script src="../js/voluntariado-demo.js?v=2"></script>
   <script src="../js/whatsapp-floating.js?v=3"></script>
 </body>
 </html>

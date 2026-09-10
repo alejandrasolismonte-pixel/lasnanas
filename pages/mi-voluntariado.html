@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Espacio personal y privado de voluntariado de Las Ñañas">
+  <title>Mi voluntariado · Las Ñañas</title>
+  <link rel="stylesheet" href="../css/mi-voluntariado.css?v=1">
+</head>
+<body>
+  <!-- AVISO: desaparece cuando la aplicación se conecta a Supabase. -->
+  <div class="demo-bar" data-connection-banner>Demostración local · los datos duran solamente durante esta pestaña · no realiza cobros</div>
+
+  <header class="portal-head">
+    <a class="brand" href="voluntariado.html" aria-label="Volver a voluntariado"><span>Ñ</span><strong>Las Ñañas</strong></a>
+    <div class="user-chip"><span class="avatar" data-avatar>V</span><span data-user-name>Voluntaria/o</span><button class="btn btn-ghost" type="button" data-logout>Salir</button></div>
+  </header>
+
+  <main class="portal-wrap">
+    <!-- La barra comunica el estado sin depender solo del color. -->
+    <section class="progress-card" aria-labelledby="portal-title">
+      <div class="progress-top"><div><p class="eyebrow">Tu espacio personal</p><h1 id="portal-title">Tu inscripción está guardada</h1></div><span class="status-pill" data-status-pill>Cuenta creada</span></div>
+      <ol class="steps" data-steps><li class="current">Cuenta</li><li>Solicitud</li><li>Revisión</li><li>Pago</li><li>Activa</li></ol>
+    </section>
+
+    <div class="portal-grid">
+      <nav class="side-nav" aria-label="Secciones de Mi voluntariado">
+        <button class="active" type="button" data-view-button="membership">Mi inscripción</button>
+        <button type="button" data-view-button="documents">Mis documentos</button>
+        <button type="button" data-view-button="profile">Mi perfil</button>
+        <button type="button" data-view-button="agenda">Mi agenda de voluntariado</button>
+      </nav>
+
+      <div class="portal-content">
+        <p class="save-state" role="status" aria-live="polite" data-save-state>Todos los cambios están guardados.</p>
+
+        <section class="content-card" data-view="membership" aria-labelledby="membership-title">
+          <button class="back-button" type="button" data-previous-step>← Volver al paso anterior</button>
+          <p class="eyebrow">Inscripción y membresía</p><h2 id="membership-title">Revisa tu plan</h2>
+          <p class="subtle">Tu cuenta existe aunque aún no envíes la solicitud ni realices un pago.</p>
+
+          <form data-membership-form novalidate>
+            <fieldset><legend>Plan seleccionado</legend><div class="option-grid">
+              <label><input type="radio" name="plan" value="keyuwün"><span><strong>keyuwün</strong><small>US$10 o $10.000 CLP al mes</small></span></label>
+              <label><input type="radio" name="plan" value="kimün"><span><strong>kimün</strong><small>US$15 o $15.000 CLP al mes</small></span></label>
+              <label><input type="radio" name="plan" value="pülli"><span><strong>pülli</strong><small>US$25 o $25.000 CLP al mes</small></span></label>
+            </div></fieldset>
+            <fieldset><legend>Periodicidad</legend><div class="option-grid option-grid--two">
+              <label><input type="radio" name="billing" value="monthly"><span>Mensual</span></label>
+              <label><input type="radio" name="billing" value="yearly"><span>Anual · 20 % de ahorro</span></label>
+            </div></fieldset>
+            <div class="review-box"><div><strong>Resumen</strong><p data-plan-summary>—</p></div><strong data-total>—</strong></div>
+            <div class="email-gate" data-email-gate><strong>Correo pendiente de verificación</strong><p>La solicitud se habilita después de verificar el correo.</p><button class="btn btn-ghost" type="button" data-demo-verify>Simular verificación en esta demostración</button></div>
+            <div class="checks"><label><input type="checkbox" name="respect"> Participaré con respeto y cuidaré la privacidad de la comunidad.</label><label><input type="checkbox" name="coordination"> Entiendo que fechas, cupos, traslados y alojamiento se coordinan directamente.</label></div>
+            <div class="button-row"><button class="btn btn-primary" type="submit" data-submit-application>Enviar solicitud al equipo</button><button class="btn btn-ghost" type="button" data-save-later>Guardar y continuar después</button></div>
+            <p class="field-message" data-membership-message aria-live="polite"></p>
+          </form>
+
+          <!-- Aclaraciones visibles y archivos privados; las notas administrativas no se mezclan aquí. -->
+          <form class="state-panel" data-clarification-form hidden>
+            <p class="eyebrow">Acción necesaria</p><h3>El equipo solicita una aclaración</h3><p data-public-clarification>—</p>
+            <label>Respuesta<textarea name="reply" maxlength="3000" required></textarea></label>
+            <label>Adjuntos privados<input name="attachments" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple></label>
+            <p class="help">PDF, JPG, PNG o WebP; máximo 5 MB por archivo. SVG y ejecutables no se aceptan.</p>
+            <ul class="attachment-list" data-attachment-list></ul>
+            <div class="button-row"><button class="btn btn-primary" type="submit">Enviar aclaración</button><button class="btn btn-ghost" type="button" data-save-later>Guardar y continuar después</button></div>
+            <p class="field-message" data-clarification-message aria-live="polite"></p>
+          </form>
+
+          <section class="state-panel" data-review-state hidden><p class="eyebrow">Solicitud recibida</p><h3>El equipo está revisando tu solicitud</h3><p>No debes pagar todavía. Te avisaremos si necesitamos información adicional.</p></section>
+          <section class="state-panel" data-conditions hidden><p class="eyebrow">Solicitud aceptada</p><h3>Condiciones y pago</h3><div class="notice warning">Las condiciones definitivas de renovación, cancelación y devolución siguen pendientes de validación.</div><label class="check"><input type="checkbox" data-terms> He leído las condiciones provisionales de esta demostración.</label><fieldset><legend>Método de pago</legend><div class="option-grid option-grid--two"><label><input type="radio" name="payment" value="gateway" checked><span>Pasarela de pago</span></label><label><input type="radio" name="payment" value="transfer"><span>Transferencia</span></label></div></fieldset><button class="btn btn-primary" type="button" data-report-payment disabled>Continuar al pago de demostración</button><p class="help">Informar una transferencia no activa la membresía. Coordinación debe confirmarla.</p></section>
+
+          <!-- Estos controles existen solo para recorrer estados antes de conectar el panel real. -->
+          <details class="demo-controls"><summary>Controles de demostración — coordinación</summary><div class="button-row"><button type="button" data-demo-action="clarify">Pedir aclaración</button><button type="button" data-demo-action="approve">Aprobar</button><button type="button" data-demo-action="reject">Rechazar</button><button type="button" data-demo-action="confirm">Confirmar pago</button></div></details>
+        </section>
+
+        <section class="content-card" data-view="documents" aria-labelledby="documents-title" hidden><p class="eyebrow">Contenido privado</p><h2 id="documents-title">Mis documentos</h2><div data-documents></div></section>
+
+        <section class="content-card" data-view="profile" aria-labelledby="profile-title" hidden><p class="eyebrow">Mi perfil</p><h2 id="profile-title">Perfil y credencial</h2><form data-profile-form><label>Nombre de uso<input name="displayName" maxlength="80" required></label><label>Fotografía opcional<input name="photo" type="file" accept="image/jpeg,image/png,image/webp"></label><div class="button-row"><button class="btn btn-primary" type="submit">Guardar perfil</button><button class="btn btn-ghost" type="button" data-remove-photo>Quitar fotografía</button></div></form><article class="credential" data-credential><span>LAS ÑAÑAS · DEMO</span><div class="credential-body"><div class="credential-photo" data-credential-photo>V</div><div><small>Nombre</small><h3 data-credential-name>—</h3><small>Plan</small><strong data-credential-plan>—</strong></div></div></article><button class="btn btn-primary" type="button" data-download-credential disabled>Descargar credencial de muestra</button></section>
+
+        <section class="content-card" data-view="agenda" aria-labelledby="agenda-title" hidden>
+          <p class="eyebrow">Privada</p><h2 id="agenda-title">Mi agenda de voluntariado</h2><p class="subtle">Solo tú y coordinación autorizada pueden consultar estos registros. No modifica cupos ni reservas.</p>
+          <div class="agenda-tabs" role="tablist" aria-label="Vista de agenda"><button class="active" type="button" role="tab" aria-selected="true" data-agenda-view="list">Lista</button><button type="button" role="tab" aria-selected="false" data-agenda-view="calendar">Calendario</button></div>
+          <form class="agenda-form" data-agenda-form novalidate>
+            <input type="hidden" name="id"><div class="form-grid">
+              <label>Tipo<select name="type" required><option value="arrival">Llegada</option><option value="departure">Salida</option><option value="meeting">Reunión</option><option value="extra">Actividad extra</option><option value="workshop">Taller</option><option value="other">Otro</option></select></label>
+              <label>Título<input name="title" maxlength="100" required></label><label>Fecha<input name="date" type="date" required></label><label>Hora de inicio<input name="start" type="time" required></label><label>Hora de término<input name="end" type="time" required></label>
+              <label>Estado<select name="status" required><option value="planned">Planificada</option><option value="confirmed">Confirmada</option><option value="completed">Realizada</option><option value="cancelled">Cancelada</option></select></label>
+              <label class="wide">Modalidad o lugar general<input name="place" maxlength="140" placeholder="En línea o sector general; evita direcciones sensibles"></label><label class="wide">Descripción o notas personales<textarea name="notes" maxlength="1000"></textarea></label>
+            </div><div class="button-row"><button class="btn btn-primary" type="submit">Guardar registro</button><button class="btn btn-ghost" type="button" data-cancel-agenda>Cancelar edición</button></div><p class="field-message" data-agenda-message aria-live="polite"></p>
+          </form>
+          <div data-agenda-list></div><div class="calendar" data-agenda-calendar hidden></div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <script src="../js/mi-voluntariado.js?v=1"></script>
+</body>
+</html>

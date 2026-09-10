@@ -1,0 +1,4 @@
+# Seguridad: los archivos de entorno reales nunca deben entrar al repositorio.
+.env
+.env.*
+!.env.example
