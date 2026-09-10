@@ -1,0 +1,3 @@
+# WEBHOOK PRIVADO: Supabase no exige JWT porque la función valida su secreto interno obligatorio.
+[functions.send-volunteer-registration-notifications]
+verify_jwt = false
