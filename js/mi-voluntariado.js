@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     billing: ['monthly','yearly'].includes(requestedBilling) ? requestedBilling : (pending.billing === 'yearly' ? 'yearly' : 'monthly'),
     currency: ['CLP','USD'].includes(requestedCurrency) ? requestedCurrency : (pending.currency === 'USD' ? 'USD' : 'CLP')
   };
-  let user, profile, application, price, messages = [], agenda = [], membership = null;
+  let user, profile, application, price, messages = [], agenda = [], membership = null, volunteerDocuments = [];
   let demo = (() => { try { return JSON.parse(sessionStorage.getItem('lasnanas_visual_demo_v1') || '{}'); } catch (_) { return {}; } })();
   let photoPreview = '';
 
@@ -67,16 +67,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       setGlobal('Cargando tu espacio privado…');
       user=await authenticatedUser(); if(!user)return;
-      const [profileResult,applicationResult,messagesResult,agendaResult,membershipResult]=await Promise.all([
+      const [profileResult,applicationResult,messagesResult,agendaResult,membershipResult,documentsResult]=await Promise.all([
         supabase.from('volunteer_profiles').select('*').eq('id',user.id).single(),
         supabase.from('membership_applications').select('*,plan_prices(*)').eq('owner_id',user.id).is('deleted_at',null).order('created_at',{ascending:false}).limit(1).maybeSingle(),
         supabase.from('application_messages').select('*').is('deleted_at',null).order('created_at',{ascending:true}),
         supabase.from('agenda_entries').select('*').is('deleted_at',null).order('starts_at',{ascending:true}),
-        supabase.from('memberships').select('*,plan_prices(*)').eq('owner_id',user.id).eq('active',true).gt('ends_at',new Date().toISOString()).order('ends_at',{ascending:false}).limit(1).maybeSingle()
+        supabase.from('memberships').select('*,plan_prices(*)').eq('owner_id',user.id).eq('active',true).gt('ends_at',new Date().toISOString()).order('ends_at',{ascending:false}).limit(1).maybeSingle(),
+        supabase.rpc('list_my_volunteer_documents')
       ]);
-      const failure=[profileResult,applicationResult,messagesResult,agendaResult,membershipResult].find(result=>result.error);
+      const failure=[profileResult,applicationResult,messagesResult,agendaResult,membershipResult,documentsResult].find(result=>result.error);
       if(failure)throw failure.error;
-      profile=profileResult.data; application=applicationResult.data; price=application?.plan_prices || null; messages=messagesResult.data || []; agenda=agendaResult.data || []; membership=membershipResult.data;
+      profile=profileResult.data; application=applicationResult.data; price=application?.plan_prices || null; messages=messagesResult.data || []; agenda=agendaResult.data || []; membership=membershipResult.data; volunteerDocuments=documentsResult.data || [];
       await ensureDraftSelection();
       setGlobal('Conectado de forma segura al proyecto Supabase de pruebas.');
       renderAll();
@@ -105,9 +106,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   function renderDocuments(){
     const root=$('[data-documents]');
-    if(!membership){root.innerHTML='<div class="locked">🔒 Los documentos y la credencial se habilitan únicamente después del pago confirmado.</div>';return;}
-    root.innerHTML='<div class="document-grid"><article class="document"><h3>Documentos autorizados</h3><p>La consulta real está protegida por membresía activa y plan mediante RLS.</p></article></div>';
+    root.replaceChildren();
+    if(!volunteerDocuments.length){const empty=document.createElement('div');empty.className='locked';empty.textContent=membership?'Aún no tienes documentos disponibles.':'Los archivos de Las Ñañas se habilitarán únicamente después del pago confirmado. Puedes enviar documentación para tu propia solicitud.';root.append(empty);return;}
+    const grid=document.createElement('div');grid.className='document-grid';
+    volunteerDocuments.forEach(record=>{const card=document.createElement('article');card.className='document';const title=document.createElement('h3');title.textContent=record.original_name;const status=document.createElement('p');status.textContent=record.document_kind==='volunteer_submission'?'Enviado para revisión':'Disponible para descarga';const button=document.createElement('button');button.className='btn btn-ghost';button.type='button';button.textContent='Descargar';button.onclick=()=>downloadVolunteerDocument(record.document_id);card.append(title,status,button);grid.append(card);});
+    root.append(grid);
   }
+
+  async function validDocumentFile(file){if(!file||!['application/pdf','image/jpeg','image/png'].includes(file.type)||file.size<1||file.size>10*1024*1024)return false;const bytes=new Uint8Array(await file.slice(0,8).arrayBuffer());const pdf=bytes[0]===0x25&&bytes[1]===0x50&&bytes[2]===0x44&&bytes[3]===0x46&&bytes[4]===0x2d;const jpg=bytes[0]===0xff&&bytes[1]===0xd8&&bytes[2]===0xff;const png=[0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a].every((value,index)=>bytes[index]===value);return(file.type==='application/pdf'&&pdf)||(file.type==='image/jpeg'&&jpg)||(file.type==='image/png'&&png);}
+  async function downloadVolunteerDocument(documentId){const pathResult=await supabase.rpc('authorize_volunteer_document_download',{p_document_id:documentId});if(pathResult.error||!pathResult.data){showMessage('[data-volunteer-document-message]','No fue posible autorizar la descarga.',true);return;}const signed=await supabase.storage.from('volunteer-documents').createSignedUrl(pathResult.data,60);if(signed.error||!signed.data?.signedUrl){showMessage('[data-volunteer-document-message]','No fue posible generar el enlace privado.',true);return;}window.open(signed.data.signedUrl,'_blank','noopener,noreferrer');}
   function renderProfile(){
     const name=profile.display_name || `${profile.first_name} ${profile.last_name}`; $('[data-profile-form]').elements.displayName.value=name; $('[data-credential-name]').textContent=name; $('[data-credential-plan]').textContent=price?.plan_id || membership?.plan_prices?.plan_id || '—'; $('[data-credential-photo]').innerHTML=photoPreview?`<img src="${photoPreview}" alt="Fotografía seleccionada">`:(name[0]||'V').toUpperCase(); $('[data-download-credential]').disabled=!membership;
   }
@@ -138,6 +145,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   $$('[data-demo-action]').forEach(button=>button.onclick=()=>{const action=button.dataset.demoAction;if(action==='clarify')demo.status='needs_clarification';if(action==='approve')demo.status='approved';if(action==='reject')demo.status='rejected';if(action==='confirm'&&demo.payment==='pending'){demo.active=true;demo.payment='confirmed';}saveDemo();renderAll();});
 
   $('[data-profile-form]').addEventListener('submit',async event=>{event.preventDefault();const displayName=event.currentTarget.elements.displayName.value.trim();if(displayName.length<2)return;setBusy(event.currentTarget,true);const{data,error}=await supabase.from('volunteer_profiles').update({display_name:displayName,updated_at:new Date().toISOString()}).eq('id',user.id).select().single();setBusy(event.currentTarget,false);if(error){setGlobal('No se pudo actualizar el perfil.',true);return;}profile=data;renderProfile();});
+
+  $('[data-volunteer-document-form]').addEventListener('submit',async event=>{event.preventDefault();const form=event.currentTarget;const file=form.elements.document.files[0];if(!application){showMessage('[data-volunteer-document-message]','Primero debes tener una solicitud guardada.',true);return;}if(!(await validDocumentFile(file))){showMessage('[data-volunteer-document-message]','Selecciona un PDF, JPG o PNG válido de hasta 10 MB.',true);return;}setBusy(form,true);showMessage('[data-volunteer-document-message]','Preparando carga privada…');const reserve=await supabase.rpc('reserve_volunteer_document_upload',{p_application_id:application.id,p_original_name:file.name,p_mime_type:file.type,p_byte_size:file.size});const reservation=reserve.data?.[0];if(reserve.error||!reservation){setBusy(form,false);showMessage('[data-volunteer-document-message]','No fue posible reservar el archivo para tu solicitud.',true);return;}const uploaded=await supabase.storage.from('volunteer-documents').upload(reservation.storage_path,file,{contentType:file.type,upsert:false});setBusy(form,false);if(uploaded.error){showMessage('[data-volunteer-document-message]','No fue posible completar la carga.',true);return;}form.reset();const refreshed=await supabase.rpc('list_my_volunteer_documents');if(!refreshed.error)volunteerDocuments=refreshed.data||[];renderDocuments();showMessage('[data-volunteer-document-message]','Documento enviado de forma privada.');});
   $('[data-profile-form]').elements.photo.addEventListener('change',event=>{const file=event.target.files[0];if(!file||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>4*1024*1024){event.target.value='';return;}const reader=new FileReader();reader.onload=()=>{photoPreview=reader.result;renderProfile();};reader.readAsDataURL(file);});
   $('[data-remove-photo]').onclick=()=>{photoPreview='';$('[data-profile-form]').elements.photo.value='';renderProfile();};
 

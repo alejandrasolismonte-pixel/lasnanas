@@ -4,6 +4,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const dialog = document.querySelector('[data-membership-auth]');
   const planButtons = [...document.querySelectorAll('[data-membership-plan]')];
+  const miRukaButton = document.querySelector('[data-mi-ruka]');
   const controls = document.querySelector('.membership-controls');
   const supabase = window.LasNanasSupabase?.client;
   const loader = window.LasNanasLoader;
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let selection = { plan: 'keyuwün', billing: 'monthly', currency: 'CLP' };
   let opener = null;
   let dirty = false;
+  let accessMode = 'plan';
   const normalizeEmail = value => value.trim().toLowerCase();
   const portalUrl = () => new URL(`mi-voluntariado.html?plan=${encodeURIComponent(selection.plan)}&billing=${selection.billing}&currency=${selection.currency}`, window.location.href).href;
   const callbackUrl = () => new URL('auth-callback.html', window.location.href).href;
@@ -31,6 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveUiSelection = () => sessionStorage.setItem('lasnanas_pending_selection_v3', JSON.stringify(selection));
   const goToPortal = () => { saveUiSelection(); window.location.assign(portalUrl()); };
 
+  // La RPC de la migración 004 actúa como comprobación administrativa protegida.
+  const routeAuthenticatedRuka = async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) return false;
+    const adminCheck = await supabase.rpc('admin_list_membership_applications');
+    window.location.assign(adminCheck.error ? 'mi-voluntariado.html' : 'coordinacion-voluntariado.html');
+    return true;
+  };
+
   const updateSummary = () => {
     dialog.querySelector('[data-auth-plan]').textContent = selection.plan;
     dialog.querySelector('[data-auth-billing]').textContent = selection.billing === 'yearly' ? 'anual' : 'mensual';
@@ -47,13 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   planButtons.forEach(button => button.addEventListener('click', async event => {
-    event.preventDefault(); opener = button;
+    event.preventDefault(); opener = button; accessMode = 'plan';
     selection = {
       plan: button.dataset.membershipPlan,
       billing: controls?.elements?.billing?.value === 'yearly' ? 'yearly' : 'monthly',
       currency: controls?.elements?.currency?.value === 'usd' ? 'USD' : 'CLP'
     };
     saveUiSelection(); updateSummary();
+    dialog.querySelector('[data-auth-selection-summary]').hidden = false;
     if (!supabase) { dialog.showModal(); status('[data-register-status]', window.LasNanasSupabase?.error || 'Falta la configuración de Supabase.', true); return; }
     // getUser consulta Auth y evita confiar en una sesión manipulada localmente.
     loader?.show('Comprobando tu sesión…');
@@ -63,6 +75,34 @@ document.addEventListener('DOMContentLoaded', () => {
     } finally { loader?.hide(); }
     dialog.showModal(); dialog.querySelector('[data-auth-tab][aria-selected="true"]')?.focus();
   }));
+
+  const openMiRuka = async openerElement => {
+    opener = openerElement;
+    accessMode = 'ruka';
+    dialog.querySelector('[data-auth-selection-summary]').hidden = true;
+    activateTab('login');
+    if (!supabase) {
+      dialog.showModal();
+      status('[data-login-status]', window.LasNanasSupabase?.error || 'Falta la configuración de Supabase.', true);
+      return;
+    }
+    loader?.show('Comprobando tu sesión…');
+    try {
+      if (await routeAuthenticatedRuka()) return;
+    } finally { loader?.hide(); }
+    dialog.showModal();
+    activateTab('login');
+  };
+
+  miRukaButton?.addEventListener('click', event => {
+    event.preventDefault();
+    openMiRuka(miRukaButton);
+  });
+
+  // Ruta fija usada exclusivamente al regresar desde un acceso directo rechazado al panel.
+  if (new URLSearchParams(window.location.search).get('access') === 'mi-ruka') {
+    openMiRuka(miRukaButton);
+  }
 
   dialog.querySelectorAll('[data-auth-tab]').forEach(tab => {
     tab.addEventListener('click', () => activateTab(tab.dataset.authTab));
@@ -97,10 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!valid) { register.querySelector('[aria-invalid="true"]')?.focus(); return; }
     busy(register,true); status('[data-register-status]','Creando la cuenta…');
     try {
-      const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: callbackUrl(), data: { first_name:firstName, last_name:lastName, country_code:country, selected_plan:selection.plan, selected_billing:selection.billing, selected_currency:selection.currency } } });
+      // Desde Mi Ruka puede crearse una cuenta, pero nunca se adjunta una selección de inscripción implícita.
+      const metadata = { first_name:firstName, last_name:lastName, country_code:country };
+      if (accessMode === 'plan') Object.assign(metadata, { selected_plan:selection.plan, selected_billing:selection.billing, selected_currency:selection.currency });
+      const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: callbackUrl(), data: metadata } });
       if (error) throw error;
-      dirty=false; register.elements.password.value=''; saveUiSelection();
-      if (data.session) goToPortal();
+      dirty=false; register.elements.password.value=''; if(accessMode==='plan')saveUiSelection();
+      if (data.session) { if(accessMode==='ruka')await routeAuthenticatedRuka();else goToPortal(); }
       else status('[data-register-status]','Revisa tu correo para confirmar la cuenta. Conservaremos el plan seleccionado al regresar.');
     } catch (error) {
       const message = /already|registered|exists/i.test(error.message) ? 'Este correo ya tiene una cuenta. Utiliza “Ya tengo cuenta”.' : error.message;
@@ -116,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!login.elements.email.validity.valid) { setError(login,'email','login-email-error','Escribe un correo válido.'); return; }
     if (!password) { setError(login,'password','login-password-error','Escribe tu contraseña.'); return; }
     busy(login,true); status('[data-login-status]','Iniciando sesión…');
-    try { const { error }=await supabase.auth.signInWithPassword({email,password}); if(error) throw error; dirty=false; login.elements.password.value=''; goToPortal(); }
+    try { const { error }=await supabase.auth.signInWithPassword({email,password}); if(error) throw error; dirty=false; login.elements.password.value=''; if(accessMode==='ruka')await routeAuthenticatedRuka();else goToPortal(); }
     catch(error){ status('[data-login-status]',/confirm/i.test(error.message)?'Debes confirmar tu correo antes de ingresar.':'Correo o contraseña incorrectos.',true); }
     finally{ busy(login,false); }
   });

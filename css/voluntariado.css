@@ -55,10 +55,24 @@
 .membership-card { position: relative; display: flex; min-width: 0; min-height: 0; padding: 1.5rem; flex-direction: column; color: var(--membership-copy); border: 1px solid rgba(226, 232, 240, .13); border-radius: 1.3rem; background: rgba(17, 29, 41, .96); box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, .25); transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease; }
 
 /* Reserva para el futuro icono de cada plan */
-.membership-card__icon-slot { display: grid; width: 84px; height: 84px; margin: 0 auto 1.25rem; place-items: center; color: var(--orange-light, #ff7a24); border: 1px solid rgba(255, 122, 36, .62); border-radius: 50%; background: rgba(234, 88, 12, .12); box-shadow: 0 0 26px rgba(234, 88, 12, .12); }
+/* Contenedor del icono limpio para imágenes PNG transparentes */
+.membership-card__icon-slot {
+  display: grid;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 1.25rem;
+  place-items: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
 .membership-card__icon-slot svg,
-.membership-card__icon-slot img { width: 40px; height: 40px; object-fit: contain; }
-.membership-card__icon-slot svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.membership-card__icon-slot img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
 
 .membership-card__heading { min-height: 0; text-align: left; }
 .membership-card__heading h2 { margin: 0; color: var(--membership-copy); font-family: 'Fraunces', Georgia, serif; font-size: 1.7rem; font-weight: 500; line-height: 1.25; }
@@ -756,3 +770,4 @@
   .volunteer-fire-hero .sweepstakes-action { grid-column: 1; grid-row: 2; justify-content: flex-start; }
   .volunteer-fire-hero .sweepstakes-highlight { margin-top: 1rem; }
 }
+

@@ -14,7 +14,11 @@
   <div class="demo-bar" data-connection-banner>Conectando con tu espacio privado…</div>
 
   <header class="portal-head">
-    <a class="brand" href="voluntariado.html" aria-label="Volver a voluntariado"><span>Ñ</span><strong>Las Ñañas</strong></a>
+    <a class="brand" href="voluntariado.html" aria-label="Volver a voluntariado">
+     <img src="../assets/img/logo.png" alt="Las Ñañas" class="portal-logo">
+     <div class="brand-back-text">Volver</div>
+   </a>
+    
     <div class="user-chip"><span class="avatar" data-avatar>V</span><span data-user-name>Voluntaria/o</span><button class="btn btn-ghost" type="button" data-logout>Salir</button></div>
   </header>
 
@@ -76,7 +80,19 @@
           <details class="demo-controls"><summary>Controles de demostración — coordinación</summary><div class="button-row"><button type="button" data-demo-action="clarify">Pedir aclaración</button><button type="button" data-demo-action="approve">Aprobar</button><button type="button" data-demo-action="reject">Rechazar</button><button type="button" data-demo-action="confirm">Confirmar pago</button></div></details>
         </section>
 
-        <section class="content-card" data-view="documents" aria-labelledby="documents-title" hidden><p class="eyebrow">Contenido privado</p><h2 id="documents-title">Mis documentos</h2><div data-documents></div></section>
+        <section class="content-card" data-view="documents" aria-labelledby="documents-title" hidden>
+          <p class="eyebrow">Contenido privado</p><h2 id="documents-title">Mis documentos</h2>
+          <div data-documents></div>
+          <!-- La reserva segura de ruta vincula cada archivo con la solicitud autenticada. -->
+          <form data-volunteer-document-form novalidate>
+            <label>Enviar documentación para mi solicitud
+              <input type="file" name="document" accept="application/pdf,image/jpeg,image/png" required>
+            </label>
+            <p class="help">PDF, JPG o PNG. Tamaño máximo: 10 MB.</p>
+            <button class="btn btn-ghost" type="submit">Subir documentación</button>
+            <p class="field-message" data-volunteer-document-message aria-live="polite"></p>
+          </form>
+        </section>
 
         <section class="content-card" data-view="profile" aria-labelledby="profile-title" hidden><p class="eyebrow">Mi perfil</p><h2 id="profile-title">Perfil y credencial</h2><form data-profile-form><label>Nombre de uso<input name="displayName" maxlength="80" required></label><label>Fotografía opcional<input name="photo" type="file" accept="image/jpeg,image/png,image/webp"></label><div class="button-row"><button class="btn btn-primary" type="submit">Guardar perfil</button><button class="btn btn-ghost" type="button" data-remove-photo>Quitar fotografía</button></div></form><article class="credential" data-credential><span>LAS ÑAÑAS · DEMO</span><div class="credential-body"><div class="credential-photo" data-credential-photo>V</div><div><small>Nombre</small><h3 data-credential-name>—</h3><small>Plan</small><strong data-credential-plan>—</strong></div></div></article><button class="btn btn-primary" type="button" data-download-credential disabled>Descargar credencial de muestra</button></section>
 

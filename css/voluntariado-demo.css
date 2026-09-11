@@ -481,3 +481,22 @@
   .membership-auth::backdrop,
   .member-space * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
+/* Logo del Modal de Autenticación */
+.membership-auth__logo {
+  display: block;
+  margin: 0 auto 1rem auto;
+  max-width: 140px; /* Tamaño compacto y equilibrado */
+  height: auto;
+  object-fit: contain;
+}
+/* --- CONTROL DE TAMAÑO DE LOS ICONOS PNG --- */
+.membership-card__icon-slot {
+  width: 100px !important;
+  height: 100px !important;
+}
+
+.membership-card__icon-slot img { 
+  width: 85px !important; 
+  height: 85px !important; 
+  object-fit: contain !important; 
+}

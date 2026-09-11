@@ -1,8 +1,102 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Coordinación · Las Ñañas</title><link rel="stylesheet" href="../css/mi-voluntariado.css?v=1"></head><body>
-<!-- SEGURIDAD: esta interfaz no concede permisos; Supabase RLS decide el acceso real. -->
-<div class="demo-bar">Panel de coordinación · requiere Supabase y un rol autorizado</div>
-<header class="portal-head"><a class="brand" href="voluntariado.html"><span>Ñ</span><strong>Las Ñañas</strong></a><a class="btn btn-ghost" href="voluntariado.html">Volver al sitio</a></header>
-<main class="portal-wrap"><section class="content-card"><p class="eyebrow">Acceso restringido</p><h1>Coordinación de voluntariado</h1><div class="notice warning" data-admin-connection><strong>Panel preparado, conexión pendiente.</strong><p>No se muestran datos personales hasta configurar Supabase Auth y asignar un rol de coordinación.</p></div>
-<nav class="side-nav" aria-label="Funciones disponibles"><button class="active" type="button">Solicitudes</button><button type="button">Aclaraciones y adjuntos</button><button type="button">Pagos y transferencias</button><button type="button">Documentos autorizados</button><button type="button">Actividades oficiales</button><button type="button">Agendas permitidas</button></nav>
-<section class="state-panel"><h2>Controles protegidos</h2><p>La migración incluida crea políticas para revisar, pedir aclaraciones, aprobar o rechazar, confirmar pagos, administrar documentos y crear actividades oficiales. Las consultas de agenda quedan limitadas al rol autorizado.</p><div class="button-row"><button class="btn btn-primary" disabled>Revisar solicitud</button><button class="btn btn-ghost" disabled>Solicitar aclaración</button><button class="btn btn-ghost" disabled>Confirmar pago</button></div></section></section></main>
-</body></html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Coordinación de voluntariado · Las Ñañas</title>
+  <link rel="stylesheet" href="../css/mi-voluntariado.css?v=1">
+</head>
+<body>
+  <div class="demo-bar" role="status" aria-live="polite">
+    <strong>Coordinación:</strong> <span data-admin-session-status>Verificando acceso seguro…</span>
+  </div>
+  <header class="portal-head">
+    <a class="brand" href="voluntariado.html"><span>Ñ</span><strong>Las Ñañas</strong></a>
+    <a class="btn btn-ghost" href="voluntariado.html">Volver al sitio</a>
+  </header>
+  <main class="portal-wrap">
+    <section class="content-card">
+      <p class="eyebrow">Acceso restringido</p>
+      <h1>Coordinación de voluntariado</h1>
+      <div class="notice warning" data-admin-notice aria-live="polite">
+        <strong>Acceso protegido.</strong>
+        <p data-admin-notice-text>Estamos comprobando tu sesión y permiso de administración.</p>
+      </div>
+      <nav class="side-nav" aria-label="Funciones disponibles">
+        <button class="active" type="button">Solicitudes</button>
+        <button type="button" disabled>Aclaraciones y adjuntos</button>
+        <button type="button" disabled>Pagos y transferencias</button>
+        <button type="button" disabled>Documentos autorizados</button>
+        <button type="button" disabled>Actividades oficiales</button>
+        <button type="button" disabled>Agendas permitidas</button>
+      </nav>
+
+      <!-- El contenido privado permanece oculto hasta validar sesión y rol admin activo. -->
+      <section class="state-panel" data-admin-workspace hidden>
+        <h2>Solicitudes registradas</h2>
+        <p data-applications-status role="status" aria-live="polite">Cargando solicitudes…</p>
+        <div data-applications-list aria-label="Solicitudes registradas"></div>
+      </section>
+
+      <section class="state-panel" data-application-detail hidden aria-labelledby="application-detail-title">
+        <button class="btn btn-ghost" type="button" data-close-detail>Volver a solicitudes</button>
+        <h2 id="application-detail-title">Detalle individual</h2>
+        <p data-detail-status role="status" aria-live="polite"></p>
+        <dl data-detail-content hidden>
+          <div class="review-box"><dt>Nombre</dt><dd data-detail-field="name">—</dd></div>
+          <div class="review-box"><dt>Correo</dt><dd data-detail-field="email">—</dd></div>
+          <div class="review-box"><dt>Plan</dt><dd data-detail-field="plan">—</dd></div>
+          <div class="review-box"><dt>Periodicidad</dt><dd data-detail-field="billing">—</dd></div>
+          <div class="review-box"><dt>Moneda</dt><dd data-detail-field="currency">—</dd></div>
+          <div class="review-box"><dt>Importe</dt><dd data-detail-field="amount">—</dd></div>
+          <div class="review-box"><dt>Estado</dt><dd data-detail-field="status">—</dd></div>
+          <div class="review-box"><dt>Fecha</dt><dd data-detail-field="created_at">—</dd></div>
+          <div class="review-box"><dt>Membresía</dt><dd data-detail-field="membership">Sin membresía activa</dd></div>
+        </dl>
+        <!-- Etapa 005: rechazo permanece bloqueado; aprobación y transferencia usan RPC protegidas. -->
+        <div class="button-row" data-admin-actions hidden>
+          <button class="btn btn-primary" type="button" data-approve-application>Aprobar</button>
+          <button class="btn btn-ghost" type="button" disabled>Rechazar</button>
+          <button class="btn btn-ghost" type="button" data-confirm-transfer>Confirmar pago</button>
+        </div>
+        <p class="field-message" data-admin-action-message aria-live="polite"></p>
+
+        <section class="state-panel" data-admin-documents>
+          <h3>Documentación privada</h3>
+          <div data-admin-document-list><p>Aún no hay documentación.</p></div>
+          <form data-admin-document-form novalidate>
+            <label>Archivo PDF, JPG o PNG (máximo 10 MB)
+              <input type="file" name="document" accept="application/pdf,image/jpeg,image/png" required>
+            </label>
+            <button class="btn btn-ghost" type="submit">Cargar para la voluntaria</button>
+            <p class="field-message" data-admin-document-message aria-live="polite"></p>
+          </form>
+        </section>
+      </section>
+    </section>
+  </main>
+  <dialog data-transfer-dialog aria-labelledby="transfer-dialog-title">
+    <form method="dialog" data-transfer-form>
+      <h2 id="transfer-dialog-title">Confirmar transferencia</h2>
+      <div class="review-box"><strong>Voluntaria</strong><span data-transfer-summary="volunteer">—</span></div>
+      <div class="review-box"><strong>Plan</strong><span data-transfer-summary="plan">—</span></div>
+      <div class="review-box"><strong>Importe</strong><span data-transfer-summary="amount">—</span></div>
+      <div class="review-box"><strong>Moneda</strong><span data-transfer-summary="currency">—</span></div>
+      <div class="review-box"><strong>Fecha</strong><span data-transfer-summary="date">—</span></div>
+      <label>Referencia de transferencia
+        <input type="text" name="reference" minlength="3" maxlength="120" autocomplete="off" required>
+      </label>
+      <p class="field-message" data-transfer-message aria-live="polite"></p>
+      <div class="button-row">
+        <button class="btn btn-ghost" type="button" data-cancel-transfer>Cancelar</button>
+        <button class="btn btn-primary" type="submit">Confirmar transferencia</button>
+      </div>
+    </form>
+  </dialog>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/supabase-client.js?v=1"></script>
+  <script src="../js/coordinacion-voluntariado.js?v=1"></script>
+</body>
+</html>
