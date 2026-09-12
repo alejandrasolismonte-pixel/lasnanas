@@ -41,7 +41,7 @@ $publicSource = ($publicFiles | ForEach-Object { Get-Content -Raw -LiteralPath $
 Assert-True ($publicSource -notmatch 'assets/(img/logo|logo)\.png') 'public pages do not request the oversized original logo'
 Assert-True ($publicSource -notmatch 'assets/icons/(voluntariado|productos|servicios)\.gif') 'public pages do not request the heavy ecosystem GIF files'
 Assert-True ($publicSource -notmatch 'assets/img/carrusel(?:_servicios)?/[^"'']+\.png') 'public carousels use optimized WebP images'
-Assert-True ($publicSource -match 'hero-web\.webp' -and $publicSource -match 'mapa-araucania-web\.webp') 'home hero and map use optimized images'
+Assert-True ($publicSource -notmatch 'hero-web\.webp' -and $publicSource -match 'mapa-araucania-web\.webp') 'home omits the obsolete static hero poster and keeps the optimized map'
 Assert-True ($publicSource -match 'voluntariado-web\.webp' -and $publicSource -match 'productos-web\.webp' -and $publicSource -match 'servicios-web\.webp') 'ecosystem visuals use optimized images'
 
 $developmentCss = Get-Content -Raw -LiteralPath (Join-Path $root 'css/desarrollo.css')

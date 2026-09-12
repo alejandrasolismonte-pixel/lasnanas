@@ -32,6 +32,6 @@ Assert-True ($css -match '@keyframes rukaBreathe' -and $css -match '@keyframes r
 Assert-True ($css -match '@media \(prefers-reduced-motion: reduce\)[\s\S]*\.ruka-access__smoke') 'ruka respects reduced-motion preferences'
 Assert-True ($mainJs -match '\.plant-cta\[href\]:not\(\[data-mi-ruka\]\)') 'legacy mobile leaf delay does not intercept the Ruka access'
 Assert-True ($volunteerJs -match "document\.querySelector\('\[data-mi-ruka\]'\)" -and $volunteerJs -match 'routeAuthenticatedRuka') 'personal and administrative routing remains connected'
-Assert-True ($html -match 'voluntariado\.css\?v=20' -and $html -match 'voluntariado\.js\?v=4' -and $html -match 'desarrollo\.js\?v=28') 'page requests refreshed Ruka styles and behavior'
+Assert-True ($html -match 'voluntariado\.css\?v=20' -and $html -match 'voluntariado\.js\?v=4' -and $html -match 'desarrollo\.js\?v=30') 'page requests refreshed Ruka styles and behavior'
 
 Write-Output 'Result: animated Ruka access smoke checks passed.'

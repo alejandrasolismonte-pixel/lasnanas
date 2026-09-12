@@ -581,6 +581,7 @@ html[data-theme="day"] .theme-toggle__icon--sun { opacity: 1; }
   align-items: center;
   overflow: hidden;
   isolation: isolate;
+  background: #0f151c;
 }
 .hero__video, .hero__overlay, .hero__texture {
   position: absolute;
@@ -591,7 +592,10 @@ html[data-theme="day"] .theme-toggle__icon--sun { opacity: 1; }
 .hero__video {
   object-fit: cover;
   z-index: -3;
+  opacity: 0;
+  transition: opacity .7s ease;
 }
+.hero__video.is-ready { opacity: 1; }
 .hero__overlay {
   z-index: -2;
   background: linear-gradient(90deg, rgba(15,21,28,.92) 0%, rgba(15,21,28,.7) 48%, rgba(15,21,28,.35));
@@ -2067,15 +2071,17 @@ h2 {
    ============================================================ */
 .ethnic-footer {
   position: relative;
+  min-height: 242px;
   background: #06080b;
-  padding: 4rem 0 2rem;
+  padding: 2.5rem 0 1.25rem;
   border-top: 2px solid var(--orange);
   overflow: hidden;
 }
 .footer-content {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  gap: 2rem;
+  min-height: 108px;
+  gap: clamp(1.25rem, 4vw, 3rem);
   align-items: center;
 }
 .footer-side {
@@ -2130,9 +2136,50 @@ h2 {
   gap: .5rem;
   margin-bottom: .3rem;
 }
-.footer-contact-list .icon {
+.footer-contact-list .icon,
+.footer-contact-link .footer-social-icon,
+.footer-location .footer-social-icon {
   color: var(--orange);
-  font-size: 1.1rem;
+}
+.footer-contact-link,
+.footer-social-link,
+.footer-location {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 1.35;
+  text-decoration: none;
+}
+.footer-contact-link:hover,
+.footer-social-link:hover {
+  color: var(--text);
+}
+.footer-social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem .85rem;
+}
+.footer-social-link {
+  min-height: 32px;
+}
+.footer-social-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.footer-social-icon--facebook {
+  fill: currentColor;
+  stroke: none;
+}
+.footer-location {
+  margin: 0;
 }
 
 /* --- Anillo central animado (logo) --- */
@@ -2142,8 +2189,8 @@ h2 {
 }
 .glowing-ring {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 108px;
+  height: 108px;
   border-radius: 50%;
   background: var(--bg);
   display: grid;
@@ -2163,8 +2210,8 @@ h2 {
   100% { transform: rotate(360deg); }
 }
 .ethnic-border {
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   border: 2px dashed var(--bg);
   display: grid;
@@ -2173,30 +2220,22 @@ h2 {
   overflow: hidden;
 }
 .logo-placeholder {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text);
+  display: block;
+  width: 112%;
+  height: 100%;
+  object-fit: contain;
 }
 .ethnic-footer .footer-copy {
   grid-column: 1 / -1;
-  margin-top: 3rem;
-  padding-top: 1.5rem;
+  margin: 1.4rem 0 0;
+  padding-top: 1rem;
   border-top: 1px solid rgba(226,232,240,.05);
   text-align: center;
   color: var(--muted);
   font-size: .85rem;
 }
 
-.ethnic-border{
-    overflow:visible;
-}
-.ethnic-border img{
-    width:130%;
-    height:110%;
-    display:block;
-    object-fit:contain;
-}
+.ethnic-border { overflow: visible; }
 
 
 

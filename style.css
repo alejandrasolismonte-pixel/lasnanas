@@ -431,3 +431,56 @@ body {
     .cta-button { padding: 10px 24px; font-size: 0.85rem; margin-bottom: 1rem; }
     .social-links a { width: 18px; height: 18px; }
 }
+
+/* Solo jerarquía: conserva íntegramente la tipografía y el efecto plateado. */
+.silver-text.welcome-subtitle { font-size: 1.7rem; }
+
+@media (max-width: 768px) {
+    .silver-text.welcome-subtitle { font-size: 1.3rem; }
+}
+
+@media (max-width: 600px) {
+    .silver-text.welcome-subtitle { font-size: .88rem; }
+}
+
+/* Acerca el entorno flotante a la tarjeta sin modificar su estilo. */
+#floating-environment {
+    left: 50%;
+    width: min(1100px, 100vw);
+    transform: translateX(-50%);
+}
+
+/* La bienvenida ocupa toda la pantalla porque su único ingreso es Küpage. */
+body.landing-welcome-page {
+    padding-top: 0;
+}
+
+body.landing-welcome-page .main-container {
+    display: grid;
+    place-items: center;
+    min-height: 100svh;
+}
+
+body.landing-welcome-page .glass-panel {
+    border: 2px solid #ea580c;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.46), 0 0 22px rgba(234, 88, 12, 0.12);
+}
+
+.landing-entry-button {
+    min-width: 240px;
+    padding: 18px 45px;
+    font-size: 1.425rem;
+    margin: 0;
+    border-color: rgba(234, 88, 12, 0.72);
+}
+
+.landing-entry-button[aria-disabled="true"] {
+    pointer-events: none;
+    opacity: 0.72;
+}
+
+/* El cargador aparece al ingresar y conserva el ritmo 30 % más lento. */
+body.landing-welcome-page .loading-overlay__loader .loader-path,
+body.landing-welcome-page .loading-overlay__loader .loader-inner {
+    animation-duration: 2.34s, 2.34s !important;
+}

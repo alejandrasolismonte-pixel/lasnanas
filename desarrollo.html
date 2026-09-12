@@ -15,7 +15,7 @@
     
     <!-- Hojas de estilo de Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Pacifico&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
 
     <!-- Tu CSS con control de caché actualizado -->
     <script>
@@ -29,7 +29,7 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="css/desarrollo.css?v=81">
+    <link rel="stylesheet" href="css/desarrollo.css?v=83">
     <link rel="stylesheet" href="css/whatsapp-floating.css?v=3">
     <link rel="stylesheet" href="css/loading-overlay.css?v=2">
 </head>
@@ -111,7 +111,7 @@
         <!-- Hero / Inicio -->
         <section class="hero section-shell" id="inicio" aria-labelledby="hero-title">
             <!-- Asegúrate de que el video exista en esta ruta: assets/videos/video-header.mp4 -->
-            <video class="hero__video" autoplay muted loop playsinline poster="assets/hero-web.webp" aria-hidden="true">
+            <video class="hero__video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
                 <source src="assets/videos/video-header.mp4" type="video/mp4">
             </video>
             <div class="hero__overlay"></div>
@@ -528,7 +528,7 @@
                     <p class="eyebrow">Conectemos · Ruka</p>
                     <h2 id="contact-title">Contacto & Ruka</h2>
                     <p>¿Tienes dudas, quieres comercializar tus semillas o necesitas contratar nuestros servicios técnicos? Escríbenos directamente.</p>
-                    <a href="mailto:equipolasnanas.aiep@gmail.com">equipolasnanas.aiep@gmail.com</a>
+                    <a href="mailto:nanamapuche@gmail.com">nanamapuche@gmail.com</a>
                     <p>Región de La Araucanía, Chile<br>lasñañas.cl</p>
                 </div>
                     <form class="contact-form" data-contact-form action="https://formspree.io/f/xyeynlka" method="POST">
@@ -547,70 +547,200 @@
 
     <!-- Juego Memorice -->
         <!-- ========================================== -->
-        <!-- 1. LIBRERÍAS EXTERNAS                      -->
-        <!-- ========================================== -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
-
-        <!-- ========================================== -->
-        <!-- 2. CONFIGURACIÓN DE COLORES TAILWIND       -->
-        <!-- ========================================== -->
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            nanas: {
-                                dark: '#0f141e',
-                                green: '#43a047',
-                                light: '#e2e8f0',
-                                accent: '#e85d22'
-                            }
-                        },
-                        fontFamily: {
-                            sans: ['Quicksand', 'sans-serif'],
-                            pacifico: ['Pacifico', 'cursive'],
-                        }
-                    }
-                }
-            }
-        </script>
-
-        <!-- ========================================== -->
-        <!-- 3. ESTILOS CSS PERSONALIZADOS (UI & UX)    -->
+        <!-- ESTILOS LOCALES DEL JUEGO (UI & UX)         -->
         <!-- ========================================== -->
         <style>
-            /* Fondo general */
-            body {
-                background-color: #0f141e;
-                background-image:
-                    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0)),
-                    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0)),
-                    radial-gradient(1px 1px at 160px 120px, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0));
-                background-repeat: repeat;
-                background-size: 200px 200px;
-                color: #e2e8f0;
-                margin: 0;
-                padding: 0;
-                min-height: 100vh;
+            /* La maquetación del juego vive aquí y ya no depende de Tailwind. */
+            #juego-memorice {
+                width: 100%;
+                margin-inline: auto;
+                padding: .75rem 1rem 7rem;
                 display: flex;
                 flex-direction: column;
-                overflow-x: hidden;
+                align-items: center;
+                justify-content: flex-start;
+                overflow: visible;
+                font-family: 'Quicksand', sans-serif;
             }
 
-            /* --- SISTEMA DE CARTAS 3D --- */
+            .memory-heading { margin-bottom: .75rem; text-align: center; }
+            .memory-heading__title {
+                margin: 0 0 .5rem;
+                color: #fff;
+                font-size: 1.875rem;
+                font-weight: 700;
+                letter-spacing: .025em;
+            }
+            .memory-heading__title span,
+            .player-panel__score { color: #43a047; }
+            .memory-heading__description {
+                max-width: 36rem;
+                margin-inline: auto;
+                color: #9ca3af;
+                font-size: .875rem;
+            }
+
+            .memory-scoreboard {
+                display: flex;
+                width: 100%;
+                max-width: 42rem;
+                margin-bottom: .75rem;
+                align-items: center;
+                justify-content: space-between;
+                gap: .5rem;
+            }
+            .player-panel {
+                flex: 1 1 0;
+                padding: .5rem;
+                border-radius: .75rem;
+                background: #1f2937;
+                text-align: center;
+            }
+            .player-panel__name {
+                margin: 0;
+                color: #fff;
+                font-size: .875rem;
+                font-weight: 700;
+            }
+            .player-panel__score {
+                margin: .25rem 0;
+                font-size: 1.25rem;
+                font-weight: 700;
+                line-height: 1;
+            }
+            .player-panel__score span:last-child,
+            .player-panel__wins {
+                color: #9ca3af;
+                font-size: .75rem;
+                font-weight: 400;
+            }
+            .player-panel__wins {
+                margin: 0;
+                letter-spacing: .05em;
+                text-transform: uppercase;
+            }
+            .player-panel__wins strong { color: #fff; font-weight: 700; }
+
+            .memory-restart {
+                display: inline-flex;
+                width: 2.5rem;
+                height: 2.5rem;
+                padding: 0;
+                flex: 0 0 auto;
+                align-items: center;
+                justify-content: center;
+                gap: .5rem;
+                color: #fff;
+                border: 0;
+                border-radius: 999px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .35);
+                font: inherit;
+                font-weight: 700;
+                cursor: pointer;
+            }
+            .memory-restart__icon { width: 1.05rem; height: 1.05rem; fill: none; stroke: currentColor; stroke-width: 2; }
+            .memory-restart__label { display: none; }
+
             .memory-game-container {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                width: 100%;
+                max-width: 48rem;
+                margin-inline: auto;
+                flex: 0 0 auto;
+                gap: .5rem;
+                overflow: visible;
                 perspective: 1000px;
             }
 
+            .memory-victory {
+                position: fixed;
+                inset: 0;
+                z-index: 50;
+                display: flex;
+                padding: 1rem;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, .8);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+            .memory-victory[hidden] { display: none !important; }
+            .memory-victory__dialog {
+                width: 100%;
+                max-width: 24rem;
+                padding: 1.5rem;
+                color: #fff;
+                border: 2px solid #43a047;
+                border-radius: 1rem;
+                background: #111827;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .55);
+                text-align: center;
+            }
+            .memory-victory__icon {
+                width: 3rem;
+                height: 3rem;
+                margin-bottom: 1rem;
+                color: #43a047;
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 1.8;
+            }
+            .memory-victory__title {
+                margin: 0 0 .5rem;
+                color: #43a047;
+                font-size: 1.5rem;
+                font-weight: 700;
+            }
+            .memory-victory__title[data-tone="draw"] { color: #facc15; }
+            .memory-victory__text { margin: 0 0 1.5rem; color: #d1d5db; font-size: 1rem; }
+            .memory-victory__scores {
+                display: flex;
+                margin-bottom: 1.5rem;
+                padding: .75rem;
+                justify-content: space-around;
+                border-radius: .5rem;
+                background: #1f2937;
+            }
+            .memory-victory__scores p { margin: 0; }
+            .memory-victory__scores small { color: #9ca3af; font-size: .75rem; }
+            .memory-victory__score { color: #fff; font-size: 1.25rem; font-weight: 700; }
+            .memory-victory__button {
+                width: 100%;
+                padding: .75rem 2rem;
+                color: #fff;
+                border: 0;
+                border-radius: 999px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .35);
+                font: inherit;
+                font-size: 1.125rem;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            /* --- SISTEMA DE CARTAS 3D --- */
             .memory-card {
                 position: relative;
+                width: 100%;
+                aspect-ratio: 3 / 4;
+                padding: 0;
+                border: 0;
+                background: transparent;
+                color: inherit;
+                font: inherit;
                 transform-style: preserve-3d;
                 /* SE HIZO MÁS RÁPIDO: de 0.6s a 0.35s para mayor fluidez */
                 transition: transform 0.35s cubic-bezier(0.4, 0.2, 0.2, 1);
                 cursor: pointer;
             }
+
+            .memory-card:focus-visible {
+                outline: 3px solid #f97316;
+                outline-offset: 4px;
+                border-radius: .75rem;
+            }
+
+            .memory-card:disabled { cursor: default; }
 
             .memory-card.flip {
                 transform: rotateY(180deg);
@@ -648,10 +778,14 @@
 
             /* Ícono y texto del reverso */
             .back-logo-icon {
-                font-size: 2rem;
+                width: 2rem;
+                height: 2rem;
                 /* Tamaño equilibrado, 30% más pequeño que antes */
                 color: #c36d0ccb;
                 margin-bottom: 4px;
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 1.8;
             }
 
             .back-logo-text {
@@ -681,6 +815,32 @@
                 justify-content: center;
                 width: 100%;
                 background-color: rgba(0, 0, 0, 0.1);
+            }
+
+            .card-icon {
+                width: 2rem;
+                height: 2rem;
+                opacity: 0;
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 1.8;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+
+            .memory-card__mapu {
+                margin: 0 0 .25rem;
+                color: #22c55e;
+                font-size: 1rem;
+                font-weight: 700;
+                line-height: 1;
+            }
+            .memory-card__translation {
+                margin: 0;
+                color: #d1d5db;
+                font-size: .875rem;
+                font-weight: 600;
+                text-transform: uppercase;
             }
 
             .card-text-container {
@@ -720,7 +880,8 @@
             @media (min-width: 1024px) {
 
                 .back-logo-icon {
-                    font-size: 2rem;
+                    width: 2rem;
+                    height: 2rem;
                 }
 
                 .back-logo-text {
@@ -732,7 +893,8 @@
                 }
 
                 .card-icon {
-                    font-size: 5rem !important;
+                    width: 5rem;
+                    height: 5rem;
                 }
 
                 .memory-card-front h3 {
@@ -749,7 +911,8 @@
             @media (min-width: 768px) and (max-width: 1023px) {
 
                 .back-logo-icon {
-                    font-size: 1.7rem;
+                    width: 1.7rem;
+                    height: 1.7rem;
                 }
 
                 .back-logo-text {
@@ -761,7 +924,8 @@
                 }
 
                 .card-icon {
-                    font-size: 2.5rem !important;
+                    width: 2.5rem;
+                    height: 2.5rem;
                 }
 
                 .memory-card-front h3 {
@@ -778,7 +942,8 @@
             @media (max-width: 767px) {
 
                 .back-logo-icon {
-                    font-size: 1.8rem;
+                    width: 1.8rem;
+                    height: 1.8rem;
                 }
 
                 .back-logo-text {
@@ -790,7 +955,8 @@
                 }
 
                 .card-icon {
-                    font-size: 2rem !important;
+                    width: 2rem;
+                    height: 2rem;
                 }
 
                 .memory-card-front h3 {
@@ -851,6 +1017,26 @@
                 transform: translateY(-2px);
             }
 
+            @media (min-width: 768px) {
+                .memory-heading__title { font-size: 2.25rem; }
+                .memory-heading__description { font-size: 1rem; }
+                .memory-scoreboard { gap: 1rem; }
+                .player-panel { padding: .75rem; }
+                .player-panel__name { font-size: 1.125rem; }
+                .player-panel__score { font-size: 1.5rem; }
+                .memory-restart { width: auto; height: 3rem; padding-inline: 1rem; }
+                .memory-restart__label { display: inline; }
+                .memory-game-container {
+                    grid-template-columns: repeat(5, minmax(0, 1fr));
+                    margin-top: -2.5rem;
+                    gap: .75rem;
+                }
+                .memory-victory__dialog { padding: 2rem; }
+                .memory-victory__title { font-size: 1.875rem; }
+                .memory-card__mapu { font-size: 1.25rem; }
+                .memory-card__translation { font-size: 1rem; }
+            }
+
             /* --- ANIMACIÓN DE FLORES Y HOJAS AL GANAR --- */
             .particle {
                 position: fixed;
@@ -877,66 +1063,68 @@
         <!-- ========================================== -->
         <!-- 4. ESTRUCTURA HTML DEL JUEGO               -->
         <!-- ========================================== -->
-        <section id="juego-memorice" class="w-full mx-auto px-4 py-8 flex-grow flex flex-col items-center justify-center">
+        <section id="juego-memorice">
 
             <!-- Encabezado -->
-            <div class="text-center mb-6">
-                <h2 class="text-3xl md:text-4xl font-bold mb-2 tracking-wide text-white">
-                    kimün <span class="text-nanas-green">conexiones.</span>
+            <div class="memory-heading">
+                <h2 class="memory-heading__title">
+                    kimün <span>conexiones.</span>
                 </h2>
-                <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+                <p class="memory-heading__description">
                     Encuentra los pares. Si aciertas, mantienes tu turno.
                 </p>
             </div>
 
             <!-- Panel de Multijugador (Turnos y Puntaje) -->
-            <div class="flex justify-between items-center w-full max-w-2xl mb-6 gap-2 md:gap-4">
+            <div class="memory-scoreboard">
 
                 <!-- Jugador 1 -->
-                <div id="panel-p1" class="player-panel flex-1 bg-gray-800 rounded-xl p-2 md:p-3 text-center active-turn">
-                    <h3 class="font-bold text-sm md:text-lg text-white">Jugador 1</h3>
-                    <p class="text-nanas-green text-xl md:text-2xl font-bold leading-none my-1"><span id="score-p1">0</span> <span class="text-xs text-gray-400 font-normal">pares</span></p>
-                    <p class="text-[0.65rem] md:text-xs text-gray-400 uppercase tracking-wider">Victorias: <span id="wins-p1" class="text-white font-bold">0</span></p>
+                <div id="panel-p1" class="player-panel active-turn">
+                    <h3 class="player-panel__name">Jugador 1</h3>
+                    <p class="player-panel__score"><span id="score-p1">0</span> <span>pares</span></p>
+                    <p class="player-panel__wins">Victorias: <strong id="wins-p1">0</strong></p>
                 </div>
 
                 <!-- Botón Reiniciar en el centro -->
-                <button id="restart-btn" class="btn-ecosistema text-white font-bold h-10 w-10 md:h-12 md:w-auto md:px-4 rounded-full flex items-center justify-center gap-2 shadow-lg shrink-0" title="Reiniciar Juego">
-                    <i class="fas fa-redo-alt"></i> <span class="hidden md:inline">Reiniciar</span>
+                <button id="restart-btn" class="btn-ecosistema memory-restart" type="button" title="Reiniciar Juego" aria-label="Reiniciar juego">
+                    <svg class="memory-restart__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6"></path><path d="M5.5 15a8 8 0 1 0 .5-7L4 10"></path></svg>
+                    <span class="memory-restart__label">Reiniciar</span>
                 </button>
 
                 <!-- Jugador 2 -->
-                <div id="panel-p2" class="player-panel flex-1 bg-gray-800 rounded-xl p-2 md:p-3 text-center">
-                    <h3 class="font-bold text-sm md:text-lg text-white">Jugador 2</h3>
-                    <p class="text-nanas-green text-xl md:text-2xl font-bold leading-none my-1"><span id="score-p2">0</span> <span class="text-xs text-gray-400 font-normal">pares</span></p>
-                    <p class="text-[0.65rem] md:text-xs text-gray-400 uppercase tracking-wider">Victorias: <span id="wins-p2" class="text-white font-bold">0</span></p>
+                <div id="panel-p2" class="player-panel">
+                    <h3 class="player-panel__name">Jugador 2</h3>
+                    <p class="player-panel__score"><span id="score-p2">0</span> <span>pares</span></p>
+                    <p class="player-panel__wins">Victorias: <strong id="wins-p2">0</strong></p>
                 </div>
 
             </div>
 
             <!-- Tablero del Juego (Tamaño ajustado max-w-3xl para que las cartas sean más equilibradas) -->
-            <div class="memory-game-container grid grid-cols-4 md:grid-cols-5 gap-2 md:gap-3 w-full max-w-3xl mx-auto" id="game-board">
+            <div class="memory-game-container" id="game-board" aria-label="Tablero del juego Memorice">
                 <!-- Las cartas se generan dinámicamente en JS -->
             </div>
+            <p id="memory-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
 
             <!-- Modal de Victoria -->
-            <div id="victory-message" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-                <div class="bg-gray-900 border-2 border-nanas-green rounded-2xl p-6 md:p-8 w-full max-w-sm text-center shadow-2xl">
-                    <i class="fas fa-seedling text-5xl text-nanas-green mb-4" id="victory-icon"></i>
-                    <h3 class="text-2xl md:text-3xl font-bold text-white mb-2" id="victory-title">¡Juego Terminado!</h3>
-                    <p class="text-gray-300 mb-6 text-base" id="victory-text">Resultados de la cosecha.</p>
+            <div id="victory-message" class="memory-victory" role="dialog" aria-modal="true" aria-labelledby="victory-title" hidden>
+                <div class="memory-victory__dialog">
+                    <svg class="memory-victory__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21v-9"></path><path d="M12 14c-4 0-7-2.5-7-7 4 0 7 2 7 6"></path><path d="M12 16c4 0 7-2.5 7-7-4 0-7 2-7 6"></path></svg>
+                    <h3 class="memory-victory__title" id="victory-title">¡Juego Terminado!</h3>
+                    <p class="memory-victory__text" id="victory-text">Resultados de la cosecha.</p>
 
-                    <div class="flex justify-around bg-gray-800 p-3 rounded-lg mb-6">
+                    <div class="memory-victory__scores">
                         <div>
-                            <p class="text-xs text-gray-400">Jugador 1</p>
-                            <p class="text-xl font-bold text-white" id="final-score-p1">0</p>
+                            <p><small>Jugador 1</small></p>
+                            <p class="memory-victory__score" id="final-score-p1">0</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400">Jugador 2</p>
-                            <p class="text-xl font-bold text-white" id="final-score-p2">0</p>
+                            <p><small>Jugador 2</small></p>
+                            <p class="memory-victory__score" id="final-score-p2">0</p>
                         </div>
                     </div>
 
-                    <button onclick="resetGame()" class="btn-ecosistema text-white font-bold py-3 px-8 rounded-full shadow-lg text-lg w-full">
+                    <button id="replay-btn" class="btn-ecosistema memory-victory__button" type="button">
                         Jugar Revancha
                     </button>
                 </div>
@@ -953,73 +1141,93 @@
                     id: 1,
                     mapu: 'Ruka',
                     esp: 'Casa',
-                    icon: 'fa-house-chimney',
+                    icon: 'house',
                     color: '#d97706'
                 }, // Naranja/Café
                 {
                     id: 2,
                     mapu: 'Tukukawe',
                     esp: 'Huerta',
-                    icon: 'fa-seedling',
+                    icon: 'seedling',
                     color: '#22c55e'
                 }, // Verde
                 {
                     id: 3,
                     mapu: 'Poyen',
                     esp: 'Amor',
-                    icon: 'fa-heart',
+                    icon: 'heart',
                     color: '#e11d48'
                 }, // Rojo
                 {
                     id: 4,
                     mapu: 'Keyuwün',
                     esp: 'Ayuda mutua',
-                    icon: 'fa-hands-holding-circle',
+                    icon: 'hands',
                     color: '#0d9488'
                 }, // Turquesa
                 {
                     id: 5,
                     mapu: 'Kimün',
                     esp: 'Sabiduría',
-                    icon: 'fa-book-open',
+                    icon: 'book',
                     color: '#9333ea'
                 }, // Morado
                 {
                     id: 6,
                     mapu: 'Mapu',
                     esp: 'Tierra',
-                    icon: 'fa-earth-americas',
+                    icon: 'earth',
                     color: '#854d0e'
                 }, // Café tierra
                 {
                     id: 7,
                     mapu: 'Ixofill',
                     esp: 'bosque',
-                    icon: 'fa-leaf',
+                    icon: 'leaf',
                     color: '#84cc16'
                 }, // Verde lima
                 {
                     id: 8,
                     mapu: 'Ko',
                     esp: 'Agua',
-                    icon: 'fa-droplet',
+                    icon: 'droplet',
                     color: '#3b82f6'
                 }, // Azul
                 {
                     id: 9,
                     mapu: 'Antü',
                     esp: 'Sol',
-                    icon: 'fa-sun',
+                    icon: 'sun',
                     color: '#eab308'
                 }, // Amarillo
                 {
                     id: 10,
                     mapu: 'Küyen',
                     esp: 'Luna',
-                    icon: 'fa-moon',
+                    icon: 'moon',
                     color: '#94a3b8'
                 } // Plata
             ];
+
+            // Íconos SVG locales: eliminan la descarga completa de Font Awesome.
+            const memoryIconPaths = Object.freeze({
+                house: '<path d="M3 11.5 12 4l9 7.5"></path><path d="M5.5 10v10h13V10M9.5 20v-6h5v6"></path>',
+                seedling: '<path d="M12 21v-9"></path><path d="M12 14c-4 0-7-2.5-7-7 4 0 7 2 7 6"></path><path d="M12 16c4 0 7-2.5 7-7-4 0-7 2-7 6"></path>',
+                heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"></path>',
+                hands: '<path d="M8.5 12.5 11 15c.6.6 1.5.6 2.1 0l3.4-3.4"></path><path d="m3 14 4.5 4.5h4l2-2M21 14l-4.5 4.5h-3"></path><path d="M3 14 1.5 12.5M21 14l1.5-1.5"></path><circle cx="12" cy="7" r="3"></circle>',
+                book: '<path d="M3 5.5c3-1 6-.5 9 1.5v13c-3-2-6-2.5-9-1.5v-13Z"></path><path d="M21 5.5c-3-1-6-.5-9 1.5v13c3-2 6-2.5 9-1.5v-13Z"></path>',
+                earth: '<circle cx="12" cy="12" r="9"></circle><path d="M3.5 9h17M3.5 15h17M12 3c2.5 2.4 3.5 5.4 3.5 9S14.5 18.6 12 21M12 3C9.5 5.4 8.5 8.4 8.5 12s1 6.6 3.5 9"></path>',
+                leaf: '<path d="M20 4C11 4 5 8.5 5 15c0 2.8 2.2 5 5 5 6.5 0 10-7 10-16Z"></path><path d="M4 21c3-5 7-8.5 12-11"></path>',
+                droplet: '<path d="M12 2S5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13Z"></path>',
+                sun: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>',
+                moon: '<path d="M20.5 15.5A9 9 0 0 1 8.5 3.5a9 9 0 1 0 12 12Z"></path>'
+            });
+
+            function renderMemoryIcon(name, className, color) {
+                const paths = memoryIconPaths[name] || memoryIconPaths.seedling;
+                const colorStyle = color ? ` style="color: ${color};"` : '';
+                return `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true"${colorStyle}>${paths}</svg>`;
+            }
 
             // Variables de estado del tablero
             let cardsArray = [];
@@ -1028,6 +1236,8 @@
             let firstCard, secondCard;
             let totalPairs = palabrasData.length;
             let matchedPairs = 0;
+            let mismatchTimer = null;
+            let victoryTimer = null;
 
             // Variables Multijugador
             let currentPlayer = 1; // 1 o 2
@@ -1038,7 +1248,7 @@
 
             // Referencias DOM
             let boardElement, victoryMessage;
-            let scoreP1El, scoreP2El, panelP1El, panelP2El;
+            let scoreP1El, scoreP2El, panelP1El, panelP2El, statusEl;
 
             function initGame() {
                 boardElement = document.getElementById('game-board');
@@ -1048,6 +1258,7 @@
                 scoreP2El = document.getElementById('score-p2');
                 panelP1El = document.getElementById('panel-p1');
                 panelP2El = document.getElementById('panel-p2');
+                statusEl = document.getElementById('memory-status');
 
                 // Barajar mazo
                 cardsArray = [...palabrasData, ...palabrasData];
@@ -1062,26 +1273,25 @@
                 boardElement.innerHTML = '';
 
                 cardsArray.forEach((item) => {
-                    const cardElement = document.createElement('div');
-                    // aspect ratio y w-full garantizan responsividad
-                    cardElement.classList.add('memory-card', 'w-full', 'aspect-[3/4]');
+                    const cardElement = document.createElement('button');
+                    cardElement.type = 'button';
+                    cardElement.className = 'memory-card';
                     cardElement.dataset.id = item.id;
+                    cardElement.dataset.cardLabel = `${item.mapu}: ${item.esp}`;
+                    cardElement.setAttribute('aria-label', 'Carta oculta');
 
-                    // NOTA: Se redujo el tamaño de text-4xl a text-2xl/3xl para equilibrar el tamaño
                     cardElement.innerHTML = `
                     <div class="memory-card-back">
-                        <i class="fas fa-seedling back-logo-icon"></i>
+                        ${renderMemoryIcon('seedling', 'back-logo-icon')}
                         <div class="back-logo-text">Las Ñañas</div>
                     </div>
                     <div class="memory-card-front">
                         <div class="card-icon-container">
-                            <i class="card-icon fas ${item.icon} opacity-0 text-2xl md:text-3xl" style="color: ${item.color};"></i>
+                            ${renderMemoryIcon(item.icon, 'card-icon', item.color)}
                         </div>
                      <div class="card-text-container">
-                        <!-- Mapudungun súper destacado -->
-                        <h3 class="text-green-500 font-bold text-base md:text-xl leading-none mb-1">${item.mapu}</h3>
-                        <!-- Español más legible -->
-                        <p class="text-gray-300 text-sm md:text-base font-medium uppercase">${item.esp}</p>
+                        <h3 class="memory-card__mapu">${item.mapu}</h3>
+                        <p class="memory-card__translation">${item.esp}</p>
                     </div>
                 </div>
                     </div>
@@ -1098,6 +1308,7 @@
                 if (this === firstCard) return;
 
                 this.classList.add('flip');
+                this.setAttribute('aria-label', this.dataset.cardLabel);
 
                 if (!hasFlippedCard) {
                     hasFlippedCard = true;
@@ -1151,22 +1362,28 @@
 
                 firstCard.querySelector('.memory-card-front').classList.add('matched');
                 secondCard.querySelector('.memory-card-front').classList.add('matched');
+                firstCard.disabled = true;
+                secondCard.disabled = true;
 
                 matchedPairs++;
+                statusEl.textContent = `Pareja encontrada. Jugador ${currentPlayer} continúa.`;
                 resetBoardVars();
 
                 if (matchedPairs === totalPairs) {
-                    setTimeout(showVictory, 600);
+                    victoryTimer = window.setTimeout(showVictory, 600);
                 }
             }
 
             function unflipCards() {
                 lockBoard = true;
                 // TIEMPO OPTIMIZADO: de 1000ms a 700ms para no aburrir al jugador
-                setTimeout(() => {
+                mismatchTimer = window.setTimeout(() => {
                     firstCard.classList.remove('flip');
                     secondCard.classList.remove('flip');
+                    firstCard.setAttribute('aria-label', 'Carta oculta');
+                    secondCard.setAttribute('aria-label', 'Carta oculta');
                     switchTurn(); // Cambia turno solo cuando se equivoca
+                    statusEl.textContent = `No son pareja. Turno del jugador ${currentPlayer}.`;
                     resetBoardVars();
                 }, 700);
             }
@@ -1185,7 +1402,9 @@
                 currentPlayer = 1;
                 panelP1El.classList.add('active-turn');
                 panelP2El.classList.remove('active-turn');
-                victoryMessage.classList.add('hidden');
+                victoryMessage.hidden = true;
+                document.getElementById('victory-title').dataset.tone = '';
+                statusEl.textContent = 'Nueva partida. Turno del jugador 1.';
             }
 
             function updateWinsUI() {
@@ -1204,29 +1423,36 @@
                 // Determinar ganador
                 if (scoreP1 > scoreP2) {
                     title.innerText = "¡Jugador 1 Gana!";
-                    title.className = "text-2xl md:text-3xl font-bold text-nanas-green mb-2";
+                    title.dataset.tone = 'winner';
                     text.innerText = "Excelente memoria.";
                     winsP1++;
                 } else if (scoreP2 > scoreP1) {
                     title.innerText = "¡Jugador 2 Gana!";
-                    title.className = "text-2xl md:text-3xl font-bold text-nanas-green mb-2";
+                    title.dataset.tone = 'winner';
                     text.innerText = "Excelente memoria.";
                     winsP2++;
                 } else {
                     title.innerText = "¡Es un Empate!";
-                    title.className = "text-2xl md:text-3xl font-bold text-yellow-400 mb-2";
+                    title.dataset.tone = 'draw';
                     text.innerText = "Ambos tienen gran sabiduría.";
                 }
 
                 updateWinsUI();
-                victoryMessage.classList.remove('hidden');
+                victoryMessage.hidden = false;
+                document.getElementById('replay-btn').focus();
                 lanzarHojasYFlores(); // Inicia animación de victoria
             }
 
             function resetGame() {
+                window.clearTimeout(mismatchTimer);
+                window.clearTimeout(victoryTimer);
+                mismatchTimer = null;
+                victoryTimer = null;
+                lockBoard = true;
+                victoryMessage.hidden = true;
                 const cards = document.querySelectorAll('.memory-card');
                 cards.forEach(card => card.classList.remove('flip'));
-                setTimeout(() => {
+                window.setTimeout(() => {
                     initGame();
                 }, 400);
             }
@@ -1271,6 +1497,7 @@
             document.addEventListener('DOMContentLoaded', () => {
                 initGame();
                 document.getElementById('restart-btn').addEventListener('click', resetGame);
+                document.getElementById('replay-btn').addEventListener('click', resetGame);
             });
         </script>
 
@@ -1297,9 +1524,9 @@
                     <!-- Columna Derecha (Datos) -->
                     <div class="footer-side right-side">
                         <ul class="footer-contact-list">
-                            <li><span class="icon" aria-hidden="true">✆</span> equipolasnanas.aiep@gmail.com</li>
-                            <li><span class="icon" aria-hidden="true">✉</span> lasñañas.cl</li>
-                            <li><span class="icon" aria-hidden="true">⌂</span> La Araucanía, Chile</li>
+                            <li><a class="footer-contact-link" href="mailto:nanamapuche@gmail.com"><svg class="footer-social-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg><span>nanamapuche@gmail.com</span></a></li>
+                            <li><div class="footer-social-links" aria-label="Redes sociales"><a class="footer-social-link" href="https://www.instagram.com/nanamapuche/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Las Ñañas"><svg class="footer-social-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg><span>Instagram</span></a><a class="footer-social-link" href="https://www.facebook.com/nanamapuche" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Las Ñañas"><svg class="footer-social-icon footer-social-icon--facebook" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-3 0-5 2-5 5v3H6v4h3v5h4v-5h3.5l.5-4h-4V9c0-.6.4-1 1-1Z"></path></svg><span>Facebook</span></a></div></li>
+                            <li><p class="footer-location"><svg class="footer-social-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg><span>La Araucanía, Chile</span></p></li>
                         </ul>
                         <span class="ethnic-triangle right-tri"></span>
                     </div>
@@ -1313,7 +1540,7 @@
     <script src="js/supabase-client.js?v=1"></script>
     <script src="js/loading-overlay.js?v=2"></script>
     <script src="js/map-pins.js?v=2"></script>
-    <script src="js/desarrollo.js?v=28"></script>
+    <script src="js/desarrollo.js?v=30"></script>
     <script src="js/whatsapp-floating.js?v=3"></script>
 </body>
 

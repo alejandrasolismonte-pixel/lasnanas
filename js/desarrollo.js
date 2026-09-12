@@ -4,6 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const navigation = document.querySelector('.main-nav');
   let themeToggle = document.querySelector('[data-theme-toggle]');
 
+  // Mantiene el fondo oscuro estable y revela el video cuando su primer cuadro está listo.
+  const heroVideo = document.querySelector('.hero__video');
+  const revealHeroVideo = () => heroVideo?.classList.add('is-ready');
+  if (heroVideo?.readyState >= 2) {
+    revealHeroVideo();
+  } else {
+    heroVideo?.addEventListener('loadeddata', revealHeroVideo, { once: true });
+  }
+
   if (!themeToggle && header) {
     themeToggle = document.createElement('button');
     themeToggle.className = 'theme-toggle';
@@ -185,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if(cartContact) {
       cartContact.classList.remove('is-disabled');
-      cartContact.href = `mailto:equipolasnanas.aiep@gmail.com?subject=${encodeURIComponent('Consulta de compra - Productos Las Ñañas')}&body=${encodeURIComponent(`Mari mari, me interesa coordinar la compra/transferencia de los siguientes productos:\n\n- ${cart.join('\n- ')}\n\nQuedo atento/a a la disponibilidad y datos de pago.`)}`;
+      cartContact.href = `mailto:nanamapuche@gmail.com?subject=${encodeURIComponent('Consulta de compra - Productos Las Ñañas')}&body=${encodeURIComponent(`Mari mari, me interesa coordinar la compra/transferencia de los siguientes productos:\n\n- ${cart.join('\n- ')}\n\nQuedo atento/a a la disponibilidad y datos de pago.`)}`;
     }
     
     button.textContent = 'Agregado ✓';

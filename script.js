@@ -1,32 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const menuToggle = document.querySelector('.landing-menu-toggle');
-    const navigation = document.querySelector('.landing-nav');
+    const entryButton = document.querySelector('[data-kupage]');
+    let isEntering = false;
 
-    const closeMenu = () => {
-        if (!menuToggle || !navigation) return;
-        menuToggle.setAttribute('aria-expanded', 'false');
-        navigation.classList.remove('is-open');
-    };
+    entryButton?.addEventListener('click', event => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
-    menuToggle?.addEventListener('click', () => {
-        const willOpen = menuToggle.getAttribute('aria-expanded') !== 'true';
-        menuToggle.setAttribute('aria-expanded', String(willOpen));
-        navigation?.classList.toggle('is-open', willOpen);
-    });
+        event.preventDefault();
+        if (isEntering) return;
 
-    navigation?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-    document.addEventListener('click', event => {
-        if (!event.target.closest('[data-landing-header]')) closeMenu();
-    });
-    document.addEventListener('keydown', event => {
-        if (event.key === 'Escape') {
-            closeMenu();
-            menuToggle?.focus();
-        }
+        isEntering = true;
+        entryButton.setAttribute('aria-disabled', 'true');
+        window.LasNanasLoader?.show('Ingresando al sitio');
+
+        window.setTimeout(() => {
+            window.location.assign(entryButton.href);
+        }, 2000);
     });
 
     const container = document.getElementById('floating-environment');
-    const esMovil = window.innerWidth <= 600;
+    const esMovil = window.innerWidth <= 900;
 
     /* ==========================================================================
        ELEMENTOS FLOTANTES (posiciones de escritorio, en % de pantalla)
@@ -36,33 +28,27 @@ document.addEventListener('DOMContentLoaded', () => {
        - Para cambiar la POSICIÓN: modifica "x" (izquierda) e "y" (arriba), en %.
        ========================================================================== */
     const elementosDesktop = [
-        { type: 'box',  x: 6,  y: 8,  color: "16, 185, 129", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3" /><path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3" /><path d="M12 20l0 -10" />' }, // manos / comunidad
-        { type: 'text', x: 27, y: 6,  content: "agroecología" },
-        { type: 'text', x: 68, y: 6,  content: "voluntariado" },
-        { type: 'box',  x: 91, y: 8,  color: "245, 158, 11", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="5 12 3 12 12 3 21 12 19 12" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />' }, // casa
-        { type: 'box',  x: 5,  y: 35, color: "139, 92, 246", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 21c-4 -1 -7 -6 -7 -12v-3h3c5 0 9 3 9 8" /><path d="M12 21c4 -1 7 -6 7 -12v-3h-3c-3 0 -6 1 -8 3" /><path d="M12 21v-8" />' }, // semilla
-        { type: 'box',  x: 92, y: 35, color: "59, 130, 246", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M12 3v18" /><path d="M3 12h18" /><path d="M12 8l4 4" /><path d="M12 16l-4 -4" />' }, // cultrún
-        { type: 'text', x: 5,  y: 63, content: "bioinsumos" },
-        { type: 'text', x: 92, y: 63, content: "naturaleza" },
-        { type: 'text', x: 8,  y: 91, content: "kvme mogen" },
-        { type: 'box',  x: 27, y: 92, color: "20, 184, 166", content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 22l0 -14" /><path d="M9 13l3 -5" /><path d="M15 13l-3 -5" /><path d="M12 6l-2 -3" /><path d="M12 6l2 -3" />' }, // araucaria
-        { type: 'text', x: 46, y: 93, content: "tecnología rural" },
-        { type: 'text', x: 73, y: 91, content: "neyen" },
-        { type: 'box',  x: 90, y: 92, color: "234, 179, 8",  content: '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><line x1="3" y1="6" x2="3" y2="19" /><line x1="12" y1="6" x2="12" y2="19" /><line x1="21" y1="6" x2="21" y2="19" />' } // educación
+        { type: 'box',  x: 10, y: 18, color: "234, 88, 12", content: '<path d="M12 2l8 10-8 10-8-10 8-10z"/><path d="M12 7l4 5-4 5-4-5 4-5z"/><path d="M4 7H1v3M20 7h3v3M4 17H1v-3M20 17h3v-3"/>' }, // geometría inspirada en tejido mapuche
+        { type: 'text', x: 7,  y: 10, content: "agroecología" },
+        { type: 'box',  x: 84, y: 20, color: "121, 198, 197", content: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/><circle cx="8" cy="8" r="1.2"/><circle cx="16" cy="8" r="1.2"/><circle cx="8" cy="16" r="1.2"/><circle cx="16" cy="16" r="1.2"/>' }, // kultrún
+        { type: 'text', x: 82, y: 33, content: "itrofill mogen" },
+        { type: 'text', x: 7,  y: 41, content: "lahuen" },
+        { type: 'box',  x: 10, y: 52, color: "52, 211, 153", content: '<path d="M12 21V10"/><path d="M12 13C7 13 4 10 4 5c5 0 8 2 8 6"/><path d="M12 16c5 0 8-3 8-8-5 0-8 2-8 6"/><circle cx="5" cy="18" r="1.5"/><circle cx="19" cy="20" r="1.5"/>' }, // lawen y semillas
+        { type: 'box',  x: 84, y: 52, color: "234, 88, 12", content: '<path d="M4 12l3-5h10l3 5M6 11v9h12v-9M9 20v-6h6v6"/><path d="M3 12h18M8 7l4-4 4 4"/>' }, // ruka
+        { type: 'text', x: 82, y: 68, content: "soberania alimentaria" },
+        { type: 'text', x: 7,  y: 71, content: "nutram" },
+        { type: 'box',  x: 10, y: 81, color: "121, 198, 197", content: '<path d="M12 22V7M8 22h8M7 15l5-8 5 8M8.5 11L12 4l3.5 7M10 7l2-5 2 5"/>' }, // araucaria
+        { type: 'box',  x: 84, y: 82, color: "52, 211, 153", content: '<path d="M3 14c2-2 4-2 6 0l3 3 3-3c2-2 4-2 6 0"/><path d="M3 14l-2 2 5 5h5l2-2M21 14l2 2-5 5h-5"/><path d="M9 8h6M12 5v6"/>' } // intercambio de saberes
     ];
 
     /* En teléfono el panel ocupa casi toda la pantalla, así que solo usamos
        las franjas libres de arriba y abajo: 4 íconos chicos en las esquinas
        + 4 palabras chicas entre medio de esos íconos. */
     const elementosMovil = [
-        { type: 'box',  x: 5,  y: 4,  small: true, color: "16, 185, 129", content: elementosDesktop[0].content },
-        { type: 'text', x: 30, y: 3,  small: true, content: "agroecología" },
-        { type: 'text', x: 60, y: 3,  small: true, content: "voluntariado" },
-        { type: 'box',  x: 82, y: 4,  small: true, color: "245, 158, 11", content: elementosDesktop[3].content },
-        { type: 'box',  x: 5,  y: 90, small: true, color: "20, 184, 166", content: elementosDesktop[9].content },
-        { type: 'text', x: 30, y: 93, small: true, content: "kvme mogen" },
-        { type: 'text', x: 58, y: 93, small: true, content: "neyen" },
-        { type: 'box',  x: 82, y: 90, small: true, color: "234, 179, 8",  content: elementosDesktop[12].content }
+        { type: 'box', x: 5,  y: 15, small: true, color: "234, 88, 12", content: elementosDesktop[0].content },
+        { type: 'box', x: 82, y: 15, small: true, color: "121, 198, 197", content: elementosDesktop[2].content },
+        { type: 'box', x: 5,  y: 88, small: true, color: "52, 211, 153", content: elementosDesktop[4].content },
+        { type: 'box', x: 82, y: 88, small: true, color: "234, 88, 12", content: elementosDesktop[5].content }
     ];
 
     const elementos = esMovil ? elementosMovil : elementosDesktop;
@@ -88,7 +74,7 @@ function createFloatingElement(container, data) {
     // Posición puesta directo en el elemento: no depende de que ninguna
     // clase CSS externa coincida, así que no se puede "romper" al copiar.
     el.style.position = 'absolute';
-    el.style.left = `${data.x}vw`;
+    el.style.left = `${data.x}%`;
     el.style.top = `${data.y}vh`;
     container.appendChild(el);
 
