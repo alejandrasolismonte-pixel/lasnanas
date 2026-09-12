@@ -18,8 +18,20 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 
     <!-- Tu CSS con control de caché actualizado -->
-    <link rel="stylesheet" href="css/desarrollo.css?v=68">
+    <script>
+        (() => {
+            try {
+                if (localStorage.getItem('lasnanas-theme') === 'day') {
+                    document.documentElement.dataset.theme = 'day';
+                }
+            } catch (_) {
+                // El modo oscuro sigue siendo el valor seguro si el almacenamiento no está disponible.
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="css/desarrollo.css?v=81">
     <link rel="stylesheet" href="css/whatsapp-floating.css?v=3">
+    <link rel="stylesheet" href="css/loading-overlay.css?v=2">
 </head>
 
 <body>
@@ -40,7 +52,7 @@
     <header class="site-header" data-header>
         <div class="header__inner container">
             <a class="brand" href="#inicio" aria-label="Las Ñañas, ir al inicio">
-                <img class="brand__mark" src="assets/img/logo.png" alt="" aria-hidden="true">
+                <img class="brand__mark" src="assets/img/logo-web.png" alt="" aria-hidden="true">
                 <span>Las Ñañas</span>
             </a>
 
@@ -82,6 +94,16 @@
                     <path fill="url(#ecosystemShineGradient)" d="M0,0 L100,0 L100,100 L0,100Z"></path>
                 </svg>
             </a>
+
+            <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Activar modo día" title="Activar modo día" data-theme-toggle>
+                <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M20.3 15.3A9 9 0 0 1 8.7 3.7 9 9 0 1 0 20.3 15.3Z"/></svg>
+                </span>
+                <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+                </span>
+                <span class="theme-toggle__thumb" aria-hidden="true"></span>
+            </button>
         </div>
     </header>
 
@@ -89,7 +111,7 @@
         <!-- Hero / Inicio -->
         <section class="hero section-shell" id="inicio" aria-labelledby="hero-title">
             <!-- Asegúrate de que el video exista en esta ruta: assets/videos/video-header.mp4 -->
-            <video class="hero__video" autoplay muted loop playsinline poster="assets/img/hero.png" aria-hidden="true">
+            <video class="hero__video" autoplay muted loop playsinline poster="assets/hero-web.webp" aria-hidden="true">
                 <source src="assets/videos/video-header.mp4" type="video/mp4">
             </video>
             <div class="hero__overlay"></div>
@@ -137,7 +159,7 @@
                 <!-- CAMBIO: la portada con el logo ahora está en la hoja derecha y conserva el giro 3D. -->
                 <div class="nanas-leaf" id="l0" style="z-index:5;">
                     <div class="nanas-face nanas-face--cover is-logo">
-                        <img class="nanas-book-logo" src="assets/img/logo%20-%20libro.png" alt="Logotipo de Las Ñañas">
+                        <img class="nanas-book-logo" src="assets/img/logo-web.png" alt="Logotipo de Las Ñañas">
                     </div>
                     <div class="nanas-face nanas-back is-image">
                         <!-- Viviana vuelve a acompañar la primera presentación al abrir la portada. -->
@@ -277,10 +299,53 @@
                         <button class="map-filter filter-choice filter-choice--nanas" type="button" data-filter="nanas" aria-pressed="false">Ñañas</button>
                         <button class="map-filter filter-choice filter-choice--experiences" type="button" data-filter="experiences" aria-pressed="false">Experiencias</button>
                     </div>
-                    <div class="map-stage" aria-label="Mapa ilustrado de Wallmapu con puntos interactivos">
+                    <div class="map-editor" data-map-editor hidden aria-label="Edición privada de posiciones del mapa">
+                        <div class="map-editor__copy">
+                            <strong>Edición privada del mapa</strong>
+                            <span data-map-editor-mode>Preparando vista…</span>
+                            <small data-map-editor-status role="status" aria-live="polite">Activa el movimiento para arrastrar los pines.</small>
+                        </div>
+                        <div class="map-editor__actions">
+                            <button type="button" data-map-add-pin="nanas">+ Pin naranja</button>
+                            <button type="button" data-map-add-pin="experiences">+ Pin verde</button>
+                            <button class="map-editor__toggle" type="button" data-map-edit-toggle aria-pressed="false">Activar movimiento</button>
+                            <button type="button" data-map-edit-save disabled>Guardar</button>
+                            <button type="button" data-map-edit-cancel disabled>Cancelar</button>
+                            <button type="button" data-map-edit-reset>Restaurar posiciones</button>
+                            <a href="pages/coordinacion-voluntariado.html">Volver al panel</a>
+                        </div>
+                        <form class="map-editor__detail" data-map-pin-form hidden>
+                            <div class="map-editor__detail-heading">
+                                <strong data-map-pin-form-title>Editar detalle del pin</strong>
+                                <button type="button" data-map-pin-form-close aria-label="Cerrar edición del detalle">×</button>
+                            </div>
+                            <label>Color y tipo
+                                <select name="category" required>
+                                    <option value="nanas">Naranja · Ñañas</option>
+                                    <option value="experiences">Verde · Experiencia</option>
+                                </select>
+                            </label>
+                            <label>Nombre
+                                <input name="title" type="text" minlength="2" maxlength="80" required autocomplete="off">
+                            </label>
+                            <label class="map-editor__detail-description">Descripción breve
+                                <textarea name="description" minlength="2" maxlength="280" required></textarea>
+                            </label>
+                            <div class="map-editor__detail-actions">
+                                <button type="submit" data-map-pin-detail-save>Guardar detalle</button>
+                                <button type="button" data-map-pin-hide>Quitar del mapa</button>
+                            </div>
+                            <small data-map-pin-form-status role="status" aria-live="polite"></small>
+                        </form>
+                        <section class="map-editor__retired" data-map-inactive-section hidden aria-labelledby="map-inactive-title">
+                            <strong id="map-inactive-title">Pines retirados</strong>
+                            <div class="map-editor__retired-list" data-map-inactive-list></div>
+                        </section>
+                    </div>
+                    <div class="map-stage" data-map-stage aria-label="Mapa ilustrado de Wallmapu con puntos interactivos">
 
                         <!-- AQUI ESTÁ LA IMAGEN DEL MAPA -->
-                        <img src="assets/img/mapa-araucania.png" alt="Mapa ilustrado de Wallmapu y La Araucanía">
+                        <img src="assets/img/mapa-araucania-web.webp" alt="Mapa ilustrado de Wallmapu y La Araucanía" loading="lazy" decoding="async">
 
                         <!-- =======================================================================
                  PINES DE "LAS ÑAÑAS" (Naranjas)
@@ -288,25 +353,25 @@
                  ======================================================================= -->
 
                         <!-- Nodo Central VIVO (Temuco) -->
-                        <button class="map-pin pin--nanas pin--location is-live" type="button" style="--x: 79.5%; --y: 54%; --x-movil: 82%; --y-movil: 50%;" data-category="nanas" data-title="Las Ñañas · Temuco" data-text="Conexiones, redes y actividades en Temuco." aria-label="Abrir información de Las Ñañas en Temuco"><span aria-hidden="true">✦</span></button>
+                        <button class="map-pin pin--nanas pin--location is-live" type="button" style="--x: 79.5%; --y: 54%; --x-movil: 82%; --y-movil: 50%;" data-pin-id="nanas-temuco" data-category="nanas" data-title="Las Ñañas · Temuco" data-text="Conexiones, redes y actividades en Temuco." aria-label="Abrir información de Las Ñañas en Temuco"><span aria-hidden="true">✦</span></button>
 
                         <!-- Renaico -->
-                        <button class="map-pin pin--nanas" type="button" style="--x: 76%; --y: 27%; --x-movil: 76%; --y-movil: 27%;" data-category="nanas" data-title="Las Ñañas · Renaico" data-text="Nodo territorial referencial en Renaico." aria-label="Abrir información de Las Ñañas en Renaico"><span aria-hidden="true">✦</span></button>
+                        <button class="map-pin pin--nanas" type="button" style="--x: 76%; --y: 27%; --x-movil: 76%; --y-movil: 27%;" data-pin-id="nanas-renaico" data-category="nanas" data-title="Las Ñañas · Renaico" data-text="Nodo territorial referencial en Renaico." aria-label="Abrir información de Las Ñañas en Renaico"><span aria-hidden="true">✦</span></button>
 
                         <!-- Sector Estero -->
-                        <button class="map-pin pin--nanas" type="button" style="--x: 33%; --y: 58%; --x-movil: 33%; --y-movil: 58%;" data-category="nanas" data-title="Las Ñañas · Sector Estero" data-text="Nodo territorial referencial junto al estero y las huertas." aria-label="Abrir información de Las Ñañas en Sector Estero"><span aria-hidden="true">✦</span></button>
+                        <button class="map-pin pin--nanas" type="button" style="--x: 33%; --y: 58%; --x-movil: 33%; --y-movil: 58%;" data-pin-id="nanas-sector-estero" data-category="nanas" data-title="Las Ñañas · Sector Estero" data-text="Nodo territorial referencial junto al estero y las huertas." aria-label="Abrir información de Las Ñañas en Sector Estero"><span aria-hidden="true">✦</span></button>
 
                         <!-- Sector Fogón -->
-                        <button class="map-pin pin--nanas" type="button" style="--x: 57%; --y: 76%; --x-movil: 57%; --y-movil: 76%;" data-category="nanas" data-title="Las Ñañas · Sector Fogón" data-text="Nodo territorial referencial junto a las plantas medicinales y el fogón." aria-label="Abrir información de Las Ñañas en Sector Fogón"><span aria-hidden="true">✦</span></button>
+                        <button class="map-pin pin--nanas" type="button" style="--x: 57%; --y: 76%; --x-movil: 57%; --y-movil: 76%;" data-pin-id="nanas-sector-fogon" data-category="nanas" data-title="Las Ñañas · Sector Fogón" data-text="Nodo territorial referencial junto a las plantas medicinales y el fogón." aria-label="Abrir información de Las Ñañas en Sector Fogón"><span aria-hidden="true">✦</span></button>
 
                         <!-- Padre Las Casas -->
-                        <button class="map-pin pin--nanas" type="button" style="--x: 80%; --y: 60%; --x-movil: 20%; --y-movil: 30%;" data-category="nanas" data-title="Las Ñañas · Padre Las Casas" data-text="Nodo territorial referencial en Padre Las Casas." aria-label="Abrir información de Las Ñañas en Padre Las Casas"><span aria-hidden="true">✦</span></button>
+                        <button class="map-pin pin--nanas" type="button" style="--x: 80%; --y: 60%; --x-movil: 20%; --y-movil: 30%;" data-pin-id="nanas-padre-las-casas" data-category="nanas" data-title="Las Ñañas · Padre Las Casas" data-text="Nodo territorial referencial en Padre Las Casas." aria-label="Abrir información de Las Ñañas en Padre Las Casas"><span aria-hidden="true">✦</span></button>
 
                         <!-- Villarrica -->
-                        <button class="map-pin pin--nanas" type="button" style="--x: 70%; --y: 20%; --x-movil: 70%; --y-movil: 83%;" data-category="nanas" data-title="Las Ñañas · Villarrica" data-text="Encuentros territoriales en Villarrica." aria-label="Abrir información de Las Ñañas en Villarrica"><span aria-hidden="true">✦</span></button>
+                        <button class="map-pin pin--nanas" type="button" style="--x: 70%; --y: 20%; --x-movil: 70%; --y-movil: 83%;" data-pin-id="nanas-villarrica" data-category="nanas" data-title="Las Ñañas · Villarrica" data-text="Encuentros territoriales en Villarrica." aria-label="Abrir información de Las Ñañas en Villarrica"><span aria-hidden="true">✦</span></button>
 
                         <!-- Lago Budi -->
-                        <button class="map-pin pin--nanas" type="button" style="--x: 90%; --y: 64%; --x-movil: 90%; --y-movil: 64%;" data-category="nanas" data-title="Las Ñañas · Lago Budi" data-text="Nodo territorial referencial junto al Lago Budi." aria-label="Abrir información de Las Ñañas en Lago Budi"><span aria-hidden="true">✦</span></button>
+                        <button class="map-pin pin--nanas" type="button" style="--x: 90%; --y: 64%; --x-movil: 90%; --y-movil: 64%;" data-pin-id="nanas-lago-budi" data-category="nanas" data-title="Las Ñañas · Lago Budi" data-text="Nodo territorial referencial junto al Lago Budi." aria-label="Abrir información de Las Ñañas en Lago Budi"><span aria-hidden="true">✦</span></button>
 
 
                         <!-- =======================================================================
@@ -315,16 +380,16 @@
                  ======================================================================= -->
 
                         <!-- Rukas -->
-                        <button class="map-pin pin--territory" type="button" style="--x: 62.5%; --y: 28.5%; --x-movil: 62.5%; --y-movil: 28.5%;" data-category="experiences" data-title="Rukas" data-text="Espacios de encuentro, abrigo y transmisión de saberes." aria-label="Abrir información sobre rukas"><span aria-hidden="true">⌂</span></button>
+                        <button class="map-pin pin--territory" type="button" style="--x: 62.5%; --y: 28.5%; --x-movil: 62.5%; --y-movil: 28.5%;" data-pin-id="experiencia-rukas" data-category="experiences" data-title="Rukas" data-text="Espacios de encuentro, abrigo y transmisión de saberes." aria-label="Abrir información sobre rukas"><span aria-hidden="true">⌂</span></button>
 
                         <!-- Flora y fauna -->
-                        <button class="map-pin pin--territory" type="button" style="--x: 32%; --y: 15%; --x-movil: 32%; --y-movil: 15%;" data-category="experiences" data-title="Flora y fauna" data-text="Observación y cuidado de especies nativas." aria-label="Abrir información sobre flora y fauna"><span aria-hidden="true">❋</span></button>
+                        <button class="map-pin pin--territory" type="button" style="--x: 32%; --y: 15%; --x-movil: 32%; --y-movil: 15%;" data-pin-id="experiencia-flora-fauna" data-category="experiences" data-title="Flora y fauna" data-text="Observación y cuidado de especies nativas." aria-label="Abrir información sobre flora y fauna"><span aria-hidden="true">❋</span></button>
 
                         <!-- Observatorio intercultural -->
-                        <button class="map-pin pin--territory" type="button" style="--x: 40%; --y: 30%; --x-movil: 50%; --y-movil: 20%;" data-category="experiences" data-title="Observatorio intercultural" data-text="Mirar el territorio desde saberes diversos." aria-label="Abrir información sobre observatorio intercultural"><span aria-hidden="true">◉</span></button>
+                        <button class="map-pin pin--territory" type="button" style="--x: 40%; --y: 30%; --x-movil: 50%; --y-movil: 20%;" data-pin-id="experiencia-observatorio" data-category="experiences" data-title="Observatorio intercultural" data-text="Mirar el territorio desde saberes diversos." aria-label="Abrir información sobre observatorio intercultural"><span aria-hidden="true">◉</span></button>
 
                         <!-- Faros agroecológicos -->
-                        <button class="map-pin pin--territory" type="button" style="--x: 40%; --y: 70%; --x-movil: 40%; --y-movil: 70%;" data-category="experiences" data-title="Faros agroecológicos" data-text="Espacios de aprendizaje, experimentación y producción." aria-label="Abrir información sobre faros agroecológicos"><span aria-hidden="true">♧</span></button>
+                        <button class="map-pin pin--territory" type="button" style="--x: 40%; --y: 70%; --x-movil: 40%; --y-movil: 70%;" data-pin-id="experiencia-faros" data-category="experiences" data-title="Faros agroecológicos" data-text="Espacios de aprendizaje, experimentación y producción." aria-label="Abrir información sobre faros agroecológicos"><span aria-hidden="true">♧</span></button>
                     </div>
                     <aside class="map-detail" aria-live="polite">
                         <p class="map-detail__eyebrow">Explora el territorio</p>
@@ -350,21 +415,21 @@
         <div class="ecosystem-grid">
             <!-- Tarjeta Voluntariado -->
             <a class="ecosystem-card zoom-card" href="pages/voluntariado.html">
-                <img src="assets/icons/voluntariado.gif" alt="Ícono de Voluntariado" class="icono-gif" aria-hidden="true">
+                <img src="assets/icons/voluntariado-web.webp" alt="Ícono de Voluntariado" class="icono-gif" aria-hidden="true" loading="lazy" decoding="async">
                 <h3>Voluntariado</h3>
                 <p>Aprender haciendo en comunidad. <strong>¡Empieza aquí!</strong></p>
             </a>
 
             <!-- Tarjeta Productos -->
             <a class="ecosystem-card zoom-card" href="pages/productos.html">
-                <img src="assets/icons/productos.gif" alt="Ícono de Productos" class="icono-gif" aria-hidden="true">
+                <img src="assets/icons/productos-web.webp" alt="Ícono de Productos" class="icono-gif" aria-hidden="true" loading="lazy" decoding="async">
                 <h3>Productos</h3>
                 <p>Del territorio a tu mesa.</p>
             </a>
 
             <!-- Tarjeta Servicios -->
             <a class="ecosystem-card zoom-card" href="pages/servicios.html">
-                <img src="assets/icons/servicios.gif" alt="Ícono de Servicios" class="icono-gif" aria-hidden="true">
+                <img src="assets/icons/servicios-web.webp" alt="Ícono de Servicios" class="icono-gif" aria-hidden="true" loading="lazy" decoding="async">
                 <h3>Servicios Técnicos</h3>
                 <p>Tecnología con pertinencia territorial.</p>
             </a>
@@ -1224,7 +1289,7 @@
                     <div class="footer-center">
                         <div class="glowing-ring">
                             <div class="ethnic-border">
-                                <img class="logo-placeholder" src="assets/img/logo.png" alt="Logo Las Ñañas">
+                                <img class="logo-placeholder" src="assets/img/logo-web.png" alt="Logo Las Ñañas" loading="lazy" decoding="async">
                             </div>
                         </div>
                     </div>
@@ -1243,7 +1308,12 @@
             </div>
         </footer>
 
-    <script src="js/desarrollo.js?v=20"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-client.js?v=1"></script>
+    <script src="js/loading-overlay.js?v=2"></script>
+    <script src="js/map-pins.js?v=2"></script>
+    <script src="js/desarrollo.js?v=28"></script>
     <script src="js/whatsapp-floating.js?v=3"></script>
 </body>
 

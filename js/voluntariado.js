@@ -75,4 +75,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Preguntas frecuentes: una conversación a la vez y un mensaje breve junto a la Ñaña guía.
+  const volunteerFaq = document.querySelector('[data-volunteer-faq]');
+  const volunteerFaqItems = Array.from(document.querySelectorAll('[data-volunteer-faq-list] details'));
+  const volunteerFaqStatus = volunteerFaq?.querySelector('[data-faq-guide-status]');
+  const volunteerFaqDefaultStatus = 'Abre la pregunta que hoy necesitas conversar.';
+  let volunteerFaqFrame = 0;
+
+  const syncVolunteerFaqGuide = () => {
+    window.cancelAnimationFrame(volunteerFaqFrame);
+    volunteerFaqFrame = window.requestAnimationFrame(() => {
+      const openItem = volunteerFaqItems.find(item => item.open);
+      volunteerFaq?.classList.toggle('has-open-answer', Boolean(openItem));
+      if (volunteerFaqStatus) {
+        volunteerFaqStatus.textContent = openItem?.dataset.guideMessage || volunteerFaqDefaultStatus;
+      }
+    });
+  };
+
+  volunteerFaqItems.forEach(item => {
+    item.addEventListener('toggle', () => {
+      if (item.open) {
+        volunteerFaqItems.forEach(otherItem => {
+          if (otherItem !== item) otherItem.removeAttribute('open');
+        });
+      }
+      syncVolunteerFaqGuide();
+    });
+  });
+
+  syncVolunteerFaqGuide();
+
 });

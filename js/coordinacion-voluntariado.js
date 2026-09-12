@@ -2,6 +2,7 @@
 (function () {
   'use strict';
   const client = window.LasNanasSupabase && window.LasNanasSupabase.client;
+  const loader = window.LasNanasLoader;
   const sessionStatus = document.querySelector('[data-admin-session-status]');
   const notice = document.querySelector('[data-admin-notice]');
   const noticeText = document.querySelector('[data-admin-notice-text]');
@@ -21,6 +22,7 @@
   const adminDocumentForm = document.querySelector('[data-admin-document-form]');
   const adminDocumentList = document.querySelector('[data-admin-document-list]');
   const adminDocumentMessage = document.querySelector('[data-admin-document-message]');
+  const editMapButton = document.querySelector('[data-admin-edit-map]');
   const statusLabels = { draft: 'Borrador', submitted: 'Enviada', in_review: 'En revisión', needs_clarification: 'Aclaración solicitada', approved: 'Aprobada', rejected: 'Rechazada', withdrawn: 'Retirada' };
   const billingLabels = { monthly: 'Mensual', yearly: 'Anual' };
   let currentApplication = null;
@@ -69,11 +71,16 @@
   }
 
   async function downloadDocument(documentId) {
-    const { data: path, error: pathError } = await client.rpc('authorize_volunteer_document_download', { p_document_id: documentId });
-    if (pathError || !path) throw new Error('download_not_authorized');
-    const { data, error } = await client.storage.from('volunteer-documents').createSignedUrl(path, 60);
-    if (error || !data?.signedUrl) throw new Error('signed_url_failed');
-    window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+    loader?.show('Preparando documento…');
+    try {
+      const { data: path, error: pathError } = await client.rpc('authorize_volunteer_document_download', { p_document_id: documentId });
+      if (pathError || !path) throw new Error('download_not_authorized');
+      const { data, error } = await client.storage.from('volunteer-documents').createSignedUrl(path, 60);
+      if (error || !data?.signedUrl) throw new Error('signed_url_failed');
+      window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+    } finally {
+      loader?.hide();
+    }
   }
 
   async function loadAdminDocuments(applicationId) {
@@ -132,6 +139,7 @@
   }
 
   async function loadApplicationDetail(applicationId) {
+    loader?.show('Cargando detalle…');
     workspace.hidden = true;
     detail.hidden = false;
     detailContent.hidden = true;
@@ -141,6 +149,7 @@
     const application = Array.isArray(data) ? data[0] : null;
     if (error || !application) {
       detailStatus.textContent = 'No fue posible cargar esta solicitud.';
+      loader?.hide();
       return;
     }
     currentApplication = application;
@@ -162,6 +171,7 @@
     confirmTransferButton.disabled = application.application_status !== 'approved' || Boolean(workflowState?.membership_active);
     actionMessage.textContent = '';
     await loadAdminDocuments(application.application_id);
+    loader?.hide();
   }
 
   async function initializeAdminPanel() {
@@ -185,8 +195,13 @@
     sessionStatus.textContent = 'Sesión administrativa verificada.';
     notice.hidden = true;
     workspace.hidden = false;
+    editMapButton.disabled = false;
     await loadApplications(initialApplications);
   }
+
+  editMapButton.addEventListener('click', function () {
+    window.location.assign('../desarrollo.html?editar-mapa=1#territorio');
+  });
 
   closeDetailButton.addEventListener('click', function () {
     detail.hidden = true;
@@ -196,14 +211,16 @@
   approveButton.addEventListener('click', async function () {
     if (!currentApplication) return;
     approveButton.disabled = true;
+    loader?.show('Aprobando solicitud…');
     actionMessage.textContent = 'Aprobando solicitud…';
     const { data, error } = await client.rpc('admin_approve_membership_application', { p_application_id: currentApplication.application_id });
-    if (error || !data?.[0]) { actionMessage.textContent = 'No fue posible aprobar la solicitud.'; approveButton.disabled = false; return; }
+    if (error || !data?.[0]) { actionMessage.textContent = 'No fue posible aprobar la solicitud.'; approveButton.disabled = false; loader?.hide(); return; }
     currentApplication.application_status = data[0].application_status;
     setDetailField('status', statusLabels[currentApplication.application_status] || currentApplication.application_status);
     confirmTransferButton.disabled = false;
     actionMessage.textContent = 'Solicitud aprobada correctamente.';
     await loadApplications();
+    loader?.hide();
   });
 
   confirmTransferButton.addEventListener('click', function () {
@@ -223,17 +240,19 @@
     if (!transferForm.reportValidity() || !currentApplication) return;
     const submit = transferForm.querySelector('[type="submit"]');
     submit.disabled = true;
+    loader?.show('Confirmando transferencia…');
     const transferMessage = document.querySelector('[data-transfer-message]');
     transferMessage.textContent = 'Confirmando pago y activando membresía…';
     const { data, error } = await client.rpc('admin_confirm_transfer', { p_application_id: currentApplication.application_id, p_transfer_reference: transferForm.elements.reference.value.trim() });
     submit.disabled = false;
-    if (error || !data?.[0]) { transferMessage.textContent = 'No fue posible confirmar la transferencia.'; return; }
+    if (error || !data?.[0]) { transferMessage.textContent = 'No fue posible confirmar la transferencia.'; loader?.hide(); return; }
     const result = data[0];
     setDetailField('membership', result.membership_active ? `Activa hasta ${formatDate(result.ends_at)}` : 'Sin membresía activa');
     confirmTransferButton.disabled = true;
     actionMessage.textContent = 'Transferencia confirmada y membresía activa.';
     transferDialog.close();
     await loadAdminDocuments(currentApplication.application_id);
+    loader?.hide();
   });
 
   adminDocumentForm.addEventListener('submit', async function (event) {
@@ -242,20 +261,23 @@
     const file = adminDocumentForm.elements.document.files[0];
     if (!(await validDocumentFile(file))) { adminDocumentMessage.textContent = 'Selecciona un PDF, JPG o PNG válido de hasta 10 MB.'; return; }
     const button = adminDocumentForm.querySelector('[type="submit"]'); button.disabled = true;
+    loader?.show('Cargando documento…');
     adminDocumentMessage.textContent = 'Preparando carga privada…';
     const { data: reserved, error: reserveError } = await client.rpc('admin_reserve_document_upload', { p_application_id: currentApplication.application_id, p_original_name: file.name, p_mime_type: file.type, p_byte_size: file.size });
     const reservation = Array.isArray(reserved) ? reserved[0] : null;
-    if (reserveError || !reservation) { button.disabled = false; adminDocumentMessage.textContent = 'No fue posible reservar el archivo.'; return; }
+    if (reserveError || !reservation) { button.disabled = false; adminDocumentMessage.textContent = 'No fue posible reservar el archivo.'; loader?.hide(); return; }
     const { error: uploadError } = await client.storage.from('volunteer-documents').upload(reservation.storage_path, file, { contentType: file.type, upsert: false });
     button.disabled = false;
-    if (uploadError) { adminDocumentMessage.textContent = 'La carga no pudo completarse.'; return; }
+    if (uploadError) { adminDocumentMessage.textContent = 'La carga no pudo completarse.'; loader?.hide(); return; }
     const releaseResult = await client.rpc('admin_release_volunteer_document', { p_document_id: reservation.document_id });
     adminDocumentForm.reset();
     adminDocumentMessage.textContent = releaseResult.error ? 'Archivo guardado. Se liberará cuando exista una membresía activa.' : 'Archivo guardado y liberado para la voluntaria.';
     await loadAdminDocuments(currentApplication.application_id);
+    loader?.hide();
   });
+  loader?.show('Cargando panel de coordinación…');
   initializeAdminPanel().catch(function () {
     // No se muestran mensajes internos de Supabase ni datos potencialmente sensibles.
     showConnectionError('Ocurrió un error inesperado al preparar el panel.');
-  });
+  }).finally(function () { loader?.hide(); });
 })();

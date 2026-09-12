@@ -850,3 +850,39 @@
 @media (prefers-reduced-motion: reduce) {
   .nn-btn, .nn-eco-card, .nn-card { transition: none; }
 }
+
+/* Las tres entradas del ecosistema ocupan un 30 % menos en celular. */
+@media (max-width: 620px) {
+  .nanas-ecosystem-page .nn-eco-card {
+    gap: .525rem;
+    padding: 1.75rem 1.05rem 1.4rem;
+    border-radius: 15px;
+  }
+
+  .nanas-ecosystem-page .nn-eco-card__icon-ring {
+    width: 59px;
+    height: 59px;
+    margin-bottom: .15rem;
+  }
+
+  .nanas-ecosystem-page .nn-eco-card .icono-gif {
+    width: 37px !important;
+    height: 37px !important;
+    margin: 0 !important;
+  }
+
+  .nanas-ecosystem-page .nn-eco-card h3 {
+    font-size: .9rem;
+    line-height: 1.25;
+  }
+
+  .nanas-ecosystem-page .nn-eco-card p {
+    font-size: .85rem;
+    line-height: 1.45;
+  }
+
+  .nanas-ecosystem-page .nn-eco-card__link {
+    margin-top: .35rem;
+    font-size: .8rem;
+  }
+}

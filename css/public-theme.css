@@ -1,0 +1,186 @@
+/* Extensión diurna exclusiva de las páginas públicas del ecosistema. */
+html[data-theme="day"] body.public-theme-page main {
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] body.public-theme-page main > section:not(.page-fire-hero):not(.nn-hero) {
+  background-color: transparent;
+}
+
+html[data-theme="day"] body.public-theme-page .contact-section {
+  background: rgba(255, 255, 255, .1);
+}
+
+/* Ecosistema Ñañas: superficies agua y papel sin alterar el hero de fuego. */
+html[data-theme="day"] .nanas-ecosystem-page .nn-faces,
+html[data-theme="day"] .nanas-ecosystem-page .nn-reciprocity,
+html[data-theme="day"] .nanas-ecosystem-page .nn-ecosystem {
+  background: transparent;
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] .nanas-ecosystem-page .nn-faces__heading h2,
+html[data-theme="day"] .nanas-ecosystem-page .nn-reciprocity__heading h2,
+html[data-theme="day"] .nanas-ecosystem-page .nn-ecosystem__heading h2 {
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] .nanas-ecosystem-page .nn-card,
+html[data-theme="day"] .nanas-ecosystem-page .nn-eco-card {
+  border-color: rgba(22, 101, 52, .62);
+  background: rgba(248, 253, 252, .32);
+  box-shadow: none;
+  color: var(--day-ink, #173B3A);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+html[data-theme="day"] .nanas-ecosystem-page .nn-card li,
+html[data-theme="day"] .nanas-ecosystem-page .nn-eco-card p {
+  color: var(--day-muted, #365C59);
+}
+
+html[data-theme="day"] .nanas-ecosystem-page .nn-card h3,
+html[data-theme="day"] .nanas-ecosystem-page .nn-eco-card h3,
+html[data-theme="day"] .nanas-ecosystem-page .nn-eco-card__link {
+  color: var(--day-accent, #984018);
+}
+
+html[data-theme="day"] .nanas-ecosystem-page .nn-eco-card:hover,
+html[data-theme="day"] .nanas-ecosystem-page .nn-eco-card:focus-visible,
+html[data-theme="day"] .nanas-ecosystem-page .nn-eco-card:active {
+  border-color: var(--green-light, #2d874e);
+  background: rgba(22, 101, 52, .3);
+  box-shadow: 0 10px 24px rgba(22, 101, 52, .16), inset 0 0 0 1px rgba(134, 239, 172, .14);
+}
+
+html[data-theme="day"] .nanas-ecosystem-page .reciprocity {
+  background: transparent;
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] .nanas-ecosystem-page .reciprocity h2,
+html[data-theme="day"] .nanas-ecosystem-page .reciprocity__group-title {
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] .nanas-ecosystem-page .reciprocity__intro {
+  color: var(--day-muted, #365C59);
+}
+
+/* Servicios: el carrusel conserva su profundidad, ahora sobre una base clara. */
+html[data-theme="day"] body.services-page .services-showcase {
+  background: transparent !important;
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] body.services-page .services-showcase__card,
+html[data-theme="day"] body.services-page .services-showcase__modal {
+  border-color: rgba(22, 101, 52, .35);
+  background: rgba(248, 253, 252, .86);
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] body.services-page .services-showcase__content {
+  background: rgba(248, 253, 252, .92);
+  box-shadow: 0 -3px 0 rgba(248, 253, 252, .92);
+}
+
+html[data-theme="day"] body.services-page .services-showcase__content h3,
+html[data-theme="day"] body.services-page .services-showcase__modal h3,
+html[data-theme="day"] body.services-page .services-showcase__modal h4 {
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] body.services-page .services-showcase__content p,
+html[data-theme="day"] body.services-page .services-showcase__modal p,
+html[data-theme="day"] body.services-page .services-showcase__modal li {
+  color: var(--day-muted, #365C59);
+}
+
+html[data-theme="day"] body.services-page .services-showcase__arrow,
+html[data-theme="day"] body.services-page .services-showcase__autoplay,
+html[data-theme="day"] body.services-page .services-showcase__modal-close {
+  border-color: rgba(22, 101, 52, .3);
+  background: rgba(248, 253, 252, .72);
+  color: var(--day-ink, #173B3A);
+}
+
+/* Productos: replica el contraste y las superficies de la portada. */
+html[data-theme="day"] body.products-page .section--products {
+  background: transparent;
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] body.products-page .product-card h3,
+html[data-theme="day"] body.products-page .product-card strong,
+html[data-theme="day"] body.products-page .cart-panel strong {
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] body.products-page .product-card p:not(.product-card__category),
+html[data-theme="day"] body.products-page .cart-panel p {
+  color: var(--day-muted, #365C59);
+}
+
+/* Voluntariado público. El diálogo .membership-auth queda deliberadamente fuera. */
+html[data-theme="day"] body.volunteer-page .participation {
+  --membership-night: transparent;
+  --membership-raised: rgba(248, 253, 252, .9);
+  --membership-featured: rgba(230, 247, 243, .92);
+  --membership-copy: #173B3A;
+  --membership-copy-soft: #365C59;
+  --membership-green-bright: #166534;
+  background: rgba(255, 255, 255, .08);
+  color: var(--membership-copy);
+}
+
+html[data-theme="day"] body.volunteer-page .participation::before,
+html[data-theme="day"] body.volunteer-page .participation::after {
+  display: none;
+}
+
+html[data-theme="day"] body.volunteer-page .membership-switch,
+html[data-theme="day"] body.volunteer-page .membership-card {
+  border-color: rgba(22, 101, 52, .34);
+  background: rgba(248, 253, 252, .68);
+  box-shadow: 0 10px 28px rgba(29, 92, 88, .1);
+}
+
+html[data-theme="day"] body.volunteer-page .membership-card:hover,
+html[data-theme="day"] body.volunteer-page .membership-card:focus-within {
+  border-color: rgba(234, 88, 12, .62);
+  background: linear-gradient(180deg, var(--membership-featured), var(--membership-raised));
+  box-shadow: 0 16px 34px rgba(29, 92, 88, .14);
+}
+
+html[data-theme="day"] body.volunteer-page .volunteer-experiences {
+  background-image: none;
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] body.volunteer-page .volunteer-experiences__heading h2 {
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] body.volunteer-page .volunteer-experiences__heading > p:last-child,
+html[data-theme="day"] body.volunteer-page .volunteer-experiences__note {
+  color: var(--day-muted, #365C59);
+}
+
+html[data-theme="day"] body.volunteer-page .volunteer-person {
+  border-color: rgba(22, 101, 52, .4);
+  background: rgba(248, 253, 252, .58);
+  color: var(--day-ink, #173B3A);
+}
+
+html[data-theme="day"] body.volunteer-page .volunteer-person__copy small {
+  color: var(--day-muted, #365C59);
+}
+
+html[data-theme="day"] body.volunteer-page .volunteer-person:hover,
+html[data-theme="day"] body.volunteer-page .volunteer-person:focus-visible,
+html[data-theme="day"] body.volunteer-page .volunteer-person.is-active {
+  border-color: var(--orange, #ea580c);
+  background: rgba(22, 101, 52, .2);
+}

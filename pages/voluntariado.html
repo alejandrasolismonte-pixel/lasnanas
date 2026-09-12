@@ -9,19 +9,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <script src="../js/theme-init.js?v=1"></script>
   
   <!-- Estilos base del proyecto -->
-  <link rel="stylesheet" href="../css/desarrollo.css?v=68">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=81">
   <!-- Estilos específicos para los efectos del Voluntariado (Planeta, Glow, Acordeón) -->
   <!-- CAMBIO: versión actualizada para cargar sin caché el nuevo hero de voluntariado. -->
-  <link rel="stylesheet" href="../css/voluntariado.css?v=8">
+  <link rel="stylesheet" href="../css/voluntariado.css?v=20">
   <!-- ETAPA 1: estilos aislados del flujo demostrativo de inscripción y membresía. -->
   <link rel="stylesheet" href="../css/voluntariado-demo.css?v=2">
   <!-- CARGA GLOBAL: indicador central para esperas de autenticación y navegación. -->
-  <link rel="stylesheet" href="../css/loading-overlay.css?v=1">
+  <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
   <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
+  <link rel="stylesheet" href="../css/public-theme.css?v=2">
 </head>
-<body>
+<body class="volunteer-page public-theme-page">
   <div class="watermark-bg" aria-hidden="true"></div>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
@@ -29,7 +31,7 @@
   <header class="site-header" data-header>
     <div class="header__inner container">
       <a class="brand" href="../desarrollo.html" aria-label="Las Ñañas, volver al inicio">
-        <img class="brand__mark" src="../assets/img/logo.png" alt="" aria-hidden="true">
+        <img class="brand__mark" src="../assets/img/logo-web.png" alt="" aria-hidden="true">
         <span>Las Ñañas</span>
       </a>
 
@@ -44,6 +46,7 @@
         <a href="../desarrollo.html#territorio">Territorio</a>
         <a href="productos.html">Productos</a>
         <a href="servicios.html">Servicios</a>
+        <a href="../desarrollo.html#contacto">Contacto</a>
       </nav>
 
       <a class="header-ecosystem luxury-btn" href="nanas.html" aria-label="Explorar el Ecosistema Las Ñañas">
@@ -91,7 +94,31 @@
 
         <div class="sweepstakes-action">
           <div class="volunteer-opening-cta-wrap">
-          <a class="plant-cta volunteer-opening-cta" href="#membresias" data-mi-ruka>
+          <!-- PROPUESTA REVERSIBLE: la clase ruka-access y este SVG crean la nueva entrada.
+               Las hojas originales se conservan debajo para poder restaurarlas sin reconstruir el botón. -->
+          <a class="plant-cta volunteer-opening-cta ruka-access" href="#membresias" data-mi-ruka aria-label="Ingresar a Mi Ruka, espacio personal o administrativo">
+            <svg class="ruka-access__scene" viewBox="0 0 240 190" aria-hidden="true" focusable="false">
+              <ellipse class="ruka-access__ground" cx="120" cy="161" rx="101" ry="13"></ellipse>
+              <g class="ruka-access__home">
+                <path class="ruka-access__wall" d="M47 86v66c20 12 126 12 146 0V86Z"></path>
+                <path class="ruka-access__roof" d="M26 92C47 45 82 23 120 21c38 2 73 24 94 71-48-13-140-13-188 0Z"></path>
+                <path class="ruka-access__roof-line" d="M52 82c18-30 42-47 68-55M82 79c10-28 23-44 38-52M188 82c-18-30-42-47-68-55M158 79c-10-28-23-44-38-52"></path>
+                <path class="ruka-access__door" d="M94 158v-37c0-19 12-31 26-31s26 12 26 31v37Z"></path>
+                <path class="ruka-access__door-line" d="M120 94v62"></path>
+                <path class="ruka-access__side-line" d="M60 104v42M180 104v42"></path>
+                <g class="ruka-access__fire">
+                  <path d="M120 145c-10 0-16-6-14-14 1-6 7-9 7-17 7 4 8 11 7 15 4-3 6-7 6-12 6 6 9 13 6 19-2 6-6 9-12 9Z"></path>
+                  <path class="ruka-access__ember" d="m108 147 23-15M132 147l-23-15"></path>
+                </g>
+                <g class="ruka-access__smoke">
+                  <path d="M113 20c-8-7 4-12-2-20M126 20c8-8-3-13 4-21"></path>
+                </g>
+              </g>
+              <g class="ruka-access__plants">
+                <path d="M37 157v-17M37 149c-7 0-11-4-11-10 7 0 11 4 11 10ZM37 145c1-7 5-11 11-11 1 7-4 11-11 11Z"></path>
+                <path d="M203 158v-15M203 151c-6 0-10-4-10-9 6 0 10 3 10 9ZM203 148c1-6 4-9 10-10 1 6-3 10-10 10Z"></path>
+              </g>
+            </svg>
             <span class="plant-cta__label">Mi Ruka</span>
             <span class="plant-cta__leaf plant-cta__leaf--1" aria-hidden="true"><svg viewBox="0 0 208.52 511.88"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-1"></use></svg></span>
             <span class="plant-cta__leaf plant-cta__leaf--2" aria-hidden="true"><svg viewBox="0 0 420.62 554.38"><use href="../assets/icons/volunteer-button-leaves.svg#leaf-2"></use></svg></span>
@@ -105,6 +132,105 @@
       <div class="page-fire-hero__seam" aria-hidden="true"></div>
     </section>
     
+    <!-- Actividades: explica qué se realiza antes de presentar las membresías. -->
+    <section class="section-shell section volunteer-activities" aria-labelledby="volunteer-activities-title">
+      <div class="container volunteer-activities__container">
+        <div class="volunteer-activities__intro reveal">
+          <p class="eyebrow">VOLUNTARIADO · FORMAS DE PARTICIPAR</p>
+          <h2 id="volunteer-activities-title">¿Qué actividades realizamos?</h2>
+          <p>El voluntariado se organiza a través de las membresías. Cada nivel permite acompañar la red de distintas maneras, desde cualquier lugar o de forma presencial cuando existen fechas y cupos disponibles.</p>
+        </div>
+
+        <div class="volunteer-activities__grid reveal">
+          <article class="activity-card">
+            <!-- Reemplaza este bloque por un <img> cuando esté disponible la imagen o el icono definitivo. -->
+            <div class="activity-card__media" data-activity-media role="img" aria-label="Ilustración provisional de huerta y agroecología">
+              <svg class="activity-card__icon activity-card__icon--garden" viewBox="0 0 180 120" aria-hidden="true" focusable="false">
+                <path class="activity-card__icon-soft" d="M14 100c35-8 117-8 152 0M25 107c24-5 106-5 130 0"></path>
+                <g class="activity-motion-bob">
+                  <path class="activity-card__icon-fill" d="M27 49h63L79 78H43Z"></path>
+                  <path d="M90 51h20M42 78l-5 13M77 78l7 13"></path>
+                  <circle class="activity-card__icon-accent" cx="39" cy="91" r="9"></circle>
+                  <path class="activity-card__icon-accent" d="M31 42c11 0 19 3 27 7"></path>
+                </g>
+                <g class="activity-motion-sway">
+                  <path d="M121 93V58M121 72c-10 0-17-6-17-15 10-1 17 5 17 15ZM121 66c1-10 7-16 17-17 1 10-6 16-17 17Z"></path>
+                </g>
+                <g class="activity-motion-sway activity-motion-sway--late">
+                  <path d="M149 95V72M149 82c-7 0-12-4-12-11 7-1 12 4 12 11ZM149 78c1-7 5-11 12-12 1 7-4 12-12 12Z"></path>
+                </g>
+              </svg>
+            </div>
+            <div class="activity-card__copy">
+              <p class="activity-card__number" aria-hidden="true">01</p>
+              <h3>Huerta y agroecología</h3>
+              <p>Acompañamiento en labores de huerta y prácticas agroecológicas, según la temporada, el territorio y la disponibilidad.</p>
+            </div>
+          </article>
+
+          <article class="activity-card">
+            <!-- Reemplaza este bloque por un <img> cuando esté disponible la imagen o el icono definitivo. -->
+            <div class="activity-card__media" data-activity-media role="img" aria-label="Ilustración provisional de intercambio de saberes">
+              <svg class="activity-card__icon activity-card__icon--gathering" viewBox="0 0 180 120" aria-hidden="true" focusable="false">
+                <path class="activity-card__icon-soft" d="M20 95c35 10 105 10 140 0M35 42c13-12 27-18 43-20M145 42c-13-12-27-18-43-20"></path>
+                <g class="activity-person activity-person--young">
+                  <circle cx="42" cy="52" r="10"></circle>
+                  <path d="M28 88c2-17 7-26 14-26s12 9 14 26M30 74l-12 12M54 74l11 10"></path>
+                </g>
+                <g class="activity-person activity-person--elder">
+                  <circle cx="138" cy="52" r="10"></circle>
+                  <path d="M124 88c2-17 7-26 14-26s12 9 14 26M126 74l-11 10M150 74l12 12"></path>
+                  <path class="activity-card__icon-soft" d="M130 47c3-8 13-9 17-2M130 58c4 4 12 4 16 0"></path>
+                </g>
+                <g class="activity-motion-flame">
+                  <path class="activity-card__icon-accent activity-card__icon-flame" d="M90 98c-12 0-19-7-17-17 2-8 10-11 9-22 10 6 10 15 9 20 5-4 8-9 7-15 8 8 12 17 8 25-3 6-8 9-16 9Z"></path>
+                  <path class="activity-card__icon-fill" d="M83 99l16-16M99 99 82 83"></path>
+                </g>
+                <g class="activity-motion-sparks activity-card__icon-accent">
+                  <circle cx="84" cy="48" r="2"></circle><circle cx="96" cy="41" r="2"></circle><circle cx="105" cy="53" r="1.5"></circle>
+                </g>
+              </svg>
+            </div>
+            <div class="activity-card__copy">
+              <p class="activity-card__number" aria-hidden="true">02</p>
+              <h3>Intercambio de saberes</h3>
+              <p>Conversatorios y encuentros para compartir conocimientos entre las mujeres del territorio y quienes se suman desde otros lugares.</p>
+            </div>
+          </article>
+
+          <article class="activity-card">
+            <!-- Reemplaza este bloque por un <img> cuando esté disponible la imagen o el icono definitivo. -->
+            <div class="activity-card__media" data-activity-media role="img" aria-label="Ilustración provisional de aportes desde habilidades personales">
+              <svg class="activity-card__icon activity-card__icon--skills" viewBox="0 0 180 120" aria-hidden="true" focusable="false">
+                <path class="activity-card__icon-soft" d="M17 101h146"></path>
+                <g class="activity-motion-person">
+                  <circle cx="89" cy="29" r="11"></circle>
+                  <path d="M73 71c2-20 7-31 16-31 8 0 14 9 17 26M76 54 60 72M101 51l13 17"></path>
+                </g>
+                <g class="activity-motion-screen">
+                  <rect class="activity-card__icon-fill" x="62" y="63" width="58" height="34" rx="4"></rect>
+                  <path d="M55 101h72M86 97v4M101 97v4"></path>
+                  <path class="activity-card__icon-accent activity-motion-draw" d="M76 84c8-12 17 8 29-8"></path>
+                </g>
+                <g class="activity-motion-camera">
+                  <path d="M22 65h27v21H22Z"></path><circle cx="35.5" cy="75.5" r="6"></circle><path d="m28 65 4-6h8l4 6M36 86v15"></path>
+                  <circle class="activity-card__icon-accent activity-motion-flash" cx="52" cy="59" r="6"></circle>
+                </g>
+                <path class="activity-card__icon-soft" d="M137 57v44M129 101h28M131 62h20l-3 20h-14Z"></path>
+              </svg>
+            </div>
+            <div class="activity-card__copy">
+              <p class="activity-card__number" aria-hidden="true">03</p>
+              <h3>Aportes desde habilidades personales</h3>
+              <p>Espacios para colaborar desde lo que cada persona sabe hacer: difusión, traducción, diseño, registro y otras habilidades.</p>
+            </div>
+          </article>
+        </div>
+
+        <p class="volunteer-activities__note reveal">Estas líneas son una orientación general. El detalle, las fechas y la forma de participación de cada actividad se acuerdan junto al equipo de coordinación.</p>
+      </div>
+    </section>
+
     <!-- 1. Estructura de precios y membresías de voluntariado -->
     <section class="section-shell section participation" id="membresias" aria-labelledby="volunteer-title">
       <div class="container participation__container">
@@ -112,7 +238,7 @@
         <div class="participation__heading section-sign section-sign--voluntariado reveal">
           <p class="eyebrow participation__eyebrow">RED DE VOLUNTARIADO · COMUNIDAD INTERNACIONAL</p>
           <h1 class="sr-only" id="volunteer-title">Súmate a una red que acciona desde el territorio.</h1>
-          <img class="section-sign__image" src="../assets/img/letreros/voluntariado.png" alt="" aria-hidden="true" width="1024" height="1536">
+          <img class="section-sign__image" src="../assets/img/letreros/voluntariado-web.webp" alt="" aria-hidden="true" width="600" height="900" loading="lazy" decoding="async">
         </div>
 
         <form class="membership-controls reveal" aria-label="Opciones para consultar los precios">
@@ -273,6 +399,84 @@
       </div>
     </section>
 
+    <!-- Preguntas prácticas de voluntariado: orientación humana antes de coordinar una visita. -->
+    <section class="section-shell section volunteer-faq" aria-labelledby="volunteer-faq-title" data-volunteer-faq>
+      <div class="container volunteer-faq__container">
+        <header class="volunteer-faq__heading reveal">
+          <p class="eyebrow">VOLUNTARIADO · ANTES DE VIAJAR</p>
+          <h2 id="volunteer-faq-title">Preguntar también es parte del encuentro.</h2>
+          <p>No esperamos que llegues con todo resuelto. Aquí conversamos lo práctico con claridad para construir una experiencia cuidada, realista y buena para ambas partes.</p>
+        </header>
+
+        <div class="volunteer-faq__layout">
+          <aside class="volunteer-faq__guide reveal" aria-label="Una Ñaña orienta esta conversación">
+            <div class="volunteer-faq__portrait">
+              <span class="volunteer-faq__portrait-trace" aria-hidden="true"></span>
+              <img src="../assets/img/voluntariado/nana-preguntas-web.webp" alt="Ilustración de una Ñaña mapuche que acompaña las preguntas frecuentes" width="720" height="788" loading="lazy" decoding="async">
+            </div>
+            <div class="volunteer-faq__guide-copy">
+              <p class="volunteer-faq__guide-name">Una Ñaña te orienta</p>
+              <p class="volunteer-faq__guide-status" data-faq-guide-status aria-live="polite">La seguridad se conversa antes de cada llegada.</p>
+            </div>
+          </aside>
+
+          <div class="volunteer-faq__list reveal" data-volunteer-faq-list>
+            <details class="volunteer-faq__item" data-guide-message="La seguridad se conversa antes de cada llegada." open>
+              <summary><span class="volunteer-faq__number">01</span><span>¿Cómo se cuida la seguridad durante la experiencia?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Antes de confirmar una visita, coordinamos contigo el punto de encuentro, los contactos, los traslados y las condiciones del lugar. Las actividades se realizan en espacios previamente acordados. Si algo no te da confianza, se conversa y se ajusta: cuidarnos es una responsabilidad compartida.</p></div>
+            </details>
+
+            <details class="volunteer-faq__item" data-guide-message="La conectividad puede cambiar de un sector a otro.">
+              <summary><span class="volunteer-faq__number">02</span><span>¿Tendré conexión a internet y señal de teléfono?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>La conectividad cambia según el sector, la compañía telefónica y el clima. Puede ser intermitente o no estar disponible durante parte del día. Antes de viajar te contaremos lo que sabemos del lugar para que puedas avisar a tu familia, descargar mapas o dejar resueltos trabajos y trámites.</p></div>
+            </details>
+
+            <details class="volunteer-faq__item" data-guide-message="La ruta y el punto de encuentro se acuerdan contigo.">
+              <summary><span class="volunteer-faq__number">03</span><span>¿Cómo llego y existe locomoción pública?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Depende del territorio y de la fecha. Algunas rutas tienen buses o colectivos hasta un punto cercano; otras requieren coordinar el último tramo. Nunca esperamos que adivines el camino: la ruta, los horarios posibles y el punto de encuentro se confirman contigo antes de la llegada.</p></div>
+            </details>
+
+            <details class="volunteer-faq__item" data-guide-message="El lugar se define según la actividad, la temporada y los cupos.">
+              <summary><span class="volunteer-faq__number">04</span><span>¿A qué lugares puedo llegar como voluntaria o voluntario?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Las experiencias pueden vincularse con huertas, espacios comunitarios, hogares, rukas o iniciativas asociadas a la red dentro del territorio. No todos los lugares están disponibles siempre: el destino se propone según la actividad, los cupos, la temporada y las condiciones de acceso.</p></div>
+            </details>
+
+            <details class="volunteer-faq__item" data-guide-message="Las horas de apoyo se acuerdan; no se imponen.">
+              <summary><span class="volunteer-faq__number">05</span><span>¿Cuántas horas de apoyo contempla el voluntariado?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Las horas y las tareas no se fijan de forma unilateral. Antes de comenzar construimos un acuerdo común que considera la duración de la estadía, el tipo de actividad, el ritmo del lugar y tus posibilidades. Lo importante es que sea claro, equilibrado y sostenible para ambas partes.</p></div>
+            </details>
+
+            <details class="volunteer-faq__item" data-guide-message="El acuerdo puede respirar y adaptarse a la realidad.">
+              <summary><span class="volunteer-faq__number">06</span><span>¿Existe flexibilidad si cambia mi disponibilidad?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Sí. El acuerdo es una guía compartida y puede ajustarse cuando aparece cansancio, clima adverso, una necesidad personal o un cambio en las tareas. Lo conversamos a tiempo para cuidar tanto tu experiencia como los compromisos de la comunidad.</p></div>
+            </details>
+
+            <details class="volunteer-faq__item" data-guide-message="Puedes aportar desde lo que sabes y aprender lo que aún no conoces.">
+              <summary><span class="volunteer-faq__number">07</span><span>¿Necesito experiencia previa en huerta o trabajo comunitario?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>No necesitas llegar sabiendo todo. Buscamos una disposición respetuosa para aprender y colaborar. Según la actividad, podrás apoyar en la huerta, la comunicación, el registro, la cocina, el diseño u otras labores que tengan sentido para el momento y para tus habilidades.</p></div>
+            </details>
+
+            <details class="volunteer-faq__item" data-guide-message="Alojamiento y alimentación siempre se confirman antes de viajar.">
+              <summary><span class="volunteer-faq__number">08</span><span>¿Dónde dormiré y cómo se organiza la alimentación?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Cada convocatoria informará si existe alojamiento, qué condiciones tiene, qué comidas están consideradas y qué debes resolver por tu cuenta. No compres pasajes suponiendo que estos servicios están incluidos: primero confirma por escrito las condiciones de tu experiencia.</p></div>
+            </details>
+
+            <details class="volunteer-faq__item" data-guide-message="Una buena preparación considera clima, terreno y necesidades personales.">
+              <summary><span class="volunteer-faq__number">09</span><span>¿Qué debo llevar para participar?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Te enviaremos una orientación según la época y la actividad. Habitualmente conviene considerar ropa para lluvia y sol, calzado firme, botella reutilizable, medicamentos personales y una linterna. Cuéntanos con anticipación si tienes una necesidad de salud, alimentación, movilidad o accesibilidad.</p></div>
+            </details>
+
+            <details class="volunteer-faq__item" data-guide-message="Si el plan cambia, lo primero es avisar y volver a conversar.">
+              <summary><span class="volunteer-faq__number">10</span><span>¿Qué ocurre si me enfermo, debo retirarme o cambia el plan?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+              <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Avísanos tan pronto como puedas. Revisaremos contigo la forma más segura de pausar, reorganizar o cerrar la experiencia. También puede haber cambios por clima, acceso o necesidades del territorio; si ocurre, te explicaremos la situación y buscaremos una alternativa posible en común.</p></div>
+            </details>
+          </div>
+        </div>
+
+        <p class="volunteer-faq__note">Cada experiencia es distinta. Las condiciones definitivas se acuerdan con la coordinación antes de comprar pasajes o iniciar el viaje.</p>
+      </div>
+    </section>
+
     <!-- SECCIÓN DE INSCRIPCIÓN / FORMULARIO -->
     <section class="section-shell section contact-section" id="inscripcion">
       <div class="container contact-grid">
@@ -307,7 +511,7 @@
   <dialog class="membership-auth" data-membership-auth aria-labelledby="auth-dialog-title">
     <div class="membership-auth__surface">
       <button class="membership-auth__close" type="button" data-auth-close aria-label="Cerrar ventana">×</button>
-     <img src="../assets/img/logo.png" alt="Las Ñañas" class="membership-auth__logo">
+     <img src="../assets/img/logo-web.png" alt="Las Ñañas" class="membership-auth__logo">
       <p class="demo-badge">Demostración · sin pagos reales</p>
       <h2 id="auth-dialog-title">Accede a Mi voluntariado</h2>
       <p class="membership-auth__plan" data-auth-selection-summary>Plan elegido: <strong data-auth-plan>—</strong> · <span data-auth-billing>—</span></p>
@@ -366,7 +570,7 @@
         <div class="footer-center">
           <div class="glowing-ring">
             <div class="ethnic-border">
-              <img class="logo-placeholder" src="../assets/img/logo.png" alt="Logo Las Ñañas">
+              <img class="logo-placeholder" src="../assets/img/logo-web.png" alt="Logo Las Ñañas" loading="lazy" decoding="async">
             </div>
           </div>
         </div>
@@ -384,13 +588,13 @@
   </footer>
 
   <!-- SCRIPTS -->
-  <script src="../js/desarrollo.js?v=20"></script>
-  <script src="../js/voluntariado.js"></script>
+  <script src="../js/desarrollo.js?v=28"></script>
+  <script src="../js/voluntariado.js?v=4"></script>
   <!-- SUPABASE: cliente público; la autorización real continúa en RLS. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-config.js"></script>
   <script src="../js/supabase-client.js?v=1"></script>
-  <script src="../js/loading-overlay.js?v=1"></script>
+  <script src="../js/loading-overlay.js?v=2"></script>
   <!-- ETAPA 1: lógica demostrativa separada de la futura autenticación y autorización reales. -->
   <script src="../js/voluntariado-demo.js?v=4"></script>
   <script src="../js/whatsapp-floating.js?v=3"></script>

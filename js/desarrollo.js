@@ -2,6 +2,48 @@ document.addEventListener('DOMContentLoaded', () => {
   const header = document.querySelector('[data-header]');
   const menuButton = document.querySelector('.menu-toggle');
   const navigation = document.querySelector('.main-nav');
+  let themeToggle = document.querySelector('[data-theme-toggle]');
+
+  if (!themeToggle && header) {
+    themeToggle = document.createElement('button');
+    themeToggle.className = 'theme-toggle';
+    themeToggle.type = 'button';
+    themeToggle.dataset.themeToggle = '';
+    themeToggle.innerHTML = `
+      <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="M20.3 15.3A9 9 0 0 1 8.7 3.7 9 9 0 1 0 20.3 15.3Z"/></svg>
+      </span>
+      <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+      </span>
+      <span class="theme-toggle__thumb" aria-hidden="true"></span>`;
+    header.querySelector('.header__inner')?.appendChild(themeToggle);
+  }
+
+  const updateThemeToggle = () => {
+    if (!themeToggle) return;
+    const isDay = document.documentElement.dataset.theme === 'day';
+    const action = isDay ? 'Activar modo noche' : 'Activar modo día';
+    themeToggle.setAttribute('aria-pressed', String(isDay));
+    themeToggle.setAttribute('aria-label', action);
+    themeToggle.setAttribute('title', action);
+  };
+
+  themeToggle?.addEventListener('click', () => {
+    const isDay = document.documentElement.dataset.theme === 'day';
+    if (isDay) {
+      delete document.documentElement.dataset.theme;
+    } else {
+      document.documentElement.dataset.theme = 'day';
+    }
+    try {
+      localStorage.setItem('lasnanas-theme', isDay ? 'night' : 'day');
+    } catch (_) {
+      // El selector sigue funcionando durante la visita aunque no pueda persistirse.
+    }
+    updateThemeToggle();
+  });
+  updateThemeToggle();
 
   // Botón flotante y discreto para regresar al inicio tras un desplazamiento largo.
   if (!document.querySelector('.back-to-top')) {
@@ -54,7 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Mapa Interactivo
   const mapDetail = document.querySelector('.map-detail');
-  const mapPins = document.querySelectorAll('.map-pin');
+  const mapStage = document.querySelector('[data-map-stage]');
+  const getMapPins = () => Array.from(document.querySelectorAll('.map-pin'));
   const mapFilters = document.querySelectorAll('.map-filter');
   mapFilters.forEach((filter) => {
     filter.addEventListener('click', () => {
@@ -63,8 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
         button.classList.toggle('is-active', isSelected);
         button.setAttribute('aria-pressed', String(isSelected));
       });
-      mapPins.forEach((pin) => pin.classList.toggle('is-hidden', filter.dataset.filter !== 'all' && pin.dataset.category !== filter.dataset.filter));
-      mapPins.forEach((pin) => pin.classList.remove('is-active'));
+      getMapPins().forEach((pin) => pin.classList.toggle('is-hidden', filter.dataset.filter !== 'all' && pin.dataset.category !== filter.dataset.filter));
+      getMapPins().forEach((pin) => pin.classList.remove('is-active'));
 
       const filterPrompts = {
         all: ['Explora el territorio', 'Elige un pin', 'Naranja identifica a Ñañas y verde a las experiencias.'],
@@ -78,10 +121,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  mapPins.forEach((pin) => pin.addEventListener('click', () => {
-    mapPins.forEach((item) => item.classList.toggle('is-active', item === pin));
-    mapDetail.innerHTML = `<p class="map-detail__eyebrow">${pin.dataset.category === 'nanas' ? 'Red Las Ñañas' : 'Experiencia territorial'}</p><h3>${pin.dataset.title}</h3><p>${pin.dataset.text}</p>`;
-  }));
+  mapStage?.addEventListener('click', (event) => {
+    const pin = event.target.closest('.map-pin');
+    if (!pin || pin.hidden || pin.classList.contains('is-hidden')) return;
+    getMapPins().forEach((item) => item.classList.toggle('is-active', item === pin));
+    if (!mapDetail) return;
+    mapDetail.replaceChildren();
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'map-detail__eyebrow';
+    eyebrow.textContent = pin.dataset.category === 'nanas' ? 'Red Las Ñañas' : 'Experiencia territorial';
+    const title = document.createElement('h3');
+    title.textContent = pin.dataset.title;
+    const description = document.createElement('p');
+    description.textContent = pin.dataset.text;
+    mapDetail.append(eyebrow, title, description);
+  });
 
   // Tarjetas Giratorias
   document.querySelectorAll('.person-card').forEach((card) => card.addEventListener('click', () => {
@@ -152,6 +206,7 @@ form?.addEventListener('submit', async (event) => {
   const data = new FormData(form);
   button.disabled = true;
   feedback.textContent = 'Enviando mensaje…';
+  window.LasNanasLoader?.show('Enviando mensaje…');
 
   try {
     const response = await fetch(form.action, {
@@ -173,6 +228,7 @@ form?.addEventListener('submit', async (event) => {
       'No pudimos confirmar el envío. Tus datos siguen aquí; inténtalo nuevamente.';
   } finally {
     button.disabled = false;
+    window.LasNanasLoader?.hide();
   }
 });
   // Año footer
@@ -182,12 +238,13 @@ form?.addEventListener('submit', async (event) => {
   }
 
   // Efecto de partículas (fondo de estrellas) - Territorio y Ecosistema
-  function createStarField(canvas, { count = 120, color = '255,255,255', speed = 0.20 } = {}) {
+  function createStarField(canvas, { count = 125, color = '255,255,255', speed = 0.12 } = {}) {
     const ctx = canvas.getContext('2d');
-    let width, height, dpr, stars = [];
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let width, height, dpr, stars = [], animationFrame = 0;
 
     const resize = () => {
-      dpr = window.devicePixelRatio || 1;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = canvas.parentElement.clientWidth;
       height = canvas.parentElement.clientHeight;
       canvas.width = width * dpr;
@@ -198,42 +255,109 @@ form?.addEventListener('submit', async (event) => {
     };
 
     const createStars = () => {
-      stars = Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: Math.random() * 1.4 + 0.4,
-        vx: (Math.random() - 0.9) * speed,
-        vy: (Math.random() - 0.) * speed,
-        alpha: Math.random() * 0.5 + 0.3,
-        twinkle: Math.random() * Math.PI * 2
-      }));
+      const responsiveCount = Math.round(Math.min(165, Math.max(72, width * height / 8500)));
+      const total = Math.min(count, responsiveCount);
+      stars = Array.from({ length: total }, () => {
+        const intensityRoll = Math.random();
+        const intensity = intensityRoll < .56 ? 'soft' : intensityRoll < .9 ? 'medium' : 'bright';
+        const radius = intensity === 'soft'
+          ? .45 + Math.random() * .45
+          : intensity === 'medium'
+            ? .8 + Math.random() * .7
+            : 1.25 + Math.random() * .85;
+        const alpha = intensity === 'soft'
+          ? .16 + Math.random() * .16
+          : intensity === 'medium'
+            ? .36 + Math.random() * .22
+            : .68 + Math.random() * .24;
+        const angle = Math.random() * Math.PI * 2;
+        const drift = speed * (.35 + Math.random() * .75);
+
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          radius,
+          intensity,
+          alpha,
+          vx: Math.cos(angle) * drift,
+          vy: Math.sin(angle) * drift,
+          twinkle: Math.random() * Math.PI * 2,
+          twinkleSpeed: .008 + Math.random() * .018,
+          twinkleRange: intensity === 'bright' ? .2 : .1,
+          rotation: Math.random() * Math.PI
+        };
+      });
     };
 
-    const animate = () => {
+    const drawSparkle = (star, alpha) => {
+      const outerRadius = star.radius * 2.5;
+      const innerRadius = star.radius * .55;
+      ctx.save();
+      ctx.translate(star.x, star.y);
+      ctx.rotate(star.rotation);
+      ctx.beginPath();
+      for (let point = 0; point < 8; point += 1) {
+        const radius = point % 2 === 0 ? outerRadius : innerRadius;
+        const angle = point * Math.PI / 4;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        if (point === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = `rgba(${color}, ${alpha})`;
+      ctx.shadowColor = `rgba(${color}, ${Math.min(1, alpha + .08)})`;
+      ctx.shadowBlur = outerRadius * 2.2;
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const draw = (advance = true) => {
       ctx.clearRect(0, 0, width, height);
       stars.forEach((star) => {
-        star.x += star.vx;
-        star.y += star.vy;
-        star.twinkle += 0.02;
+        if (advance) {
+          star.x += star.vx;
+          star.y += star.vy;
+          star.twinkle += star.twinkleSpeed;
+          star.rotation += star.intensity === 'bright' ? .0012 : 0;
+        }
 
         if (star.x < 0) star.x = width;
         if (star.x > width) star.x = 0;
         if (star.y < 0) star.y = height;
         if (star.y > height) star.y = 0;
 
-        const twinkleAlpha = Math.max(0, star.alpha + Math.sin(star.twinkle) * 0.2);
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${color}, ${twinkleAlpha})`;
-        ctx.fill();
+        const twinkleAlpha = Math.max(.08, star.alpha + Math.sin(star.twinkle) * star.twinkleRange);
+        if (star.intensity === 'bright') {
+          drawSparkle(star, twinkleAlpha);
+        } else {
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${color}, ${twinkleAlpha})`;
+          ctx.fill();
+        }
       });
-      requestAnimationFrame(animate);
+    };
+
+    const animate = () => {
+      draw(true);
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    const start = () => {
+      cancelAnimationFrame(animationFrame);
+      if (document.hidden || reducedMotion.matches) {
+        draw(false);
+        return;
+      }
+      animate();
     };
 
     resize();
     createStars();
-    window.addEventListener('resize', () => { resize(); createStars(); });
-    animate();
+    window.addEventListener('resize', () => { resize(); createStars(); start(); });
+    document.addEventListener('visibilitychange', start);
+    reducedMotion.addEventListener('change', start);
+    start();
   }
 
   /* ============================================================
@@ -374,56 +498,56 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       id: 'desarrollo-web-territorial', categoria: 'Tecnología', titulo: 'Desarrollo web territorial',
       descripcion: 'Diseño y desarrollo de sitios web para emprendimientos rurales, organizaciones y proyectos con identidad territorial.',
-      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/diseño_web.png`, alt: 'Computador con un sitio web de identidad territorial en desarrollo',
+      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/diseño_web-web.webp`, alt: 'Computador con un sitio web de identidad territorial en desarrollo',
       detalles: ['Diseño adaptable a celulares y computadores', 'Arquitectura de contenidos clara y accesible', 'Acompañamiento para publicar y administrar el sitio'],
       mensajeWhatsApp: 'Hola, quiero consultar por: Desarrollo web territorial.'
     },
     {
       id: 'tecnologia-huerta', categoria: 'Tecnología', titulo: 'Tecnología aplicada a la huerta',
       descripcion: 'Soluciones tecnológicas sencillas para mejorar el riego, monitorear los cultivos y hacer más eficiente el trabajo en la huerta.',
-      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/servicios_iot.png`, alt: 'Sensores y tecnología de monitoreo instalados en una huerta',
+      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/servicios_iot-web.webp`, alt: 'Sensores y tecnología de monitoreo instalados en una huerta',
       detalles: ['Diagnóstico de necesidades en terreno', 'Automatización básica de riego y monitoreo', 'Orientación para el uso y mantenimiento de los equipos'],
       mensajeWhatsApp: 'Hola, quiero consultar por: Tecnología aplicada a la huerta.'
     },
     {
       id: 'chipeadora-terreno', categoria: 'Arriendo', titulo: 'Chipeadora en terreno',
       descripcion: 'Chipeado de restos vegetales y podas para producir material destinado al compostaje, senderos y cobertura protectora del suelo.',
-      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/chipeadora.png`, alt: 'Chipeadora procesando ramas y restos de poda en terreno',
+      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/chipeadora-web.webp`, alt: 'Chipeadora procesando ramas y restos de poda en terreno',
       detalles: ['Coordinación del trabajo en terreno', 'Procesamiento de podas y restos vegetales', 'Orientación para aprovechar el material resultante'],
       mensajeWhatsApp: 'Hola, quiero consultar por: Chipeadora en terreno.'
     },
     {
       id: 'motocultor', categoria: 'Arriendo', titulo: 'Motocultor',
       descripcion: 'Preparación responsable de terrenos y huertas para labores agrícolas de pequeña escala.',
-      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/motocultivador.png`, alt: 'Motocultor preparando suelo para una huerta de pequeña escala',
+      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/motocultivador-web.webp`, alt: 'Motocultor preparando suelo para una huerta de pequeña escala',
       detalles: ['Evaluación básica del área de trabajo', 'Preparación superficial y aireación del suelo', 'Coordinación de traslado y operación en terreno'],
       mensajeWhatsApp: 'Hola, quiero consultar por: Motocultor.'
     },
     {
       id: 'diseno-agroecologico', categoria: 'Asesoría', titulo: 'Diseño agroecológico',
       descripcion: 'Planificación predial basada en agroecología y permacultura, incorporando captación de aguas lluvias, corredores biológicos y bosques comestibles.',
-      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/diseño_agroecologico.png`, alt: 'Plano de diseño agroecológico con cultivos, agua y corredores biológicos',
+      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/diseño_agroecologico-web.webp`, alt: 'Plano de diseño agroecológico con cultivos, agua y corredores biológicos',
       detalles: ['Lectura inicial del predio y sus ciclos', 'Propuesta de zonificación y manejo del agua', 'Recomendaciones de biodiversidad y producción regenerativa'],
       mensajeWhatsApp: 'Hola, quiero consultar por: Diseño agroecológico.'
     },
     {
       id: 'taller-agroecologia', categoria: 'Taller', titulo: 'Taller de agroecología',
       descripcion: 'Aprendizajes prácticos para cuidar el suelo, producir alimentos, elaborar compost y fortalecer sistemas agrícolas sustentables.',
-      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/taller_agroecologia.png`, alt: 'Grupo participando en un taller práctico de agroecología',
+      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/taller_agroecologia-web.webp`, alt: 'Grupo participando en un taller práctico de agroecología',
       detalles: ['Cuidado y recuperación del suelo', 'Producción de compost y abonos naturales', 'Prácticas de cultivo adaptadas al territorio'],
       mensajeWhatsApp: 'Hola, quiero consultar por: Taller de agroecología.'
     },
     {
       id: 'taller-permacultura', categoria: 'Taller', titulo: 'Taller de permacultura',
       descripcion: 'Principios y herramientas para diseñar espacios resilientes, eficientes y conectados con su entorno.',
-      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/taller_permacultura.png`, alt: 'Participantes diseñando un espacio productivo con principios de permacultura',
+      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/taller_permacultura-web.webp`, alt: 'Participantes diseñando un espacio productivo con principios de permacultura',
       detalles: ['Principios éticos y de diseño', 'Lectura de patrones naturales y zonas', 'Ejercicio práctico aplicado a un espacio real'],
       mensajeWhatsApp: 'Hola, quiero consultar por: Taller de permacultura.'
     },
     {
       id: 'lengua-cosmovision-mapuche', categoria: 'Taller', titulo: 'Lengua y cosmovisión mapuche',
       descripcion: 'Espacio de acercamiento al Mapuzugun y a la cosmovisión mapuche desde el respeto, la experiencia territorial y el aprendizaje colectivo.',
-      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/cosmovision_lengua_mapuche.png`, alt: 'Encuentro colectivo de aprendizaje sobre Mapuzugun y cosmovisión mapuche',
+      imagen: `${SERVICES_ASSET_BASE}/img/carrusel_servicios/cosmovision_lengua_mapuche-web.webp`, alt: 'Encuentro colectivo de aprendizaje sobre Mapuzugun y cosmovisión mapuche',
       detalles: ['Acercamiento respetuoso al Mapuzugun', 'Conceptos vinculados con territorio y comunidad', 'Aprendizaje colectivo desde experiencias situadas'],
       mensajeWhatsApp: 'Hola, quiero consultar por: Lengua y cosmovisión mapuche.'
     }
@@ -582,9 +706,15 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.querySelector('[data-services-modal-title]').textContent = service.titulo;
     modal.querySelector('[data-services-modal-description]').textContent = service.descripcion;
     modal.querySelector('[data-services-modal-details]').innerHTML = service.detalles.map((detail) => `<li>${detail}</li>`).join('');
-    const whatsappLink = modal.querySelector('[data-services-whatsapp]');
-    whatsappLink.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(service.mensajeWhatsApp)}`;
-    whatsappLink.setAttribute('aria-label', `Consultar por WhatsApp sobre ${service.titulo}`);
+    const whatsappLinks = modal.querySelectorAll('[data-services-whatsapp]');
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(service.mensajeWhatsApp)}`;
+    whatsappLinks.forEach((whatsappLink) => {
+      whatsappLink.href = whatsappUrl;
+      const label = whatsappLink.classList.contains('services-showcase__consult')
+        ? `Consultas sobre ${service.titulo}`
+        : `Consultar por WhatsApp sobre ${service.titulo}`;
+      whatsappLink.setAttribute('aria-label', label);
+    });
     stopAutoplay();
     modal.showModal();
   });
@@ -614,7 +744,10 @@ function iniciarBotonEcosistema() {
 
       boton.classList.add('is-activating');
       const espera = reducirMovimiento.matches ? 0 : 720;
-      window.setTimeout(() => window.location.assign(boton.href), espera);
+      window.setTimeout(() => {
+        window.LasNanasLoader?.show('Cargando la página…');
+        window.location.assign(boton.href);
+      }, espera);
     });
   });
 
@@ -631,7 +764,7 @@ if (document.readyState === 'loading') {
 
 // En móvil permite que la planta termine de abrirse antes de seguir el enlace.
 function iniciarBotonesVegetales() {
-  const botones = document.querySelectorAll('.plant-cta[href]');
+  const botones = document.querySelectorAll('.plant-cta[href]:not([data-mi-ruka])');
   const vistaMovil = window.matchMedia('(max-width: 720px), (pointer: coarse)');
   const reducirMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -647,7 +780,10 @@ function iniciarBotonesVegetales() {
       boton.setAttribute('aria-busy', 'true');
 
       // 0.5 s de despliegue + 0.45 s de espera + 1 s de balanceo.
-      window.setTimeout(() => window.location.assign(boton.href), 1550);
+      window.setTimeout(() => {
+        window.LasNanasLoader?.show('Cargando la página…');
+        window.location.assign(boton.href);
+      }, 1550);
     });
   });
 

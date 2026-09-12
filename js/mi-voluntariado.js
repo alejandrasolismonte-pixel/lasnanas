@@ -27,7 +27,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const money = (value, currency = application?.currency || 'CLP') => new Intl.NumberFormat(currency === 'USD' ? 'en-US' : 'es-CL', { style:'currency', currency, maximumFractionDigits:0 }).format(value || 0);
   const showMessage = (selector, message, error = false) => { const node=$(selector); if(node){node.textContent=message;node.style.color=error?'#9f2f2f':'';} };
-  const setBusy = (element, value) => { element?.querySelectorAll('button,input,select,textarea').forEach(control => { control.disabled=value; }); };
+  const setBusy = (element, value) => {
+    element?.querySelectorAll('button,input,select,textarea').forEach(control => { control.disabled = value; });
+    if (value) loader?.show('Procesando…'); else loader?.hide();
+  };
   const currentVisualStatus = () => demo.status || application?.status || 'draft';
   const activeVisual = () => Boolean(membership || demo.active);
   const stage = () => activeVisual() ? 5 : demo.payment === 'pending' ? 4 : ['in_review','needs_clarification','approved','rejected'].includes(currentVisualStatus()) ? 3 : currentVisualStatus()==='submitted' ? 2 : 1;
