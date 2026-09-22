@@ -52,7 +52,20 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const elementos = esMovil ? elementosMovil : elementosDesktop;
-    elementos.forEach(el => createFloatingElement(container, el));
+    const floatingAnimations = elementos.map(el => createFloatingElement(container, el));
+    const syncLandingAnimations = () => {
+        document.documentElement.classList.toggle('is-document-hidden', document.hidden);
+        floatingAnimations.forEach(animation => document.hidden ? animation.pause() : animation.play());
+    };
+    if (window.MotionLifecycle) {
+        window.MotionLifecycle.register(container, {
+            start: () => floatingAnimations.forEach(animation => animation.play()),
+            stop: () => floatingAnimations.forEach(animation => animation.pause())
+        });
+    } else {
+        document.addEventListener('visibilitychange', syncLandingAnimations);
+        syncLandingAnimations();
+    }
 });
 
 function createFloatingElement(container, data) {
@@ -87,7 +100,7 @@ function createFloatingElement(container, data) {
     const duration = 7 + Math.random() * 6; // 7 a 13 segundos (más rápido)
     const delay = Math.random() * -10;
 
-    el.animate([
+    return el.animate([
         { transform: `translate(0, 0)` },
         { transform: `translate(${moveX}vw, ${moveY}vh)` }
     ], {

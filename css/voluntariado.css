@@ -328,22 +328,11 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
   background: radial-gradient(circle at 50% 42%, rgba(22, 101, 52, .18), transparent 34rem), var(--membership-night);
 }
 
-.participation::before,
-.participation::after {
-  content: "";
-  position: absolute;
-  inset: -40%;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle, rgba(255, 255, 255, .9) 0 1px, transparent 1.5px),
-    radial-gradient(circle, rgba(120, 217, 154, .65) 0 1px, transparent 1.5px);
-  background-size: 120px 120px, 210px 210px;
-  opacity: .55;
-  animation: participationStars 34s linear infinite;
-}
-
-.participation::after { background-position: 55px 80px, 110px 35px; opacity: .28; animation-duration: 52s; }
-.participation__container { position: relative; z-index: 1; max-width: 1100px; margin-inline: auto; }
+.participation > .particles-canvas,
+.volunteer-experiences > .particles-canvas { z-index: 0; }
+.participation__container,
+.volunteer-experiences > .container { position: relative; z-index: 1; }
+.participation__container { max-width: 1100px; margin-inline: auto; }
 .participation__heading { max-width: 760px; margin: 0 auto; text-align: center; }
 .participation__eyebrow { margin: 0 0 .75rem; color: var(--orange, #ea580c); font-weight: 700; letter-spacing: .14em; }
 .participation__heading h1 { max-width: 760px; margin: 0 auto; color: var(--membership-copy); font-family: 'Fraunces', Georgia, serif; font-size: clamp(2rem, 4.4vw, 3.6rem); font-style: italic; font-weight: 500; line-height: 1.08; text-wrap: balance; }
@@ -411,7 +400,6 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
 .membership-card:hover,
 .membership-card:focus-within { z-index: 3; border-color: var(--orange, #ea580c); background: linear-gradient(180deg, var(--membership-featured), var(--membership-raised)); box-shadow: 0 1.8rem 4rem rgba(0, 0, 0, .45), 0 0 42px rgba(120, 217, 154, .2); transform: translateY(-.8rem) scale(1.018); }
 
-@keyframes participationStars { to { transform: translate3d(120px, 80px, 0); } }
 @keyframes membershipButtonBounce { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-4px); } 70% { transform: translateY(1px); } }
 
 /* 4. Reglas responsive: tres columnas en tablet y una en celular */
@@ -436,8 +424,6 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .participation::before,
-  .participation::after { animation: none; }
   .membership-card,
   .membership-card__includes { transition: none; }
   .membership-card__button { animation: none; }
@@ -447,8 +433,8 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
 /* ============================================================
    2. EXPERIENCIAS DE VOLUNTARIADO
    ============================================================ */
-/* Fondo estrellado integrado con la estética oscura del sitio */
-.volunteer-experiences { position: relative; overflow: hidden; background-image: radial-gradient(circle at 12% 18%, rgba(255,255,255,.7) 0 1px, transparent 1.5px), radial-gradient(circle at 78% 66%, rgba(221,237,230,.55) 0 1px, transparent 1.5px); background-size: 137px 137px, 211px 211px; }
+/* El fondo estrellado reutiliza el mismo canvas irregular de Inicio. */
+.volunteer-experiences { position: relative; overflow: hidden; }
 
 /* Encabezado editorial y textos introductorios */
 .volunteer-experiences__heading { max-width: 780px; margin-bottom: clamp(2.4rem,6vw,4rem); }
@@ -668,7 +654,7 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
     inset -24px -22px 42px rgba(0, 0, 0, .58),
     inset 12px 10px 24px rgba(163, 230, 203, .14),
     0 0 34px rgba(52, 211, 153, .36);
-  animation: floatPlanet 8s ease-in-out infinite;
+  animation: floatPlanet 11.2s ease-in-out infinite;
 }
 
 .sweepstakes-title {
@@ -712,7 +698,7 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
   margin-left: -155px;
   border-radius: 50%;
   border: 1px dashed rgba(242, 153, 74, .48);
-  animation: spinOrbit 22s linear infinite;
+  animation: spinOrbit 30.8s linear infinite;
 }
 
 .sweepstakes-prize {
@@ -725,7 +711,7 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
   flex-direction: column;
   align-items: center;
   gap: .25rem;
-  animation: counterSpin 22s linear infinite, floatPrize 3.6s ease-in-out infinite;
+  animation: counterSpin 30.8s linear infinite, floatPrize 5.04s ease-in-out infinite;
 }
 
 .sweepstakes-prize img {
@@ -912,6 +898,18 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
   padding: 0;
   border: 0;
   background: #090d14 !important;
+}
+
+/* El hero inicial se muestra de inmediato; el movimiento del fuego y la joya aporta la entrada visual. */
+.volunteer-fire-hero.sweepstakes-section--intro {
+  opacity: 1;
+  clip-path: none;
+  transform: none;
+  animation: none;
+}
+
+.volunteer-fire-hero .page-fire-hero__video-wrap video {
+  transition: none;
 }
 
 /* Oscurece los extremos para que el texto y el botón mantengan contraste sobre el fuego. */

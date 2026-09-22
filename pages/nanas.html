@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Kaushan+Script&display=swap" rel="stylesheet">
   <script src="../js/theme-init.js?v=1"></script>
-  <link rel="stylesheet" href="../css/desarrollo.css?v=83">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=86">
   <!-- Versión de caché actualizada para mostrar inmediatamente el ajuste de la ventana. -->
-  <link rel="stylesheet" href="../css/nanas.css?v=11">
+  <link rel="stylesheet" href="../css/nanas.css?v=12">
   <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
   <link rel="stylesheet" href="../css/public-theme.css?v=2">
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
@@ -61,13 +61,15 @@
       <div class="nn-hero__video-wrap" aria-hidden="true">
         <video
           class="nn-hero__video"
-          src="../assets/videos/video-header.mp4"
-          poster="../assets/videos/video-header.mp4"
           autoplay
           muted
           loop
           playsinline
-        ></video>
+          preload="metadata"
+        >
+          <source src="../assets/videos/video-header-web.webm" type="video/webm">
+          <source src="../assets/videos/video-header-iphone.mp4" type="video/mp4">
+        </video>
       </div>
       <div class="nn-hero__overlay" aria-hidden="true"></div>
 
@@ -83,21 +85,21 @@
 
     <div class="nn-ecosystem__grid reveal">
       <a class="nn-eco-card" href="voluntariado.html">
-        <span class="nn-eco-card__icon-ring"><img src="../assets/icons/voluntariado-web.webp" alt="" class="icono-gif" aria-hidden="true" loading="lazy" decoding="async"></span>
+        <span class="nn-eco-card__icon-ring"><img src="../assets/icons/voluntariado-still.png" data-motion-static-src="../assets/icons/voluntariado-still.png" data-motion-animated-src="../assets/icons/voluntariado-web.webp" alt="" class="icono-gif" aria-hidden="true" width="160" height="160" loading="lazy" decoding="async"></span>
         <h3>Voluntariado</h3>
         <p>Aprender haciendo en comunidad.</p>
         <span class="nn-eco-card__link">Explorar <span aria-hidden="true">→</span></span>
       </a>
 
       <a class="nn-eco-card" href="servicios.html">
-        <span class="nn-eco-card__icon-ring"><img src="../assets/icons/servicios-web.webp" alt="" class="icono-gif" aria-hidden="true" loading="lazy" decoding="async"></span>
+        <span class="nn-eco-card__icon-ring"><img src="../assets/icons/servicios-still.png" data-motion-static-src="../assets/icons/servicios-still.png" data-motion-animated-src="../assets/icons/servicios-web.webp" alt="" class="icono-gif" aria-hidden="true" width="160" height="160" loading="lazy" decoding="async"></span>
         <h3>Servicios Técnicos</h3>
         <p>Tecnología con pertinencia territorial.</p>
         <span class="nn-eco-card__link">Explorar <span aria-hidden="true">→</span></span>
       </a>
 
       <a class="nn-eco-card" href="productos.html">
-        <span class="nn-eco-card__icon-ring"><img src="../assets/icons/productos-web.webp" alt="" class="icono-gif" aria-hidden="true" loading="lazy" decoding="async"></span>
+        <span class="nn-eco-card__icon-ring"><img src="../assets/icons/productos-still.png" data-motion-static-src="../assets/icons/productos-still.png" data-motion-animated-src="../assets/icons/productos-web.webp" alt="" class="icono-gif" aria-hidden="true" width="160" height="160" loading="lazy" decoding="async"></span>
         <h3>Productos</h3>
         <p>Del territorio a tu mesa.</p>
         <span class="nn-eco-card__link">Explorar <span aria-hidden="true">→</span></span>
@@ -292,8 +294,9 @@
   </footer>
 
   <script src="../js/loading-overlay.js?v=2"></script>
-  <script src="../js/desarrollo.js?v=30"></script>
-  <script src="../js/nanas.js?v=3"></script>
+  <script src="../js/motion-lifecycle.js?v=2"></script>
+  <script src="../js/desarrollo.js?v=32"></script>
+  <script src="../js/nanas.js?v=5"></script>
   <script src="../js/whatsapp-floating.js?v=3"></script>
 </body>
 </html>

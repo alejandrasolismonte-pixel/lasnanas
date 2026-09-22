@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const carousel = document.querySelector('[data-carousel]');
   const track = carousel?.querySelector('[data-carousel-track]');
   if (!carousel || !track) return;
+  const carouselViewport = carousel.querySelector('.nn-carousel__viewport') || track;
 
   const originalSlides = Array.from(track.children);
   const dots = Array.from(carousel.querySelectorAll('.nn-carousel__dot'));
@@ -31,6 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let dragStartPosition = 0;
   let autoPauseUntil = 0;
   let activeIndex = -1;
+  let animationFrame = 0;
+  let isInitialized = false;
+  let isCarouselVisible = Boolean(window.MotionLifecycle) || !('IntersectionObserver' in window);
+  let motionAllowed = !window.MotionLifecycle;
 
   const getLoopWidth = () => track.scrollWidth / 3;
 
@@ -86,6 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Conserva la velocidad lineal y pausa un segundo sólo al centrar una foto automáticamente.
   function animate(currentTime) {
+    animationFrame = 0;
+    if (document.hidden || reducedMotion.matches || !isCarouselVisible || !motionAllowed) {
+      previousTime = undefined;
+      return;
+    }
     if (previousTime === undefined) previousTime = currentTime;
     const elapsedSeconds = Math.min((currentTime - previousTime) / 1000, 0.05);
     previousTime = currentTime;
@@ -103,7 +113,17 @@ document.addEventListener('DOMContentLoaded', () => {
       renderPosition();
     }
 
-    window.requestAnimationFrame(animate);
+    animationFrame = window.requestAnimationFrame(animate);
+  }
+
+  function syncAnimation() {
+    if (animationFrame) {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
+    }
+    previousTime = undefined;
+    if (!isInitialized || document.hidden || reducedMotion.matches || !isCarouselVisible || !motionAllowed) return;
+    animationFrame = window.requestAnimationFrame(animate);
   }
 
   track.addEventListener('pointerdown', event => {
@@ -136,9 +156,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Los cambios de preferencia del sistema detienen o reanudan únicamente el avance automático.
   reducedMotion.addEventListener('change', () => {
-    previousTime = undefined;
     autoPauseUntil = 0;
+    syncAnimation();
   });
+
+  if (window.MotionLifecycle) {
+    window.MotionLifecycle.register(carouselViewport, {
+      start: () => {
+        motionAllowed = true;
+        syncAnimation();
+      },
+      stop: () => {
+        motionAllowed = false;
+        syncAnimation();
+      }
+    });
+  } else if ('IntersectionObserver' in window) {
+    const carouselObserver = new IntersectionObserver(([entry]) => {
+      // Observa la ventana que contiene la cinta, no el bloque completo con sus indicadores.
+      // Exigir un área real evita que siga activo cuando sólo toca el borde del viewport.
+      isCarouselVisible = entry.isIntersecting
+        && entry.intersectionRect.width > 0
+        && entry.intersectionRect.height > 0;
+      syncAnimation();
+    }, { threshold: 0 });
+    carouselObserver.observe(carouselViewport);
+  }
+  document.addEventListener('visibilitychange', syncAnimation);
 
   window.requestAnimationFrame(() => {
     // Elige la copia de la primera foto que queda centrada dentro del tramo infinito normalizado.
@@ -152,7 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
     position = centeredStart ?? loopWidth;
     autoPauseUntil = performance.now() + PAUSA_CENTRAL_MS;
     renderPosition();
-    window.requestAnimationFrame(animate);
+    isInitialized = true;
+    syncAnimation();
   });
 });
 

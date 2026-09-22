@@ -84,16 +84,27 @@
 .nn-hero__video-wrap {
   position: absolute;
   inset: 0;
-  z-index: -2;
+  z-index: 0;
   overflow: hidden;
+  contain: paint;
+  background:
+    radial-gradient(circle at 50% 55%, rgba(234, 88, 12, .28), transparent 58%),
+    #0f151c;
 }
 
 .nn-hero__video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  transition: opacity .25s ease;
   /* Empuja el video un poco más cálido/brillante sin tocar el archivo fuente */
   filter: saturate(1.15) brightness(0.85);
+}
+
+.nn-hero__video.is-motion-paused {
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* Overlay en dos capas: una para legibilidad, otra radial cálida
@@ -101,7 +112,7 @@
 .nn-hero__overlay {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
   background:
     radial-gradient(ellipse 60% 50% at 50% 65%, rgba(234, 88, 12, 0.28), transparent 70%),
     linear-gradient(180deg, rgba(20, 17, 14, 0.55) 0%, rgba(20, 17, 14, 0.72) 55%, rgba(20, 17, 14, 0.94) 100%);
@@ -109,6 +120,7 @@
 
 .nn-hero__content {
   position: relative;
+  z-index: 2;
   max-width: 760px;
   margin-inline: auto;
   padding-inline: 1.5rem;
@@ -138,7 +150,7 @@
   right: 0;
   bottom: -1px;
   height: 46px;
-  z-index: 1;
+  z-index: 3;
   background: var(--nn-bg);
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none'%3E%3Cpath d='M0 20 L0 8 Q5 0 10 8 T20 8 T30 8 T40 8 T50 8 T60 8 T70 8 T80 8 T90 8 T100 8 T110 8 T120 8 L120 20 Z'/%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none'%3E%3Cpath d='M0 20 L0 8 Q5 0 10 8 T20 8 T30 8 T40 8 T50 8 T60 8 T70 8 T80 8 T90 8 T100 8 T110 8 T120 8 L120 20 Z'/%3E%3C/svg%3E");
@@ -152,7 +164,7 @@
   left: 70%;
   bottom: 28px;
   transform: translateX(-50%);
-  z-index: 3;
+  z-index: 4;
 }
 
 @media (max-width: 620px) {
@@ -698,6 +710,8 @@
    BLOQUE 4 — CAJAS DEL ECOSISTEMA (Conversión)
    ============================================================ */
 .nn-ecosystem {
+  position: relative;
+  z-index: 2;
   padding: 5rem 0 6rem;
 }
 
@@ -736,6 +750,9 @@
     min-height: auto;
     padding: 5.75rem 0 4.75rem;
   }
+
+  /* Evita una capa gráfica pegada durante el desplazamiento en móviles. */
+  .nn-hero__video { filter: none; }
 
   .nn-ecosystem {
     width: 100%;

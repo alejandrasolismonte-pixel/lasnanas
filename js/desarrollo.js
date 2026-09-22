@@ -4,14 +4,95 @@ document.addEventListener('DOMContentLoaded', () => {
   const navigation = document.querySelector('.main-nav');
   let themeToggle = document.querySelector('[data-theme-toggle]');
 
-  // Mantiene el fondo oscuro estable y revela el video cuando su primer cuadro está listo.
-  const heroVideo = document.querySelector('.hero__video');
-  const revealHeroVideo = () => heroVideo?.classList.add('is-ready');
-  if (heroVideo?.readyState >= 2) {
-    revealHeroVideo();
-  } else {
-    heroVideo?.addEventListener('loadeddata', revealHeroVideo, { once: true });
+  // Pausa los videos decorativos fuera de pantalla y conserva su cuadro actual al reanudarlos.
+  const decorativeVideos = [...document.querySelectorAll('video[autoplay][muted][loop]')];
+  const videoControllers = new Map();
+
+  const syncDecorativeVideo = (controller) => {
+    const { video } = controller;
+    if (document.hidden || !controller.isVisible || !controller.motionAllowed) {
+      video.classList.add('is-motion-paused');
+      video.pause();
+      return;
+    }
+    if (controller.isBlocked || controller.playPending) return;
+    if (!video.paused && video.readyState >= 2) {
+      video.classList.remove('is-motion-paused');
+      if (video.classList.contains('hero__video')) video.classList.add('is-ready');
+      return;
+    }
+
+    video.hidden = false;
+    try {
+      const playAttempt = video.play();
+      if (playAttempt) {
+        controller.playPending = true;
+        playAttempt
+          .catch(() => {
+            if (!document.hidden && controller.isVisible && controller.motionAllowed) controller.hideVideo();
+          })
+          .finally(() => {
+            controller.playPending = false;
+            if (!controller.isBlocked && controller.isVisible && controller.motionAllowed && !document.hidden && video.paused) {
+              syncDecorativeVideo(controller);
+            }
+          });
+      }
+    } catch (error) {
+      controller.hideVideo();
+    }
+  };
+
+  decorativeVideos.forEach((video) => {
+    const controller = {
+      video,
+      isVisible: Boolean(window.MotionLifecycle) || !('IntersectionObserver' in window),
+      motionAllowed: !window.MotionLifecycle,
+      isBlocked: false,
+      playPending: false,
+      hideVideo: null
+    };
+    controller.hideVideo = () => {
+      controller.isBlocked = true;
+      video.classList.remove('is-ready');
+      video.hidden = true;
+    };
+    video.addEventListener('playing', () => {
+      video.classList.remove('is-motion-paused');
+      if (!controller.isBlocked && video.classList.contains('hero__video')) video.classList.add('is-ready');
+    });
+    video.addEventListener('error', controller.hideVideo, { once: true });
+    videoControllers.set(video.closest('section') || video, controller);
+  });
+
+  if (window.MotionLifecycle) {
+    videoControllers.forEach((controller, target) => {
+      window.MotionLifecycle.register(target, {
+        start: () => {
+          controller.motionAllowed = true;
+          syncDecorativeVideo(controller);
+        },
+        stop: () => {
+          controller.motionAllowed = false;
+          syncDecorativeVideo(controller);
+        }
+      });
+    });
+  } else if ('IntersectionObserver' in window && videoControllers.size) {
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const controller = videoControllers.get(entry.target);
+        controller.isVisible = entry.isIntersecting;
+        syncDecorativeVideo(controller);
+      });
+    });
+    videoControllers.forEach((controller, target) => videoObserver.observe(target));
   }
+
+  document.addEventListener('visibilitychange', () => {
+    videoControllers.forEach(syncDecorativeVideo);
+  });
+  videoControllers.forEach(syncDecorativeVideo);
 
   if (!themeToggle && header) {
     themeToggle = document.createElement('button');
@@ -146,11 +227,38 @@ document.addEventListener('DOMContentLoaded', () => {
     mapDetail.append(eyebrow, title, description);
   });
 
-  // Tarjetas Giratorias
-  document.querySelectorAll('.person-card').forEach((card) => card.addEventListener('click', () => {
-    const flipped = card.classList.toggle('is-flipped');
+  // Tarjetas giratorias: una sola fuente de estado y una sola tarjeta abierta a la vez.
+  const personCards = [...document.querySelectorAll('.person-card')];
+  const setPersonCardState = (card, flipped) => {
+    card.classList.toggle('is-flipped', flipped);
     card.setAttribute('aria-pressed', String(flipped));
-  }));
+    const instruction = card.querySelector('.sr-only');
+    if (instruction) instruction.textContent = flipped
+      ? 'Presiona para volver a la presentación'
+      : 'Presiona para conocer su tarea';
+  };
+  const closePersonCards = (except = null) => {
+    personCards.forEach((card) => {
+      if (card !== except) setPersonCardState(card, false);
+    });
+  };
+
+  personCards.forEach((card) => {
+    card.addEventListener('click', () => {
+      const willFlip = !card.classList.contains('is-flipped');
+      closePersonCards(card);
+      setPersonCardState(card, willFlip);
+    });
+    card.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !card.classList.contains('is-flipped')) return;
+      event.preventDefault();
+      setPersonCardState(card, false);
+    });
+  });
+
+  if (personCards.length) {
+    window.addEventListener('pageshow', () => closePersonCards());
+  }
 
   // Lógica del Acordeón FAQ (Cerrar los otros al abrir uno)
   const detailsElements = document.querySelectorAll('.faq-list details');
@@ -244,129 +352,6 @@ form?.addEventListener('submit', async (event) => {
   const yearEl = document.querySelector('[data-current-year]');
   if(yearEl) {
     yearEl.textContent = new Date().getFullYear();
-  }
-
-  // Efecto de partículas (fondo de estrellas) - Territorio y Ecosistema
-  function createStarField(canvas, { count = 125, color = '255,255,255', speed = 0.12 } = {}) {
-    const ctx = canvas.getContext('2d');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let width, height, dpr, stars = [], animationFrame = 0;
-
-    const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = canvas.parentElement.clientWidth;
-      height = canvas.parentElement.clientHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    const createStars = () => {
-      const responsiveCount = Math.round(Math.min(165, Math.max(72, width * height / 8500)));
-      const total = Math.min(count, responsiveCount);
-      stars = Array.from({ length: total }, () => {
-        const intensityRoll = Math.random();
-        const intensity = intensityRoll < .56 ? 'soft' : intensityRoll < .9 ? 'medium' : 'bright';
-        const radius = intensity === 'soft'
-          ? .45 + Math.random() * .45
-          : intensity === 'medium'
-            ? .8 + Math.random() * .7
-            : 1.25 + Math.random() * .85;
-        const alpha = intensity === 'soft'
-          ? .16 + Math.random() * .16
-          : intensity === 'medium'
-            ? .36 + Math.random() * .22
-            : .68 + Math.random() * .24;
-        const angle = Math.random() * Math.PI * 2;
-        const drift = speed * (.35 + Math.random() * .75);
-
-        return {
-          x: Math.random() * width,
-          y: Math.random() * height,
-          radius,
-          intensity,
-          alpha,
-          vx: Math.cos(angle) * drift,
-          vy: Math.sin(angle) * drift,
-          twinkle: Math.random() * Math.PI * 2,
-          twinkleSpeed: .008 + Math.random() * .018,
-          twinkleRange: intensity === 'bright' ? .2 : .1,
-          rotation: Math.random() * Math.PI
-        };
-      });
-    };
-
-    const drawSparkle = (star, alpha) => {
-      const outerRadius = star.radius * 2.5;
-      const innerRadius = star.radius * .55;
-      ctx.save();
-      ctx.translate(star.x, star.y);
-      ctx.rotate(star.rotation);
-      ctx.beginPath();
-      for (let point = 0; point < 8; point += 1) {
-        const radius = point % 2 === 0 ? outerRadius : innerRadius;
-        const angle = point * Math.PI / 4;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-        if (point === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.fillStyle = `rgba(${color}, ${alpha})`;
-      ctx.shadowColor = `rgba(${color}, ${Math.min(1, alpha + .08)})`;
-      ctx.shadowBlur = outerRadius * 2.2;
-      ctx.fill();
-      ctx.restore();
-    };
-
-    const draw = (advance = true) => {
-      ctx.clearRect(0, 0, width, height);
-      stars.forEach((star) => {
-        if (advance) {
-          star.x += star.vx;
-          star.y += star.vy;
-          star.twinkle += star.twinkleSpeed;
-          star.rotation += star.intensity === 'bright' ? .0012 : 0;
-        }
-
-        if (star.x < 0) star.x = width;
-        if (star.x > width) star.x = 0;
-        if (star.y < 0) star.y = height;
-        if (star.y > height) star.y = 0;
-
-        const twinkleAlpha = Math.max(.08, star.alpha + Math.sin(star.twinkle) * star.twinkleRange);
-        if (star.intensity === 'bright') {
-          drawSparkle(star, twinkleAlpha);
-        } else {
-          ctx.beginPath();
-          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${color}, ${twinkleAlpha})`;
-          ctx.fill();
-        }
-      });
-    };
-
-    const animate = () => {
-      draw(true);
-      animationFrame = requestAnimationFrame(animate);
-    };
-
-    const start = () => {
-      cancelAnimationFrame(animationFrame);
-      if (document.hidden || reducedMotion.matches) {
-        draw(false);
-        return;
-      }
-      animate();
-    };
-
-    resize();
-    createStars();
-    window.addEventListener('resize', () => { resize(); createStars(); start(); });
-    document.addEventListener('visibilitychange', start);
-    reducedMotion.addEventListener('change', start);
-    start();
   }
 
   /* ============================================================
@@ -489,10 +474,24 @@ form?.addEventListener('submit', async (event) => {
     updateBook();
   }
 
-  /* ============================================================
-     INICIALIZACIÓN DE PARTÍCULAS
-     ============================================================ */
-  document.querySelectorAll('.particles-canvas').forEach((canvas) => createStarField(canvas));
+  // Detiene únicamente animaciones CSS continuas dentro de secciones que no están visibles.
+  const animatedSections = document.querySelectorAll('.section-shell');
+  if (!window.MotionLifecycle && 'IntersectionObserver' in window && animatedSections.length) {
+    const sectionAnimationObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle('is-offscreen-paused', !entry.isIntersecting);
+      });
+    });
+    animatedSections.forEach((section) => sectionAnimationObserver.observe(section));
+  }
+
+  const syncDocumentAnimations = () => {
+    document.documentElement.classList.toggle('is-document-hidden', document.hidden);
+  };
+  if (!window.MotionLifecycle) {
+    document.addEventListener('visibilitychange', syncDocumentAnimations);
+    syncDocumentAnimations();
+  }
 });
 
 /* ============================================================
@@ -581,6 +580,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let touchStartY = 0;
   let autoplayTimer = null;
   let autoplayPausedByUser = false;
+  let isCarouselVisible = Boolean(window.MotionLifecycle) || !('IntersectionObserver' in window);
+  let motionAllowed = !window.MotionLifecycle;
 
   // Crea el contenido visual y los selectores directamente desde el arreglo.
   cardsContainer.innerHTML = services.map((service, index) => `
@@ -632,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stopAutoplay();
     const pausedByMouse = hoverCapable.matches && carousel.matches(':hover');
     const pausedByKeyboard = Boolean(carousel.querySelector(':focus-visible'));
-    if (autoplayPausedByUser || reducedMotion.matches || document.hidden || modal?.open || pausedByMouse || pausedByKeyboard) return;
+    if (autoplayPausedByUser || reducedMotion.matches || document.hidden || !isCarouselVisible || !motionAllowed || modal?.open || pausedByMouse || pausedByKeyboard) return;
     autoplayTimer = window.setInterval(() => showService(currentIndex + 1, false), AUTOPLAY_DELAY);
   };
 
@@ -704,6 +705,25 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAutoplayControl();
     startAutoplay();
   });
+
+  if (window.MotionLifecycle) {
+    window.MotionLifecycle.register(carousel, {
+      start: () => {
+        motionAllowed = true;
+        startAutoplay();
+      },
+      stop: () => {
+        motionAllowed = false;
+        stopAutoplay();
+      }
+    });
+  } else if ('IntersectionObserver' in window) {
+    const carouselObserver = new IntersectionObserver(([entry]) => {
+      isCarouselVisible = entry.isIntersecting;
+      if (isCarouselVisible) startAutoplay(); else stopAutoplay();
+    });
+    carouselObserver.observe(carousel);
+  }
 
   // El diálogo reutiliza los datos y prepara el mensaje de WhatsApp.
   cardsContainer.addEventListener('click', (event) => {

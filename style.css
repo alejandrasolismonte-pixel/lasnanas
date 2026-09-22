@@ -312,6 +312,12 @@ body {
     100% { box-shadow: 0 0 50px rgba(139, 69, 19, 0.12); border-color: rgba(255, 255, 255, 0.06); }
 }
 
+html.is-document-hidden *,
+html.is-document-hidden *::before,
+html.is-document-hidden *::after {
+    animation-play-state: paused !important;
+}
+
 .logo {
     width: 130px;
     margin-bottom: 1.6rem;

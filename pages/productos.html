@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
   <script src="../js/theme-init.js?v=1"></script>
-  <link rel="stylesheet" href="../css/desarrollo.css?v=83">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=86">
   <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
   <link rel="stylesheet" href="../css/public-theme.css?v=2">
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
@@ -53,7 +53,10 @@
     <!-- Hero de fuego compartido con Inicio y Ecosistema. -->
     <section class="page-fire-hero page-fire-hero--productos" aria-labelledby="products-title">
       <div class="page-fire-hero__video-wrap" aria-hidden="true">
-        <video src="../assets/videos/video-header.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <video autoplay muted loop playsinline preload="metadata">
+          <source src="../assets/videos/video-header-web.webm" type="video/webm">
+          <source src="../assets/videos/video-header-iphone.mp4" type="video/mp4">
+        </video>
       </div>
       <div class="page-fire-hero__overlay" aria-hidden="true"></div>
       <div class="page-fire-hero__content">
@@ -185,7 +188,8 @@
   </footer>
 
   <script src="../js/loading-overlay.js?v=2"></script>
-  <script src="../js/desarrollo.js?v=30"></script>
+  <script src="../js/motion-lifecycle.js?v=2"></script>
+  <script src="../js/desarrollo.js?v=32"></script>
   <script src="../js/whatsapp-floating.js?v=3"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
   <script src="../js/theme-init.js?v=1"></script>
-  <link rel="stylesheet" href="../css/desarrollo.css?v=83">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=86">
   <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
   <link rel="stylesheet" href="../css/public-theme.css?v=2">
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
@@ -53,7 +53,10 @@
     <!-- Hero de fuego compartido con Inicio y Ecosistema. -->
     <section class="page-fire-hero page-fire-hero--servicios" aria-labelledby="services-showcase-title">
       <div class="page-fire-hero__video-wrap" aria-hidden="true">
-        <video src="../assets/videos/video-header.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <video autoplay muted loop playsinline preload="metadata">
+          <source src="../assets/videos/video-header-web.webm" type="video/webm">
+          <source src="../assets/videos/video-header-iphone.mp4" type="video/mp4">
+        </video>
       </div>
       <div class="page-fire-hero__overlay" aria-hidden="true"></div>
       <div class="page-fire-hero__content">
@@ -117,6 +120,968 @@
         </div>
       </dialog>
     </section>
+        <!-- Juego Memorice -->
+        <!-- ========================================== -->
+        <!-- ESTILOS LOCALES DEL JUEGO (UI & UX)         -->
+        <!-- ========================================== -->
+        <style>
+            /* La maquetación del juego vive aquí y ya no depende de Tailwind. */
+            #juego-memorice {
+                width: 100%;
+                margin-inline: auto;
+                padding: .75rem 1rem 7rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                overflow: visible;
+                font-family: 'Quicksand', sans-serif;
+            }
+
+            .memory-heading { margin-bottom: .75rem; text-align: center; }
+            .memory-heading__title {
+                margin: 0 0 .5rem;
+                color: #fff;
+                font-size: 1.875rem;
+                font-weight: 700;
+                letter-spacing: .025em;
+            }
+            .memory-heading__title span,
+            .player-panel__score { color: #43a047; }
+            .memory-heading__description {
+                max-width: 36rem;
+                margin-inline: auto;
+                color: #9ca3af;
+                font-size: .875rem;
+            }
+
+            .memory-scoreboard {
+                display: flex;
+                width: 100%;
+                max-width: 42rem;
+                margin-bottom: .75rem;
+                align-items: center;
+                justify-content: space-between;
+                gap: .5rem;
+            }
+            .player-panel {
+                flex: 1 1 0;
+                padding: .5rem;
+                border-radius: .75rem;
+                background: #1f2937;
+                text-align: center;
+            }
+            .player-panel__name {
+                margin: 0;
+                color: #fff;
+                font-size: .875rem;
+                font-weight: 700;
+            }
+            .player-panel__score {
+                margin: .25rem 0;
+                font-size: 1.25rem;
+                font-weight: 700;
+                line-height: 1;
+            }
+            .player-panel__score span:last-child,
+            .player-panel__wins {
+                color: #9ca3af;
+                font-size: .75rem;
+                font-weight: 400;
+            }
+            .player-panel__wins {
+                margin: 0;
+                letter-spacing: .05em;
+                text-transform: uppercase;
+            }
+            .player-panel__wins strong { color: #fff; font-weight: 700; }
+
+            .memory-restart {
+                display: inline-flex;
+                width: 2.5rem;
+                height: 2.5rem;
+                padding: 0;
+                flex: 0 0 auto;
+                align-items: center;
+                justify-content: center;
+                gap: .5rem;
+                color: #fff;
+                border: 0;
+                border-radius: 999px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .35);
+                font: inherit;
+                font-weight: 700;
+                cursor: pointer;
+            }
+            .memory-restart__icon { width: 1.05rem; height: 1.05rem; fill: none; stroke: currentColor; stroke-width: 2; }
+            .memory-restart__label { display: none; }
+
+            .memory-game-container {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                width: 100%;
+                max-width: 48rem;
+                margin-inline: auto;
+                flex: 0 0 auto;
+                gap: .5rem;
+                overflow: visible;
+                perspective: 1000px;
+            }
+
+            .memory-victory {
+                position: fixed;
+                inset: 0;
+                z-index: 50;
+                display: flex;
+                padding: 1rem;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, .8);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+            .memory-victory[hidden] { display: none !important; }
+            .memory-victory__dialog {
+                width: 100%;
+                max-width: 24rem;
+                padding: 1.5rem;
+                color: #fff;
+                border: 2px solid #43a047;
+                border-radius: 1rem;
+                background: #111827;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .55);
+                text-align: center;
+            }
+            .memory-victory__icon {
+                width: 3rem;
+                height: 3rem;
+                margin-bottom: 1rem;
+                color: #43a047;
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 1.8;
+            }
+            .memory-victory__title {
+                margin: 0 0 .5rem;
+                color: #43a047;
+                font-size: 1.5rem;
+                font-weight: 700;
+            }
+            .memory-victory__title[data-tone="draw"] { color: #facc15; }
+            .memory-victory__text { margin: 0 0 1.5rem; color: #d1d5db; font-size: 1rem; }
+            .memory-victory__scores {
+                display: flex;
+                margin-bottom: 1.5rem;
+                padding: .75rem;
+                justify-content: space-around;
+                border-radius: .5rem;
+                background: #1f2937;
+            }
+            .memory-victory__scores p { margin: 0; }
+            .memory-victory__scores small { color: #9ca3af; font-size: .75rem; }
+            .memory-victory__score { color: #fff; font-size: 1.25rem; font-weight: 700; }
+            .memory-victory__button {
+                width: 100%;
+                padding: .75rem 2rem;
+                color: #fff;
+                border: 0;
+                border-radius: 999px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .35);
+                font: inherit;
+                font-size: 1.125rem;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            /* --- SISTEMA DE CARTAS 3D --- */
+            .memory-card {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 3 / 4;
+                padding: 0;
+                border: 0;
+                background: transparent;
+                color: inherit;
+                font: inherit;
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+                -webkit-transform-style: preserve-3d;
+                transform-style: preserve-3d;
+                /* SE HIZO MÁS RÁPIDO: de 0.6s a 0.35s para mayor fluidez */
+                transition: transform 0.35s cubic-bezier(0.4, 0.2, 0.2, 1);
+                cursor: pointer;
+            }
+
+            .memory-card:focus-visible {
+                outline: 3px solid #f97316;
+                outline-offset: 4px;
+                border-radius: .75rem;
+            }
+
+            .memory-card:disabled { cursor: default; }
+
+            .memory-card.flip {
+                transform: rotateY(180deg);
+            }
+
+            .memory-card-front,
+            .memory-card-back {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                backface-visibility: hidden;
+                -webkit-backface-visibility: hidden;
+                border-radius: 0.75rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+            }
+
+            /* --- NUEVO REVERSO DE CARTA (Ligero, claro y sin imágenes pesadas) --- */
+            .memory-card-back {
+                background: linear-gradient(135deg, #1e293b 0%, #1e293b 100%);
+                /* Verde pastel muy claro */
+                border: 2px solid #86efac;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transform: rotateY(0deg);
+                transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            }
+
+            @media (hover: hover) and (pointer: fine) {
+                .memory-card-back:hover {
+                    border-color: #4ade80;
+                    box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
+                    transform: scale(1.02);
+                }
+            }
+
+            /* Ícono y texto del reverso */
+            .back-logo-icon {
+                width: 2rem;
+                height: 2rem;
+                /* Tamaño equilibrado, 30% más pequeño que antes */
+                color: #c36d0ccb;
+                margin-bottom: 4px;
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 1.8;
+            }
+
+            .back-logo-text {
+                font-family: 'Pacifico', cursive;
+                color: #166534;
+                font-size: 1rem;
+                line-height: 1;
+            }
+
+            /* --- FRENTE DE LA CARTA (Donde va la palabra) --- */
+            .memory-card-front {
+                transform: rotateY(180deg);
+                background-color: #0d2425;
+                /* Un poco más claro que el fondo para resaltar */
+                border: 2px solid #43a047;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                text-align: center;
+            }
+
+            .card-icon-container {
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+
+            .card-icon {
+                width: 2rem;
+                height: 2rem;
+                opacity: 0;
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 1.8;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+
+            .memory-card__mapu {
+                margin: 0 0 .25rem;
+                color: #22c55e;
+                font-size: 1rem;
+                font-weight: 700;
+                line-height: 1;
+            }
+            .memory-card__translation {
+                margin: 0;
+                color: #d1d5db;
+                font-size: .875rem;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            .card-text-container {
+                width: 100%;
+                padding: 20px 10px;
+                background-color: #1a2332;
+                border-top: 1px solid rgba(67, 160, 71, 0.3);
+            }
+
+            /* Animación de rebote del ícono al voltear (Más rápida) */
+            .memory-card.flip .card-icon {
+                animation: bounceIn 0.4s ease-out forwards;
+            }
+
+            @keyframes bounceIn {
+                0% {
+                    transform: scale(0);
+                    opacity: 0;
+                }
+
+                60% {
+                    transform: scale(1.1);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+
+            /* ==========================================================
+       MEMORICE RESPONSIVO
+       ========================================================== */
+
+            /* ---------- Escritorio (1024px o más) ---------- */
+            @media (min-width: 1024px) {
+
+                .back-logo-icon {
+                    width: 2rem;
+                    height: 2rem;
+                }
+
+                .back-logo-text {
+                    font-size: 1rem;
+                }
+
+                .card-text-container {
+                    padding: 20px 10px;
+                }
+
+                .card-icon {
+                    width: 5rem;
+                    height: 5rem;
+                }
+
+                .memory-card-front h3 {
+                    font-size: 1.3rem;
+                }
+
+                .memory-card-front p {
+                    font-size: 1rem;
+                }
+
+            }
+
+            /* ---------- Tablet (768px a 1023px) ---------- */
+            @media (min-width: 768px) and (max-width: 1023px) {
+
+                .back-logo-icon {
+                    width: 1.7rem;
+                    height: 1.7rem;
+                }
+
+                .back-logo-text {
+                    font-size: .9rem;
+                }
+
+                .card-text-container {
+                    padding: 15px 8px;
+                }
+
+                .card-icon {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                }
+
+                .memory-card-front h3 {
+                    font-size: 1.1rem;
+                }
+
+                .memory-card-front p {
+                    font-size: .9rem;
+                }
+
+            }
+
+            /* ---------- Celular (767px o menos) ---------- */
+            @media (max-width: 767px) {
+
+                .back-logo-icon {
+                    width: 1.8rem;
+                    height: 1.8rem;
+                }
+
+                .back-logo-text {
+                    font-size: .7rem;
+                }
+
+                .card-text-container {
+                    padding: 15px 5px;
+                }
+
+                .card-icon {
+                    width: 2rem;
+                    height: 2rem;
+                }
+
+                .memory-card-front h3 {
+                    font-size: .95rem;
+                }
+
+                .memory-card-front p {
+                    font-size: .75rem;
+                }
+
+            }
+
+            /* Estilo de carta adivinada (Match) */
+            .matched {
+                animation: pulseMatch 0.6s ease-in-out;
+                border-color: #ffd700 !important;
+                box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            }
+
+            @keyframes pulseMatch {
+                0% {
+                    transform: rotateY(180deg) scale(1);
+                }
+
+                50% {
+                    transform: rotateY(180deg) scale(1.05);
+                }
+
+                100% {
+                    transform: rotateY(180deg) scale(1);
+                }
+            }
+
+            /* --- PANEL DE JUGADORES (Turnos) --- */
+            .player-panel {
+                transition: all 0.3s ease;
+                opacity: 0.6;
+                border: 2px solid transparent;
+            }
+
+            .player-panel.active-turn {
+                opacity: 1;
+                border-color: #43a047;
+                /* Verde activo */
+                box-shadow: 0 0 20px rgba(67, 160, 71, 0.2);
+                transform: translateY(-2px);
+                background-color: rgba(30, 41, 59, 0.8);
+            }
+
+            /* Botón general */
+            .btn-ecosistema {
+                background-color: #e85d22;
+                transition: background-color 0.3s, transform 0.2s;
+            }
+
+            .btn-ecosistema:hover {
+                background-color: #d04d16;
+                transform: translateY(-2px);
+            }
+
+            @media (min-width: 768px) {
+                .memory-heading__title { font-size: 2.25rem; }
+                .memory-heading__description { font-size: 1rem; }
+                .memory-scoreboard { gap: 1rem; }
+                .player-panel { padding: .75rem; }
+                .player-panel__name { font-size: 1.125rem; }
+                .player-panel__score { font-size: 1.5rem; }
+                .memory-restart { width: auto; height: 3rem; padding-inline: 1rem; }
+                .memory-restart__label { display: inline; }
+                .memory-game-container {
+                    grid-template-columns: repeat(5, minmax(0, 1fr));
+                    margin-top: -2.5rem;
+                    gap: .75rem;
+                }
+                .memory-victory__dialog { padding: 2rem; }
+                .memory-victory__title { font-size: 1.875rem; }
+                .memory-card__mapu { font-size: 1.25rem; }
+                .memory-card__translation { font-size: 1rem; }
+            }
+
+            /* --- ANIMACIÓN DE FLORES Y HOJAS AL GANAR --- */
+            .particle {
+                position: fixed;
+                top: -10%;
+                z-index: 9999;
+                pointer-events: none;
+                animation: fall linear forwards;
+                font-size: 1.5rem;
+            }
+
+            @keyframes fall {
+                0% {
+                    transform: translateY(-10vh) rotate(0deg);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translateY(110vh) rotate(720deg);
+                    opacity: 0;
+                }
+            }
+        </style>
+
+        <!-- ========================================== -->
+        <!-- 4. ESTRUCTURA HTML DEL JUEGO               -->
+        <!-- ========================================== -->
+        <section id="juego-memorice">
+
+            <!-- Encabezado -->
+            <div class="memory-heading">
+                <h2 class="memory-heading__title">
+                    kimün <span>conexiones.</span>
+                </h2>
+                <p class="memory-heading__description">
+                    Encuentra los pares. Si aciertas, mantienes tu turno.
+                </p>
+            </div>
+
+            <!-- Panel de Multijugador (Turnos y Puntaje) -->
+            <div class="memory-scoreboard">
+
+                <!-- Jugador 1 -->
+                <div id="panel-p1" class="player-panel active-turn">
+                    <h3 class="player-panel__name">Jugador 1</h3>
+                    <p class="player-panel__score"><span id="score-p1">0</span> <span>pares</span></p>
+                    <p class="player-panel__wins">Victorias: <strong id="wins-p1">0</strong></p>
+                </div>
+
+                <!-- Botón Reiniciar en el centro -->
+                <button id="restart-btn" class="btn-ecosistema memory-restart" type="button" title="Reiniciar Juego" aria-label="Reiniciar juego">
+                    <svg class="memory-restart__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6"></path><path d="M5.5 15a8 8 0 1 0 .5-7L4 10"></path></svg>
+                    <span class="memory-restart__label">Reiniciar</span>
+                </button>
+
+                <!-- Jugador 2 -->
+                <div id="panel-p2" class="player-panel">
+                    <h3 class="player-panel__name">Jugador 2</h3>
+                    <p class="player-panel__score"><span id="score-p2">0</span> <span>pares</span></p>
+                    <p class="player-panel__wins">Victorias: <strong id="wins-p2">0</strong></p>
+                </div>
+
+            </div>
+
+            <!-- Tablero del Juego (Tamaño ajustado max-w-3xl para que las cartas sean más equilibradas) -->
+            <div class="memory-game-container" id="game-board" aria-label="Tablero del juego Memorice">
+                <!-- Las cartas se generan dinámicamente en JS -->
+            </div>
+            <p id="memory-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+
+            <!-- Modal de Victoria -->
+            <div id="victory-message" class="memory-victory" role="dialog" aria-modal="true" aria-labelledby="victory-title" hidden>
+                <div class="memory-victory__dialog">
+                    <svg class="memory-victory__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21v-9"></path><path d="M12 14c-4 0-7-2.5-7-7 4 0 7 2 7 6"></path><path d="M12 16c4 0 7-2.5 7-7-4 0-7 2-7 6"></path></svg>
+                    <h3 class="memory-victory__title" id="victory-title">¡Juego Terminado!</h3>
+                    <p class="memory-victory__text" id="victory-text">Resultados de la cosecha.</p>
+
+                    <div class="memory-victory__scores">
+                        <div>
+                            <p><small>Jugador 1</small></p>
+                            <p class="memory-victory__score" id="final-score-p1">0</p>
+                        </div>
+                        <div>
+                            <p><small>Jugador 2</small></p>
+                            <p class="memory-victory__score" id="final-score-p2">0</p>
+                        </div>
+                    </div>
+
+                    <button id="replay-btn" class="btn-ecosistema memory-victory__button" type="button">
+                        Jugar Revancha
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 5. SCRIPT: LÓGICA DEL JUEGO Y UX           -->
+        <!-- ========================================== -->
+        <script>
+            /* BASE DE DATOS DE CARTAS: Agregamos colores específicos a cada elemento para darles vida */
+            const palabrasData = [{
+                    id: 1,
+                    mapu: 'Ruka',
+                    esp: 'Casa',
+                    icon: 'house',
+                    color: '#d97706'
+                }, // Naranja/Café
+                {
+                    id: 2,
+                    mapu: 'Tukukawe',
+                    esp: 'Huerta',
+                    icon: 'seedling',
+                    color: '#22c55e'
+                }, // Verde
+                {
+                    id: 3,
+                    mapu: 'Poyen',
+                    esp: 'Amor',
+                    icon: 'heart',
+                    color: '#e11d48'
+                }, // Rojo
+                {
+                    id: 4,
+                    mapu: 'Keyuwün',
+                    esp: 'Ayuda mutua',
+                    icon: 'hands',
+                    color: '#0d9488'
+                }, // Turquesa
+                {
+                    id: 5,
+                    mapu: 'Kimün',
+                    esp: 'Sabiduría',
+                    icon: 'book',
+                    color: '#9333ea'
+                }, // Morado
+                {
+                    id: 6,
+                    mapu: 'Mapu',
+                    esp: 'Tierra',
+                    icon: 'earth',
+                    color: '#854d0e'
+                }, // Café tierra
+                {
+                    id: 7,
+                    mapu: 'Ixofill',
+                    esp: 'bosque',
+                    icon: 'leaf',
+                    color: '#84cc16'
+                }, // Verde lima
+                {
+                    id: 8,
+                    mapu: 'Ko',
+                    esp: 'Agua',
+                    icon: 'droplet',
+                    color: '#3b82f6'
+                }, // Azul
+                {
+                    id: 9,
+                    mapu: 'Antü',
+                    esp: 'Sol',
+                    icon: 'sun',
+                    color: '#eab308'
+                }, // Amarillo
+                {
+                    id: 10,
+                    mapu: 'Küyen',
+                    esp: 'Luna',
+                    icon: 'moon',
+                    color: '#94a3b8'
+                } // Plata
+            ];
+
+            // Íconos SVG locales: eliminan la descarga completa de Font Awesome.
+            const memoryIconPaths = Object.freeze({
+                house: '<path d="M3 11.5 12 4l9 7.5"></path><path d="M5.5 10v10h13V10M9.5 20v-6h5v6"></path>',
+                seedling: '<path d="M12 21v-9"></path><path d="M12 14c-4 0-7-2.5-7-7 4 0 7 2 7 6"></path><path d="M12 16c4 0 7-2.5 7-7-4 0-7 2-7 6"></path>',
+                heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"></path>',
+                hands: '<path d="M8.5 12.5 11 15c.6.6 1.5.6 2.1 0l3.4-3.4"></path><path d="m3 14 4.5 4.5h4l2-2M21 14l-4.5 4.5h-3"></path><path d="M3 14 1.5 12.5M21 14l1.5-1.5"></path><circle cx="12" cy="7" r="3"></circle>',
+                book: '<path d="M3 5.5c3-1 6-.5 9 1.5v13c-3-2-6-2.5-9-1.5v-13Z"></path><path d="M21 5.5c-3-1-6-.5-9 1.5v13c3-2 6-2.5 9-1.5v-13Z"></path>',
+                earth: '<circle cx="12" cy="12" r="9"></circle><path d="M3.5 9h17M3.5 15h17M12 3c2.5 2.4 3.5 5.4 3.5 9S14.5 18.6 12 21M12 3C9.5 5.4 8.5 8.4 8.5 12s1 6.6 3.5 9"></path>',
+                leaf: '<path d="M20 4C11 4 5 8.5 5 15c0 2.8 2.2 5 5 5 6.5 0 10-7 10-16Z"></path><path d="M4 21c3-5 7-8.5 12-11"></path>',
+                droplet: '<path d="M12 2S5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13Z"></path>',
+                sun: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>',
+                moon: '<path d="M20.5 15.5A9 9 0 0 1 8.5 3.5a9 9 0 1 0 12 12Z"></path>'
+            });
+
+            function renderMemoryIcon(name, className, color) {
+                const paths = memoryIconPaths[name] || memoryIconPaths.seedling;
+                const colorStyle = color ? ` style="color: ${color};"` : '';
+                return `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true"${colorStyle}>${paths}</svg>`;
+            }
+
+            // Variables de estado del tablero
+            let cardsArray = [];
+            let hasFlippedCard = false;
+            let lockBoard = false;
+            let firstCard, secondCard;
+            let totalPairs = palabrasData.length;
+            let matchedPairs = 0;
+            let mismatchTimer = null;
+            let victoryTimer = null;
+
+            // Variables Multijugador
+            let currentPlayer = 1; // 1 o 2
+            let scoreP1 = 0;
+            let scoreP2 = 0;
+            let winsP1 = 0;
+            let winsP2 = 0;
+
+            // Referencias DOM
+            let boardElement, victoryMessage;
+            let scoreP1El, scoreP2El, panelP1El, panelP2El, statusEl;
+
+            function initGame() {
+                boardElement = document.getElementById('game-board');
+                victoryMessage = document.getElementById('victory-message');
+
+                scoreP1El = document.getElementById('score-p1');
+                scoreP2El = document.getElementById('score-p2');
+                panelP1El = document.getElementById('panel-p1');
+                panelP2El = document.getElementById('panel-p2');
+                statusEl = document.getElementById('memory-status');
+
+                // Barajar mazo
+                cardsArray = [...palabrasData, ...palabrasData];
+                cardsArray.sort(() => 0.5 - Math.random());
+
+                renderBoard();
+                resetMatchStats();
+            }
+
+            // Renderizado del HTML de las cartas
+            function renderBoard() {
+                boardElement.innerHTML = '';
+
+                cardsArray.forEach((item) => {
+                    const cardElement = document.createElement('button');
+                    cardElement.type = 'button';
+                    cardElement.className = 'memory-card';
+                    cardElement.dataset.id = item.id;
+                    cardElement.dataset.cardLabel = `${item.mapu}: ${item.esp}`;
+                    cardElement.setAttribute('aria-label', 'Carta oculta');
+
+                    cardElement.innerHTML = `
+                    <div class="memory-card-back">
+                        ${renderMemoryIcon('seedling', 'back-logo-icon')}
+                        <div class="back-logo-text">Las Ñañas</div>
+                    </div>
+                    <div class="memory-card-front">
+                        <div class="card-icon-container">
+                            ${renderMemoryIcon(item.icon, 'card-icon', item.color)}
+                        </div>
+                     <div class="card-text-container">
+                        <h3 class="memory-card__mapu">${item.mapu}</h3>
+                        <p class="memory-card__translation">${item.esp}</p>
+                    </div>
+                </div>
+                    </div>
+                `;
+
+                    cardElement.addEventListener('click', flipCard);
+                    boardElement.appendChild(cardElement);
+                });
+            }
+
+            // Lógica al hacer clic en una carta
+            function flipCard() {
+                if (lockBoard) return;
+                if (this === firstCard) return;
+
+                this.classList.add('flip');
+                this.setAttribute('aria-label', this.dataset.cardLabel);
+
+                if (!hasFlippedCard) {
+                    hasFlippedCard = true;
+                    firstCard = this;
+                    return;
+                }
+
+                secondCard = this;
+                checkForMatch();
+            }
+
+            // Verificar si las dos cartas son iguales
+            function checkForMatch() {
+                let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+
+                if (isMatch) {
+                    // Acierto: suma punto y mantiene turno
+                    addScore();
+                    disableCards();
+                } else {
+                    // Falla: cambia el turno
+                    unflipCards();
+                }
+            }
+
+            function addScore() {
+                if (currentPlayer === 1) {
+                    scoreP1++;
+                    scoreP1El.innerText = scoreP1;
+                } else {
+                    scoreP2++;
+                    scoreP2El.innerText = scoreP2;
+                }
+            }
+
+            function switchTurn() {
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                // Actualizar UI
+                if (currentPlayer === 1) {
+                    panelP1El.classList.add('active-turn');
+                    panelP2El.classList.remove('active-turn');
+                } else {
+                    panelP2El.classList.add('active-turn');
+                    panelP1El.classList.remove('active-turn');
+                }
+            }
+
+            function disableCards() {
+                firstCard.removeEventListener('click', flipCard);
+                secondCard.removeEventListener('click', flipCard);
+
+                firstCard.querySelector('.memory-card-front').classList.add('matched');
+                secondCard.querySelector('.memory-card-front').classList.add('matched');
+                firstCard.disabled = true;
+                secondCard.disabled = true;
+
+                matchedPairs++;
+                statusEl.textContent = `Pareja encontrada. Jugador ${currentPlayer} continúa.`;
+                resetBoardVars();
+
+                if (matchedPairs === totalPairs) {
+                    victoryTimer = window.setTimeout(showVictory, 600);
+                }
+            }
+
+            function unflipCards() {
+                lockBoard = true;
+                // TIEMPO OPTIMIZADO: de 1000ms a 700ms para no aburrir al jugador
+                mismatchTimer = window.setTimeout(() => {
+                    firstCard.classList.remove('flip');
+                    secondCard.classList.remove('flip');
+                    firstCard.setAttribute('aria-label', 'Carta oculta');
+                    secondCard.setAttribute('aria-label', 'Carta oculta');
+                    switchTurn(); // Cambia turno solo cuando se equivoca
+                    statusEl.textContent = `No son pareja. Turno del jugador ${currentPlayer}.`;
+                    resetBoardVars();
+                }, 700);
+            }
+
+            function resetBoardVars() {
+                [hasFlippedCard, lockBoard] = [false, false];
+                [firstCard, secondCard] = [null, null];
+            }
+
+            function resetMatchStats() {
+                matchedPairs = 0;
+                scoreP1 = 0;
+                scoreP2 = 0;
+                scoreP1El.innerText = '0';
+                scoreP2El.innerText = '0';
+                currentPlayer = 1;
+                panelP1El.classList.add('active-turn');
+                panelP2El.classList.remove('active-turn');
+                victoryMessage.hidden = true;
+                document.getElementById('victory-title').dataset.tone = '';
+                statusEl.textContent = 'Nueva partida. Turno del jugador 1.';
+            }
+
+            function updateWinsUI() {
+                document.getElementById('wins-p1').innerText = winsP1;
+                document.getElementById('wins-p2').innerText = winsP2;
+            }
+
+            // === FIN DEL JUEGO Y EFECTOS ===
+            function showVictory() {
+                let title = document.getElementById('victory-title');
+                let text = document.getElementById('victory-text');
+
+                document.getElementById('final-score-p1').innerText = scoreP1;
+                document.getElementById('final-score-p2').innerText = scoreP2;
+
+                // Determinar ganador
+                if (scoreP1 > scoreP2) {
+                    title.innerText = "¡Jugador 1 Gana!";
+                    title.dataset.tone = 'winner';
+                    text.innerText = "Excelente memoria.";
+                    winsP1++;
+                } else if (scoreP2 > scoreP1) {
+                    title.innerText = "¡Jugador 2 Gana!";
+                    title.dataset.tone = 'winner';
+                    text.innerText = "Excelente memoria.";
+                    winsP2++;
+                } else {
+                    title.innerText = "¡Es un Empate!";
+                    title.dataset.tone = 'draw';
+                    text.innerText = "Ambos tienen gran sabiduría.";
+                }
+
+                updateWinsUI();
+                victoryMessage.hidden = false;
+                document.getElementById('replay-btn').focus();
+                lanzarHojasYFlores(); // Inicia animación de victoria
+            }
+
+            function resetGame() {
+                window.clearTimeout(mismatchTimer);
+                window.clearTimeout(victoryTimer);
+                mismatchTimer = null;
+                victoryTimer = null;
+                lockBoard = true;
+                victoryMessage.hidden = true;
+                const cards = document.querySelectorAll('.memory-card');
+                cards.forEach(card => card.classList.remove('flip'));
+                window.setTimeout(() => {
+                    initGame();
+                }, 400);
+            }
+
+            // ==========================================
+            // SISTEMA DE PARTÍCULAS (Hojas y Flores)
+            // ==========================================
+            function lanzarHojasYFlores() {
+                const emojis = ['🌸', '🌼', '🍃', '🍂', '🌺', '🌱'];
+                const container = document.body;
+
+                // Crea 40 partículas
+                for (let i = 0; i < 40; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.classList.add('particle');
+                        particle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+
+                        // Posición horizontal aleatoria
+                        particle.style.left = Math.random() * 100 + 'vw';
+
+                        // Tamaño aleatorio
+                        const size = Math.random() * 1.5 + 0.8;
+                        particle.style.fontSize = size + 'rem';
+
+                        // Duración de caída aleatoria (entre 2 y 5 segundos)
+                        const duration = Math.random() * 3 + 2;
+                        particle.style.animationDuration = duration + 's';
+
+                        container.appendChild(particle);
+
+                        // Eliminar del DOM una vez que termine la animación
+                        setTimeout(() => {
+                            particle.remove();
+                        }, duration * 1000);
+
+                    }, i * 50); // Retraso escalonado para que no caigan todas de golpe
+                }
+            }
+
+            // Inicializar al cargar
+            document.addEventListener('DOMContentLoaded', () => {
+                initGame();
+                document.getElementById('restart-btn').addEventListener('click', resetGame);
+                document.getElementById('replay-btn').addEventListener('click', resetGame);
+            });
+        </script>
 
     <section class="section-shell section contact-section" id="contacto">
       <div class="container contact-grid">
@@ -126,7 +1091,7 @@
           <p>¿Necesitas contratar nuestros servicios técnicos o asesoría agroecológica? Escríbenos directamente y evaluaremos tu terreno.</p>
           <a href="mailto:nanamapuche@gmail.com">nanamapuche@gmail.com</a>
         </div>
-        
+                
          <form class="contact-form reveal" data-contact-form action="https://formspree.io/f/xyeynlka" method="POST">
           <input type="hidden" name="subject" value="Las Ñañas | Servicios">
           <label>Nombre<input name="nombre" type="text" autocomplete="name" required></label>
@@ -140,6 +1105,7 @@
       </div>
     </section>
   </main>
+  
 
   <footer class="site-footer ethnic-footer">
     <div class="container">
@@ -170,7 +1136,8 @@
   </footer>
 
   <script src="../js/loading-overlay.js?v=2"></script>
-  <script src="../js/desarrollo.js?v=30"></script>
+  <script src="../js/motion-lifecycle.js?v=2"></script>
+  <script src="../js/desarrollo.js?v=32"></script>
   <script src="../js/whatsapp-floating.js?v=3"></script>
 </body>
 </html>
