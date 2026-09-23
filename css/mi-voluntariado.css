@@ -26,3 +26,34 @@
   border: none;
   padding: 0;
 }
+/* Estados visuales del proceso de voluntariado */
+
+.state-panel--warning {
+  border-left-color: var(--orange);
+  background: #fff7ef;
+  color: var(--ink);
+}
+
+.state-panel--info {
+  border-left-color: var(--turquoise);
+  background: #eef9f8;
+  color: var(--ink);
+}
+
+.state-panel--success {
+  border-left-color: var(--green);
+  background: #edf7f3;
+  color: var(--ink);
+}
+
+.state-panel--warning h3 {
+  color: #8b3d12;
+}
+
+.state-panel--info h3 {
+  color: #18595c;
+}
+
+.state-panel--success h3 {
+  color: var(--green);
+}

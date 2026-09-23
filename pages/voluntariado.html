@@ -16,7 +16,7 @@
   <!-- Estilos específicos para los efectos del Voluntariado (Planeta, Glow, Acordeón) -->
   <!-- CAMBIO: versión actualizada para cargar sin caché el nuevo hero de voluntariado. -->
   <link rel="stylesheet" href="../css/voluntariado.css?v=23">
-  <!-- ETAPA 1: estilos aislados del flujo demostrativo de inscripción y membresía. -->
+  <!-- Estilos del acceso y registro de voluntariado. -->
   <link rel="stylesheet" href="../css/voluntariado-demo.css?v=2">
   <!-- CARGA GLOBAL: indicador central para esperas de autenticación y navegación. -->
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
@@ -518,10 +518,9 @@
     <div class="membership-auth__surface">
       <button class="membership-auth__close" type="button" data-auth-close aria-label="Cerrar ventana">×</button>
      <img src="../assets/img/logo-web.png" alt="Las Ñañas" class="membership-auth__logo">
-      <p class="demo-badge">Demostración · sin pagos reales</p>
+      <p class="demo-badge">Acceso a tu cuenta de voluntariado</p>
       <h2 id="auth-dialog-title">Accede a Mi voluntariado</h2>
       <p class="membership-auth__plan" data-auth-selection-summary>Plan elegido: <strong data-auth-plan>—</strong> · <span data-auth-billing>—</span></p>
-      <p class="membership-auth__warning">Utiliza únicamente datos ficticios para probar este prototipo.</p>
 
       <div class="membership-auth__tabs" role="tablist" aria-label="Acceso a la cuenta">
         <button type="button" role="tab" id="create-account-tab" aria-controls="create-account-panel" aria-selected="true" data-auth-tab="create">Crear cuenta</button>
@@ -603,7 +602,7 @@
   <script src="../js/supabase-config.js"></script>
   <script src="../js/supabase-client.js?v=1"></script>
   <script src="../js/loading-overlay.js?v=2"></script>
-  <!-- ETAPA 1: lógica demostrativa separada de la futura autenticación y autorización reales. -->
+  <!-- Acceso y registro mediante Supabase Auth. -->
   <script src="../js/voluntariado-demo.js?v=4"></script>
   <script src="../js/whatsapp-floating.js?v=3"></script>
 </body>

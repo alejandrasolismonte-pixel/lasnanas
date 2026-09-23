@@ -46,12 +46,13 @@
         <h2 id="application-detail-title">Detalle individual</h2>
         <p data-detail-status role="status" aria-live="polite"></p>
         <dl data-detail-content hidden>
+          <div class="review-box"><dt>Código de solicitud</dt><dd data-detail-field="application_code" style="overflow-wrap:anywhere;user-select:all">—</dd></div>
           <div class="review-box"><dt>Nombre</dt><dd data-detail-field="name">—</dd></div>
           <div class="review-box"><dt>Correo</dt><dd data-detail-field="email">—</dd></div>
           <div class="review-box"><dt>Plan</dt><dd data-detail-field="plan">—</dd></div>
           <div class="review-box"><dt>Periodicidad</dt><dd data-detail-field="billing">—</dd></div>
-          <div class="review-box"><dt>Moneda</dt><dd data-detail-field="currency">—</dd></div>
-          <div class="review-box"><dt>Importe</dt><dd data-detail-field="amount">—</dd></div>
+          <div class="review-box"><dt>Moneda cotizada</dt><dd data-detail-field="currency">—</dd></div>
+          <div class="review-box"><dt>Importe cotizado</dt><dd data-detail-field="amount">—</dd></div>
           <div class="review-box"><dt>Estado</dt><dd data-detail-field="status">—</dd></div>
           <div class="review-box"><dt>Fecha</dt><dd data-detail-field="created_at">—</dd></div>
           <div class="review-box"><dt>Membresía</dt><dd data-detail-field="membership">Sin membresía activa</dd></div>
@@ -63,6 +64,12 @@
           <button class="btn btn-ghost" type="button" data-confirm-transfer>Confirmar pago</button>
         </div>
         <p class="field-message" data-admin-action-message aria-live="polite"></p>
+        <section class="state-panel" aria-labelledby="receipt-title">
+          <h3 id="receipt-title">Comprobante de transferencia</h3>
+          <p data-admin-receipt-status role="status" aria-live="polite"></p>
+          <button class="btn btn-ghost" type="button" data-admin-receipt-download disabled>Descargar comprobante privado</button>
+          <p class="help">El comprobante no acredita por sí solo el abono. La moneda de origen puede ser CLP, USD o EUR. Verifica el importe y la moneda efectivamente abonados, las comisiones y su correspondencia con la solicitud; no confirmes diferencias sin resolver.</p>
+        </section>
 
         <section class="state-panel" data-admin-documents>
           <h3>Documentación privada</h3>
@@ -81,14 +88,17 @@
   <dialog data-transfer-dialog aria-labelledby="transfer-dialog-title">
     <form method="dialog" data-transfer-form>
       <h2 id="transfer-dialog-title">Confirmar transferencia</h2>
+      <div class="review-box"><strong>Código de solicitud</strong><span data-transfer-summary="application_code" style="overflow-wrap:anywhere;user-select:all">—</span></div>
       <div class="review-box"><strong>Voluntaria</strong><span data-transfer-summary="volunteer">—</span></div>
       <div class="review-box"><strong>Plan</strong><span data-transfer-summary="plan">—</span></div>
-      <div class="review-box"><strong>Importe</strong><span data-transfer-summary="amount">—</span></div>
-      <div class="review-box"><strong>Moneda</strong><span data-transfer-summary="currency">—</span></div>
+      <div class="review-box"><strong>Importe cotizado</strong><span data-transfer-summary="amount">—</span></div>
+      <div class="review-box"><strong>Moneda cotizada</strong><span data-transfer-summary="currency">—</span></div>
       <div class="review-box"><strong>Fecha</strong><span data-transfer-summary="date">—</span></div>
-      <label>Referencia de transferencia
+      <p class="help">Coteja el código de solicitud con el comentario del abono. Registra abajo la referencia bancaria de la operación.</p>
+      <label>Referencia bancaria de la transferencia
         <input type="text" name="reference" minlength="3" maxlength="120" autocomplete="off" required>
       </label>
+      <label class="check"><input type="checkbox" name="bankVerified" required> He verificado el importe y la moneda efectivamente abonados en la cuenta bancaria, su referencia y su correspondencia con el precio cotizado, considerando conversiones y comisiones bancarias. No quedan diferencias pendientes.</label>
       <p class="field-message" data-transfer-message aria-live="polite"></p>
       <div class="button-row">
         <button class="btn btn-ghost" type="button" data-cancel-transfer>Cancelar</button>
@@ -100,6 +110,8 @@
   <script src="../js/supabase-config.js"></script>
   <script src="../js/supabase-client.js?v=1"></script>
   <script src="../js/loading-overlay.js?v=2"></script>
-  <script src="../js/coordinacion-voluntariado.js?v=3"></script>
+  <script src="../js/transfer-config.js?v=4"></script>
+  <script src="../js/transfer-payments.js?v=3"></script>
+  <script src="../js/coordinacion-voluntariado.js?v=6"></script>
 </body>
 </html>

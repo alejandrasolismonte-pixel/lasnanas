@@ -2,15 +2,16 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Espacio personal y privado de voluntariado de Las Ñañas">
   <title>Mi voluntariado · Las Ñañas</title>
-  <link rel="stylesheet" href="../css/mi-voluntariado.css?v=2">
+<link rel="stylesheet" href="../css/mi-voluntariado.css?v=3">
   <!-- CARGA GLOBAL: indicador central para esperas que bloquean el portal. -->
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
 </head>
 <body>
-  <!-- AVISO: desaparece cuando la aplicación se conecta a Supabase. -->
+  <!-- Estado de conexión y carga del espacio personal. -->
   <div class="demo-bar" data-connection-banner>Conectando con tu espacio privado…</div>
 
   <header class="portal-head">
@@ -22,11 +23,12 @@
     <div class="user-chip"><span class="avatar" data-avatar>V</span><span data-user-name>Voluntaria/o</span><button class="btn btn-ghost" type="button" data-logout>Salir</button></div>
   </header>
 
-  <main class="portal-wrap">
+  <main class="portal-wrap" data-private-workspace hidden>
     <!-- La barra comunica el estado sin depender solo del color. -->
     <section class="progress-card" aria-labelledby="portal-title">
       <div class="progress-top"><div><p class="eyebrow">Tu espacio personal</p><h1 id="portal-title">Tu inscripción está guardada</h1></div><span class="status-pill" data-status-pill>Cuenta creada</span></div>
       <ol class="steps" data-steps><li class="current">Cuenta</li><li>Solicitud</li><li>Revisión</li><li>Pago</li><li>Activa</li></ol>
+      <p>Código de tu solicitud: <strong data-application-code style="overflow-wrap:anywhere;user-select:all">—</strong></p>
     </section>
 
     <div class="portal-grid">
@@ -56,28 +58,49 @@
               <label><input type="radio" name="billing" value="yearly"><span>Anual · 20 % de ahorro</span></label>
             </div></fieldset>
             <div class="review-box"><div><strong>Resumen</strong><p data-plan-summary>—</p></div><strong data-total>—</strong></div>
-            <div class="email-gate" data-email-gate><strong>Correo pendiente de verificación</strong><p>La solicitud se habilita después de verificar el correo.</p><button class="btn btn-ghost" type="button" data-demo-verify>Simular verificación en esta demostración</button></div>
+            <div class="email-gate" data-email-gate><strong>Correo pendiente de verificación</strong><p>La solicitud se habilita después de verificar el correo.</p></div>
             <div class="checks"><label><input type="checkbox" name="respect"> Participaré con respeto y cuidaré la privacidad de la comunidad.</label><label><input type="checkbox" name="coordination"> Entiendo que fechas, cupos, traslados y alojamiento se coordinan directamente.</label></div>
             <div class="button-row"><button class="btn btn-primary" type="submit" data-submit-application>Enviar solicitud al equipo</button><button class="btn btn-ghost" type="button" data-save-later>Guardar y continuar después</button></div>
             <p class="field-message" data-membership-message aria-live="polite"></p>
           </form>
 
           <!-- Aclaraciones visibles y archivos privados; las notas administrativas no se mezclan aquí. -->
-          <form class="state-panel" data-clarification-form hidden>
+          <form class="state-panel state-panel--warning" data-clarification-form hidden>
             <p class="eyebrow">Acción necesaria</p><h3>El equipo solicita una aclaración</h3><p data-public-clarification>—</p>
             <label>Respuesta<textarea name="reply" maxlength="3000" required></textarea></label>
-            <label>Adjuntos privados<input name="attachments" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple></label>
-            <p class="help">PDF, JPG, PNG o WebP; máximo 5 MB por archivo. SVG y ejecutables no se aceptan.</p>
+            <label>Adjuntos privados<input name="attachments" type="file" disabled accept=".pdf,.jpg,.jpeg,.png,.webp" multiple></label>
+            <p class="help">Los adjuntos de aclaraciones todavía no están habilitados.</p>
             <ul class="attachment-list" data-attachment-list></ul>
             <div class="button-row"><button class="btn btn-primary" type="submit">Enviar aclaración</button><button class="btn btn-ghost" type="button" data-save-later>Guardar y continuar después</button></div>
             <p class="field-message" data-clarification-message aria-live="polite"></p>
           </form>
 
-          <section class="state-panel" data-review-state hidden><p class="eyebrow">Solicitud recibida</p><h3>El equipo está revisando tu solicitud</h3><p>No debes pagar todavía. Te avisaremos si necesitamos información adicional.</p></section>
-          <section class="state-panel" data-conditions hidden><p class="eyebrow">Solicitud aceptada</p><h3>Condiciones y pago</h3><div class="notice warning">Las condiciones definitivas de renovación, cancelación y devolución siguen pendientes de validación.</div><label class="check"><input type="checkbox" data-terms> He leído las condiciones provisionales de esta demostración.</label><fieldset><legend>Método de pago</legend><div class="option-grid option-grid--two"><label><input type="radio" name="payment" value="gateway" checked><span>Pasarela de pago</span></label><label><input type="radio" name="payment" value="transfer"><span>Transferencia</span></label></div></fieldset><button class="btn btn-primary" type="button" data-report-payment disabled>Continuar al pago de demostración</button><p class="help">Informar una transferencia no activa la membresía. Coordinación debe confirmarla.</p></section>
+         <section class="state-panel state-panel--info" data-review-state hidden><p class="eyebrow">Solicitud recibida</p><h3>El equipo está revisando tu solicitud</h3><p>No debes pagar todavía. Te avisaremos si necesitamos información adicional.</p></section>
+          <section class="state-panel state-panel--success" data-conditions hidden>
+            <p class="eyebrow">Solicitud aceptada</p><h3>Transferencia bancaria</h3>
+            <p data-receipt-status role="status" aria-live="polite">Consultando estado del pago…</p>
+            <p data-transfer-quote></p>
+            <div data-transfer-options hidden>
+              <label>Moneda desde la que envías
+                <select data-transfer-source-currency><option value="">Selecciona</option><option value="CLP">CLP</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
+              </label>
+              <label>Tipo de transferencia
+                <select data-transfer-route><option value="">Selecciona</option><option value="domestic">Nacional (dentro de Chile)</option><option value="international">Internacional</option></select>
+              </label>
+            </div>
+            <div data-transfer-instructions></div>
+            <form data-receipt-form hidden>
+              <label>Comprobante privado (PDF, JPG o PNG, máximo 5 MiB)
+                <input type="file" name="receipt" accept="application/pdf,image/jpeg,image/png" required>
+              </label>
+              <button class="btn btn-primary" type="submit">Enviar comprobante</button>
+            </form>
+            <button class="btn btn-ghost" type="button" data-receipt-finalize hidden>Reintentar recepción</button>
+            <button class="btn btn-ghost" type="button" data-receipt-download hidden>Descargar mi comprobante</button>
+            <button class="btn btn-ghost" type="button" data-receipt-report hidden>Reportar comprobante incorrecto</button>
+            <p class="help">Recibir el comprobante no confirma el pago ni activa la membresía. Administración debe verificar el abono bancario.</p>
+          </section>
 
-          <!-- Estos controles existen solo para recorrer estados antes de conectar el panel real. -->
-          <details class="demo-controls"><summary>Controles de demostración — coordinación</summary><div class="button-row"><button type="button" data-demo-action="clarify">Pedir aclaración</button><button type="button" data-demo-action="approve">Aprobar</button><button type="button" data-demo-action="reject">Rechazar</button><button type="button" data-demo-action="confirm">Confirmar pago</button></div></details>
         </section>
 
         <section class="content-card" data-view="documents" aria-labelledby="documents-title" hidden>
@@ -88,13 +111,13 @@
             <label>Enviar documentación para mi solicitud
               <input type="file" name="document" accept="application/pdf,image/jpeg,image/png" required>
             </label>
-            <p class="help">PDF, JPG o PNG. Tamaño máximo: 10 MB.</p>
+            <p class="help">PDF, JPG o PNG. Tamaño máximo: 10 MB. Este formulario es para documentación de la solicitud; no admite comprobantes de pago.</p>
             <button class="btn btn-ghost" type="submit">Subir documentación</button>
             <p class="field-message" data-volunteer-document-message aria-live="polite"></p>
           </form>
         </section>
 
-        <section class="content-card" data-view="profile" aria-labelledby="profile-title" hidden><p class="eyebrow">Mi perfil</p><h2 id="profile-title">Perfil y credencial</h2><form data-profile-form><label>Nombre de uso<input name="displayName" maxlength="80" required></label><label>Fotografía opcional<input name="photo" type="file" accept="image/jpeg,image/png,image/webp"></label><div class="button-row"><button class="btn btn-primary" type="submit">Guardar perfil</button><button class="btn btn-ghost" type="button" data-remove-photo>Quitar fotografía</button></div></form><article class="credential" data-credential><span>LAS ÑAÑAS · DEMO</span><div class="credential-body"><div class="credential-photo" data-credential-photo>V</div><div><small>Nombre</small><h3 data-credential-name>—</h3><small>Plan</small><strong data-credential-plan>—</strong></div></div></article><button class="btn btn-primary" type="button" data-download-credential disabled>Descargar credencial de muestra</button></section>
+        <section class="content-card" data-view="profile" aria-labelledby="profile-title" hidden><p class="eyebrow">Mi perfil</p><h2 id="profile-title">Perfil y credencial</h2><form data-profile-form><label>Nombre de uso<input name="displayName" maxlength="80" required></label><label>Fotografía opcional<input name="photo" type="file" accept="image/jpeg,image/png,image/webp"></label><div class="button-row"><button class="btn btn-primary" type="submit">Guardar perfil</button><button class="btn btn-ghost" type="button" data-remove-photo>Quitar fotografía</button></div></form><article class="credential" data-credential><span>LAS ÑAÑAS</span><div class="credential-body"><div class="credential-photo" data-credential-photo>V</div><div><small>Nombre</small><h3 data-credential-name>—</h3><small>Plan</small><strong data-credential-plan>—</strong></div></div></article><button class="btn btn-primary" type="button" data-download-credential disabled>Credencial pendiente de habilitación</button></section>
 
         <section class="content-card" data-view="agenda" aria-labelledby="agenda-title" hidden>
           <p class="eyebrow">Privada</p><h2 id="agenda-title">Mi agenda de voluntariado</h2><p class="subtle">Solo tú y coordinación autorizada pueden consultar estos registros. No modifica cupos ni reservas.</p>
@@ -117,6 +140,8 @@
   <script src="../js/supabase-config.js"></script>
   <script src="../js/supabase-client.js?v=1"></script>
   <script src="../js/loading-overlay.js?v=2"></script>
-  <script src="../js/mi-voluntariado.js?v=4"></script>
+  <script src="../js/transfer-config.js?v=4"></script>
+ <script src="../js/transfer-payments.js?v=4"></script>
+  <script src="../js/mi-voluntariado.js?v=7"></script>
 </body>
 </html>

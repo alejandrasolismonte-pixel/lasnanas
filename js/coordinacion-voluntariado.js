@@ -26,6 +26,47 @@
   const statusLabels = { draft: 'Borrador', submitted: 'Enviada', in_review: 'En revisión', needs_clarification: 'Aclaración solicitada', approved: 'Aprobada', rejected: 'Rechazada', withdrawn: 'Retirada' };
   const billingLabels = { monthly: 'Mensual', yearly: 'Anual' };
   let currentApplication = null;
+  const transfers = window.LasNanasTransfers.createService(client);
+  const receiptStatus = document.querySelector('[data-admin-receipt-status]');
+  const receiptDownload = document.querySelector('[data-admin-receipt-download]');
+  let currentReceipt = null, receiptOpened = false, workflowState = null, confirming = false;
+  let detailGeneration = 0;
+  const transferEnabled = () => window.LasNanasTransfers.configured(window.LAS_NANAS_TRANSFER);
+  const canConfirm = () => transferEnabled() && currentApplication?.application_status === 'approved' &&
+    currentReceipt?.status === 'received' && receiptOpened && workflowState &&
+    !workflowState.membership_active && (!workflowState.payment_status || workflowState.payment_status === 'pending');
+  function syncTransferButton() { confirmTransferButton.disabled = confirming || !canConfirm(); }
+  async function loadReceipt(applicationId, token) {
+    if (token !== detailGeneration) return;
+    currentReceipt = null; receiptOpened = false; receiptDownload.disabled = true; syncTransferButton();
+    receiptStatus.textContent = 'Consultando comprobante…';
+    try {
+      const record = await transfers.receipt(applicationId);
+      if (token !== detailGeneration) return;
+      currentReceipt = record?.status === 'received' ? record : null;
+      receiptDownload.disabled = !currentReceipt;
+      receiptStatus.textContent = currentReceipt ? 'Comprobante recibido. Descárgalo para revisar sus datos y verifica el abono bancario.' : 'No hay un comprobante recibido para revisar.';
+      if (!transferEnabled()) receiptStatus.textContent += ' La confirmación de transferencias todavía no está habilitada.';
+    } catch (_) {
+      if (token === detailGeneration) receiptStatus.textContent = 'No se pudo consultar el comprobante. La confirmación permanece bloqueada.';
+    }
+    syncTransferButton();
+  }
+  receiptDownload.addEventListener('click', async () => {
+    if (!currentReceipt) return;
+    const token = detailGeneration;
+    receiptDownload.disabled = true;
+    try {
+      await transfers.download(currentReceipt);
+      if (token !== detailGeneration) return;
+      receiptOpened = true;
+      receiptStatus.textContent = 'Comprobante descargado. Confirma únicamente después de comprobar el abono en la cuenta bancaria.';
+    } catch (_) {
+      if (token === detailGeneration) { receiptOpened = false; receiptStatus.textContent = 'No se pudo descargar el comprobante.'; }
+    } finally {
+      if (token === detailGeneration) { receiptDownload.disabled = !currentReceipt; syncTransferButton(); }
+    }
+  });
 
   async function validDocumentFile(file) {
     if (!file || !['application/pdf', 'image/jpeg', 'image/png'].includes(file.type) || file.size < 1 || file.size > 10 * 1024 * 1024) return false;
@@ -128,7 +169,7 @@
     if (!Array.isArray(data)) {
       const result = await client.rpc('admin_list_membership_applications');
       if (result.error) {
-        applicationsStatus.textContent = 'No fue posible cargar las solicitudes. Comprueba que la migración 004 esté aplicada en el entorno correspondiente.';
+        applicationsStatus.textContent = 'No fue posible cargar las solicitudes. Vuelve a intentarlo en unos minutos.';
         return;
       }
       data = result.data;
@@ -139,6 +180,9 @@
   }
 
   async function loadApplicationDetail(applicationId) {
+    const token = ++detailGeneration;
+    currentApplication = null; currentReceipt = null; workflowState = null; receiptOpened = false;
+    receiptDownload.disabled = true; syncTransferButton();
     loader?.show('Cargando detalle…');
     workspace.hidden = true;
     detail.hidden = false;
@@ -146,6 +190,7 @@
     adminActions.hidden = true;
     detailStatus.textContent = 'Cargando detalle…';
     const { data, error } = await client.rpc('admin_get_membership_application', { p_application_id: applicationId });
+    if (token !== detailGeneration) return;
     const application = Array.isArray(data) ? data[0] : null;
     if (error || !application) {
       detailStatus.textContent = 'No fue posible cargar esta solicitud.';
@@ -153,6 +198,7 @@
       return;
     }
     currentApplication = application;
+    setDetailField('application_code', application.application_id);
     setDetailField('name', `${application.first_name} ${application.last_name}`.trim());
     setDetailField('email', application.email);
     setDetailField('plan', application.plan_id);
@@ -162,15 +208,17 @@
     setDetailField('status', statusLabels[application.application_status] || application.application_status);
     setDetailField('created_at', formatDate(application.application_created_at));
     const workflow = await client.rpc('admin_get_application_membership', { p_application_id: application.application_id });
-    const workflowState = !workflow.error && workflow.data?.[0] ? workflow.data[0] : null;
+    if (token !== detailGeneration) return;
+    workflowState = !workflow.error && workflow.data?.[0] ? workflow.data[0] : null;
     setDetailField('membership', workflowState?.membership_active ? `Activa hasta ${formatDate(workflowState.ends_at)}` : 'Sin membresía activa');
     detailStatus.textContent = '';
     detailContent.hidden = false;
     adminActions.hidden = false;
     approveButton.disabled = application.application_status === 'approved';
-    confirmTransferButton.disabled = application.application_status !== 'approved' || Boolean(workflowState?.membership_active);
+    syncTransferButton();
     actionMessage.textContent = '';
     await loadAdminDocuments(application.application_id);
+    await loadReceipt(application.application_id, token);
     loader?.hide();
   }
 
@@ -204,6 +252,8 @@
   });
 
   closeDetailButton.addEventListener('click', function () {
+    ++detailGeneration; currentApplication = null; currentReceipt = null; receiptOpened = false;
+    syncTransferButton();
     detail.hidden = true;
     workspace.hidden = false;
   });
@@ -217,42 +267,51 @@
     if (error || !data?.[0]) { actionMessage.textContent = 'No fue posible aprobar la solicitud.'; approveButton.disabled = false; loader?.hide(); return; }
     currentApplication.application_status = data[0].application_status;
     setDetailField('status', statusLabels[currentApplication.application_status] || currentApplication.application_status);
-    confirmTransferButton.disabled = false;
+    syncTransferButton();
     actionMessage.textContent = 'Solicitud aprobada correctamente.';
     await loadApplications();
     loader?.hide();
   });
 
   confirmTransferButton.addEventListener('click', function () {
-    if (!currentApplication || currentApplication.application_status !== 'approved') return;
+    if (!canConfirm()) return;
+    transferDialog.querySelector('[data-transfer-summary="application_code"]').textContent = currentApplication.application_id;
     transferDialog.querySelector('[data-transfer-summary="volunteer"]').textContent = `${currentApplication.first_name} ${currentApplication.last_name}`.trim();
     transferDialog.querySelector('[data-transfer-summary="plan"]').textContent = `${currentApplication.plan_id} · ${billingLabels[currentApplication.billing] || currentApplication.billing}`;
     transferDialog.querySelector('[data-transfer-summary="amount"]').textContent = formatAmount(currentApplication.quoted_amount, currentApplication.currency);
     transferDialog.querySelector('[data-transfer-summary="currency"]').textContent = currentApplication.currency;
     transferDialog.querySelector('[data-transfer-summary="date"]').textContent = formatDate(new Date().toISOString());
     transferForm.elements.reference.value = '';
+    transferForm.elements.bankVerified.checked = false;
+    document.querySelector('[data-transfer-message]').textContent = '';
     transferDialog.showModal();
   });
 
   document.querySelector('[data-cancel-transfer]').addEventListener('click', function () { transferDialog.close(); });
   transferForm.addEventListener('submit', async function (event) {
     event.preventDefault();
-    if (!transferForm.reportValidity() || !currentApplication) return;
+    if (confirming || !transferForm.reportValidity() || !canConfirm() || !transferForm.elements.bankVerified.checked) return;
+    const applicationId = currentApplication.application_id;
+    confirming = true; syncTransferButton();
     const submit = transferForm.querySelector('[type="submit"]');
     submit.disabled = true;
     loader?.show('Confirmando transferencia…');
     const transferMessage = document.querySelector('[data-transfer-message]');
     transferMessage.textContent = 'Confirmando pago y activando membresía…';
-    const { data, error } = await client.rpc('admin_confirm_transfer', { p_application_id: currentApplication.application_id, p_transfer_reference: transferForm.elements.reference.value.trim() });
-    submit.disabled = false;
-    if (error || !data?.[0]) { transferMessage.textContent = 'No fue posible confirmar la transferencia.'; loader?.hide(); return; }
-    const result = data[0];
-    setDetailField('membership', result.membership_active ? `Activa hasta ${formatDate(result.ends_at)}` : 'Sin membresía activa');
-    confirmTransferButton.disabled = true;
-    actionMessage.textContent = 'Transferencia confirmada y membresía activa.';
-    transferDialog.close();
-    await loadAdminDocuments(currentApplication.application_id);
-    loader?.hide();
+    try {
+      // Revalidar rol y comprobante justo antes de la RPC que confirma el pago.
+      const access = await client.rpc('admin_get_membership_application', { p_application_id:applicationId });
+      if (access.error || !access.data?.[0]) throw new Error('admin_access_required');
+      const latestReceipt = await transfers.receipt(applicationId);
+      if (latestReceipt?.status !== 'received') throw new Error('receipt_required');
+      const { data, error } = await client.rpc('admin_confirm_transfer', { p_application_id:applicationId, p_transfer_reference:transferForm.elements.reference.value.trim() });
+      if (error || data?.[0]?.payment_status !== 'confirmed') throw new Error('confirmation_failed');
+      transferDialog.close();
+      await loadApplicationDetail(applicationId);
+      actionMessage.textContent = data[0].membership_active ? 'Transferencia confirmada y membresía activa.' : 'Transferencia confirmada. Revisa el estado de la membresía.';
+    } catch (_) {
+      transferMessage.textContent = 'No se pudo verificar la confirmación. Consulta el estado antes de reintentar.';
+    } finally { confirming = false; submit.disabled = false; syncTransferButton(); loader?.hide(); }
   });
 
   adminDocumentForm.addEventListener('submit', async function (event) {

@@ -1,14 +1,17 @@
 /* PORTAL PERSONAL CON SUPABASE
-   Toda consulta queda limitada por RLS. sessionStorage conserva únicamente
-   selección y estados visuales simulados; nunca concede autorización. */
+   El servidor autoriza cada operación mediante RLS/RPC.
+   sessionStorage conserva únicamente la selección de plan. */
 document.addEventListener('DOMContentLoaded', async () => {
   const supabase = window.LasNanasSupabase?.client;
   const $ = selector => document.querySelector(selector);
   const $$ = selector => [...document.querySelectorAll(selector)];
   const banner = $('[data-connection-banner]');
   const loader = window.LasNanasLoader;
+  const workspace = $('[data-private-workspace]');
+  workspace.hidden = true;
   const setGlobal = (message, error = false) => { banner.textContent = message; banner.style.background = error ? '#7f1d1d' : ''; };
   if (!supabase) { setGlobal(window.LasNanasSupabase?.error || 'No se pudo iniciar Supabase.', true); return; }
+  const transferPanel = window.LasNanasTransfers?.mountVolunteer(supabase, window.LAS_NANAS_TRANSFER, $('[data-conditions]'));
 
   const PLAN_ORDER = ['keyuwün','kimün','pülli'];
   const STATUS_LABELS = { draft:'Cuenta creada', submitted:'Solicitud enviada', in_review:'En revisión', needs_clarification:'Necesita aclaración', approved:'Solicitud aceptada', rejected:'Solicitud rechazada', withdrawn:'Retirada' };
@@ -22,7 +25,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     currency: ['CLP','USD'].includes(requestedCurrency) ? requestedCurrency : (pending.currency === 'USD' ? 'USD' : 'CLP')
   };
   let user, profile, application, price, messages = [], agenda = [], membership = null, volunteerDocuments = [];
-  let demo = (() => { try { return JSON.parse(sessionStorage.getItem('lasnanas_visual_demo_v1') || '{}'); } catch (_) { return {}; } })();
+  let sessionInvalidated = false;
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT' || (user && session?.user && session.user.id !== user.id)) {
+      sessionInvalidated = true;
+      workspace.hidden = true;
+      workspace.replaceChildren();
+      $('[data-user-name]').textContent = 'Sesión finalizada';
+      $('[data-avatar]').textContent = 'V';
+      location.replace('voluntariado.html#membresias');
+    }
+  });
+  // Retira estados ficticios de versiones anteriores sin utilizarlos.
+  try { sessionStorage.removeItem('lasnanas_visual_demo_v1'); } catch (_) {}
   let photoPreview = '';
 
   const money = (value, currency = application?.currency || 'CLP') => new Intl.NumberFormat(currency === 'USD' ? 'en-US' : 'es-CL', { style:'currency', currency, maximumFractionDigits:0 }).format(value || 0);
@@ -31,10 +46,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     element?.querySelectorAll('button,input,select,textarea').forEach(control => { control.disabled = value; });
     if (value) loader?.show('Procesando…'); else loader?.hide();
   };
-  const currentVisualStatus = () => demo.status || application?.status || 'draft';
-  const activeVisual = () => Boolean(membership || demo.active);
-  const stage = () => activeVisual() ? 5 : demo.payment === 'pending' ? 4 : ['in_review','needs_clarification','approved','rejected'].includes(currentVisualStatus()) ? 3 : currentVisualStatus()==='submitted' ? 2 : 1;
-  const saveDemo = () => sessionStorage.setItem('lasnanas_visual_demo_v1', JSON.stringify(demo));
+  const currentStatus = () => application?.status || 'draft';
+  const hasActiveMembership = () => Boolean(membership?.active && membership.owner_id === user?.id && Date.parse(membership.starts_at) <= Date.now() && Date.parse(membership.ends_at) > Date.now());
+  const stage = () => hasActiveMembership() ? 5 : ['in_review','needs_clarification','approved','rejected'].includes(currentStatus()) ? 3 : currentStatus()==='submitted' ? 2 : 1;
 
   async function authenticatedUser() {
     const { data, error } = await supabase.auth.getUser();
@@ -66,6 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function loadAll() {
+    workspace.hidden = true;
     loader?.show('Cargando tu espacio personal…');
     try {
       setGlobal('Cargando tu espacio privado…');
@@ -80,19 +95,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       ]);
       const failure=[profileResult,applicationResult,messagesResult,agendaResult,membershipResult,documentsResult].find(result=>result.error);
       if(failure)throw failure.error;
+      if(sessionInvalidated)throw new Error('La sesión cambió durante la carga.');
       profile=profileResult.data; application=applicationResult.data; price=application?.plan_prices || null; messages=messagesResult.data || []; agenda=agendaResult.data || []; membership=membershipResult.data; volunteerDocuments=documentsResult.data || [];
       await ensureDraftSelection();
-      setGlobal('Conectado de forma segura al proyecto Supabase de pruebas.');
+      if(sessionInvalidated)throw new Error('La sesión cambió durante la carga.');
+      setGlobal('Datos de tu cuenta actualizados.');
       renderAll();
+      await transferPanel?.refresh(application);
+      if(sessionInvalidated)throw new Error('La sesión cambió durante la carga.');
+      workspace.hidden = false;
+    } catch (error) {
+      workspace.hidden = true;
+      setGlobal('No se pudo cargar tu espacio privado. Vuelve a cargar la página para intentarlo nuevamente.', true);
+      throw error;
     } finally { loader?.hide(); }
   }
 
   function renderHeader(){
+    $('[data-application-code]').textContent = application?.id || 'Pendiente de crear solicitud';
     const name=profile.display_name || `${profile.first_name} ${profile.last_name}`;
     $('[data-user-name]').textContent=name; $('[data-avatar]').textContent=(name[0]||'V').toUpperCase();
     $$('[data-steps] li').forEach((item,index)=>{item.classList.toggle('done',index+1<stage());item.classList.toggle('current',index+1===stage());});
-    $('[data-status-pill]').textContent=activeVisual()?'Membresía activa':demo.payment==='pending'?'Pago pendiente':STATUS_LABELS[currentVisualStatus()] || 'Cuenta creada';
-    $('#portal-title').textContent=activeVisual()?'Tu membresía está activa':currentVisualStatus()==='draft'?'Tu inscripción está guardada':'Revisa el estado de tu proceso';
+    $('[data-status-pill]').textContent=hasActiveMembership()?'Membresía activa':STATUS_LABELS[currentStatus()] || 'Cuenta creada';
+    $('#portal-title').textContent=hasActiveMembership()?'Tu membresía está activa':currentStatus()==='draft'?'Tu inscripción está guardada':'Revisa el estado de tu proceso';
   }
   function renderMembership(){
     const form=$('[data-membership-form]');
@@ -100,12 +125,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     form.elements.plan.value=planId; form.elements.billing.value=billing; form.elements.respect.checked=Boolean(application?.respect_accepted); form.elements.coordination.checked=Boolean(application?.coordination_accepted);
     $('[data-plan-summary]').textContent=`${planId} · ${billing==='yearly'?'anual':'mensual'} · ${currency}`; $('[data-total]').textContent=money(application?.quoted_amount || quote(price || {},billing,currency),currency);
     const editable=application?.status==='draft'; form.querySelectorAll('input').forEach(input=>{input.disabled=!editable;});
-    const verified=Boolean(user.email_confirmed_at); $('[data-email-gate]').classList.toggle('verified',verified); $('[data-email-gate] strong').textContent=verified?'Correo verificado':'Correo pendiente de verificación'; $('[data-email-gate] p').textContent=verified?'Ya puedes enviar la solicitud cuando completes los acuerdos.':'Confirma el enlace enviado a tu correo.'; $('[data-demo-verify]').hidden=true;
+    const verified=Boolean(user.email_confirmed_at); $('[data-email-gate]').classList.toggle('verified',verified); $('[data-email-gate] strong').textContent=verified?'Correo verificado':'Correo pendiente de verificación'; $('[data-email-gate] p').textContent=verified?'Ya puedes enviar la solicitud cuando completes los acuerdos.':'Confirma el enlace enviado a tu correo.';
     $('[data-submit-application]').disabled=!editable || !verified || !form.elements.respect.checked || !form.elements.coordination.checked;
-    $('[data-review-state]').hidden=!['submitted','in_review','rejected'].includes(currentVisualStatus()); $('[data-review-state] h3').textContent=currentVisualStatus()==='rejected'?'La solicitud fue rechazada':'El equipo está revisando tu solicitud';
-    $('[data-clarification-form]').hidden=currentVisualStatus()!=='needs_clarification';
+    $('[data-review-state]').hidden=!['submitted','in_review','rejected'].includes(currentStatus()); $('[data-review-state] h3').textContent=currentStatus()==='rejected'?'La solicitud fue rechazada':'El equipo está revisando tu solicitud';
+    $('[data-clarification-form]').hidden=currentStatus()!=='needs_clarification';
     const latestRequest=[...messages].reverse().find(message=>message.author_id!==user.id && message.visible_to_member); $('[data-public-clarification]').textContent=latestRequest?.body || 'Coordinación solicitó información adicional.';
-    $('[data-conditions]').hidden=currentVisualStatus()!=='approved' || activeVisual(); $('[data-report-payment]').disabled=!$('[data-terms]').checked || demo.payment==='pending';
+    $('[data-conditions]').hidden=currentStatus()!=='approved';
   }
   function renderDocuments(){
     const root=$('[data-documents]');
@@ -119,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function validDocumentFile(file){if(!file||!['application/pdf','image/jpeg','image/png'].includes(file.type)||file.size<1||file.size>10*1024*1024)return false;const bytes=new Uint8Array(await file.slice(0,8).arrayBuffer());const pdf=bytes[0]===0x25&&bytes[1]===0x50&&bytes[2]===0x44&&bytes[3]===0x46&&bytes[4]===0x2d;const jpg=bytes[0]===0xff&&bytes[1]===0xd8&&bytes[2]===0xff;const png=[0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a].every((value,index)=>bytes[index]===value);return(file.type==='application/pdf'&&pdf)||(file.type==='image/jpeg'&&jpg)||(file.type==='image/png'&&png);}
   async function downloadVolunteerDocument(documentId){const pathResult=await supabase.rpc('authorize_volunteer_document_download',{p_document_id:documentId});if(pathResult.error||!pathResult.data){showMessage('[data-volunteer-document-message]','No fue posible autorizar la descarga.',true);return;}const signed=await supabase.storage.from('volunteer-documents').createSignedUrl(pathResult.data,60);if(signed.error||!signed.data?.signedUrl){showMessage('[data-volunteer-document-message]','No fue posible generar el enlace privado.',true);return;}window.open(signed.data.signedUrl,'_blank','noopener,noreferrer');}
   function renderProfile(){
-    const name=profile.display_name || `${profile.first_name} ${profile.last_name}`; $('[data-profile-form]').elements.displayName.value=name; $('[data-credential-name]').textContent=name; $('[data-credential-plan]').textContent=price?.plan_id || membership?.plan_prices?.plan_id || '—'; $('[data-credential-photo]').innerHTML=photoPreview?`<img src="${photoPreview}" alt="Fotografía seleccionada">`:(name[0]||'V').toUpperCase(); $('[data-download-credential]').disabled=!membership;
+    const name=profile.display_name || `${profile.first_name} ${profile.last_name}`; $('[data-profile-form]').elements.displayName.value=name; $('[data-credential-name]').textContent=name; $('[data-credential-plan]').textContent=price?.plan_id || membership?.plan_prices?.plan_id || '—'; $('[data-credential-photo]').innerHTML=photoPreview?`<img src="${photoPreview}" alt="Fotografía seleccionada">`:(name[0]||'V').toUpperCase(); $('[data-download-credential]').disabled=true;
   }
   const agendaRecord=(item)=>{const start=new Date(item.starts_at),end=new Date(item.ends_at);return{id:item.id,official:item.official,type:item.type,title:item.title,date:start.toLocaleDateString('en-CA'),start:start.toTimeString().slice(0,5),end:end.toTimeString().slice(0,5),place:item.general_place||'',notes:item.private_notes||'',status:item.status};};
   function renderAgenda(){
@@ -141,11 +166,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('[data-membership-form]').addEventListener('submit',async event=>{event.preventDefault();const button=$('[data-submit-application]');button.disabled=true;showMessage('[data-membership-message]','Enviando solicitud…');const{error}=await supabase.rpc('submit_membership_application',{p_application_id:application.id});if(error){showMessage('[data-membership-message]','No se pudo enviar la solicitud.',true);button.disabled=false;return;}await loadAll();showMessage('[data-membership-message]','Solicitud enviada correctamente.');});
   $('[data-previous-step]').onclick=()=>showMessage('[data-membership-message]',application?.status==='draft'?'Ya estás en el primer paso editable.':'El estado enviado no se revierte desde el navegador.');
 
-  $('[data-clarification-form]').addEventListener('submit',async event=>{event.preventDefault();const body=event.currentTarget.elements.reply.value.trim();if(!body){showMessage('[data-clarification-message]','Escribe una respuesta.',true);return;}setBusy(event.currentTarget,true);const{error}=await supabase.rpc('respond_to_membership_clarification',{p_application_id:application.id,p_body:body});setBusy(event.currentTarget,false);if(error){showMessage('[data-clarification-message]','Falta aplicar la segunda migración o la solicitud no admite respuesta.',true);return;}event.currentTarget.elements.reply.value='';await loadAll();});
+  $('[data-clarification-form]').addEventListener('submit',async event=>{event.preventDefault();const body=event.currentTarget.elements.reply.value.trim();if(!body){showMessage('[data-clarification-message]','Escribe una respuesta.',true);return;}setBusy(event.currentTarget,true);const{error}=await supabase.rpc('respond_to_membership_clarification',{p_application_id:application.id,p_body:body});setBusy(event.currentTarget,false);if(error){showMessage('[data-clarification-message]','No se pudo enviar la respuesta. Comprueba que tu solicitud siga esperando una aclaración e inténtalo nuevamente.',true);return;}event.currentTarget.elements.reply.value='';await loadAll();});
   // Adjuntos siguen fuera de alcance: no se suben hasta implementar la Edge Function segura.
   $('[data-clarification-form]').elements.attachments.addEventListener('change',event=>{event.target.value='';showMessage('[data-clarification-message]','Los adjuntos permanecen deshabilitados hasta conectar su función segura.',true);});
-  $('[data-terms]').onchange=()=>renderMembership(); $('[data-report-payment]').onclick=()=>{demo.payment='pending';saveDemo();renderAll();};
-  $$('[data-demo-action]').forEach(button=>button.onclick=()=>{const action=button.dataset.demoAction;if(action==='clarify')demo.status='needs_clarification';if(action==='approve')demo.status='approved';if(action==='reject')demo.status='rejected';if(action==='confirm'&&demo.payment==='pending'){demo.active=true;demo.payment='confirmed';}saveDemo();renderAll();});
 
   $('[data-profile-form]').addEventListener('submit',async event=>{event.preventDefault();const displayName=event.currentTarget.elements.displayName.value.trim();if(displayName.length<2)return;setBusy(event.currentTarget,true);const{data,error}=await supabase.from('volunteer_profiles').update({display_name:displayName,updated_at:new Date().toISOString()}).eq('id',user.id).select().single();setBusy(event.currentTarget,false);if(error){setGlobal('No se pudo actualizar el perfil.',true);return;}profile=data;renderProfile();});
 
