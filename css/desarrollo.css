@@ -664,6 +664,42 @@ h2 {
   color: #d1ddd2;
   font-size: clamp(1em, 3vw,1rem);
 }
+.hero__arrival {
+  margin: 1.5rem auto 0;
+  max-width: 42rem;
+}
+.hero__arrival-message {
+  margin-bottom: 1rem;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.5vw, 1.85rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: .01em;
+}
+.hero__arrival-message span {
+  display: block;
+}
+.hero__days {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: .25rem .65rem;
+  margin: 0;
+  color: #d1ddd2;
+}
+.hero__days-number {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  line-height: 1;
+}
+.hero__days-label {
+  font-family: var(--font-body);
+  font-size: .8rem;
+  letter-spacing: .08em;
+}
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -1729,58 +1765,6 @@ h2 {
 }
 
 /* ============================================================
-   12. FAQ - ACORDEÓN
-   ============================================================ */
-.faq-layout {
-  display: grid;
-  grid-template-columns: .65fr 1.35fr;
-  gap: clamp(2rem, 8vw, 7rem);
-}
-.faq-list details {
-  border-bottom: 1px solid var(--line);
-  overflow: hidden;
-}
-.faq-list summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.1rem 0;
-  /* PESO DE LAS PREGUNTAS: 400 evita la negrita sintética. */
-  font: 400 1.25rem/1.35 var(--font-display);
-  cursor: pointer;
-  list-style: none;
-  transition: color .2s;
-}
-#faq-title { font-weight: 400; }
-.faq-list summary:hover {
-  color: var(--orange-light);
-}
-.faq-list summary::-webkit-details-marker {
-  display: none;
-}
-.faq-list summary::after {
-  content: "↓";
-  flex: 0 0 auto;
-  color: var(--green-light);
-  font: 400 1.5rem var(--font-body);
-  transition: transform .3s ease;
-}
-.faq-list details[open] summary::after {
-  transform: rotate(180deg);
-  color: var(--orange-light);
-}
-.faq-content {
-  padding-bottom: 1.2rem;
-  color: var(--muted);
-  animation: faqSlide .3s ease-out;
-}
-@keyframes faqSlide {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ============================================================
    13. CONTACTO
    ============================================================ */
 .contact-section {
@@ -2361,7 +2345,7 @@ h2 {
     font-size: clamp(.92rem, 4.2vw, 1rem);
     line-height: 1.55;
   }
-  .split-grid, .split-grid--reverse, .faq-layout, .contact-grid {
+  .split-grid, .split-grid--reverse, .contact-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
@@ -3880,7 +3864,6 @@ html[data-theme="day"] #quienes-somos,
 html[data-theme="day"] #nanas,
 html[data-theme="day"] #territorio,
 html[data-theme="day"] #sumate,
-html[data-theme="day"] #preguntas,
 html[data-theme="day"] #contacto {
   color: var(--day-ink);
 }
@@ -3902,7 +3885,6 @@ html[data-theme="day"] .section-heading > p:not(.eyebrow),
 html[data-theme="day"] .ecosystem-card p,
 html[data-theme="day"] .map-detail p:not(.map-detail__eyebrow),
 html[data-theme="day"] .section-note,
-html[data-theme="day"] .faq-content,
 html[data-theme="day"] .memorice-box p:last-child,
 html[data-theme="day"] .person-card small {
   color: var(--day-muted);
@@ -3970,10 +3952,6 @@ html[data-theme="day"] .ecosystem-card:active {
   border-color: var(--green-light);
   background: rgba(22, 101, 52, .3);
   box-shadow: 0 10px 24px rgba(22, 101, 52, .16), inset 0 0 0 1px rgba(134, 239, 172, .14);
-}
-
-html[data-theme="day"] .faq-list details {
-  border-color: var(--day-line);
 }
 
 html[data-theme="day"] .contact-copy > p:not(.eyebrow),

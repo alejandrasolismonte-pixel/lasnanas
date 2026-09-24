@@ -1,0 +1,219 @@
+/* Fondos del recorrido publico. Las vetas y la franja toman su ritmo de
+   "Preguntar tambien es parte del encuentro" en Voluntariado. */
+:root {
+  --public-band-ink: #0b121b;
+  --public-stars-ink: #05080c;
+  --public-band-border: rgba(121, 198, 197, .16);
+  --public-band-stripe: linear-gradient(90deg,
+    #176d69 0 17%, #79c6c5 17% 31%, #d65818 31% 42%,
+    #176d69 42% 68%, #ea7b34 68% 75%, #79c6c5 75% 100%);
+  --public-band-vein-a: linear-gradient(93deg,
+    transparent 0 7%, rgba(121, 198, 197, .048) 7.15%,
+    transparent 7.45% 26%, rgba(255, 122, 36, .028) 26.2%,
+    transparent 26.55% 61%, rgba(121, 198, 197, .037) 61.2%,
+    transparent 61.5%);
+  --public-band-vein-b: linear-gradient(87deg,
+    transparent 0 38%, rgba(237, 246, 243, .022) 38.15%,
+    transparent 38.4% 79%, rgba(121, 198, 197, .031) 79.2%,
+    transparent 79.45%);
+  --public-band-vein-c: linear-gradient(91deg,
+    transparent 0 15%, rgba(121, 198, 197, .027) 15.2%,
+    transparent 15.45% 48%, rgba(255, 122, 36, .018) 48.17%,
+    transparent 48.5% 83%, rgba(237, 246, 243, .018) 83.2%,
+    transparent 83.4%);
+  --public-star-near: radial-gradient(circle,
+    rgba(237, 246, 243, .72) 0 .7px, transparent 1.35px);
+  --public-star-mid: radial-gradient(circle,
+    rgba(121, 198, 197, .55) 0 .7px, transparent 1.25px);
+  --public-star-far: radial-gradient(circle,
+    rgba(237, 246, 243, .4) 0 .55px, transparent 1.15px);
+}
+
+body.public-flow-page main > .public-band:not(.page-fire-hero) {
+  --public-section-tint: linear-gradient(110deg,
+    rgba(23, 109, 105, .075), transparent 55%);
+  --public-pattern-image: var(--public-section-tint),
+    var(--public-band-vein-a), var(--public-band-vein-b),
+    var(--public-band-vein-c);
+  position: relative;
+  padding-block: clamp(3.75rem, 6.5vw, 6rem);
+  border-block: 1px solid var(--public-band-border);
+  background-color: var(--public-band-ink);
+  background-image: var(--public-pattern-image);
+  background-size: 100% 100%, 283px 100%, 419px 100%, 337px 100% !important;
+  background-position: center, 17px 0, 91px 0, 49px 0;
+  background-repeat: no-repeat, repeat-x, repeat-x, repeat-x !important;
+}
+
+/* Canto irregular tomado de la franja original del FAQ. */
+body.public-flow-page main > .public-band:not(.volunteer-faq)::after,
+body.landing-welcome-page .dark-background::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 9px;
+  pointer-events: none;
+  background: var(--public-band-stripe);
+  clip-path: polygon(0 15%, 7% 45%, 14% 12%, 23% 60%,
+    34% 25%, 42% 72%, 54% 18%, 65% 55%, 75% 20%,
+    88% 63%, 100% 18%, 100% 100%, 0 100%);
+  animation: publicBandTrace 12s ease-in-out infinite alternate;
+}
+
+body.public-flow-page main > .volunteer-faq.public-band::after {
+  animation: publicBandTrace 12s ease-in-out infinite alternate;
+}
+
+body.public-flow-page .volunteer-faq__heading::after {
+  transform-origin: left center;
+  animation: publicHeadingTrace 9s ease-in-out infinite alternate;
+}
+
+@keyframes publicBandTrace {
+  to {
+    clip-path: polygon(0 42%, 7% 12%, 14% 52%, 23% 18%,
+      34% 64%, 42% 25%, 54% 58%, 65% 16%, 75% 57%,
+      88% 20%, 100% 43%, 100% 100%, 0 100%);
+    transform: translateY(1px);
+  }
+}
+
+@keyframes publicHeadingTrace {
+  to { transform: scaleX(1.025) rotate(.15deg); }
+}
+
+@keyframes publicVeinsDrift {
+  to { background-position: center, 25px 0, 83px 0, 55px 0; }
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  body.public-flow-page main > .public-band:not(.public-band--stars):not(#juego-memorice) {
+    animation: publicVeinsDrift 28s steps(12, end) infinite alternate;
+  }
+}
+
+/* Inicio tenia un ajuste de proximidad entre sus dos primeros bloques. */
+body.public-flow-page main > :is(#quienes-somos, #nanas).public-band {
+  padding-block: clamp(3.75rem, 6.5vw, 6rem);
+}
+
+/* Conserva el matiz propio de cada bloque dentro del mismo patron. */
+body.public-flow-page main > .section--ecosystem.public-band {
+  --public-section-tint: linear-gradient(135deg,
+    rgba(22, 101, 52, .15), transparent 60%);
+}
+
+body.public-flow-page main > .contact-section.public-band {
+  --public-section-tint: linear-gradient(125deg,
+    rgba(22, 101, 52, .2), rgba(28, 39, 52, .48) 63%);
+}
+
+body.public-flow-page main > .participation.public-band {
+  --public-section-tint: radial-gradient(circle at 50% 42%,
+    rgba(22, 101, 52, .18), transparent 34rem);
+  background-color: var(--public-band-ink) !important;
+  background-image: var(--public-pattern-image) !important;
+}
+
+/* Una pausa central negra con estrellas estaticas, sin recursos de imagen. */
+body.public-flow-page main > .public-band.public-band--stars {
+  --public-star-image: var(--public-star-near), var(--public-star-mid),
+    var(--public-star-far),
+    linear-gradient(110deg, rgba(17, 35, 39, .2), transparent 58%);
+  color: #edf6f3;
+  border-block-color: rgba(121, 198, 197, .22);
+  background-color: var(--public-stars-ink) !important;
+  background-image: var(--public-star-image) !important;
+  background-size: 137px 137px, 211px 211px,
+    293px 293px, 100% 100% !important;
+  background-position: 17px 13px, 77px 57px,
+    151px 99px, center !important;
+  background-repeat: repeat, repeat, repeat, no-repeat !important;
+}
+
+/* El juego sigue a la pausa estrellada en Servicios. */
+body.public-flow-page main > #juego-memorice.public-band {
+  padding-top: clamp(3.75rem, 6.5vw, 6rem);
+}
+
+/* En modo dia se conservan la textura y las divisiones sobre el fondo claro. */
+html[data-theme="day"] body.public-flow-page main > .public-band:not(.public-band--stars) {
+  --public-section-tint: linear-gradient(110deg,
+    rgba(255, 255, 255, .12), transparent 55%);
+  --public-pattern-image: var(--public-section-tint),
+    linear-gradient(93deg, transparent 0 7%, rgba(23, 109, 105, .08) 7.15%,
+      transparent 7.45% 61%, rgba(152, 64, 24, .05) 61.2%, transparent 61.5%),
+    linear-gradient(87deg, transparent 0 38%, rgba(23, 109, 105, .06) 38.15%,
+      transparent 38.4% 79%, rgba(23, 109, 105, .045) 79.2%, transparent 79.45%),
+    linear-gradient(91deg, transparent 0 15%, rgba(23, 109, 105, .05) 15.2%,
+      transparent 15.45% 48%, rgba(152, 64, 24, .035) 48.17%, transparent 48.5%);
+  background-color: rgba(255, 255, 255, .07) !important;
+  background-image: var(--public-pattern-image) !important;
+  background-position: center, 17px 0, 91px 0, 49px 0 !important;
+}
+
+html[data-theme="day"] body.public-flow-page main > .public-band--stars,
+html[data-theme="day"] body.public-flow-page #territorio.public-band--stars {
+  color: #edf6f3;
+}
+
+html[data-theme="day"] body.public-flow-page main > .public-band--stars .eyebrow {
+  color: #ff8b3d;
+}
+
+html[data-theme="day"] body.public-flow-page #territorio.public-band--stars .section-heading > p:not(.eyebrow),
+html[data-theme="day"] body.volunteer-page .volunteer-experiences.public-band--stars .volunteer-experiences__heading > p:last-child,
+html[data-theme="day"] body.volunteer-page .volunteer-experiences.public-band--stars .volunteer-experiences__note {
+  color: #b9cbc8;
+}
+
+html[data-theme="day"] body.volunteer-page .volunteer-experiences.public-band--stars .volunteer-experiences__heading h2,
+html[data-theme="day"] body.nanas-ecosystem-page .reciprocity.public-band--stars h2,
+html[data-theme="day"] body.nanas-ecosystem-page .reciprocity.public-band--stars .reciprocity__group-title {
+  color: #edf6f3;
+}
+
+html[data-theme="day"] body.nanas-ecosystem-page .reciprocity.public-band--stars .reciprocity__intro {
+  color: #b9cbc8;
+}
+
+/* La portada es una sola pantalla: las estrellas quedan detras de su panel. */
+body.landing-welcome-page .dark-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--public-star-near), var(--public-star-mid),
+    var(--public-star-far),
+    var(--public-band-vein-a), var(--public-band-vein-b),
+    var(--public-band-vein-c);
+  background-size: 137px 137px, 211px 211px,
+    293px 293px, 283px 100%, 419px 100%, 337px 100%;
+  background-position: 17px 13px, 77px 57px,
+    151px 99px, 17px 0, 91px 0, 49px 0;
+  background-repeat: repeat, repeat, repeat, repeat-x, repeat-x, repeat-x;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.public-flow-page main > .public-band:not(.volunteer-faq)::after,
+  body.public-flow-page main > .volunteer-faq.public-band::after,
+  body.public-flow-page .volunteer-faq__heading::after,
+  body.landing-welcome-page .dark-background::before {
+    animation: none;
+  }
+}
+
+@media (max-width: 600px) {
+  body.public-flow-page main > .public-band:not(.page-fire-hero),
+  body.public-flow-page main > :is(#quienes-somos, #nanas).public-band {
+    padding-block: 3.5rem;
+  }
+
+  body.public-flow-page main > .public-band.public-band--stars:not(.page-fire-hero) {
+    padding-block: 4rem;
+  }
+}

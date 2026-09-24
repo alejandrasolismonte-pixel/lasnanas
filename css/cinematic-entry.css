@@ -1,0 +1,290 @@
+/* Entrada cinematográfica: estas reglas no afectan al Inicio en desarrollo.html. */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; min-height: 100%; }
+
+body.cinematic-entry {
+  overflow: hidden;
+  background: #050608;
+  color: #f5f5f5;
+  font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+}
+
+.cinema {
+  position: fixed;
+  inset: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #050608;
+}
+
+.cinema__scene {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .75s ease, visibility .75s;
+}
+
+.cinema__scene.is-active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.cinema__scene--fire { z-index: 1; }
+.cinema__scene--fire.is-active { transition: none; }
+.cinema__scene--story { z-index: 2; background: #050608; }
+.cinema__scene--gate { z-index: 3; background: #050608; }
+
+.cinema__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.cinema__places {
+  position: absolute;
+  top: clamp(3rem, 18.5svh, 11rem);
+  left: 50%;
+  display: flex;
+  width: min(94vw, 1300px);
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: .15em .42em;
+  margin: 0;
+  padding: 0;
+  color: #e6e6e6;
+  font-size: clamp(1.05rem, 2.23vw, 2rem);
+  font-weight: 400;
+  letter-spacing: .055em;
+  line-height: 1.35;
+  list-style: none;
+  text-align: center;
+  text-shadow: 0 1px 16px rgba(255, 255, 255, .1);
+  transform: translateX(-50%);
+}
+
+.cinema__places li {
+  display: inline-flex;
+  align-items: baseline;
+  opacity: 0;
+  transform: translateY(.55em);
+  transition: opacity .65s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+}
+
+.cinema__places li.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cinema__places li:not(:last-child)::after {
+  content: '→';
+  margin-left: .42em;
+  color: #b9b9b9;
+  font-weight: 400;
+}
+
+.cinema__identity {
+  position: absolute;
+  top: 49%;
+  left: 50%;
+  width: min(95vw, 1200px);
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.cinema__title {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.55rem, 5.15vw, 4.625rem);
+  font-weight: 700;
+  letter-spacing: .012em;
+  line-height: 1.11;
+  opacity: 0;
+  filter: blur(9px);
+  text-wrap: balance;
+  transform: translateY(18px) scale(.83);
+  transition: opacity 1.1s ease, filter 1.2s ease,
+              transform 1.6s cubic-bezier(.16,1,.3,1);
+}
+
+.cinema__title.is-visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0) scale(1);
+}
+
+.cinema__subtitle {
+  margin: .7em 0 0;
+  color: #e0e0e0;
+  font-size: clamp(1.65rem, 2.92vw, 2.625rem);
+  font-weight: 400;
+  letter-spacing: .02em;
+  line-height: 1.2;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .85s ease, transform 1s cubic-bezier(.16,1,.3,1);
+}
+
+.cinema__subtitle.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Reutiliza el campo de estrellas CSS ya definido en public-backgrounds.css. */
+.cinema__stars {
+  position: absolute;
+  inset: 0;
+  background-color: #050608;
+  background-image: var(--public-star-near), var(--public-star-mid),
+                    var(--public-star-far);
+  background-size: 137px 137px, 211px 211px, 293px 293px;
+  background-position: 17px 13px, 77px 57px, 151px 99px;
+  opacity: .86;
+}
+
+.cinema__portal {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 36% 58% at 50% 50%,
+              rgba(230, 240, 248, .19), rgba(99, 130, 151, .045) 43%,
+              transparent 80%);
+  opacity: 0;
+  transition: opacity 1.2s ease .25s;
+}
+
+.cinema__door {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(50% + 1px);
+  background: rgba(5, 6, 8, .62);
+  transition: transform 1.35s cubic-bezier(.65,0,.2,1) .38s;
+}
+
+.cinema__door--left {
+  left: 0;
+  border-right: 1px solid rgba(255, 255, 255, .18);
+}
+
+.cinema__door--right {
+  right: 0;
+  border-left: 1px solid rgba(255, 255, 255, .18);
+}
+
+.cinema__seam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: min(58svh, 520px);
+  background: linear-gradient(180deg, transparent, #f2f4f5 14%,
+              #fff 50%, #f2f4f5 86%, transparent);
+  box-shadow: 0 0 20px rgba(255, 255, 255, .48);
+  opacity: 0;
+  transform: translate(-50%, -50%) scaleY(.12);
+  transition: opacity .5s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+}
+
+.cinema__horizon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(88vw, 1100px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d8e0e6 14%,
+              #fff 50%, #d8e0e6 86%, transparent);
+  box-shadow: 0 0 14px rgba(255, 255, 255, .32);
+  opacity: 0;
+  transform: translate(-50%, -50%) scaleX(0);
+  transition: opacity .35s ease, transform .85s cubic-bezier(.2,.7,.2,1);
+}
+
+.cinema__scene--gate.has-seam .cinema__seam {
+  opacity: 1;
+  transform: translate(-50%, -50%) scaleY(1);
+}
+
+.cinema__scene--gate.is-opening .cinema__door--left { transform: translateX(-101%); }
+.cinema__scene--gate.is-opening .cinema__door--right { transform: translateX(101%); }
+.cinema__scene--gate.is-opening .cinema__portal { opacity: 1; }
+.cinema__scene--gate.is-opening .cinema__horizon {
+  opacity: .92;
+  transform: translate(-50%, -50%) scaleX(1);
+}
+.cinema__scene--gate.is-opening .cinema__seam { opacity: 0; transition-delay: .75s; }
+
+/* El cargador compartido cambia de escala y de color solo en esta página. */
+.cinematic-entry .loading-overlay {
+  background: #050608;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.cinematic-entry .loading-overlay__content { color: #fff; }
+.cinematic-entry .loading-overlay__loader {
+  width: clamp(150px, 18vw, 230px);
+  height: clamp(150px, 18vw, 230px);
+  color: #fff;
+  filter: none;
+}
+.cinematic-entry .loading-overlay__loader .loader-path,
+.cinematic-entry .loading-overlay__loader .loader-inner { stroke: #fff; }
+.cinematic-entry .loading-overlay__loader .loader-inner { opacity: .55; }
+
+.cinema__skip,
+.cinema__no-script {
+  position: fixed;
+  z-index: 10001;
+  top: 1rem;
+  left: 1rem;
+  padding: .65rem .9rem;
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: 4px;
+  background: #050608;
+  color: #fff;
+  font: 400 1rem/1.2 'Oswald', 'Arial Narrow', Impact, sans-serif;
+  text-decoration: none;
+}
+
+.cinema__skip { transform: translateY(calc(-100% - 2rem)); }
+.cinema__skip:focus-visible { transform: translateY(0); }
+.cinema__no-script { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+@media (max-width: 600px) {
+  .cinema__places {
+    top: clamp(2.5rem, 14svh, 7rem);
+    width: min(94vw, 520px);
+    font-size: clamp(.98rem, 4.2vw, 1.35rem);
+    gap: .05em .3em;
+    letter-spacing: .035em;
+  }
+  .cinema__places li:not(:last-child)::after { margin-left: .3em; }
+  .cinema__identity { top: 52%; width: min(92vw, 500px); }
+  .cinema__title { font-size: clamp(2.35rem, 10.2vw, 3.5rem); }
+  .cinema__subtitle { font-size: clamp(1.5rem, 6.5vw, 2rem); }
+  .cinema__seam { height: min(53svh, 420px); }
+}
+
+@media (max-height: 540px) and (orientation: landscape) {
+  .cinema__places { top: 8svh; }
+  .cinema__identity { top: 56%; }
+  .cinema__title { font-size: clamp(2rem, 7svh, 4rem); }
+  .cinema__subtitle { margin-top: .35em; font-size: clamp(1.2rem, 4svh, 2rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinema__scene,
+  .cinema__places li,
+  .cinema__title,
+  .cinema__subtitle,
+  .cinema__door,
+  .cinema__seam,
+  .cinema__horizon,
+  .cinema__portal { transition: none !important; animation: none !important; }
+  .cinema__scene--fire { display: none; }
+}

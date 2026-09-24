@@ -1,4 +1,39 @@
+// Fecha oficial de lanzamiento (YYYY-MM-DD, calendario de Chile).
+const OFFICIAL_LAUNCH_DATE = '2026-10-01';
+
 document.addEventListener('DOMContentLoaded', () => {
+  const launchDays = document.querySelector('[data-launch-days]');
+  const launchDaysLabel = document.querySelector('[data-launch-days-label]');
+  if (launchDays && /^\d{4}-\d{2}-\d{2}$/.test(OFFICIAL_LAUNCH_DATE || '')) {
+    const [year, month, day] = OFFICIAL_LAUNCH_DATE.split('-').map(Number);
+    const launchDay = Date.UTC(year, month - 1, day);
+    const validLaunchDate = new Date(launchDay);
+
+    if (validLaunchDate.getUTCFullYear() === year &&
+        validLaunchDate.getUTCMonth() === month - 1 &&
+        validLaunchDate.getUTCDate() === day) {
+      const updateLaunchDays = () => {
+        const todayParts = new Intl.DateTimeFormat('en-US', {
+          timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit'
+        }).formatToParts(new Date());
+        const today = Object.fromEntries(todayParts.map(part => [part.type, Number(part.value)]));
+        const todayDay = Date.UTC(today.year, today.month - 1, today.day);
+        const elapsedDays = Math.floor((todayDay - launchDay) / 86400000);
+        const count = Math.abs(elapsedDays);
+        launchDays.textContent = new Intl.NumberFormat('es-CL').format(count);
+        if (launchDaysLabel) {
+          launchDaysLabel.textContent = elapsedDays < 0
+            ? `${count === 1 ? 'día' : 'días'} para nuestro lanzamiento`
+            : `${count === 1 ? 'día' : 'días'} desde nuestro lanzamiento`;
+        }
+      };
+
+      updateLaunchDays();
+      window.addEventListener('pageshow', updateLaunchDays);
+      window.setInterval(updateLaunchDays, 60000);
+    }
+  }
+
   const header = document.querySelector('[data-header]');
   const menuButton = document.querySelector('.menu-toggle');
   const navigation = document.querySelector('.main-nav');
@@ -260,17 +295,31 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('pageshow', () => closePersonCards());
   }
 
-  // Lógica del Acordeón FAQ (Cerrar los otros al abrir uno)
-  const detailsElements = document.querySelectorAll('.faq-list details');
-  detailsElements.forEach((targetDetail) => {
-    targetDetail.addEventListener('click', () => {
-      detailsElements.forEach((detail) => {
-        if (detail !== targetDetail) {
-          detail.removeAttribute('open');
-        }
-      });
+  // Las preguntas se abren de a una y la Ñaña acompaña la conversación.
+  const homeFaq = document.querySelector('[data-home-faq]');
+  const homeFaqItems = Array.from(document.querySelectorAll('[data-home-faq-list] details'));
+  const homeFaqStatus = homeFaq?.querySelector('[data-faq-guide-status]');
+
+  const syncHomeFaqGuide = () => {
+    const openItem = homeFaqItems.find(item => item.open);
+    homeFaq?.classList.toggle('has-open-answer', Boolean(openItem));
+    if (homeFaqStatus) {
+      homeFaqStatus.textContent = openItem?.dataset.guideMessage || 'Conversemos con claridad.';
+    }
+  };
+
+  homeFaqItems.forEach(item => {
+    item.addEventListener('toggle', () => {
+      if (item.open) {
+        homeFaqItems.forEach(otherItem => {
+          if (otherItem !== item) otherItem.removeAttribute('open');
+        });
+      }
+      syncHomeFaqGuide();
     });
   });
+
+  syncHomeFaqGuide();
 
   // Filtros de Productos
   const productFilters = document.querySelectorAll('.product-filter');

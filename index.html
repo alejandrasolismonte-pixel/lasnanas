@@ -3,62 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Las Ñañas | Ecosistema Rural y Ancestral</title>
+    <meta name="theme-color" content="#050608">
+    <meta name="description" content="Una entrada desde Wallmapu al universo de Las Ñañas.">
+    <title>Las Ñañas · Raíces que cuidan</title>
 
-    <!-- Tipografías de Google Fonts -->
+    <!-- Oswald se aplica únicamente a esta entrada cinematográfica. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@500;600&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css?v=7">
-    <link rel="stylesheet" href="css/whatsapp-floating.css?v=3">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/loading-overlay.css?v=2">
+    <link rel="stylesheet" href="css/public-backgrounds.css?v=1">
+    <link rel="stylesheet" href="css/cinematic-entry.css?v=1">
     <link rel="prefetch" href="desarrollo.html">
 </head>
-<body class="landing-welcome-page">
+<body class="cinematic-entry">
+    <a class="cinema__skip" href="desarrollo.html">Saltar introducción</a>
 
-    <a class="landing-skip-link" href="#contenido">Saltar al contenido</a>
+    <main class="cinema" aria-label="Introducción a Las Ñañas">
+        <section class="cinema__scene cinema__scene--fire is-active" data-scene="fire" aria-label="Fuego de bienvenida">
+            <video class="cinema__video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+                <source src="assets/videos/video-header" type="video/webm">
+                <source src="assets/videos/video-header-iphone.mp4" type="video/mp4">
+            </video>
+        </section>
 
-    <!-- Fondo oscuro sólido -->
-    <div class="dark-background"></div>
+        <section class="cinema__scene cinema__scene--story" data-scene="story" aria-hidden="true">
+            <ol class="cinema__places" aria-label="Desde Wallmapu hasta el universo">
+                <li>WALLMAPU</li>
+                <li>ARAUCANÍA</li>
+                <li>CHILE</li>
+                <li>SUDAMÉRICA</li>
+                <li>UNIVERSO</li>
+            </ol>
+            <div class="cinema__identity">
+                <h1 class="cinema__title">Ñañas <span aria-hidden="true">·</span> Raíces que cuidan</h1>
+                <p class="cinema__subtitle">Redes para territorios</p>
+            </div>
+        </section>
 
-    <!-- Contenedor del entorno interactivo (Íconos y Palabras) -->
-    <div id="floating-environment" aria-hidden="true"></div>
-
-    <!-- Contenido Principal -->
-    <main class="main-container" id="contenido">
-        <!-- Recuadro central -->
-        <article class="glass-panel fade-in">
-
-            <header>
-                <!-- Logo -->
-                <img src="assets/img/logo-web.png" alt="Logo de Las Ñañas" class="logo" onerror="this.style.display='none'">
-
-                <!-- Título plateado -->
-                <h1 class="silver-text">Marri marri pu lamien .<br>Küme akuymün!!</h1>
-                <h2 class="silver-text welcome-subtitle">Raíces profundas.<br>Ecosistemas vivos.</h2>
-            </header>
-                <p class="description">
-                    Desde la Araucania, Wallmapu creamos este espacio donde la agroecología, en donde la cultura mapuche y la fuerza de la mujer campesina convergen. Impulsamos nuestro trabajo, respetando itrofill mogen,nuestras plantas y semillas nativas y promovemos la soberanía alimentaria.
-                </p>
-
-                <div class="launch-message">
-                    <span class="status-dot"></span>
-                    <p>La Mapu se prepara. Nuestra semilla germinará pronto.</p>
-                </div>
-
-                <!-- Único ingreso al sitio. El cargador aparece al activarlo. -->
-                <div class="progress-wrap">
-                    <a href="desarrollo.html#inicio" class="cta-button landing-entry-button" data-kupage aria-label="Ingresar al sitio">Küpage</a>
-                </div>
-        </article>
+        <section class="cinema__scene cinema__scene--gate" data-scene="gate" aria-hidden="true" aria-label="Compuerta hacia Las Ñañas">
+            <div class="cinema__stars" aria-hidden="true"></div>
+            <div class="cinema__portal" aria-hidden="true"></div>
+            <div class="cinema__door cinema__door--left" aria-hidden="true"></div>
+            <div class="cinema__door cinema__door--right" aria-hidden="true"></div>
+            <div class="cinema__seam" aria-hidden="true"></div>
+            <div class="cinema__horizon" aria-hidden="true"></div>
+        </section>
     </main>
 
-    <!-- JavaScript Vanilla -->
+    <noscript><a class="cinema__no-script" href="desarrollo.html">Entrar a Las Ñañas</a></noscript>
+
     <script src="js/loading-overlay.js?v=2"></script>
-    <script src="js/motion-lifecycle.js?v=2"></script>
-    <script src="script.js?v=7"></script>
-    <script src="js/whatsapp-floating.js?v=3"></script>
+    <script src="js/cinematic-entry.js?v=1"></script>
 </body>
 </html>

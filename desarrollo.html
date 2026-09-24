@@ -29,12 +29,14 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="css/desarrollo.css?v=86">
+    <link rel="stylesheet" href="css/desarrollo.css?v=88">
     <link rel="stylesheet" href="css/whatsapp-floating.css?v=3">
     <link rel="stylesheet" href="css/loading-overlay.css?v=2">
+    <link rel="stylesheet" href="css/public-faq.css?v=1">
+    <link rel="stylesheet" href="css/public-backgrounds.css?v=1">
 </head>
 
-<body>
+<body class="public-flow-page">
     <!-- Fondo de marcas de agua mapuche flotantes -->
     <div class="watermark-bg" aria-hidden="true"></div>
 
@@ -120,6 +122,10 @@
                 <p class="eyebrow location-tag">Wallmapu · La Araucanía · Chile</p>
               <h1 class="titulo-nanas">Raíces que cuidan.<br><span class="texto-verde">Redes que florecen.</span></h1>
                 <p class="hero__lead">Proyecto agroecológico de autogestión y creación de redes de apoyo que une territorios.</p>
+                <div class="hero__arrival">
+                    <p class="hero__arrival-message"><span>Entra, recorre y sé parte de esta historia.</span><span>Las Ñañas también se construyen contigo.</span></p>
+                    <p class="hero__days"><span class="hero__days-number" data-launch-days>—</span><span class="hero__days-label" data-launch-days-label>lanzamiento el 1 de octubre de 2026</span></p>
+                </div>
                 <div class="hero__actions">
                     <!-- Este botón ahora apunta a la página independiente -->
                     <a class="plant-cta" href="pages/voluntariado.html">
@@ -137,7 +143,7 @@
         </section>
 
      <!-- Quiénes somos (Efecto Libro) -->
-<section class="section-shell section" id="quienes-somos" aria-labelledby="about-title">
+<section class="section-shell section public-band" id="quienes-somos" aria-labelledby="about-title">
     <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
         
         <div class="section-heading" style="text-align: center;">
@@ -219,7 +225,7 @@
 </section>
 
         <!-- Las Ñañas (Tarjetas Flip) -->
-        <section class="section-shell section" id="nanas" aria-labelledby="nanas-title">
+        <section class="section-shell section public-band" id="nanas" aria-labelledby="nanas-title">
             <div class="container">
                 <div class="section-heading section-heading--wide reveal">
                     <p class="eyebrow">Pu lamngen · comunidad</p>
@@ -282,7 +288,7 @@
       
 
         <!-- Territorios (MAPA) -->
-        <section class="section-shell section section--territory" id="territorio" aria-labelledby="territory-title">
+        <section class="section-shell section section--territory public-band public-band--stars" id="territorio" aria-labelledby="territory-title">
             <!-- EFECTO DE ESTRELLAS: para quitarlo, borra este <canvas> y el bloque
            .particles-canvas en el CSS (sección 18) y createStarField en js/star-field.js -->
             <canvas class="particles-canvas" aria-hidden="true"></canvas>
@@ -404,7 +410,7 @@
   
 
 <!-- BLOQUE 4: CAJAS ECOSISTEMA (VOLUNTARIADO, PRODUCTOS, SERVICIOS) -->
-<section class="section-shell section section--ecosystem" id="sumate" aria-labelledby="ecosystem-title">
+<section class="section-shell section section--ecosystem public-band" id="sumate" aria-labelledby="ecosystem-title">
     <canvas class="particles-canvas" aria-hidden="true"></canvas>
     <div class="container">
         <div class="ecosystem-intro reveal">
@@ -439,90 +445,71 @@
 
 
         <!-- Preguntas Frecuentes (FAQ) -->
-        <section class="section-shell section" id="preguntas" aria-labelledby="faq-title">
-            <div class="container faq-layout">
-                <div class="section-heading reveal">
+        <section class="section-shell section volunteer-faq public-band" id="preguntas" aria-labelledby="faq-title" data-home-faq>
+            <div class="container volunteer-faq__container">
+                <header class="volunteer-faq__heading reveal">
                     <p class="eyebrow">Preguntas frecuentes</p>
                     <h2 id="faq-title">Conversemos con claridad.</h2>
-                </div>
-                <div class="faq-list reveal">
-
-                    <details>
-                        <summary>1. ¿Qué es Las Ñañas?</summary>
-                        <div class="faq-content">
-                            <p>Las Ñañas es un proyecto agroecológico que nace desde el vínculo con el territorio, la producción responsable de alimentos, la protección de semillas y la recuperación de saberes relacionados con la tierra y la biodiversidad.</p>
+                </header>
+                <div class="volunteer-faq__layout">
+                    <aside class="volunteer-faq__guide reveal" aria-label="Una Ñaña acompaña las preguntas frecuentes">
+                        <div class="volunteer-faq__portrait">
+                            <span class="volunteer-faq__portrait-trace" aria-hidden="true"></span>
+                            <img src="assets/img/voluntariado/nana-preguntas-inicio.webp" alt="Ilustración de una Ñaña que invita amablemente a conversar" width="1199" height="1312" loading="lazy" decoding="async">
                         </div>
-                    </details>
-
-                    <details>
-                        <summary>2. ¿Dónde nace el proyecto Las Ñañas?</summary>
-                        <div class="faq-content">
-                            <p>Las Ñañas nace en territorio de La Araucanía, desde una mirada de respeto hacia la naturaleza, los ciclos agrícolas y los conocimientos comunitarios que han cuidado la tierra por generaciones.</p>
+                        <div class="volunteer-faq__guide-copy">
+                            <p class="volunteer-faq__guide-name">Una Ñaña te acompaña</p>
+                            <p class="volunteer-faq__guide-status" data-faq-guide-status aria-live="polite">¿Qué es Las Ñañas?</p>
                         </div>
-                    </details>
-
-                    <details>
-                        <summary>3. ¿Qué productos ofrecen?</summary>
-                        <div class="faq-content">
-                            <p>Trabajamos con productos agroecológicos como hortalizas, semillas, plantas nativas, productos elaborados y otros elementos vinculados al cuidado de la tierra.</p>
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>4. ¿Qué significa que sus productos sean agroecológicos?</summary>
-                        <div class="faq-content">
-                            <p>La agroecología busca producir alimentos respetando los ecosistemas, reduciendo impactos negativos y fortaleciendo la biodiversidad del territorio.</p>
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>5. ¿Venden semillas o plantas nativas?</summary>
-                        <div class="faq-content">
-                            <p>Sí, uno de nuestros objetivos es fortalecer la conservación y circulación de semillas, además de promover plantas nativas y especies adaptadas al territorio.</p>
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>6. ¿Cómo puedo comprar productos de Las Ñañas?</summary>
-                        <div class="faq-content">
-                            <p>Puedes contactarnos directamente a través de nuestro formulario, redes sociales o WhatsApp para consultar disponibilidad, formatos de venta y fechas de entrega.</p>
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>7. ¿Realizan envíos o entregas?</summary>
-                        <div class="faq-content">
-                            <p>Actualmente trabajamos con modalidades de entrega que dependen del producto, ubicación y disponibilidad. Contáctanos para revisar las opciones disponibles.</p>
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>8. ¿Realizan talleres o actividades educativas?</summary>
-                        <div class="faq-content">
-                            <p>Sí, Las Ñañas busca compartir conocimientos relacionados con agroecología, semillas, cultivo, biodiversidad y conexión con el territorio mediante talleres y actividades comunitarias.</p>
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>9. ¿Cómo puedo apoyar el proyecto?</summary>
-                        <div class="faq-content">
-                            <p>Puedes apoyar comprando nuestros productos, participando en actividades, difundiendo nuestro trabajo o colaborando en iniciativas relacionadas con la protección de semillas y biodiversidad.</p>
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>10. ¿Las Ñañas trabaja con comunidades u organizaciones?</summary>
-                        <div class="faq-content">
-                            <p>Sí, buscamos generar redes de colaboración con personas, organizaciones y comunidades que compartan una visión de cuidado territorial, soberanía alimentaria y desarrollo sostenible.</p>
-                        </div>
-                    </details>
-
+                    </aside>
+                    <div class="volunteer-faq__list reveal" data-home-faq-list>
+                        <details class="volunteer-faq__item" data-guide-message="¿Qué es Las Ñañas?" open>
+                            <summary><span class="volunteer-faq__number">01</span><span>¿Qué es Las Ñañas?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Las Ñañas es un proyecto agroecológico que nace desde el vínculo con el territorio, la producción responsable de alimentos, la protección de semillas y la recuperación de saberes relacionados con la tierra y la biodiversidad.</p></div>
+                        </details>
+                        <details class="volunteer-faq__item" data-guide-message="¿Dónde nace el proyecto Las Ñañas?">
+                            <summary><span class="volunteer-faq__number">02</span><span>¿Dónde nace el proyecto Las Ñañas?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Las Ñañas nace en territorio de La Araucanía, desde una mirada de respeto hacia la naturaleza, los ciclos agrícolas y los conocimientos comunitarios que han cuidado la tierra por generaciones.</p></div>
+                        </details>
+                        <details class="volunteer-faq__item" data-guide-message="¿Qué productos ofrecen?">
+                            <summary><span class="volunteer-faq__number">03</span><span>¿Qué productos ofrecen?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Trabajamos con productos agroecológicos como hortalizas, semillas, plantas nativas, productos elaborados y otros elementos vinculados al cuidado de la tierra.</p></div>
+                        </details>
+                        <details class="volunteer-faq__item" data-guide-message="¿Qué significa que sus productos sean agroecológicos?">
+                            <summary><span class="volunteer-faq__number">04</span><span>¿Qué significa que sus productos sean agroecológicos?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>La agroecología busca producir alimentos respetando los ecosistemas, reduciendo impactos negativos y fortaleciendo la biodiversidad del territorio.</p></div>
+                        </details>
+                        <details class="volunteer-faq__item" data-guide-message="¿Venden semillas o plantas nativas?">
+                            <summary><span class="volunteer-faq__number">05</span><span>¿Venden semillas o plantas nativas?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Sí, uno de nuestros objetivos es fortalecer la conservación y circulación de semillas, además de promover plantas nativas y especies adaptadas al territorio.</p></div>
+                        </details>
+                        <details class="volunteer-faq__item" data-guide-message="¿Cómo puedo comprar productos de Las Ñañas?">
+                            <summary><span class="volunteer-faq__number">06</span><span>¿Cómo puedo comprar productos de Las Ñañas?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Puedes contactarnos directamente a través de nuestro formulario, redes sociales o WhatsApp para consultar disponibilidad, formatos de venta y fechas de entrega.</p></div>
+                        </details>
+                        <details class="volunteer-faq__item" data-guide-message="¿Realizan envíos o entregas?">
+                            <summary><span class="volunteer-faq__number">07</span><span>¿Realizan envíos o entregas?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Actualmente trabajamos con modalidades de entrega que dependen del producto, ubicación y disponibilidad. Contáctanos para revisar las opciones disponibles.</p></div>
+                        </details>
+                        <details class="volunteer-faq__item" data-guide-message="¿Realizan talleres o actividades educativas?">
+                            <summary><span class="volunteer-faq__number">08</span><span>¿Realizan talleres o actividades educativas?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Sí, Las Ñañas busca compartir conocimientos relacionados con agroecología, semillas, cultivo, biodiversidad y conexión con el territorio mediante talleres y actividades comunitarias.</p></div>
+                        </details>
+                        <details class="volunteer-faq__item" data-guide-message="¿Cómo puedo apoyar el proyecto?">
+                            <summary><span class="volunteer-faq__number">09</span><span>¿Cómo puedo apoyar el proyecto?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Puedes apoyar comprando nuestros productos, participando en actividades, difundiendo nuestro trabajo o colaborando en iniciativas relacionadas con la protección de semillas y biodiversidad.</p></div>
+                        </details>
+                        <details class="volunteer-faq__item" data-guide-message="¿Las Ñañas trabaja con comunidades u organizaciones?">
+                            <summary><span class="volunteer-faq__number">10</span><span>¿Las Ñañas trabaja con comunidades u organizaciones?</span><span class="volunteer-faq__mark" aria-hidden="true"></span></summary>
+                            <div class="volunteer-faq__answer"><span>Ñaña responde</span><p>Sí, buscamos generar redes de colaboración con personas, organizaciones y comunidades que compartan una visión de cuidado territorial, soberanía alimentaria y desarrollo sostenible.</p></div>
+                        </details>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Contacto -->
-        <section class="section-shell section contact-section" id="contacto" aria-labelledby="contact-title">
+        <section class="section-shell section contact-section public-band" id="contacto" aria-labelledby="contact-title">
             <div class="container contact-grid">
                 <div class="contact-copy reveal">
                     <p class="eyebrow">Conectemos · Ruka</p>
@@ -585,7 +572,7 @@
     <script src="js/loading-overlay.js?v=2"></script>
     <script src="js/map-pins.js?v=2"></script>
     <script src="js/motion-lifecycle.js?v=2"></script>
-    <script src="js/desarrollo.js?v=32"></script>
+    <script src="js/desarrollo.js?v=35"></script>
     <script src="js/star-field.js?v=2"></script>
     <script src="js/whatsapp-floating.js?v=3"></script>
 </body>
