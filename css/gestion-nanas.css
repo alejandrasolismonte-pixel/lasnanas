@@ -1,0 +1,115 @@
+:root {
+  --nanas-ink: #123638;
+  --nanas-muted: #4c6868;
+  --nanas-green: #17633f;
+  --nanas-orange: #df6224;
+  --nanas-line: #bedbd5;
+  --nanas-paper: #fffefa;
+  --orange: #df6224;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; background: #eaf5f1; color: var(--nanas-ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid var(--nanas-orange); outline-offset: 3px; }
+
+.nanas-header { min-height: 84px; padding: 12px max(20px, calc((100vw - 1450px)/2)); display: flex; align-items: center; justify-content: space-between; gap: 18px; background: #80cbc5; border-bottom: 1px solid #72b7b1; }
+.nanas-brand { display: inline-flex; align-items: center; gap: 12px; color: var(--nanas-ink); text-decoration: none; font: 700 1.45rem Georgia, serif; }
+.nanas-brand img { width: 65px; height: 60px; object-fit: contain; }
+.nanas-account { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.nanas-account span { max-width: 25vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .9rem; }
+.nanas-shell { width: min(100%, 1490px); margin: auto; padding: 28px 20px 70px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(265px, 315px); align-items: start; gap: 24px; }
+.nanas-main { min-width: 0; }
+.nanas-card, .nanas-protocol { border: 1px solid #d6e8e2; border-radius: 20px; background: var(--nanas-paper); box-shadow: 0 12px 30px rgba(10, 57, 51, .08); }
+.nanas-card { padding: clamp(20px, 3vw, 32px); }
+.nanas-login { max-width: 630px; margin: 30px auto; }
+.nanas-login form { display: grid; gap: 16px; margin-top: 24px; }
+.nanas-eyebrow { margin: 0 0 5px; color: #9e461d; font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+h1, h2, h3 { color: var(--nanas-ink); }
+.nanas-title-row h1, .nanas-card h1, .nanas-card h2, .nanas-protocol h2 { margin: 0 0 12px; font-family: Georgia, serif; line-height: 1.16; }
+.nanas-title-row h1 { font-size: clamp(1.85rem, 3.5vw, 2.7rem); }
+.nanas-card h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); }
+.nanas-title-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; }
+.nanas-session { padding: 8px 13px; border-radius: 999px; background: #daf0e4; color: var(--nanas-green); font-size: .82rem; font-weight: 700; }
+.nanas-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.nanas-nav button, .nanas-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 9px 15px; border: 1px solid var(--nanas-line); border-radius: 11px; background: #fff; color: var(--nanas-ink); text-decoration: none; font-size: .9rem; font-weight: 750; }
+.nanas-nav .is-active { border-color: var(--nanas-green); background: var(--nanas-green); color: #fff; }
+.nanas-section-head { display: flex; justify-content: space-between; align-items: start; gap: 14px; }
+.nanas-section-head h3 { margin: 0; }
+.nanas-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 23px 0 27px; }
+.nanas-metrics article { min-width: 0; padding: 19px; border: 1px solid var(--nanas-line); border-radius: 15px; background: #f3faf6; }
+.nanas-metrics strong { display: block; color: var(--nanas-green); font: 700 2.3rem Georgia, serif; }
+.nanas-metrics span { color: var(--nanas-muted); font-size: .85rem; font-weight: 700; }
+.nanas-recent { display: grid; gap: 9px; }
+.nanas-recent article { display: flex; justify-content: space-between; gap: 12px; padding: 12px 15px; border: 1px solid var(--nanas-line); border-radius: 10px; }
+.nanas-recent small { color: var(--nanas-muted); }
+.nanas-table-wrap { overflow-x: auto; margin-top: 20px; }
+.nanas-table-wrap table { width: 100%; border-collapse: collapse; text-align: left; }
+.nanas-table-wrap th, .nanas-table-wrap td { padding: 13px 10px; border-bottom: 1px solid #dbeae5; vertical-align: top; }
+.nanas-table-wrap th { color: var(--nanas-muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; }
+.nanas-table-wrap td { font-size: .88rem; }
+.nanas-table-wrap td:first-child { font-weight: 750; }
+.nanas-row-actions { display: flex; flex-wrap: wrap; gap: 6px; min-width: 180px; }
+.nanas-row-actions button { border: 1px solid var(--nanas-line); border-radius: 8px; padding: 6px 8px; background: #fff; color: var(--nanas-ink); font-size: .81rem; }
+.nanas-row-actions button:hover { background: #eaf5f0; }
+.nanas-status { display: inline-block; padding: 4px 8px; border-radius: 999px; background: #e4f1e8; color: #155333; font-size: .8rem; font-weight: 800; white-space: nowrap; }
+.nanas-status--in_process { background: #fff1d9; color: #81500e; }
+.nanas-status--inactive { background: #e9eded; color: #4c6263; }
+.nanas-detail { margin-top: 24px; padding: 20px; border-radius: 14px; background: #f4f9f6; }
+.nanas-detail dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 0; }
+.nanas-detail dl div { min-width: 0; padding: 10px 12px; border: 1px solid #d9e8df; border-radius: 10px; background: #fff; overflow-wrap: anywhere; }
+.nanas-detail dt { color: var(--nanas-muted); font-size: .75rem; font-weight: 800; text-transform: uppercase; }
+.nanas-detail dd { margin: 4px 0 0; white-space: pre-wrap; }
+.nanas-card fieldset { min-width: 0; margin: 27px 0; padding: 0; border: 0; }
+.nanas-card legend { margin-bottom: 12px; font: 700 1.25rem Georgia, serif; }
+.nanas-card label { display: grid; gap: 5px; min-width: 0; font-weight: 700; }
+.nanas-card input, .nanas-card select, .nanas-card textarea { width: 100%; min-width: 0; min-height: 44px; padding: 10px 11px; border: 1px solid #9bbdb5; border-radius: 9px; background: #fff; color: var(--nanas-ink); }
+.nanas-card textarea { min-height: 92px; resize: vertical; }
+.nanas-card small, .nanas-help { color: var(--nanas-muted); font-size: .8rem; font-weight: 500; }
+.nanas-help { margin: 4px 0 11px; }
+.nanas-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.nanas-wide { grid-column: 1 / -1; }
+.nanas-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.nanas-choices label { display: inline-flex; margin: 0; cursor: pointer; }
+.nanas-choices input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.nanas-choices span { display: inline-flex; align-items: center; min-height: 40px; padding: 8px 12px; border: 1px solid var(--nanas-line); border-radius: 10px; background: #fff; font-size: .87rem; }
+.nanas-choices input:checked + span { border-color: var(--nanas-orange); background: #fff2e6; color: #71320e; box-shadow: inset 0 0 0 1px var(--nanas-orange); }
+.nanas-choices input:focus-visible + span { outline: 3px solid var(--nanas-orange); outline-offset: 3px; }
+[data-agriculture-options] { margin-top: 19px; padding: 17px; border-radius: 12px; background: #edf7f2; }
+.nanas-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+.nanas-button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 9px 17px; border: 1px solid var(--nanas-line); border-radius: 10px; font-weight: 750; }
+.nanas-button--primary { border-color: var(--nanas-green); background: var(--nanas-green); color: #fff; }
+.nanas-button--quiet { background: #fff; color: var(--nanas-ink); }
+.nanas-button:disabled { opacity: .55; cursor: wait; }
+.nanas-message { min-height: 1.2em; color: #a52e28; font-weight: 650; }
+.nanas-message.is-success { color: var(--nanas-green); }
+.nanas-protocol { position: sticky; top: 18px; padding: 23px 22px; border-top: 5px solid var(--nanas-orange); }
+.nanas-protocol h2 { font-size: 1.35rem; }
+.nanas-protocol ul { margin: 15px 0 0; padding-left: 20px; }
+.nanas-protocol li + li { margin-top: 10px; }
+.nanas-map-view .map-experience { margin-top: 18px; }
+.nanas-map-view .map-detail h3 { color: #fff; }
+
+@media (max-width: 1050px) {
+  .nanas-shell { grid-template-columns: 1fr; }
+  .nanas-protocol { position: static; order: -1; }
+  .nanas-login { margin: 0; max-width: none; }
+}
+@media (max-width: 720px) {
+  .nanas-header { padding: 10px 15px; }
+  .nanas-brand { font-size: 1.1rem; }
+  .nanas-brand img { width: 48px; height: 48px; }
+  .nanas-account span { display: none; }
+  .nanas-shell { padding: 16px 12px 50px; gap: 15px; }
+  .nanas-card, .nanas-protocol { padding: 19px; }
+  .nanas-title-row { align-items: start; flex-direction: column; }
+  .nanas-metrics { grid-template-columns: 1fr; }
+  .nanas-form-grid, .nanas-detail dl { grid-template-columns: 1fr; }
+  .nanas-wide { grid-column: auto; }
+  .nanas-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nanas-nav button, .nanas-nav a { justify-content: center; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

@@ -362,6 +362,8 @@
       }
       const userResult = await client.auth.getUser();
       if (userResult.error || !userResult.data?.user) {
+        // El panel de Ñañas muestra su propio formulario de acceso.
+        if (document.querySelector('[data-nanas-map-editor]')) return;
         window.location.replace('pages/voluntariado.html?access=mi-ruka');
         return;
       }

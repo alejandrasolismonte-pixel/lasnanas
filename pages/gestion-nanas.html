@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Gestión de Ñañas · Las Ñañas</title>
+  <link rel="stylesheet" href="../css/desarrollo.css?v=3">
+  <link rel="stylesheet" href="../css/gestion-nanas.css?v=1">
+</head>
+<body>
+  <header class="nanas-header">
+    <a class="nanas-brand" href="nanas.html" aria-label="Volver al sitio de Las Ñañas">
+      <img src="../assets/img/logo-web.png" alt="Las Ñañas">
+      <span>Gestión de Ñañas</span>
+    </a>
+    <div class="nanas-account" data-account hidden>
+      <span data-account-email></span>
+      <button type="button" class="nanas-button nanas-button--quiet" data-logout>Salir</button>
+    </div>
+  </header>
+
+  <div class="nanas-shell">
+    <main class="nanas-main">
+      <section class="nanas-card nanas-login" data-login-panel aria-labelledby="login-title">
+        <p class="nanas-eyebrow">Acceso independiente</p>
+        <h1 id="login-title">Panel de Ñañas</h1>
+        <p>Ingresa con la cuenta autorizada para la gestión de Ñañas.</p>
+        <form data-login-form>
+          <label>Correo electrónico
+            <input name="email" type="email" autocomplete="username" required>
+          </label>
+          <label>Contraseña
+            <input name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button type="submit" class="nanas-button nanas-button--primary">Ingresar</button>
+          <p class="nanas-message" data-login-message role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <div data-panel hidden>
+        <div class="nanas-title-row">
+          <div><p class="nanas-eyebrow">Administración</p><h1>Gestión de Ñañas</h1></div>
+          <span class="nanas-session">Acceso exclusivo de Ñañas</span>
+        </div>
+        <nav class="nanas-nav" aria-label="Secciones del panel de Ñañas">
+          <button type="button" data-view-button="resumen" class="is-active" aria-current="page">Resumen</button>
+          <button type="button" data-view-button="registradas">Ñañas registradas</button>
+          <button type="button" data-view-button="agregar">Agregar Ñaña</button>
+          <a href="gestion-nanas.html?editar-mapa=1#pines" data-view-button="pines">Gestión de pines del mapa</a>
+        </nav>
+
+        <section class="nanas-card" data-view="resumen" aria-labelledby="resumen-title">
+          <div class="nanas-section-head"><div><p class="nanas-eyebrow">Panorama</p><h2 id="resumen-title">Resumen</h2></div></div>
+          <div class="nanas-metrics">
+            <article><strong data-count="active">—</strong><span>Ñañas activas</span></article>
+            <article><strong data-count="in_process">—</strong><span>Ñañas en proceso</span></article>
+            <article><strong data-count="inactive">—</strong><span>Inactivas o archivadas</span></article>
+          </div>
+          <h3>Últimos registros</h3>
+          <div data-recent-list class="nanas-recent"></div>
+        </section>
+
+        <section class="nanas-card" data-view="registradas" aria-labelledby="registradas-title" hidden>
+          <div class="nanas-section-head"><div><p class="nanas-eyebrow">Directorio interno</p><h2 id="registradas-title">Ñañas registradas</h2></div></div>
+          <div class="nanas-table-wrap">
+            <table>
+              <thead><tr><th>Nombre</th><th>Territorio</th><th>Rubro</th><th>Estado</th><th>Experiencia</th><th>Acciones</th></tr></thead>
+              <tbody data-nanas-list></tbody>
+            </table>
+          </div>
+          <p data-list-message class="nanas-message" role="status" aria-live="polite"></p>
+          <article class="nanas-detail" data-detail hidden aria-labelledby="detail-title">
+            <div class="nanas-section-head"><h3 id="detail-title">Detalle de Ñaña</h3><button type="button" class="nanas-button nanas-button--quiet" data-detail-close>Cerrar</button></div>
+            <dl data-detail-content></dl>
+          </article>
+        </section>
+
+        <section class="nanas-card" data-view="agregar" aria-labelledby="form-title" hidden>
+          <div class="nanas-section-head"><div><p class="nanas-eyebrow">Ficha interna</p><h2 id="form-title">Agregar Ñaña</h2></div></div>
+          <form data-nana-form novalidate>
+            <fieldset><legend>Identificación</legend>
+              <div class="nanas-form-grid">
+                <label>Nombre <input name="first_name" required maxlength="80" autocomplete="off"></label>
+                <label>Apellidos <input name="last_name" required maxlength="100" autocomplete="off"></label>
+                <label>RUT <input name="rut" required maxlength="16" autocomplete="off" placeholder="12.345.678-9"><small>Dato privado.</small></label>
+                <label>Estado <select name="status"><option value="in_process">En proceso</option><option value="active">Activa</option><option value="inactive">Inactiva</option></select></label>
+                <label class="nanas-wide">Dirección exacta <input name="exact_address" required maxlength="240" autocomplete="off"><small>Dato privado.</small></label>
+                <label>Territorio o localidad <input name="territory" required maxlength="120"></label>
+                <label>Comuna <input name="commune" required maxlength="120"></label>
+              </div>
+            </fieldset>
+
+            <fieldset><legend>Rubro de la Ñaña</legend>
+              <p class="nanas-help">Puedes seleccionar más de un rubro.</p>
+              <div class="nanas-choices" data-choices="categories">
+                <label><input type="checkbox" value="espiritualidad_cosmovision"><span>Espiritualidad / cosmovisión</span></label>
+                <label><input type="checkbox" value="turismo_rural"><span>Turismo rural</span></label>
+                <label><input type="checkbox" value="agricultura_agroecologia"><span>Agricultura / agroecología</span></label>
+                <label><input type="checkbox" value="artesania"><span>Artesanía</span></label>
+                <label><input type="checkbox" value="gastronomia_alimentos"><span>Gastronomía / alimentos</span></label>
+                <label><input type="checkbox" value="oficios_saberes"><span>Oficios y saberes</span></label>
+                <label><input type="checkbox" value="otro"><span>Otro</span></label>
+              </div>
+              <div data-agriculture-options hidden>
+                <p class="nanas-help">Agricultura / agroecología</p>
+                <div class="nanas-choices" data-choices="agriculture_items">
+                  <label><input type="checkbox" value="hortalizas"><span>Hortalizas</span></label>
+                  <label><input type="checkbox" value="huevos_aves"><span>Huevos / aves</span></label>
+                  <label><input type="checkbox" value="semillas"><span>Semillas</span></label>
+                  <label><input type="checkbox" value="frutales"><span>Frutales</span></label>
+                  <label><input type="checkbox" value="cultivos_varios"><span>Cultivos varios</span></label>
+                  <label><input type="checkbox" value="otro"><span>Otro</span></label>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset><legend>Información</legend>
+              <div class="nanas-form-grid">
+                <label class="nanas-wide">Breve reseña de la Ñaña <textarea name="nana_bio" maxlength="1200"></textarea></label>
+                <label class="nanas-wide">Breve reseña del territorio <textarea name="territory_bio" maxlength="1200"></textarea></label>
+                <label class="nanas-wide">Actividades a realizar <textarea name="activities" maxlength="1600"></textarea></label>
+              </div>
+            </fieldset>
+
+            <fieldset><legend>Qué ofrece la experiencia</legend>
+              <div class="nanas-choices" data-choices="experience_offerings">
+                <label><input type="checkbox" value="paseos_recorridos"><span>Paseos o recorridos</span></label>
+                <label><input type="checkbox" value="comidas"><span>Comidas</span></label>
+                <label><input type="checkbox" value="ensenanza_oficio"><span>Enseñanza de un oficio</span></label>
+                <label><input type="checkbox" value="experiencia_cultural"><span>Experiencia cultural</span></label>
+                <label><input type="checkbox" value="aprendizaje_agroecologico"><span>Aprendizaje agroecológico</span></label>
+                <label><input type="checkbox" value="otra"><span>Otra experiencia</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset><legend>Alimentación</legend>
+              <div class="nanas-form-grid">
+                <label>Disponibilidad <select name="food_inclusion"><option value="included">Incluida</option><option value="partial">Parcial</option><option value="not_included">No incluida</option></select></label>
+                <div class="nanas-wide"><p class="nanas-help">Tipo de alimentación, si corresponde</p>
+                  <div class="nanas-choices" data-choices="food_types">
+                    <label><input type="checkbox" value="general"><span>General</span></label>
+                    <label><input type="checkbox" value="vegetariana"><span>Vegetariana</span></label>
+                    <label><input type="checkbox" value="vegana"><span>Vegana</span></label>
+                    <label><input type="checkbox" value="otra"><span>Otra</span></label>
+                  </div>
+                </div>
+                <label class="nanas-wide">Observaciones de alimentación <textarea name="food_notes" maxlength="1200"></textarea></label>
+              </div>
+            </fieldset>
+
+            <fieldset><legend>Alojamiento</legend>
+              <div class="nanas-form-grid">
+                <label>Disponibilidad <select name="lodging_inclusion"><option value="included">Incluido</option><option value="subject_to_availability">Depende de disponibilidad</option><option value="not_included">No incluido</option></select></label>
+                <label class="nanas-wide">Descripción del alojamiento <textarea name="lodging_description" maxlength="1200"></textarea></label>
+              </div>
+            </fieldset>
+
+            <fieldset><legend>Interno</legend>
+              <label>Notas de administración <textarea name="admin_notes" maxlength="2000"></textarea></label>
+            </fieldset>
+            <div class="nanas-actions">
+              <button type="button" class="nanas-button nanas-button--quiet" data-save-draft>Guardar en proceso</button>
+              <button type="submit" class="nanas-button nanas-button--primary">Guardar Ñaña</button>
+            </div>
+            <p class="nanas-message" data-form-message role="status" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="nanas-card nanas-map-view" id="pines" data-view="pines" aria-labelledby="pines-title" hidden>
+          <div class="nanas-section-head"><div><p class="nanas-eyebrow">Mapa territorial</p><h2 id="pines-title">Gestión de pines del mapa</h2></div></div>
+          <p>Estos son los mismos pines del mapa público. Los cambios se publican al guardar.</p>
+          <div data-nanas-map-editor data-map-image-url="../assets/img/mapa-araucania-web.webp"></div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="nanas-protocol" aria-labelledby="protocol-title">
+      <p class="nanas-eyebrow">Protocolo vigente</p>
+      <h2 id="protocol-title">Acuerdos para cada experiencia</h2>
+      <ul>
+        <li>5 horas de trabajo al día.</li>
+        <li>5 días por semana.</li>
+        <li>Jornada y horarios acordados entre Ñaña y voluntaria.</li>
+        <li>Informar previamente alimentación: general, vegetariana, vegana u otra.</li>
+        <li>Informar previamente condiciones de alojamiento.</li>
+        <li>La experiencia debe contemplar aprendizaje, intercambio de saberes y participación en el territorio.</li>
+      </ul>
+    </aside>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/gestion-nanas.js?v=1"></script>
+  <script src="../js/nanas-map-editor.js?v=1"></script>
+  <script src="../js/map-pins.js?v=4"></script>
+</body>
+</html>
