@@ -328,6 +328,25 @@
       } finally { button.disabled = false; }
     });
 
+    document.querySelector('[data-nanas-reset-password]').addEventListener('click', async event => {
+      if (!client) { message(loginMessage, window.LasNanasSupabase.error); return; }
+      const emailInput = loginForm.elements.email;
+      if (!emailInput.reportValidity()) return;
+      const button = event.currentTarget;
+      button.disabled = true;
+      message(loginMessage, 'Enviando instrucciones…');
+      try {
+        const redirectTo = new URL('activar-gestion-nanas.html', location.href).href;
+        const { error } = await client.auth.resetPasswordForEmail(emailInput.value.trim().toLowerCase(), { redirectTo });
+        message(loginMessage, error
+          ? 'No fue posible enviar las instrucciones. Intenta nuevamente.'
+          : 'Si el correo corresponde a una cuenta habilitada, recibirás un enlace para crear o recuperar tu contraseña.',
+        !error);
+      } catch (_) {
+        message(loginMessage, 'No fue posible enviar las instrucciones. Intenta nuevamente.');
+      } finally { button.disabled = false; }
+    });
+
     document.querySelector('[data-logout]').addEventListener('click', async () => {
       await client.auth.signOut();
       records = [];

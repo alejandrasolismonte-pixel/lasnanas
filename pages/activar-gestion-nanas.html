@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Activar acceso de Ñañas · Las Ñañas</title>
+  <link rel="stylesheet" href="../css/gestion-nanas.css?v=1">
+</head>
+<body>
+  <header class="nanas-header">
+    <a class="nanas-brand" href="nanas.html" aria-label="Volver al sitio de Las Ñañas">
+      <img src="../assets/img/logo-web.png" alt="Las Ñañas">
+      <span>Gestión de Ñañas</span>
+    </a>
+  </header>
+
+  <div class="nanas-shell">
+    <main class="nanas-main">
+      <section class="nanas-card nanas-login" aria-labelledby="activation-title">
+        <p class="nanas-eyebrow">Acceso independiente</p>
+        <h1 id="activation-title">Crear o recuperar contraseña</h1>
+        <p>Validaremos el enlace y el permiso de gestión de Ñañas antes de habilitar el cambio.</p>
+        <p class="nanas-message" data-activation-status role="status" aria-live="polite">Validando el enlace…</p>
+        <form data-activation-form hidden>
+          <label>Nueva contraseña
+            <input name="password" type="password" minlength="12" maxlength="256" autocomplete="new-password" required>
+          </label>
+          <label>Repite la contraseña
+            <input name="confirmation" type="password" minlength="12" maxlength="256" autocomplete="new-password" required>
+          </label>
+          <button type="submit" class="nanas-button nanas-button--primary">Guardar contraseña</button>
+        </form>
+        <a href="gestion-nanas.html">Volver al acceso de Ñañas</a>
+      </section>
+    </main>
+
+    <aside class="nanas-protocol" aria-labelledby="protocol-title">
+      <p class="nanas-eyebrow">Protocolo vigente</p>
+      <h2 id="protocol-title">Acuerdos para cada experiencia</h2>
+      <ul>
+        <li>5 horas de trabajo al día.</li>
+        <li>5 días por semana.</li>
+        <li>Jornada y horarios acordados entre Ñaña y voluntaria.</li>
+        <li>Informar previamente alimentación: general, vegetariana, vegana u otra.</li>
+        <li>Informar previamente condiciones de alojamiento.</li>
+        <li>La experiencia debe contemplar aprendizaje, intercambio de saberes y participación en el territorio.</li>
+      </ul>
+    </aside>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/activar-gestion-nanas.js?v=1"></script>
+</body>
+</html>
