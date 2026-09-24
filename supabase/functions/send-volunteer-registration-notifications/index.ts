@@ -1,11 +1,11 @@
-/* Las Ñañas · worker privado para correos de inscripción y bienvenida.
+/* Las Ñañas · worker privado para correos de inscripción, bienvenida y comprobantes.
    No registra destinatarios, contenido de correo, tokens ni secretos. */
 import { createClient } from "@supabase/supabase-js";
 
 export type NotificationRow = {
   notification_id: string;
   application_id: string;
-  notification_type: "admin_registration" | "volunteer_welcome";
+  notification_type: "admin_registration" | "volunteer_welcome" | "transfer_receipt_received";
   recipient_email: string | null;
   first_name: string;
   last_name: string;
@@ -40,12 +40,14 @@ export const escapeHtml = (value: unknown): string => String(value ?? "").replac
 export const cleanPlainText = (value: unknown): string => String(value ?? "").replace(/[\u0000-\u001f\u007f]+/g, " ").trim();
 
 export function validateNotification(row: NotificationRow): void {
-  if (!ALLOWED_PLANS.has(row.plan_id) || !ALLOWED_BILLING.has(row.billing) ||
+  if (!["admin_registration", "volunteer_welcome", "transfer_receipt_received"].includes(row.notification_type) ||
+      !ALLOWED_PLANS.has(row.plan_id) || !ALLOWED_BILLING.has(row.billing) ||
       !ALLOWED_CURRENCIES.has(row.currency) || !ALLOWED_STATUSES.has(row.application_status)) {
     throw new Error("invalid_notification_payload");
   }
   if (!EMAIL_PATTERN.test(row.volunteer_email) ||
-      (row.notification_type === "volunteer_welcome" && (!row.recipient_email || row.recipient_email !== row.volunteer_email))) {
+      (row.notification_type === "volunteer_welcome" && (!row.recipient_email || row.recipient_email !== row.volunteer_email)) ||
+      (row.notification_type !== "volunteer_welcome" && row.recipient_email !== null)) {
     throw new Error("invalid_notification_recipient");
   }
   if (!/^[0-9a-f-]{36}$/i.test(row.idempotency_key) || Number.isNaN(Date.parse(row.application_created_at))) {
@@ -61,15 +63,17 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig) {
   const coordinationUrl = new URL("pages/coordinacion-voluntariado.html", baseUrl);
   coordinationUrl.searchParams.set("application", row.application_id);
   const periodicity = row.billing === "yearly" ? "Anual" : "Mensual";
+  const plan = ({ "keyuwün": "Keyuwün", "kimün": "Kimün", "pülli": "Pülli" } as const)[row.plan_id];
+  const status = ({ draft: "Borrador", submitted: "Enviada", in_review: "En revisión", needs_clarification: "Requiere información adicional", approved: "Aprobada", rejected: "Rechazada", withdrawn: "Retirada" } as Record<string, string>)[row.application_status];
   const createdAt = new Intl.DateTimeFormat("es-CL", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Santiago" }).format(new Date(row.application_created_at));
   const firstName = cleanPlainText(row.first_name);
   const lastName = cleanPlainText(row.last_name);
 
   const commonRows = `
-    <tr><th align="left">Plan</th><td>${escapeHtml(row.plan_id)}</td></tr>
+    <tr><th align="left">Plan</th><td>${escapeHtml(plan)}</td></tr>
     <tr><th align="left">Periodicidad</th><td>${periodicity}</td></tr>
     <tr><th align="left">Moneda</th><td>${escapeHtml(row.currency)}</td></tr>
-    <tr><th align="left">Estado</th><td>${escapeHtml(row.application_status)}</td></tr>`;
+    <tr><th align="left">Estado de la solicitud</th><td>${escapeHtml(status)}</td></tr>`;
 
   if (row.notification_type === "admin_registration") {
     return {
@@ -82,7 +86,28 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig) {
         <tr><th align="left">Correo</th><td>${escapeHtml(row.volunteer_email)}</td></tr>
         ${commonRows}<tr><th align="left">Fecha y hora</th><td>${escapeHtml(createdAt)}</td></tr>
         </table><p><a href="${escapeHtml(coordinationUrl.href)}">Abrir panel de coordinación</a></p></body></html>`,
-      textContent: `Nueva inscripción de voluntariado\nNombre: ${firstName}\nApellido: ${lastName}\nCorreo: ${row.volunteer_email}\nPlan: ${row.plan_id}\nPeriodicidad: ${periodicity}\nMoneda: ${row.currency}\nFecha y hora: ${createdAt}\nEstado: ${row.application_status}\nPanel: ${coordinationUrl.href}`,
+      textContent: `Nueva inscripción de voluntariado\nNombre: ${firstName}\nApellido: ${lastName}\nCorreo: ${row.volunteer_email}\nPlan: ${plan}\nPeriodicidad: ${periodicity}\nMoneda: ${row.currency}\nFecha y hora: ${createdAt}\nEstado de la solicitud: ${status}\nPanel de coordinación: ${coordinationUrl.href}`,
+      headers: { idempotencyKey: row.idempotency_key },
+    };
+  }
+
+  if (row.notification_type === "transfer_receipt_received") {
+    return {
+      sender: { name: "Las Ñañas", email: config.senderEmail },
+      to: [{ email: config.adminEmail, name: "Coordinación Las Ñañas" }],
+      subject: "Nuevo comprobante de transferencia recibido",
+      htmlContent: `<html lang="es"><body><h1>Nuevo comprobante de transferencia recibido</h1>
+        <p>Una voluntaria terminó correctamente la carga de su comprobante de transferencia.</p>
+        <table><tr><th align="left">Nombre</th><td>${escapeHtml(firstName)}</td></tr>
+        <tr><th align="left">Apellido</th><td>${escapeHtml(lastName)}</td></tr>
+        <tr><th align="left">Correo</th><td>${escapeHtml(row.volunteer_email)}</td></tr>
+        ${commonRows}<tr><th align="left">Fecha de inscripción</th><td>${escapeHtml(createdAt)}</td></tr></table>
+        <p>El comprobante fue recibido correctamente, pero el pago aún requiere validación manual.
+        Esto no confirma que el dinero haya ingresado a la cuenta bancaria.</p>
+        <p>La transferencia debe verificarse manualmente antes de activar la suscripción.</p>
+        <p><a href="${escapeHtml(coordinationUrl.href)}">Revisar en administración</a></p>
+        </body></html>`,
+      textContent: `Nuevo comprobante de transferencia recibido\nNombre: ${firstName} ${lastName}\nCorreo: ${row.volunteer_email}\nPlan: ${plan}\nPeriodicidad: ${periodicity}\nMoneda: ${row.currency}\nEstado de la solicitud: ${status}\n\nEl comprobante fue recibido correctamente, pero el pago aún requiere validación manual. Esto no confirma que el dinero haya ingresado a la cuenta bancaria.\nLa transferencia debe verificarse manualmente antes de activar la suscripción.\n\nRevisar en administración: ${coordinationUrl.href}`,
       headers: { idempotencyKey: row.idempotency_key },
     };
   }
@@ -94,7 +119,7 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig) {
     htmlContent: `<html><body><h1>Bienvenida a Las Ñañas, ${escapeHtml(firstName)}</h1>
       <p>Tu inscripción fue guardada correctamente y será revisada por coordinación.</p><table>${commonRows}</table>
       <p><a href="${escapeHtml(volunteerUrl)}">Ir a Mi voluntariado</a></p></body></html>`,
-    textContent: `Bienvenida a Las Ñañas, ${firstName}.\nTu inscripción fue guardada correctamente y será revisada por coordinación.\nPlan: ${row.plan_id}\nPeriodicidad: ${periodicity}\nMoneda: ${row.currency}\nEstado: ${row.application_status}\nMi voluntariado: ${volunteerUrl}`,
+    textContent: `Bienvenida a Las Ñañas, ${firstName}.\nTu inscripción fue guardada correctamente y será revisada por coordinación.\nPlan: ${plan}\nPeriodicidad: ${periodicity}\nMoneda: ${row.currency}\nEstado de la solicitud: ${status}\nMi voluntariado: ${volunteerUrl}`,
     headers: { idempotencyKey: row.idempotency_key },
   };
 }
@@ -141,7 +166,7 @@ async function secretsMatch(received: string, expected: string): Promise<boolean
 }
 
 export async function handler(request: Request): Promise<Response> {
-  if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405 });
+  if (request.method !== "POST") return new Response("Método no permitido", { status: 405 });
   let config: ReturnType<typeof requireRuntimeConfig>;
   try { config = requireRuntimeConfig(); } catch { return Response.json({ error: "server_not_configured" }, { status: 503 }); }
   if (!await secretsMatch(request.headers.get("x-notification-secret") ?? "", config.webhookSecret)) {
