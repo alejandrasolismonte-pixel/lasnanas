@@ -1,5 +1,13 @@
 # Transferencia manual: preparación y bloqueos
 
+## Estado operativo verificado
+
+La versión v20 (`5f216a4`) está publicada en Render. La reserva remota detectó un bloqueo real: el ejecutor no tiene `USAGE` en el esquema administrado `auth`, aunque la migración original intentaba concederlo. Se aplicó `202609230001_transfer_receipt_identity.sql`: las dos RPC y sus siete políticas usan una función sin privilegios elevados con la misma expresión de identidad que `auth.uid()`. Se conservan FORCE RLS, el propietario NOBYPASSRLS y las restricciones de carga y lectura.
+
+La prueba `transfer-reservation-rollback.sql` pasó en Supabase: reserva autenticada, reintento idempotente, rechazo al finalizar sin archivo, ausencia de pago automático y denegación de lectura/finalización ajena. La transacción se revirtió íntegramente. Pasaron además las 31 pruebas Node y las 9 comprobaciones administrativas. No se realizó una transferencia bancaria ni una carga binaria autenticada real; esta validación no certifica esos pasos.
+
+Las secciones siguientes conservan el historial previo. No volver a aplicar la migración inicial de comprobantes sobre el proyecto existente.
+
 **Actualización tras inspección remota:** el 23 de septiembre se observó el bucket `transfer-receipts` ya creado en Supabase. No se acreditó todavía la correspondencia de funciones, roles y políticas con la migración completa. Las afirmaciones históricas de migración pendiente que siguen abajo no justifican volver a ejecutarla. Consultar `docs/primera-prueba-real.md` para el estado observado y los pasos actuales.
 
 ## Revisión del 23 de septiembre de 2026

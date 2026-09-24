@@ -1,5 +1,7 @@
 # Preparación de la primera prueba real
 
+Actualización: Render ya publica v20 (`5f216a4`). Se verificaron las funciones de transferencia contra el SQL local y se reparó el acceso a la identidad de sesión con `202609230001_transfer_receipt_identity.sql`, aplicada en Supabase. La prueba transaccional de reserva/reintento/aislamiento pasó sin dejar registros. Los puntos de publicación y correspondencia de RPC descritos abajo corresponden al diagnóstico anterior. La carga binaria con una sesión real y la comprobación del abono bancario siguen sin ejecutarse.
+
 Revisión del 23 de septiembre de 2026. Alcance inicial: registro, correo confirmado, solicitud, aprobación administrativa, transferencia nacional, comprobante privado y activación de membresía. No se realizaron registros, envíos de correo, pagos ni despliegues durante esta revisión.
 
 ## Conexiones observadas directamente
