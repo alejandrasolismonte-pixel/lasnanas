@@ -111,6 +111,11 @@
   transform: translate(2px, 2px);
 }
 
+.whatsapp-floating.is-before-hero-exit {
+  opacity: 0;
+  pointer-events: none;
+}
+
 body.menu-open .whatsapp-floating,
 body:has(dialog[open]) .whatsapp-floating {
   opacity: 0;
@@ -156,6 +161,12 @@ body:has(dialog[open]) .whatsapp-floating {
   .whatsapp-floating {
     right: max(14px, calc(env(safe-area-inset-right, 0px) + 10px));
     bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+  }
+}
+
+@media (max-width: 480px) {
+  .whatsapp-floating {
+    right: max(8px, calc(env(safe-area-inset-right, 0px) + 8px));
   }
 }
 

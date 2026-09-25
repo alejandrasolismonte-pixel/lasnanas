@@ -66,6 +66,37 @@
   margin-bottom: 0.75rem;
 }
 
+.nanas-ecosystem-page .header-registration {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: .65rem 1.1rem;
+  border: 1px solid rgba(168, 230, 181, .5);
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--nn-green), var(--nn-flame-gold));
+  box-shadow: 0 8px 20px rgba(22, 101, 52, .3);
+  color: #fff;
+  font: 700 .95rem var(--nn-font-body);
+  letter-spacing: .04em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.nanas-ecosystem-page .header-registration:hover,
+.nanas-ecosystem-page .header-registration:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(22, 101, 52, .42);
+}
+
+.nanas-ecosystem-page .header-registration:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
 /* ============================================================
    BLOQUE 1 — HERO CON VIDEO DE FUEGO
    ============================================================ */
@@ -74,11 +105,11 @@
   isolation: isolate;
   min-height: min(88vh, 780px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   text-align: center;
     z-index: 2;    
-  padding: clamp(6rem, 14vw, 10rem) 0 6rem;
+  padding: clamp(1.75rem, 3vw, 2.75rem) 0 6rem;
 }
 
 .nn-hero__video-wrap {
@@ -712,7 +743,7 @@
 .nn-ecosystem {
   position: relative;
   z-index: 2;
-  padding: 5rem 0 6rem;
+  padding: 0 0 6rem;
 }
 
 .nn-ecosystem__heading {
@@ -738,17 +769,94 @@
   width: 100%;
 }
 
+.nn-ecosystem__register {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: 820px;
+  margin: 0 auto clamp(2.25rem, 5vw, 3.5rem);
+  padding: clamp(1.1rem, 2.5vw, 1.5rem);
+  border: 1px solid rgba(121, 198, 197, .42);
+  border-radius: var(--nn-radius);
+  background: rgba(11, 18, 27, .86);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .24);
+  text-align: left;
+}
+
+.nn-ecosystem__register > p {
+  margin: 0;
+  color: #f4fbfa;
+  font-family: var(--nn-font-display);
+  font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+  line-height: 1.25;
+}
+
+.nn-ecosystem__register .nn-btn {
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: .8rem 1.4rem;
+  box-shadow: 0 8px 25px rgba(22, 101, 52, .35);
+}
+
+.nn-registration-intent {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: .8rem 1rem;
+  border: 1px solid rgba(121, 198, 197, .42);
+  border-radius: .75rem;
+  background: rgba(23, 109, 105, .16);
+  color: var(--nn-text);
+  line-height: 1.5;
+}
+
+#registro { scroll-margin-top: 6rem; }
+
+html[data-theme="day"] .nn-ecosystem__register {
+  border-color: rgba(23, 86, 82, .38);
+  background: rgba(252, 255, 254, .94);
+  box-shadow: 0 14px 32px rgba(29, 92, 88, .15);
+}
+
+html[data-theme="day"] .nn-registration-intent { color: var(--day-ink, #173b3a); }
+
+html[data-theme="day"] .nn-ecosystem__register > p {
+  color: var(--day-ink, #173b3a);
+}
+
 @media (max-width: 900px) {
   .nanas-ecosystem-page .nn-ecosystem__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
 
+@media (max-width: 767px) {
+  .nanas-ecosystem-page .header-registration {
+    position: absolute;
+    top: 70px;
+    right: 14px;
+    z-index: 100;
+    min-width: 132px;
+    transform: translateY(-40%);
+  }
+
+  .nanas-ecosystem-page .header-registration:hover,
+  .nanas-ecosystem-page .header-registration:focus-visible {
+    transform: translateY(calc(-40% - 2px));
+  }
+
+  .nanas-ecosystem-page .menu-toggle[aria-expanded="true"] ~ .header-registration {
+    visibility: hidden;
+  }
+
+  .nn-hero { padding-top: 3rem; }
+}
+
 @media (max-width: 620px) {
   /* TIPOGRAFÍA MÓVIL: evita que el título del ecosistema domine toda la pantalla. */
   .nn-hero {
     min-height: auto;
-    padding: 5.75rem 0 4.75rem;
+    padding: 3.5rem 0 4.75rem;
   }
 
   /* Evita una capa gráfica pegada durante el desplazamiento en móviles. */
@@ -756,7 +864,13 @@
 
   .nn-ecosystem {
     width: 100%;
-    padding: 2rem 0 3.5rem;
+    padding: 0 0 6rem;
+  }
+
+  .nn-ecosystem__register {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
   }
 
   .nn-ecosystem__heading {

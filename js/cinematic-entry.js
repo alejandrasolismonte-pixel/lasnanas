@@ -12,8 +12,26 @@
     const places = [...story.querySelectorAll('.cinema__places li')];
     const title = story.querySelector('.cinema__title');
     const subtitle = story.querySelector('.cinema__subtitle');
+    const translationButton = gate.querySelector('.cinema__translate');
+    const translationTooltip = gate.querySelector('.cinema__translation');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let leaving = false;
+
+    if (translationButton && translationTooltip) {
+      translationTooltip.textContent = translationButton.dataset.translation || '';
+      translationButton.addEventListener('click', () => {
+        const isOpen = translationButton.getAttribute('aria-expanded') === 'true';
+        translationButton.setAttribute('aria-expanded', String(!isOpen));
+        translationButton.setAttribute('aria-label', isOpen ? 'Mostrar traducción del saludo' : 'Ocultar traducción del saludo');
+      });
+      translationButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          translationButton.setAttribute('aria-expanded', 'false');
+          translationButton.setAttribute('aria-label', 'Mostrar traducción del saludo');
+          translationButton.blur();
+        }
+      });
+    }
 
     site.inert = true;
     site.setAttribute('aria-hidden', 'true');
@@ -22,7 +40,7 @@
     // Cada frase tarda 3000 ms y la siguiente comienza al terminar la anterior.
     // Con las tres frases ya visibles, la compuerta espera 5000 ms antes de cerrarse.
     const TIMING = {
-      video: 3000,
+      video: window.matchMedia('(max-width: 600px)').matches ? 5000 : 3000,
       sceneFade: 1400,
       placeStep: 630,
       titleHold: 1500,
@@ -51,6 +69,15 @@
     document.documentElement.style.setProperty('--cinema-exit-fade', `${TIMING.exitFade}ms`);
 
     const wait = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+    const waitForTranslation = async () => {
+      while (translationButton && (
+        translationButton.getAttribute('aria-expanded') === 'true' ||
+        (window.matchMedia('(hover: hover)').matches && translationButton.matches(':hover'))
+      )) {
+        await wait(250);
+        if (leaving) return;
+      }
+    };
     const activate = (scene) => {
       for (const current of [fire, story, gate]) {
         const active = current === scene;
@@ -91,7 +118,10 @@
       video?.pause();
       activate(gate);
       gate.classList.add('is-opening', 'is-message-visible');
-      window.setTimeout(enterSite, TIMING.messageWindow);
+      window.setTimeout(async () => {
+        await waitForTranslation();
+        if (!leaving) enterSite();
+      }, TIMING.messageWindow);
       return;
     }
 
@@ -101,7 +131,7 @@
     });
 
     const playSequence = async () => {
-      // Escena 1: tres segundos de video a pantalla completa, sin texto ni controles.
+      // Escena 1: cinco segundos en móvil y tres en escritorio, sin texto ni controles.
       await wait(TIMING.video);
       if (leaving) return;
 
@@ -138,6 +168,8 @@
       await wait(TIMING.messageReveal + TIMING.messageStagger * 2);
       if (leaving) return;
       await wait(TIMING.messageWindow);
+      if (leaving) return;
+      await waitForTranslation();
       if (leaving) return;
       gate.classList.remove('is-message-visible');
       gate.classList.add('is-closing');

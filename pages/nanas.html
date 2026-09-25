@@ -26,13 +26,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Kaushan+Script&display=swap" rel="stylesheet">
   <script src="../js/theme-init.js?v=1"></script>
-  <link rel="stylesheet" href="../css/desarrollo.css?v=86">
-  <!-- Versión de caché actualizada para mostrar inmediatamente el ajuste de la ventana. -->
-  <link rel="stylesheet" href="../css/nanas.css?v=12">
-  <link rel="stylesheet" href="../css/whatsapp-floating.css?v=3">
-  <link rel="stylesheet" href="../css/public-theme.css?v=2">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=93">
+  <link rel="stylesheet" href="../css/nanas.css?v=14">
+  <link rel="stylesheet" href="../css/whatsapp-floating.css?v=4">
+  <link rel="stylesheet" href="../css/public-theme.css?v=3">
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
-  <link rel="stylesheet" href="../css/public-backgrounds.css?v=1">
+  <link rel="stylesheet" href="../css/public-backgrounds.css?v=2">
 </head>
 <body class="nanas-ecosystem-page public-theme-page public-flow-page">
   <div class="watermark-bg" aria-hidden="true"></div>
@@ -60,13 +59,7 @@
         <a href="../#contacto">Contacto</a>
       </nav>
 
-      <a class="header-ecosystem luxury-btn" href="nanas.html" aria-label="Ecosistema Ñañas, página actual" aria-current="page">
-        <svg preserveAspectRatio="none" viewBox="0 0 100 100" class="luxury-btn__border" aria-hidden="true" focusable="false"><path fill="none" d="M5,20 Q50,5 95,20 Q95,50 95,80 Q50,95 5,80 Q5,50 5,20 Z" class="luxury-btn__border-path"></path></svg>
-        <svg viewBox="0 0 15 15" class="luxury-btn__ornament-left" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path><circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle></svg>
-        <span class="luxury-btn__text">Ecosistema Ñañas</span>
-        <svg viewBox="0 0 15 15" class="luxury-btn__ornament-right" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path><circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle></svg>
-        <svg preserveAspectRatio="none" viewBox="0 0 100 100" class="luxury-btn__shine" aria-hidden="true" focusable="false"><defs><linearGradient y2="0%" x2="100%" y1="0%" x1="0%" id="ecosystemShineGradient"><stop stop-color="transparent" offset="0%"></stop><stop stop-color="#fff" stop-opacity=".22" offset="50%"></stop><stop stop-color="transparent" offset="100%"></stop></linearGradient></defs><path fill="url(#ecosystemShineGradient)" d="M0,0 L100,0 L100,100 L0,100Z"></path></svg>
-      </a>
+      <a class="header-registration" href="#registro" data-ecosystem-registration>Registro <span aria-hidden="true">→</span></a>
     </div>
   </header>
 
@@ -96,6 +89,11 @@
      ============================================================ -->
 <section class="nn-ecosystem section-shell" aria-labelledby="ecosystem-title-page">
   <div class="container">
+    <div class="nn-ecosystem__register reveal">
+      <p>Te invitamos a ser parte de la red</p>
+      <a class="nn-btn" href="#registro" data-ecosystem-registration>Regístrate <span aria-hidden="true">→</span></a>
+    </div>
+
     <div class="nn-ecosystem__heading reveal">
       <p class="eyebrow">Ecosistema Las Ñañas</p>
       <h2 id="ecosystem-title-page">Descubre nuestro ecosistema agroecológico y mapuche.</h2>
@@ -123,6 +121,7 @@
         <span class="nn-eco-card__link">Explorar <span aria-hidden="true">→</span></span>
       </a>
     </div>
+
   </div>
 </section>
 
@@ -266,14 +265,15 @@
           <p>Región de La Araucanía, Chile<br>lasñañas.cl</p>
         </div>
 
-        <form class="contact-form reveal" data-contact-form action="https://formspree.io/f/xyeynlka" method="POST">
+        <form class="contact-form reveal" id="registro" data-contact-form tabindex="-1" aria-label="Formulario de contacto y registro" action="https://formspree.io/f/xyeynlka" method="POST">
           <input type="hidden" name="subject" value="Las Ñañas | Ecosistema">
+          <p class="nn-registration-intent" data-registration-intent hidden>Solicitud de registro: completa los cuatro datos de contacto. El mensaje ya está preparado.</p>
           <label>Nombre<input name="nombre" type="text" autocomplete="name" required></label>
           <label>País<input name="pais" type="text" autocomplete="country-name" required></label>
           <label>Correo electrónico<input name="email" type="email" autocomplete="email" required></label>
-          <label>WhatsApp<input name="whatsapp" type="tel" autocomplete="tel"></label>
+          <label><span data-contact-phone-label>Teléfono / WhatsApp (opcional)</span><input name="whatsapp" type="tel" autocomplete="tel"></label>
           <label>Mensaje<textarea name="mensaje" rows="4" required></textarea></label>
-          <button class="button button--primary" type="submit">Enviar Mensaje <span aria-hidden="true">→</span></button>
+          <button class="button button--primary" type="submit"><span data-contact-submit-label>Enviar mensaje</span> <span aria-hidden="true">→</span></button>
           <p class="form-feedback" data-form-feedback aria-live="polite"></p>
         </form>
       </div>
@@ -313,8 +313,8 @@
 
   <script src="../js/loading-overlay.js?v=2"></script>
   <script src="../js/motion-lifecycle.js?v=2"></script>
-  <script src="../js/desarrollo.js?v=32"></script>
-  <script src="../js/nanas.js?v=5"></script>
-  <script src="../js/whatsapp-floating.js?v=3"></script>
+  <script src="../js/desarrollo.js?v=33"></script>
+  <script src="../js/nanas.js?v=7"></script>
+  <script src="../js/whatsapp-floating.js?v=4"></script>
 </body>
 </html>

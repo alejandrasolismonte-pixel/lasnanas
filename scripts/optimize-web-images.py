@@ -18,7 +18,7 @@ LANCZOS = Image.Resampling.LANCZOS
 # origen, salida, ancho máximo, calidad WebP
 WEBP_IMAGES = [
     ("assets/hero.png", "assets/hero-web.webp", 1920, 80),
-    ("assets/img/mapa-araucania.png", "assets/img/mapa-araucania-web.webp", 1536, 86),
+    ("assets/img/mapa-araucania-web.png", "assets/img/mapa-araucania-web.webp", 1536, 86),
     ("assets/img/letreros/voluntariado.png", "assets/img/letreros/voluntariado-web.webp", 900, 88),
     ("assets/img/letreros/productos.png", "assets/img/letreros/productos-web.webp", 900, 88),
     ("assets/img/letreros/servicios.png", "assets/img/letreros/servicios-web.webp", 900, 88),

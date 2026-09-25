@@ -1,0 +1,135 @@
+/* Un relato mensual dentro de la sección Las Ñañas. */
+#nanas .monthly-story {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  width: min(100%, 1050px);
+  margin: clamp(3rem, 6vw, 5rem) auto 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid rgba(234, 88, 12, .38);
+  border-radius: 24px;
+  background: linear-gradient(140deg, var(--surface-2), var(--bg));
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.monthly-story__copy { min-width: 0; }
+
+.monthly-story__copy .eyebrow { margin-bottom: .75rem; }
+
+.monthly-story__copy h3 {
+  max-width: 18ch;
+  margin: 0 0 1rem;
+  font-size: clamp(1.75rem, 2.8vw, 2.4rem);
+  line-height: 1.2;
+}
+
+.monthly-story__description {
+  max-width: 43ch;
+  margin-bottom: 1rem;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.monthly-story__meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .025em;
+}
+
+.monthly-story__action {
+  display: inline-flex;
+  margin-top: 1.25rem;
+  color: var(--orange-light);
+  font-weight: 700;
+  text-underline-offset: .2em;
+}
+
+.monthly-story__action:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 4px;
+}
+
+.monthly-story__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 18px;
+  background: #0f151c;
+}
+
+.monthly-story__placeholder {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  padding: 1rem;
+  background-image:
+    linear-gradient(rgba(15, 21, 28, .48), rgba(15, 21, 28, .76)),
+    url('../assets/img/carrusel/paisaje-territorio-02-web.webp');
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .7);
+}
+
+.monthly-story__placeholder span {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.monthly-story__placeholder strong {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.monthly-story__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #050608;
+}
+
+.monthly-story [hidden] { display: none !important; }
+
+html[data-theme="day"] #nanas .monthly-story {
+  border-color: var(--day-line);
+  background: var(--day-paper);
+  color: var(--day-ink);
+  box-shadow: var(--day-shadow);
+}
+
+html[data-theme="day"] .monthly-story__description { color: var(--day-ink); }
+html[data-theme="day"] .monthly-story__meta { color: var(--day-muted); }
+html[data-theme="day"] .monthly-story__media { border-color: var(--day-line); }
+html[data-theme="day"] .monthly-story__action { color: var(--day-accent); }
+
+@media (max-width: 800px) {
+  #nanas .monthly-story { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  #nanas .monthly-story {
+    gap: 1.25rem;
+    padding: 1rem;
+    border-radius: 18px;
+  }
+  .monthly-story__media { border-radius: 12px; }
+  .monthly-story__placeholder strong { font-size: 1.3rem; }
+}

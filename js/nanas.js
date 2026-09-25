@@ -223,3 +223,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// El registro informativo reutiliza el formulario de contacto sin crear una cuenta.
+document.addEventListener('DOMContentLoaded', () => {
+  const entry = document.querySelector('[data-ecosystem-registration]');
+  const form = document.querySelector('#contacto [data-contact-form]');
+  if (!entry || !form) return;
+
+  const subject = form.querySelector('[name="subject"]');
+  const message = form.querySelector('[name="mensaje"]');
+  const phone = form.querySelector('[name="whatsapp"]');
+  const phoneLabel = form.querySelector('[data-contact-phone-label]');
+  const intent = form.querySelector('[data-registration-intent]');
+  const submitLabel = form.querySelector('[data-contact-submit-label]');
+
+  function activateRegistration() {
+    form.dataset.registrationIntent = 'true';
+    if (subject) subject.value = 'Las Ñañas | Solicitud de registro informativo';
+    if (message && !message.value.trim()) {
+      message.value = 'Quiero registrarme para recibir información de Las Ñañas.';
+    }
+    if (phone) phone.required = true;
+    if (phoneLabel) phoneLabel.textContent = 'Teléfono / WhatsApp';
+    if (intent) intent.hidden = false;
+    if (submitLabel) submitLabel.textContent = 'Enviar solicitud';
+  }
+
+  entry.addEventListener('click', () => {
+    activateRegistration();
+    requestAnimationFrame(() => form.focus({ preventScroll: true }));
+  });
+
+  if (window.location.hash === '#registro') activateRegistration();
+
+  form.addEventListener('reset', () => {
+    delete form.dataset.registrationIntent;
+    if (phone) phone.required = false;
+    if (phoneLabel) phoneLabel.textContent = 'Teléfono / WhatsApp (opcional)';
+    if (intent) intent.hidden = true;
+    if (submitLabel) submitLabel.textContent = 'Enviar mensaje';
+  });
+});

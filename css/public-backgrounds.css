@@ -143,14 +143,14 @@ body.public-flow-page main > #juego-memorice.public-band {
 /* En modo dia se conservan la textura y las divisiones sobre el fondo claro. */
 html[data-theme="day"] body.public-flow-page main > .public-band:not(.public-band--stars) {
   --public-section-tint: linear-gradient(110deg,
-    rgba(255, 255, 255, .12), transparent 55%);
+    rgba(255, 255, 255, .144), transparent 55%);
   --public-pattern-image: var(--public-section-tint),
-    linear-gradient(93deg, transparent 0 7%, rgba(23, 109, 105, .08) 7.15%,
-      transparent 7.45% 61%, rgba(152, 64, 24, .05) 61.2%, transparent 61.5%),
-    linear-gradient(87deg, transparent 0 38%, rgba(23, 109, 105, .06) 38.15%,
-      transparent 38.4% 79%, rgba(23, 109, 105, .045) 79.2%, transparent 79.45%),
-    linear-gradient(91deg, transparent 0 15%, rgba(23, 109, 105, .05) 15.2%,
-      transparent 15.45% 48%, rgba(152, 64, 24, .035) 48.17%, transparent 48.5%);
+    linear-gradient(93deg, transparent 0 7%, rgba(23, 109, 105, .096) 7.15%,
+      transparent 7.45% 61%, rgba(152, 64, 24, .06) 61.2%, transparent 61.5%),
+    linear-gradient(87deg, transparent 0 38%, rgba(23, 109, 105, .072) 38.15%,
+      transparent 38.4% 79%, rgba(23, 109, 105, .054) 79.2%, transparent 79.45%),
+    linear-gradient(91deg, transparent 0 15%, rgba(23, 109, 105, .06) 15.2%,
+      transparent 15.45% 48%, rgba(152, 64, 24, .042) 48.17%, transparent 48.5%);
   background-color: rgba(255, 255, 255, .07) !important;
   background-image: var(--public-pattern-image) !important;
   background-position: center, 17px 0, 91px 0, 49px 0 !important;

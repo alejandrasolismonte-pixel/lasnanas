@@ -7,6 +7,7 @@
   function crearBotonWhatsApp() {
     if (document.querySelector('.whatsapp-floating')) return;
 
+    const heroInicio = document.querySelector('#inicio.hero');
     const enlace = document.createElement('a');
     enlace.className = 'whatsapp-floating';
     enlace.href = WHATSAPP_URL;
@@ -20,6 +21,29 @@
         </svg>
       </span>
       <span class="whatsapp-floating__label">WhatsApp</span>`;
+
+    if (heroInicio) {
+      const actualizarVisibilidad = () => {
+        const oculto = heroInicio.getBoundingClientRect().bottom > 0;
+        if (enlace.classList.contains('is-before-hero-exit') === oculto) return;
+        enlace.classList.toggle('is-before-hero-exit', oculto);
+        if (oculto) {
+          enlace.setAttribute('aria-hidden', 'true');
+          enlace.tabIndex = -1;
+          enlace.classList.remove('is-expanded');
+          if (document.activeElement === enlace) enlace.blur();
+        } else {
+          enlace.removeAttribute('aria-hidden');
+          enlace.removeAttribute('tabindex');
+        }
+      };
+
+      // Fija el estado antes de insertar el enlace para evitar un destello en el hero.
+      actualizarVisibilidad();
+      window.addEventListener('scroll', actualizarVisibilidad, { passive: true });
+      window.addEventListener('resize', actualizarVisibilidad);
+      window.addEventListener('pageshow', actualizarVisibilidad);
+    }
 
     document.body.appendChild(enlace);
 

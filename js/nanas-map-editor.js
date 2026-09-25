@@ -4,7 +4,7 @@
 
   function mount(container, options = {}) {
     if (!container || container.dataset.nanasMapMounted === 'true') return;
-    const imageUrl = options.imageUrl || '../assets/img/mapa-araucania-web.webp';
+    const imageUrl = options.imageUrl || '../assets/img/mapa-araucania-web.webp?v=20260925';
     container.dataset.nanasMapMounted = 'true';
     container.innerHTML = `
       <div class="map-experience" data-map-experience>

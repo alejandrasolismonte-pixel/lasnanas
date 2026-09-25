@@ -51,12 +51,13 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="css/desarrollo.css?v=91">
-    <link rel="stylesheet" href="css/whatsapp-floating.css?v=3">
+    <link rel="stylesheet" href="css/desarrollo.css?v=94">
+    <link rel="stylesheet" href="css/monthly-story.css?v=1">
+    <link rel="stylesheet" href="css/whatsapp-floating.css?v=4">
     <link rel="stylesheet" href="css/loading-overlay.css?v=2">
     <link rel="stylesheet" href="css/public-faq.css?v=1">
-    <link rel="stylesheet" href="css/public-backgrounds.css?v=1">
-    <link rel="stylesheet" href="css/cinematic-entry.css?v=5">
+    <link rel="stylesheet" href="css/public-backgrounds.css?v=2">
+    <link rel="stylesheet" href="css/cinematic-entry.css?v=6">
     <script>
         // Las visitas a una sección o al editor del mapa entran directamente al Inicio.
         if (!window.location.hash && new URLSearchParams(window.location.search).get('editar-mapa') !== '1') {
@@ -97,7 +98,7 @@
             <div class="cinema__seam" aria-hidden="true"></div>
             <div class="cinema__horizon" aria-hidden="true"></div>
             <div class="cinema__message">
-                <p class="cinema__message-line cinema__message-line--greeting">Marri marri pu lamien · Küme akuymün!!</p>
+                <p class="cinema__message-line cinema__message-line--greeting">Marri marri pu lamien · Küme akuymün!! <button class="cinema__translate" type="button" data-translation="TRADUCCIÓN_AQUÍ" aria-label="Mostrar traducción del saludo" aria-controls="cinema-greeting-translation" aria-describedby="cinema-greeting-translation" aria-expanded="false">?</button><span class="cinema__translation" id="cinema-greeting-translation" role="tooltip"></span></p>
                 <p class="cinema__message-line cinema__message-line--territory">Territorio vivo donde el newen de la mujer mapuche, “Las Ñañas”, la agroecología y la cultura mapuche convergen</p>
                 <p class="cinema__message-line cinema__message-line--mission">Trabajamos respetando la itrofill mogen, nuestras plantas, semillas nativas y promoviendo la soberanía alimentaria.</p>
             </div>
@@ -188,7 +189,7 @@
             <div class="hero__overlay"></div>
             <div class="hero__texture" aria-hidden="true"></div>
             <div class="hero__arrival">
-                <h1 class="hero__arrival-message" id="hero-title"><span>Entra y recorre, sé parte de esta historia.</span><span>Las Ñañas también se construyen contigo.</span></h1>
+                <h1 class="hero__arrival-message" id="hero-title"><span>Entra y recorre.</span><span>Las Ñañas también se construyen contigo.</span></h1>
                 <div class="hero__days" role="status" aria-live="polite" aria-atomic="true">
                     <div class="hero__calendar">
                         <span class="hero__calendar-date" aria-hidden="true">01 OCT · 2026</span>
@@ -303,8 +304,7 @@
             <div class="container">
                 <div class="section-heading section-heading--wide reveal">
                     <p class="eyebrow">Pu lamngen </p>
-                    <h2 id="nanas-title">Las Ñañas: Red que se sostiene entre muchas.</h2>
-                    <p>Presiona las tarjetas para conocer la labor territorial de cada ñaña.</p>
+                    <h2 id="nanas-title"> Red que se sostiene entre muchas.</h2>
                 </div>
                 <div class="people-grid">
 
@@ -357,6 +357,23 @@
                     </button>
 
                 </div>
+
+                <article class="monthly-story reveal" data-monthly-story aria-labelledby="monthly-story-title">
+                    <div class="monthly-story__copy">
+                        <p class="eyebrow">Voces del territorio</p>
+                        <h3 id="monthly-story-title" data-monthly-story-title>La historia del mes</h3>
+                        <p class="monthly-story__description" data-monthly-story-description>Cada mes, una Ñaña compartirá una historia</p>
+                        <p class="monthly-story__meta" data-monthly-story-meta></p>/
+                        <a class="monthly-story__action" data-monthly-story-action hidden></a>
+                    </div>
+                    <div class="monthly-story__media">
+                        <div class="monthly-story__placeholder" data-monthly-story-placeholder>
+                            <span>Las Ñañas · Wallmapu</span>
+                            <strong>Primer video próximamente</strong>
+                        </div>
+                        <video class="monthly-story__video" data-monthly-story-video controls playsinline preload="none" aria-label="Video de muestra: fuego de bienvenida" hidden></video>
+                    </div>
+                </article>
             </div>
         </section>
       
@@ -370,7 +387,7 @@
                 <div class="section-heading section-heading--wide reveal">
                     <p class="eyebrow">Mapu · territorio vivo</p>
                     <h2 id="territory-title">Un mapa para recorrer nuestras conexiones.</h2>
-                    <p>Selecciona un pin para conocer iniciativas, lugares y aprendizajes que dan vida a Las Ñañas.</p>
+                    <p>Selecciona un pin para conocer iniciativas, lugares y aprendizajes.</p>
                 </div>
 
                 <div class="map-experience reveal" data-map-experience>
@@ -425,7 +442,7 @@
                     <div class="map-stage" data-map-stage aria-label="Mapa ilustrado de Wallmapu con puntos interactivos">
 
                         <!-- AQUI ESTÁ LA IMAGEN DEL MAPA -->
-                        <img src="assets/img/mapa-araucania-web.webp" alt="Mapa ilustrado de Wallmapu y La Araucanía" loading="lazy" decoding="async">
+                        <img src="assets/img/mapa-araucania-web.webp?v=20260925" alt="Mapa ilustrado de Wallmapu y La Araucanía" loading="lazy" decoding="async">
 
                         <!-- =======================================================================
                  PINES DE "LAS ÑAÑAS" (Naranjas)
@@ -643,14 +660,15 @@
     </div>
 
     <script src="js/loading-overlay.js?v=2"></script>
-    <script src="js/cinematic-entry.js?v=5"></script>
+    <script src="js/cinematic-entry.js?v=7"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/supabase-client.js?v=1"></script>
     <script src="js/map-pins.js?v=2"></script>
     <script src="js/motion-lifecycle.js?v=2"></script>
     <script src="js/desarrollo.js?v=35"></script>
+    <script src="js/monthly-story.js?v=1"></script>
     <script src="js/star-field.js?v=2"></script>
-    <script src="js/whatsapp-floating.js?v=3"></script>
+    <script src="js/whatsapp-floating.js?v=4"></script>
 </body>
 </html>

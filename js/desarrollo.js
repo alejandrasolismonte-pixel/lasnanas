@@ -370,9 +370,11 @@ form?.addEventListener('submit', async (event) => {
   if (button.disabled) return;
 
   const data = new FormData(form);
+  const isRegistration = form.dataset.registrationIntent === 'true';
+  const sendingText = isRegistration ? 'Enviando solicitud…' : 'Enviando mensaje…';
   button.disabled = true;
-  feedback.textContent = 'Enviando mensaje…';
-  window.LasNanasLoader?.show('Enviando mensaje…');
+  feedback.textContent = sendingText;
+  window.LasNanasLoader?.show(sendingText);
 
   try {
     const response = await fetch(form.action, {
@@ -387,7 +389,9 @@ form?.addEventListener('submit', async (event) => {
       throw new Error('El servicio no aceptó el envío.');
     }
 
-    feedback.textContent = '¡Mensaje enviado! Chaltumay pu lamien.';
+    feedback.textContent = isRegistration
+      ? '¡Solicitud de registro enviada! Chaltumay pu lamien.'
+      : '¡Mensaje enviado! Chaltumay pu lamien.';
     form.reset();
   } catch (error) {
     feedback.textContent =

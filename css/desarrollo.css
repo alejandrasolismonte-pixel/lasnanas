@@ -174,6 +174,13 @@ body:has(dialog[open]) .back-to-top {
   }
 }
 
+@media (max-width: 480px) {
+  .back-to-top {
+    left: max(8px, calc(env(safe-area-inset-left, 0px) + 8px));
+    bottom: max(85px, calc(env(safe-area-inset-bottom, 0px) + 75px));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .back-to-top { transition: none; }
 }
@@ -210,11 +217,21 @@ body:has(dialog[open]) .back-to-top {
   transition: background .3s, backdrop-filter .3s, -webkit-backdrop-filter .3s, border-color .3s, box-shadow .3s;
 }
 .site-header.is-scrolled {
-  background: rgba(15,21,28,.9);
+  background: #0f151c;
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   border-color: var(--line);
   box-shadow: 0 8px 30px rgba(0,0,0,.2);
+}
+/* En Inicio, el header conserva su scroll sticky y se superpone al hero. */
+body.public-flow-page #site-content {
+  --home-header-height: 76px;
+}
+body.public-flow-page #site-content > .site-header {
+  margin-bottom: calc(-1 * var(--home-header-height));
+}
+body.public-flow-page #site-content > .site-header:not(.is-scrolled) {
+  background: rgba(15,21,28,.72);
 }
 .header__inner {
   min-height: 76px;
@@ -488,6 +505,10 @@ html[data-theme="day"] .theme-toggle__icon--sun { opacity: 1; }
   transform: none;
 }
 
+#inicio .uiverse-flip-button {
+  --flip-button-background: rgba(251, 251, 252, .2);
+}
+
 .uiverse-flip-button.uiverse-flip-button.uiverse-flip-button::before,
 .uiverse-flip-button.uiverse-flip-button.uiverse-flip-button::after {
   content: attr(data-label);
@@ -583,6 +604,9 @@ html[data-theme="day"] .theme-toggle__icon--sun { opacity: 1; }
   isolation: isolate;
   background: #0f151c;
 }
+body.public-flow-page #inicio.hero {
+  min-height: 100svh;
+}
 .hero__video, .hero__overlay, .hero__texture {
   position: absolute;
   inset: 0;
@@ -673,6 +697,9 @@ h2 {
   width: min(34rem, calc(90% - 2rem));
   text-align: left;
 }
+body.public-flow-page #inicio .hero__arrival {
+  top: calc(var(--home-header-height) + clamp(1.95rem, 5.2svh, 4.225rem));
+}
 .hero__arrival-message {
   max-width: none;
   margin: 0;
@@ -702,17 +729,18 @@ h2 {
   grid-template-rows: 1.8rem 1fr;
   /* TAMAÑO DEL CALENDARIO: ajusta estas medidas junto con flex-basis. */
   flex: 0 0 112px;
-  width: 112px;
-  height: 126px;
-  border: 1px solid rgba(255, 255, 255, .8);
-  border-radius: 10px;
+  width: 150px;
+  height: 100px;
+  transform: translateX(20px);
+  border: 1px solid rgba(255, 255, 255, 0.247);
+  border-radius: 20px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, .34);
 }
 .hero__calendar::before,
 .hero__calendar::after {
   position: absolute;
   z-index: 1;
-  top: -.48rem;
+  top: -.30rem;
   width: .38rem;
   height: 1rem;
   border: 2px solid #f7f3e9;
@@ -755,7 +783,9 @@ h2 {
   letter-spacing: .025em;
   line-height: 1.35;
   text-shadow: 0 2px 12px rgba(0, 0, 0, .75);
-}
+ transform: translate( 20px)
+ 
+} /*cambio de texto debajo de calendario*/
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -1701,7 +1731,7 @@ h2 {
   justify-content: center;
   background: var(--orange);
   color: #fff;
-  font: 300 1.25rem/1.35 var(--font-display);
+  font: 400 1.125rem/1.5 var(--font-body);
   transform: rotateY(180deg);
 }
 /* ==========================================================
@@ -2350,6 +2380,7 @@ h2 {
 /* --- Móviles grandes / menú hamburguesa (max 720px) --- */
 @media (max-width: 720px) {
   html { scroll-padding-top: 68px; }
+  body.public-flow-page #site-content { --home-header-height: 66px; }
   .container { width: min(100% - 28px, 1180px); }
   .header__inner { min-height: 66px; }
   .menu-toggle { display: block; }
@@ -2456,12 +2487,17 @@ h2 {
     justify-content: flex-start;
     min-height: max(700px, calc(100svh - 76px));
   }
+  body.public-flow-page #inicio.hero { min-height: max(700px, 100svh); }
   .hero__arrival {
     position: relative;
     top: auto;
     left: auto;
     width: min(34rem, calc(100% - 40px));
     margin: clamp(2.6rem, 6.5svh, 4.55rem) 0 0 clamp(1.25rem, 3vw, 2.5rem);
+  }
+  body.public-flow-page #inicio .hero__arrival {
+    top: auto;
+    margin-top: calc(var(--home-header-height) + clamp(2.6rem, 6.5svh, 4.55rem));
   }
   .hero__content { padding: 0 0 5rem; }
   .hero__actions { margin-top: clamp(2.5rem, 6svh, 4rem); }
@@ -2472,13 +2508,30 @@ h2 {
     width: calc(100% - 28px);
     margin: 3.25rem 14px 0;
   }
+  body.public-flow-page #inicio .hero__arrival {
+    margin-top: calc(var(--home-header-height) + 3.25rem);
+  }
   .hero__arrival-message { font-size: clamp(1.35rem, 5.4vw, 1.65rem); }
   .hero__days { gap: .8rem; margin-top: 1.25rem; }
-  .hero__calendar { flex-basis: 96px; width: 96px; height: 112px; grid-template-rows: 1.6rem 1fr; }
-  .hero__calendar-date { font-size: .56rem; }
-  .hero__days-number { font-size: 2.8rem; }
+  .hero__calendar { flex-basis: 58px; width: 58px; height: 67px; grid-template-rows: 1.05rem 1fr; border-radius: 12px; }
+  .hero__calendar-date { font-size: .4rem; }
+  .hero__days-number { font-size: 1.7rem; }
   .hero__days-label { max-width: 18ch; font-size: .85rem; }
-  .hero__actions { margin-top: 2rem; }
+}
+
+@media (min-width: 521px) and (max-width: 767px) {
+  .hero__calendar { flex-basis: 67px; width: 67px; height: 60px; grid-template-rows: 1.1rem 1fr; border-radius: 12px; }
+  .hero__calendar-date { font-size: .44rem; }
+  .hero__days-number { font-size: 1.85rem; }
+}
+
+@media (max-width: 767px) {
+  .hero__calendar::before,
+  .hero__calendar::after { top: -.2rem; width: .25rem; height: .65rem; border-width: 1px; }
+  .hero__calendar-date { border-radius: 7px 7px 0 0; }
+  .hero__days-number { border-radius: 0 0 7px 7px; }
+  /* Compensa el calendario más bajo y deja ambos CTA cerca de un 30 % más abajo. */
+  .hero__actions { margin-top: 11.5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3926,9 +3979,12 @@ html[data-theme="day"] {
 }
 
 html[data-theme="day"] .site-header.is-scrolled {
-  background: rgba(239, 250, 248, .86);
+  background: #effaf8;
   border-color: var(--day-line);
   box-shadow: 0 8px 24px rgba(29, 92, 88, .1);
+}
+html[data-theme="day"] body.public-flow-page #site-content > .site-header:not(.is-scrolled) {
+  background: rgba(239, 250, 248, .86);
 }
 
 html[data-theme="day"] .site-header.is-scrolled .brand,
@@ -4028,10 +4084,10 @@ html[data-theme="day"] .person-card__face--front strong {
 html[data-theme="day"] .ecosystem-card {
   min-height: 0;
   padding-block: 1.6rem;
-  border-color: rgba(22, 101, 52, .62);
+  border-color: rgba(23, 86, 82, .38);
   border-radius: 22px;
-  background: rgba(248, 253, 252, .28);
-  box-shadow: none;
+  background: rgba(252, 255, 254, .94);
+  box-shadow: 0 14px 32px rgba(29, 92, 88, .15);
   -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
 }
@@ -4040,9 +4096,9 @@ html[data-theme="day"] .ecosystem-card:hover,
 html[data-theme="day"] .ecosystem-card:focus-visible,
 html[data-theme="day"] .ecosystem-card:active {
   transform: translateY(-3px);
-  border-color: var(--green-light);
-  background: rgba(22, 101, 52, .3);
-  box-shadow: 0 10px 24px rgba(22, 101, 52, .16), inset 0 0 0 1px rgba(134, 239, 172, .14);
+  border-color: #176d69;
+  background: #e8f5f0;
+  box-shadow: 0 18px 36px rgba(29, 92, 88, .2);
 }
 
 html[data-theme="day"] .contact-copy > p:not(.eyebrow),
@@ -4147,7 +4203,7 @@ html[data-theme="day"] .contact-form textarea::placeholder {
   }
 
   .site-header.is-scrolled {
-    background: rgba(15, 21, 28, .98);
+    background: #0f151c;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
