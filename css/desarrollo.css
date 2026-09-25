@@ -613,7 +613,7 @@ html[data-theme="day"] .theme-toggle__icon--sun { opacity: 1; }
     radial-gradient(circle at 78% 70%, rgba(22,101,52,.35), transparent 25%);
 }
 .hero__content {
-  padding: 2rem 0 5rem;
+  padding: 11rem 0 5rem;
   text-align: center;
 }
 
@@ -665,40 +665,96 @@ h2 {
   font-size: clamp(1em, 3vw,1rem);
 }
 .hero__arrival {
-  margin: 1.5rem auto 0;
-  max-width: 42rem;
+  position: absolute;
+  z-index: 2;
+  /* POSICIÓN DEL TEXTO: top está 30% más abajo; cambia top y left para moverlo. */
+  top: clamp(1.95rem, 5.2svh, 4.225rem);
+  left: clamp(1.5rem, 3vw, 3.5rem);
+  width: min(34rem, calc(90% - 2rem));
+  text-align: left;
 }
 .hero__arrival-message {
-  margin-bottom: 1rem;
+  max-width: none;
+  margin: 0;
   color: #fff;
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2.5vw, 1.85rem);
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
   font-weight: 400;
-  line-height: 1.3;
+  line-height: 1.34;
   letter-spacing: .01em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .76);
 }
 .hero__arrival-message span {
   display: block;
 }
+.hero__arrival-message span + span { margin-top: .12em; }
 .hero__days {
   display: flex;
-  align-items: baseline;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: .25rem .65rem;
-  margin: 0;
-  color: #d1ddd2;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin-top: 1.45rem;
+  color: #fff;
+}
+.hero__calendar {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1.8rem 1fr;
+  /* TAMAÑO DEL CALENDARIO: ajusta estas medidas junto con flex-basis. */
+  flex: 0 0 112px;
+  width: 112px;
+  height: 126px;
+  border: 1px solid rgba(255, 255, 255, .8);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .34);
+}
+.hero__calendar::before,
+.hero__calendar::after {
+  position: absolute;
+  z-index: 1;
+  top: -.48rem;
+  width: .38rem;
+  height: 1rem;
+  border: 2px solid #f7f3e9;
+  border-radius: 999px;
+  background: #2b302b;
+  content: '';
+}
+.hero__calendar::before { left: 23%; }
+.hero__calendar::after { right: 23%; }
+.hero__calendar-date {
+  display: grid;
+  place-items: center;
+  border-radius: 9px 9px 0 0;
+  background: #bd4d28;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .09em;
 }
 .hero__days-number {
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  display: grid;
+  place-items: center;
+  border-radius: 0 0 9px 9px;
+  background: #f7f3e9;
+  color: #17452e;
+  font-family: var(--font-body);
+  font-size: clamp(2.25rem, 3.6vw, 3.25rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.07em;
   line-height: 1;
 }
 .hero__days-label {
+  max-width: 15ch;
+  color: #f5f5f3;
   font-family: var(--font-body);
-  font-size: .8rem;
-  letter-spacing: .08em;
+  font-size: clamp(.9rem, 1.2vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: .025em;
+  line-height: 1.35;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .75);
 }
 .hero__actions {
   display: flex;
@@ -2388,6 +2444,40 @@ h2 {
   .cart-panel { align-items: flex-start; flex-direction: column; }
   .contact-form { grid-template-columns: 1fr; }
   .contact-form label { grid-column: 1 / -1 !important; }
+}
+
+/* El mensaje vuelve al flujo en pantallas estrechas o bajas para no tocar los botones. */
+@media (max-width: 1100px), (max-height: 690px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    min-height: max(700px, calc(100svh - 76px));
+  }
+  .hero__arrival {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(34rem, calc(100% - 40px));
+    margin: clamp(2.6rem, 6.5svh, 4.55rem) 0 0 clamp(1.25rem, 3vw, 2.5rem);
+  }
+  .hero__content { padding: 0 0 5rem; }
+  .hero__actions { margin-top: clamp(2.5rem, 6svh, 4rem); }
+}
+
+@media (max-width: 520px) {
+  .hero__arrival {
+    width: calc(100% - 28px);
+    margin: 3.25rem 14px 0;
+  }
+  .hero__arrival-message { font-size: clamp(1.35rem, 5.4vw, 1.65rem); }
+  .hero__days { gap: .8rem; margin-top: 1.25rem; }
+  .hero__calendar { flex-basis: 96px; width: 96px; height: 112px; grid-template-rows: 1.6rem 1fr; }
+  .hero__calendar-date { font-size: .56rem; }
+  .hero__days-number { font-size: 2.8rem; }
+  .hero__days-label { max-width: 18ch; font-size: .85rem; }
+  .hero__actions { margin-top: 2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -248,7 +248,7 @@
   }
 
   editMapButton.addEventListener('click', function () {
-    window.location.assign('../desarrollo.html?editar-mapa=1#territorio');
+    window.location.assign('../?editar-mapa=1#territorio');
   });
 
   closeDetailButton.addEventListener('click', function () {

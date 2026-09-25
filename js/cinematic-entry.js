@@ -1,5 +1,10 @@
 (() => {
   const start = () => {
+    const cinema = document.querySelector('.cinema');
+    if (!cinema || !document.documentElement.classList.contains('cinema-enabled')) return;
+
+    const site = document.querySelector('#site-content');
+    const siteMain = document.querySelector('#contenido');
     const fire = document.querySelector('[data-scene="fire"]');
     const story = document.querySelector('[data-scene="story"]');
     const gate = document.querySelector('[data-scene="gate"]');
@@ -10,6 +15,41 @@
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let leaving = false;
 
+    site.inert = true;
+    site.setAttribute('aria-hidden', 'true');
+
+    // VELOCIDAD: cambia estos milisegundos para ajustar la entrada.
+    // Cada frase tarda 3000 ms y la siguiente comienza al terminar la anterior.
+    // Con las tres frases ya visibles, la compuerta espera 5000 ms antes de cerrarse.
+    const TIMING = {
+      video: 3000,
+      sceneFade: 1400,
+      placeStep: 630,
+      titleHold: 1500,
+      subtitleHold: 1700,
+      gatePause: 600,
+      seamReveal: 850,
+      doorOpen: 1600,
+      doorDelay: 240,
+      doorClose: 2100,
+      messageReveal: 3000,
+      messageStagger: 3000,
+      messageWindow: 5000,
+      messageExit: 550,
+      afterClose: 300,
+      exitFade: 950
+    };
+
+    // Mantiene los fundidos CSS sincronizados con los tiempos anteriores.
+    document.documentElement.style.setProperty('--cinema-scene-fade', `${TIMING.sceneFade}ms`);
+    document.documentElement.style.setProperty('--cinema-door-open', `${TIMING.doorOpen}ms`);
+    document.documentElement.style.setProperty('--cinema-door-delay', `${TIMING.doorDelay}ms`);
+    document.documentElement.style.setProperty('--cinema-door-close', `${TIMING.doorClose}ms`);
+    document.documentElement.style.setProperty('--cinema-message-reveal', `${TIMING.messageReveal}ms`);
+    document.documentElement.style.setProperty('--cinema-message-stagger', `${TIMING.messageStagger}ms`);
+    document.documentElement.style.setProperty('--cinema-message-exit', `${TIMING.messageExit}ms`);
+    document.documentElement.style.setProperty('--cinema-exit-fade', `${TIMING.exitFade}ms`);
+
     const wait = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
     const activate = (scene) => {
       for (const current of [fire, story, gate]) {
@@ -18,22 +58,40 @@
         current.setAttribute('aria-hidden', String(!active));
       }
     };
-    const enterSite = () => {
-      if (!leaving) window.location.assign('desarrollo.html');
+    const revealSite = (focusSite = false) => {
+      site.inert = false;
+      site.removeAttribute('aria-hidden');
+      cinema.hidden = true;
+      document.documentElement.classList.remove('cinema-enabled');
+      if (focusSite) {
+        siteMain?.setAttribute('tabindex', '-1');
+        siteMain?.focus({ preventScroll: true });
+      }
     };
+    const enterSite = async (focusSite = false) => {
+      if (leaving) return;
+      leaving = true;
+      video?.pause();
+      cinema.classList.add('is-leaving');
+      await wait(reducedMotion.matches ? 0 : TIMING.exitFade);
+      revealSite(focusSite);
+    };
+
+    cinema.querySelector('[data-skip-intro]')?.addEventListener('click', () => enterSite(true));
 
     window.addEventListener('pagehide', () => {
       leaving = true;
       video?.pause();
     }, { once: true });
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted && leaving) revealSite();
+    });
 
     if (reducedMotion.matches) {
       video?.pause();
-      activate(story);
-      places.forEach((place) => place.classList.add('is-revealed'));
-      title.classList.add('is-visible');
-      subtitle.classList.add('is-visible');
-      window.setTimeout(enterSite, 1200);
+      activate(gate);
+      gate.classList.add('is-opening', 'is-message-visible');
+      window.setTimeout(enterSite, TIMING.messageWindow);
       return;
     }
 
@@ -44,49 +102,56 @@
 
     const playSequence = async () => {
       // Escena 1: tres segundos de video a pantalla completa, sin texto ni controles.
-      await wait(3000);
+      await wait(TIMING.video);
       if (leaving) return;
 
-      // Escena 2: el mismo componente de carga que usa el resto del sitio.
-      window.LasNanasLoader?.show('Preparando el territorio…');
-      activate(null);
-      video?.pause();
-      await wait(1800);
-      if (leaving) return;
+      // Escena 2: el recorrido territorial se funde sobre el video.
       activate(story);
-      window.LasNanasLoader?.hide();
+      await wait(TIMING.sceneFade);
+      if (leaving) return;
+      video?.pause();
 
       // Escena 3: los territorios aparecen en orden y preceden al título.
       for (const place of places) {
         place.classList.add('is-revealed');
-        await wait(570);
+        await wait(TIMING.placeStep);
         if (leaving) return;
       }
       title.classList.add('is-visible');
-      await wait(1500);
+      await wait(TIMING.titleHold);
       if (leaving) return;
       subtitle.classList.add('is-visible');
-      await wait(1700);
+      await wait(TIMING.subtitleHold);
       if (leaving) return;
 
-      // Escena 4: estrellas, línea central y apertura horizontal de la compuerta.
+      // Escena 4: la compuerta se abre por completo antes de mostrar el texto.
       activate(gate);
-      await wait(650);
+      await wait(TIMING.sceneFade + TIMING.gatePause);
       if (leaving) return;
       gate.classList.add('has-seam');
-      await wait(750);
+      await wait(TIMING.seamReveal);
       if (leaving) return;
       gate.classList.add('is-opening');
-      await wait(1900);
+      await wait(TIMING.doorDelay + TIMING.doorOpen + 100);
+      if (leaving) return;
+      gate.classList.add('is-message-visible');
+      await wait(TIMING.messageReveal + TIMING.messageStagger * 2);
+      if (leaving) return;
+      await wait(TIMING.messageWindow);
+      if (leaving) return;
+      gate.classList.remove('is-message-visible');
+      gate.classList.add('is-closing');
+      await wait(TIMING.messageExit);
+      if (leaving) return;
+      gate.classList.remove('is-opening', 'has-seam');
+      await wait(TIMING.doorClose + TIMING.afterClose);
+      if (leaving) return;
       enterSite();
     };
 
     playSequence();
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
+  // La entrada comienza con el HTML ya presente, sin esperar scripts externos del Inicio.
+  start();
 })();

@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let themeToggle = document.querySelector('[data-theme-toggle]');
 
   // Pausa los videos decorativos fuera de pantalla y conserva su cuadro actual al reanudarlos.
-  const decorativeVideos = [...document.querySelectorAll('video[autoplay][muted][loop]')];
+  const decorativeVideos = [...document.querySelectorAll('#contenido video[autoplay][muted][loop]')];
   const videoControllers = new Map();
 
   const syncDecorativeVideo = (controller) => {

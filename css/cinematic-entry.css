@@ -1,23 +1,44 @@
-/* Entrada cinematográfica: estas reglas no afectan al Inicio en desarrollo.html. */
+/* Entrada cinematográfica superpuesta al Inicio de index.html. */
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body { margin: 0; min-height: 100%; }
 
-body.cinematic-entry {
+html.cinema-enabled body {
   overflow: hidden;
-  background: #050608;
-  color: #f5f5f5;
-  font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
 }
 
 .cinema {
+  display: none;
   position: fixed;
+  z-index: 10001;
   inset: 0;
   min-height: 100vh;
   min-height: 100svh;
   overflow: hidden;
   isolation: isolate;
   background: #050608;
+  color: #f5f5f5;
+  font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+  opacity: 1;
+  transition: opacity var(--cinema-exit-fade) ease-in-out;
+}
+
+html.cinema-enabled .cinema { display: block; }
+.cinema[hidden] { display: none !important; }
+.cinema.is-leaving { opacity: 0; pointer-events: none; }
+html.cinema-enabled .whatsapp-floating,
+html.cinema-enabled .back-to-top { visibility: hidden !important; }
+
+/* VELOCIDAD: los tiempos de fundido se controlan desde TIMING en js/cinematic-entry.js. */
+:root {
+  --cinema-scene-fade: 1400ms;
+  --cinema-door-open: 1600ms;
+  --cinema-door-delay: 240ms;
+  --cinema-door-close: 2100ms;
+  --cinema-message-reveal: 3000ms;
+  --cinema-message-stagger: 3000ms;
+  --cinema-message-exit: 550ms;
+  --cinema-exit-fade: 950ms;
 }
 
 .cinema__scene {
@@ -25,12 +46,14 @@ body.cinematic-entry {
   inset: 0;
   visibility: hidden;
   opacity: 0;
-  transition: opacity .75s ease, visibility .75s;
+  transition: opacity var(--cinema-scene-fade) ease-in-out,
+              visibility 0s linear var(--cinema-scene-fade);
 }
 
 .cinema__scene.is-active {
   visibility: visible;
   opacity: 1;
+  transition: opacity var(--cinema-scene-fade) ease-in-out, visibility 0s;
 }
 
 .cinema__scene--fire { z-index: 1; }
@@ -72,8 +95,8 @@ body.cinematic-entry {
   display: inline-flex;
   align-items: baseline;
   opacity: 0;
-  transform: translateY(.55em);
-  transition: opacity .65s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+  transform: translateY(.35em);
+  transition: opacity .85s ease, transform 1s cubic-bezier(.2,.7,.2,1);
 }
 
 .cinema__places li.is-revealed {
@@ -105,11 +128,11 @@ body.cinematic-entry {
   letter-spacing: .012em;
   line-height: 1.11;
   opacity: 0;
-  filter: blur(9px);
+  filter: blur(4px);
   text-wrap: balance;
-  transform: translateY(18px) scale(.83);
-  transition: opacity 1.1s ease, filter 1.2s ease,
-              transform 1.6s cubic-bezier(.16,1,.3,1);
+  transform: translateY(9px) scale(.97);
+  transition: opacity 1.2s ease, filter 1.2s ease,
+              transform 1.4s cubic-bezier(.16,1,.3,1);
 }
 
 .cinema__title.is-visible {
@@ -126,8 +149,8 @@ body.cinematic-entry {
   letter-spacing: .02em;
   line-height: 1.2;
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity .85s ease, transform 1s cubic-bezier(.16,1,.3,1);
+  transform: translateY(8px);
+  transition: opacity 1.1s ease, transform 1.2s cubic-bezier(.16,1,.3,1);
 }
 
 .cinema__subtitle.is-visible {
@@ -163,7 +186,8 @@ body.cinematic-entry {
   bottom: 0;
   width: calc(50% + 1px);
   background: rgba(5, 6, 8, .62);
-  transition: transform 1.35s cubic-bezier(.65,0,.2,1) .38s;
+  transition: transform var(--cinema-door-open) cubic-bezier(.45,0,.25,1)
+              var(--cinema-door-delay);
 }
 
 .cinema__door--left {
@@ -218,26 +242,127 @@ body.cinematic-entry {
 }
 .cinema__scene--gate.is-opening .cinema__seam { opacity: 0; transition-delay: .75s; }
 
-/* El cargador compartido cambia de escala y de color solo en esta página. */
-.cinematic-entry .loading-overlay {
+.cinema__scene--gate.is-closing .cinema__door {
+  transition: transform var(--cinema-door-close) cubic-bezier(.65,0,.35,1);
+}
+
+/* TAMAÑO DE LETRA: ajusta los clamp de .cinema__message y --greeting; abajo están los tamaños móviles. */
+.cinema__message {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: clamp(1rem, 2.6svh, 1.8rem);
+  width: min(94vw, 1120px);
+  max-height: calc(100svh - 2rem);
+  padding: .75rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  color: #f5f5f3;
+  font-family: 'DM Sans', Arial, sans-serif;
+  font-size: clamp(1.15rem, 2.45vw, 2.3rem);
+  font-weight: 400;
+  letter-spacing: -.015em;
+  line-height: 1.25;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .5);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.cinema__message::-webkit-scrollbar { display: none; }
+
+.cinema__message-line {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  font-family: inherit;
+  opacity: 0;
+  text-wrap: balance;
+  transition: opacity var(--cinema-message-reveal) ease-in-out,
+              transform var(--cinema-message-reveal) cubic-bezier(.45,0,.55,1);
+}
+
+.cinema__message-line--greeting {
+  color: #dc4c37;
+  font-size: clamp(1.9rem, 3.6vw, 3.55rem);
+  font-weight: 400;
+  transform: translate3d(clamp(48px, 8vw, 108px), 0, 0);
+}
+
+.cinema__message-line--territory {
+  transform: translate3d(clamp(-108px, -8vw, -48px), 0, 0);
+}
+
+.cinema__message-line--mission { transform: translate3d(0, 48px, 0); }
+
+.cinema__message-line--territory,
+.cinema__message-line--mission {
+  /* LETRA BLANCA: 300 es el peso ligero; 0 evita que las letras se aprieten. */
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+.cinema__scene--gate.is-message-visible .cinema__message { pointer-events: auto; }
+.cinema__scene--gate.is-message-visible .cinema__message-line {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.cinema__scene--gate.is-message-visible .cinema__message-line--territory {
+  transition-delay: var(--cinema-message-stagger);
+}
+
+.cinema__scene--gate.is-message-visible .cinema__message-line--mission {
+  transition-delay: calc(var(--cinema-message-stagger) + var(--cinema-message-stagger));
+}
+
+.cinema__scene--gate.is-closing .cinema__message-line {
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  transition-delay: 0s;
+  transition: opacity var(--cinema-message-exit) ease;
+}
+
+.cinema__scene--gate.is-message-visible .cinema__horizon { opacity: 0; }
+.cinema__scene--gate.is-closing .cinema__horizon { opacity: 0; }
+
+/* Fundido hacia el Inicio, ya presente debajo de la entrada. */
+.cinema__exit {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  background: #0f151c;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--cinema-exit-fade) ease-in-out;
+}
+
+.cinema.is-leaving .cinema__exit { opacity: 1; }
+
+/* El cargador compartido cambia de escala y de color durante la entrada. */
+html.cinema-enabled .loading-overlay {
   background: #050608;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
-.cinematic-entry .loading-overlay__content { color: #fff; }
-.cinematic-entry .loading-overlay__loader {
+html.cinema-enabled .loading-overlay__content { color: #fff; }
+html.cinema-enabled .loading-overlay__loader {
   width: clamp(150px, 18vw, 230px);
   height: clamp(150px, 18vw, 230px);
   color: #fff;
   filter: none;
 }
-.cinematic-entry .loading-overlay__loader .loader-path,
-.cinematic-entry .loading-overlay__loader .loader-inner { stroke: #fff; }
-.cinematic-entry .loading-overlay__loader .loader-inner { opacity: .55; }
+html.cinema-enabled .loading-overlay__loader .loader-path,
+html.cinema-enabled .loading-overlay__loader .loader-inner { stroke: #fff; }
+html.cinema-enabled .loading-overlay__loader .loader-inner { opacity: .55; }
 
-.cinema__skip,
-.cinema__no-script {
+.cinema__skip {
   position: fixed;
   z-index: 10001;
   top: 1rem;
@@ -253,7 +378,6 @@ body.cinematic-entry {
 
 .cinema__skip { transform: translateY(calc(-100% - 2rem)); }
 .cinema__skip:focus-visible { transform: translateY(0); }
-.cinema__no-script { top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
 @media (max-width: 600px) {
   .cinema__places {
@@ -268,6 +392,8 @@ body.cinematic-entry {
   .cinema__title { font-size: clamp(2.35rem, 10.2vw, 3.5rem); }
   .cinema__subtitle { font-size: clamp(1.5rem, 6.5vw, 2rem); }
   .cinema__seam { height: min(53svh, 420px); }
+  .cinema__message { width: 96vw; padding: .5rem; gap: 1rem; font-size: clamp(1.15rem, 4.6vw, 1.45rem); line-height: 1.28; }
+  .cinema__message-line--greeting { font-size: clamp(1.9rem, 6.5vw, 2.55rem); }
 }
 
 @media (max-height: 540px) and (orientation: landscape) {
@@ -275,9 +401,12 @@ body.cinematic-entry {
   .cinema__identity { top: 56%; }
   .cinema__title { font-size: clamp(2rem, 7svh, 4rem); }
   .cinema__subtitle { margin-top: .35em; font-size: clamp(1.2rem, 4svh, 2rem); }
+  .cinema__message { padding: .25rem .5rem; gap: .55rem; font-size: clamp(1rem, 5.3svh, 2rem); line-height: 1.2; }
+  .cinema__message-line--greeting { font-size: clamp(1.5rem, 8svh, 2.8rem); }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cinema,
   .cinema__scene,
   .cinema__places li,
   .cinema__title,
@@ -285,6 +414,8 @@ body.cinematic-entry {
   .cinema__door,
   .cinema__seam,
   .cinema__horizon,
-  .cinema__portal { transition: none !important; animation: none !important; }
+  .cinema__portal,
+  .cinema__message-line,
+  .cinema__exit { transition: none !important; animation: none !important; }
   .cinema__scene--fire { display: none; }
 }

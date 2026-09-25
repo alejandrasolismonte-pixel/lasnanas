@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- Iconos lineales para las tarjetas de Servicios. Cada símbolo usa viewBox 180 × 120. -->
+
+  <symbol id="programming" viewBox="0 0 180 120">
+    <g fill="none" stroke="#ff9a54" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="63" y="18" width="91" height="65" rx="3"/>
+      <path d="M108 83v13m-17 0h34M63 29h91M73 24h2m6 0h2"/>
+      <circle cx="34" cy="41" r="9"/>
+      <path d="M25 58c3-5 15-5 19 0l3 25m-13-24v30l-8 15m8-15 12 15M44 63l14-9 14 1"/>
+      <path d="m72 55 28-14M22 105h134" stroke="#79c6a0"/>
+      <path d="m91 49-7 7 7 7m18-14 7 7-7 7m-6-16-6 19" stroke="#79c6a0"/>
+    </g>
+  </symbol>
+
+  <symbol id="tiller" viewBox="0 0 180 120">
+    <g fill="none" stroke="#ff9a54" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="39" cy="29" r="9"/>
+      <path d="M37 40c-9 8-9 19-6 29l17 11 9-13-9-12M46 43l18 15 14-7M49 81l-8 21m8-21 20 20M28 105h141"/>
+      <path d="M76 51h22l13 18m-30-7h39l10 20H78l-8-12Zm48 5 20-9m-19 15 26-2"/>
+      <circle cx="87" cy="89" r="10"/>
+      <circle cx="125" cy="89" r="10"/>
+      <path d="M22 91c15 0 29 2 41 6M18 99c15 0 28 2 38 6m77-12 11 8m3-19 14 4" stroke="#79c6a0"/>
+    </g>
+  </symbol>
+
+  <symbol id="territory-products" viewBox="0 0 180 120">
+    <g fill="none" stroke="#ff9a54" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 95h136m-126 0v11m116-11v11M21 106h138"/>
+      <rect x="42" y="37" width="45" height="53" rx="5"/>
+      <path d="M45 37v-8h39v8M41 29h47M49 54h31v26H49Z"/>
+      <path d="M54 71c7-12 12-12 19 0m-10-8v-9m0 8c-5-6-8-5-10-5m10 5c5-6 8-5 10-5" stroke="#79c6a0"/>
+      <path d="m99 83 40-27 16 27-56 7Z"/>
+      <circle cx="130" cy="76" r="3" stroke="#79c6a0"/>
+      <circle cx="143" cy="82" r="2.5" stroke="#79c6a0"/>
+      <path d="M104 82h13" stroke="#79c6a0"/>
+    </g>
+  </symbol>
+
+</svg>
