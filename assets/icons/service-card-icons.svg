@@ -23,16 +23,14 @@
     </g>
   </symbol>
 
-  <symbol id="territory-products" viewBox="0 0 180 120">
+  <symbol id="technology" viewBox="0 0 180 120">
     <g fill="none" stroke="#ff9a54" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M22 95h136m-126 0v11m116-11v11M21 106h138"/>
-      <rect x="42" y="37" width="45" height="53" rx="5"/>
-      <path d="M45 37v-8h39v8M41 29h47M49 54h31v26H49Z"/>
-      <path d="M54 71c7-12 12-12 19 0m-10-8v-9m0 8c-5-6-8-5-10-5m10 5c5-6 8-5 10-5" stroke="#79c6a0"/>
-      <path d="m99 83 40-27 16 27-56 7Z"/>
-      <circle cx="130" cy="76" r="3" stroke="#79c6a0"/>
-      <circle cx="143" cy="82" r="2.5" stroke="#79c6a0"/>
-      <path d="M104 82h13" stroke="#79c6a0"/>
+      <circle cx="29" cy="35" r="8"/>
+      <path d="M22 47c-5 4-7 10-7 17v17m16-34c6 2 9 8 9 16v18M38 56l12 3 6-5M22 81l-6 20m22-20 8 20"/>
+      <rect x="55" y="31" width="52" height="41" rx="3"/>
+      <path d="M55 72h52l5 9H50l5-9Zm21 5h10M13 104h154"/>
+      <path d="M107 52h18v30h13m0-9v18m-5-18h10m-12 7 3 5m15-5-3 5" stroke="#79c6a0"/>
+      <path d="M137 72c3-5 8-5 11 0m9 27V79m0 11c-7-8-12-7-13-7m13 7c6-8 11-7 13-7m-24 21h22" stroke="#79c6a0"/>
     </g>
   </symbol>
 

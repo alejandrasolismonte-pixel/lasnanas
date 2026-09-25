@@ -112,13 +112,10 @@
   animation: offeringFurrow 4.4s ease-in-out infinite;
 }
 
-.offering-card__motion--spark {
-  fill: none;
-  stroke: #a5e3b8;
-  stroke-width: 2.5;
-  stroke-linecap: round;
+.offering-card__motion--water {
+  fill: #a5e3b8;
   filter: drop-shadow(0 0 4px rgba(165, 227, 184, .6));
-  animation: offeringSpark 3.8s ease-in-out infinite;
+  animation: offeringWater 3.8s ease-in-out infinite;
 }
 
 @keyframes offeringPointer {
@@ -134,9 +131,10 @@
   100% { opacity: 0; stroke-dashoffset: -44; }
 }
 
-@keyframes offeringSpark {
-  0%, 63%, 100% { opacity: .15; transform: scale(.75) rotate(-12deg); }
-  77% { opacity: 1; transform: scale(1.2) rotate(0deg); }
+@keyframes offeringWater {
+  0%, 30%, 100% { opacity: 0; transform: translateY(-4px) scale(.8); }
+  52% { opacity: 1; }
+  75% { opacity: 0; transform: translateY(4px) scale(1); }
 }
 
 .offering-card__copy {
