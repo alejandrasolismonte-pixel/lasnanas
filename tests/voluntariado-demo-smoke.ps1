@@ -30,12 +30,14 @@ Has $loaderJs "setAttribute('role', 'status')" 'loader exposes an accessible sta
 Has $loaderCss 'prefers-reduced-motion: reduce' 'loader respects reduced motion preference'
 Has $loaderCss 'background: transparent' 'loader overlay has no background color'
 Has $loaderCss 'backdrop-filter: none' 'loader overlay does not blur the page'
-$loaderPages = @('index.html','desarrollo.html','pages\nanas.html','pages\servicios.html','pages\productos.html','pages\voluntariado.html','pages\mi-voluntariado.html','pages\coordinacion-voluntariado.html','pages\auth-callback.html','pages\actualizar-contrasena.html')
+$loaderPages = @('index.html','pages\nanas.html','pages\servicios.html','pages\productos.html','pages\voluntariado.html','pages\mi-voluntariado.html','pages\coordinacion-voluntariado.html','pages\auth-callback.html','pages\actualizar-contrasena.html')
 foreach($loaderPage in $loaderPages){
   $loaderMarkup = Get-Content (Join-Path $root $loaderPage) -Raw -Encoding utf8
   Has $loaderMarkup 'loading-overlay.css' "$loaderPage loads loader styles"
   Has $loaderMarkup 'loading-overlay.js' "$loaderPage loads loader behavior"
 }
+$redirectPage = Get-Content (Join-Path $root 'desarrollo.html') -Raw -Encoding utf8
+Has $redirectPage "window.location.replace(destination.href)" 'legacy desarrollo page redirects to the main page'
 Has $portalJs "supabase.from('volunteer_profiles')" 'profile loads from Supabase'
 Has $portalJs "supabase.from('membership_applications')" 'plan draft persists in Supabase'
 Has $portalJs "supabase.from('application_messages')" 'messages load from Supabase'

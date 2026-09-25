@@ -33,12 +33,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveUiSelection = () => sessionStorage.setItem('lasnanas_pending_selection_v3', JSON.stringify(selection));
   const goToPortal = () => { saveUiSelection(); window.location.assign(portalUrl()); };
 
-  // La RPC de la migración 004 actúa como comprobación administrativa protegida.
-  const routeAuthenticatedRuka = async () => {
+  // La RPC de la migración 004 actúa como comprobación administrativa protegida
+  // desde Mi Ruka y desde cualquiera de las tarjetas de membresía.
+  const routeAuthenticatedUser = async (requireSession = false) => {
     const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) return false;
+    if (error || !data.user) {
+      if (requireSession) throw new Error('session_unavailable');
+      return false;
+    }
     const adminCheck = await supabase.rpc('admin_list_membership_applications');
-    window.location.assign(adminCheck.error ? 'mi-voluntariado.html' : 'coordinacion-voluntariado.html');
+    if (!adminCheck.error) {
+      window.location.assign('coordinacion-voluntariado.html');
+    } else if (adminCheck.error.code === '42501' || /admin_access_required/i.test(adminCheck.error.message || '')) {
+      if (accessMode === 'ruka') window.location.assign('mi-voluntariado.html');
+      else goToPortal();
+    } else {
+      throw new Error('admin_route_unavailable');
+    }
     return true;
   };
 
@@ -70,8 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // getUser consulta Auth y evita confiar en una sesión manipulada localmente.
     loader?.show('Comprobando tu sesión…');
     try {
-      const { data, error } = await supabase.auth.getUser();
-      if (!error && data.user) { goToPortal(); return; }
+      if (await routeAuthenticatedUser()) return;
+    } catch (_) {
+      dialog.showModal(); activateTab('login');
+      status('[data-login-status]', 'No pudimos comprobar el acceso. Intenta nuevamente.', true);
+      return;
     } finally { loader?.hide(); }
     dialog.showModal(); dialog.querySelector('[data-auth-tab][aria-selected="true"]')?.focus();
   }));
@@ -88,7 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loader?.show('Comprobando tu sesión…');
     try {
-      if (await routeAuthenticatedRuka()) return;
+      if (await routeAuthenticatedUser()) return;
+    } catch (_) {
+      dialog.showModal();
+      status('[data-login-status]', 'No pudimos comprobar el acceso. Intenta nuevamente.', true);
+      return;
     } finally { loader?.hide(); }
     dialog.showModal();
     activateTab('login');
@@ -143,10 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: callbackUrl(), data: metadata } });
       if (error) throw error;
       dirty=false; register.elements.password.value=''; if(accessMode==='plan')saveUiSelection();
-      if (data.session) { if(accessMode==='ruka')await routeAuthenticatedRuka();else goToPortal(); }
+      if (data.session) await routeAuthenticatedUser(true);
       else status('[data-register-status]','Revisa tu correo para confirmar la cuenta. Conservaremos el plan seleccionado al regresar.');
     } catch (error) {
-      const message = /already|registered|exists/i.test(error.message) ? 'Este correo ya tiene una cuenta. Utiliza “Ya tengo cuenta”.' : error.message;
+      const message = /^(admin_route_unavailable|session_unavailable)$/.test(error.message)
+        ? 'La cuenta se creó, pero no pudimos comprobar el acceso. Intenta ingresar nuevamente.'
+        : /already|registered|exists/i.test(error.message)
+          ? 'Este correo ya tiene una cuenta. Utiliza “Ya tengo cuenta”.'
+          : error.message;
       status('[data-register-status]',message || 'No se pudo crear la cuenta.',true);
     } finally { busy(register,false); }
   });
@@ -159,9 +181,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!login.elements.email.validity.valid) { setError(login,'email','login-email-error','Escribe un correo válido.'); return; }
     if (!password) { setError(login,'password','login-password-error','Escribe tu contraseña.'); return; }
     busy(login,true); status('[data-login-status]','Iniciando sesión…');
-    try { const { error }=await supabase.auth.signInWithPassword({email,password}); if(error) throw error; dirty=false; login.elements.password.value=''; if(accessMode==='ruka')await routeAuthenticatedRuka();else goToPortal(); }
-    catch(error){ status('[data-login-status]',/confirm/i.test(error.message)?'Debes confirmar tu correo antes de ingresar.':'Correo o contraseña incorrectos.',true); }
-    finally{ busy(login,false); }
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      dirty = false;
+      login.elements.password.value = '';
+      await routeAuthenticatedUser(true);
+    } catch (error) {
+      const message = /^(admin_route_unavailable|session_unavailable)$/.test(error.message)
+        ? 'Ingresaste, pero no pudimos comprobar el acceso. Intenta nuevamente.'
+        : /confirm/i.test(error.message)
+          ? 'Debes confirmar tu correo antes de ingresar.'
+          : 'Correo o contraseña incorrectos.';
+      status('[data-login-status]', message, true);
+    } finally { busy(login,false); }
   });
 
   // El mensaje es deliberadamente neutro para evitar revelar si un correo existe.

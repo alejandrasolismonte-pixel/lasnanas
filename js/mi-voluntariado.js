@@ -129,7 +129,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     $('[data-submit-application]').disabled=!editable || !verified || !form.elements.respect.checked || !form.elements.coordination.checked;
     $('[data-review-state]').hidden=!['submitted','in_review','rejected'].includes(currentStatus()); $('[data-review-state] h3').textContent=currentStatus()==='rejected'?'La solicitud fue rechazada':'El equipo está revisando tu solicitud';
     $('[data-clarification-form]').hidden=currentStatus()!=='needs_clarification';
-    const latestRequest=[...messages].reverse().find(message=>message.author_id!==user.id && message.visible_to_member); $('[data-public-clarification]').textContent=latestRequest?.body || 'Coordinación solicitó información adicional.';
+    const latestRequest=[...messages].reverse().find(message=>message.application_id===application?.id && message.author_id!==user.id && message.visible_to_member);
+    $('[data-public-clarification]').textContent=latestRequest?.body || 'Coordinación solicitó información adicional.';
+    const rejectionReason=$('[data-rejection-reason]');
+    rejectionReason.hidden=currentStatus()!=='rejected' || !latestRequest;
+    rejectionReason.textContent=latestRequest ? `Motivo comunicado por el equipo: ${latestRequest.body}` : '';
     $('[data-conditions]').hidden=currentStatus()!=='approved';
   }
   function renderDocuments(){

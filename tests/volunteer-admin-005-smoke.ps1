@@ -3,8 +3,10 @@ $ErrorActionPreference = 'Stop'
 # Pruebas estáticas y de aislamiento estructural; no conectan ni modifican Supabase.
 $root = Split-Path -Parent $PSScriptRoot
 $migration = Get-Content -LiteralPath (Join-Path $root 'supabase/migrations/202609100005_admin_payments_documents.sql') -Raw
+$workflowMigration = Get-Content -LiteralPath (Join-Path $root 'supabase/migrations/202609250001_volunteer_admin_workflow.sql') -Raw
 $adminJs = Get-Content -LiteralPath (Join-Path $root 'js/coordinacion-voluntariado.js') -Raw
 $memberJs = Get-Content -LiteralPath (Join-Path $root 'js/mi-voluntariado.js') -Raw
+$memberHtml = Get-Content -LiteralPath (Join-Path $root 'pages/mi-voluntariado.html') -Raw
 $adminHtml = Get-Content -LiteralPath (Join-Path $root 'pages/coordinacion-voluntariado.html') -Raw
 
 $ownerA = [guid]::NewGuid().ToString()
@@ -30,7 +32,12 @@ $checks = [ordered]@{
   'Dos cuentas ficticias generan espacios de ruta diferentes' = $pathA -ne $pathB -and $pathA.StartsWith($ownerA) -and $pathB.StartsWith($ownerB)
   'Frontend valida firma binaria y tamaño antes de cargar' = $adminJs -match '0x25' -and $adminJs -match '10 \* 1024 \* 1024' -and $memberJs -match '0x89' -and $memberJs -match '10\*1024\*1024'
   'Descargas usan URL firmada corta' = $adminJs -match 'createSignedUrl\(path, 60\)' -and $memberJs -match 'createSignedUrl\(pathResult\.data,60\)'
-  'Rechazar sigue deshabilitado' = $adminHtml -match '<button class="btn btn-ghost" type="button" disabled>Rechazar</button>'
+  'Rechazo y aclaración usan transición autorizada del servidor' = $workflowMigration -match 'admin_set_application_status' -and $workflowMigration -match 'admin_access_required' -and $workflowMigration -match 'revoked_at is null' -and $adminJs -match "rpc\('admin_set_application_status'"
+  'Rechazo exige motivo y comunica el resultado a la voluntaria' = $workflowMigration -match 'rejection_reason_required' -and $workflowMigration -match 'insert into public\.application_messages' -and $workflowMigration -match 'visible_to_member' -and $adminHtml -match 'data-admin-reject-form'
+  'Voluntaria ve el motivo de rechazo de su solicitud' = $memberHtml -match 'data-rejection-reason' -and $memberJs -match 'message\.application_id===application\?\.id' -and $memberJs -match 'rejectionReason\.textContent'
+  'Rechazo no interrumpe un pago confirmado ni membresía activa' = $workflowMigration -match 'approved_application_has_payment_or_membership' -and $workflowMigration -match "pay\.status = 'confirmed'" -and $workflowMigration -match 'm\.active'
+  'Admin activo puede leer agendas sin ampliar acceso de Nanas' = $workflowMigration -match "r\.role = 'admin'::public\.volunteer_role" -and $workflowMigration -match "r\.role = 'coordination'::public\.volunteer_role and r\.agenda_access" -and $adminJs -match "rpc\('can_read_agenda'\)"
+  'Transiciones administrativas se auditan y no se exponen a anónimos' = $workflowMigration -match 'application_status_changed' -and $workflowMigration -match 'revoke all on function public\.admin_set_application_status' -and $workflowMigration -match 'grant execute on function public\.admin_set_application_status' -and $workflowMigration -notmatch 'grant execute[^;]+to\s+anon'
   'Frontend no contiene secretos privilegiados' = ($adminJs + $memberJs) -notmatch '(service_role|SUPABASE_SECRET_KEY|BREVO_API_KEY|NOTIFICATION_WEBHOOK_SECRET)'
   'DDL de columnas, índice y restricción admite segunda ejecución' = ([regex]::Matches($migration, 'add column if not exists')).Count -eq 8 -and $migration -match 'create index if not exists documents_application_kind_idx' -and $migration -match "conname = 'documents_scope_valid'"
   'Políticas nuevas toleran una segunda ejecución' = ([regex]::Matches($migration, 'exception when duplicate_object then null')).Count -ge 9

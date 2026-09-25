@@ -31,7 +31,7 @@ Assert-True ($css -match '@media \(max-width: 768px\)[\s\S]*width:\s*min\(156px,
 Assert-True ($css -match '@keyframes rukaBreathe' -and $css -match '@keyframes rukaFire' -and $css -match '@keyframes rukaSmoke') 'ruka uses subtle pertinent motion'
 Assert-True ($css -match '@media \(prefers-reduced-motion: reduce\)[\s\S]*\.ruka-access__smoke') 'ruka respects reduced-motion preferences'
 Assert-True ($mainJs -match '\.plant-cta\[href\]:not\(\[data-mi-ruka\]\)') 'legacy mobile leaf delay does not intercept the Ruka access'
-Assert-True ($volunteerJs -match "document\.querySelector\('\[data-mi-ruka\]'\)" -and $volunteerJs -match 'routeAuthenticatedRuka') 'personal and administrative routing remains connected'
-Assert-True ($html -match 'voluntariado\.css\?v=20' -and $html -match 'voluntariado\.js\?v=4' -and $html -match 'desarrollo\.js\?v=30') 'page requests refreshed Ruka styles and behavior'
+Assert-True ($volunteerJs -match "document\.querySelector\('\[data-mi-ruka\]'\)" -and $volunteerJs -match 'routeAuthenticatedUser' -and $volunteerJs -match "window\.location\.assign\('coordinacion-voluntariado\.html'\)") 'personal and administrative routing remains connected'
+Assert-True ($html -match 'voluntariado\.css\?v=23' -and $html -match 'voluntariado\.js\?v=4' -and $html -match 'desarrollo\.js\?v=32' -and $html -match 'voluntariado-demo\.js\?v=5') 'page requests refreshed Ruka styles and behavior'
 
 Write-Output 'Result: animated Ruka access smoke checks passed.'

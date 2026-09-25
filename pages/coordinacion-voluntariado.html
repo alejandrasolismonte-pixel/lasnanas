@@ -6,6 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Coordinación de voluntariado · Las Ñañas</title>
   <link rel="stylesheet" href="../css/mi-voluntariado.css?v=1">
+  <link rel="stylesheet" href="../css/coordinacion-voluntariado.css?v=1">
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
 </head>
 <body>
@@ -14,7 +15,7 @@
   </div>
   <header class="portal-head">
     <a class="brand" href="voluntariado.html"><span>Ñ</span><strong>Las Ñañas</strong></a>
-    <a class="btn btn-ghost" href="voluntariado.html">Volver al sitio</a>
+    <div class="button-row admin-header-actions"><a class="btn btn-ghost" href="voluntariado.html">Volver al sitio</a><button class="btn btn-ghost" type="button" data-admin-logout hidden>Cerrar sesión</button></div>
   </header>
   <main class="portal-wrap">
     <section class="content-card">
@@ -24,28 +25,87 @@
         <strong>Acceso protegido.</strong>
         <p data-admin-notice-text>Estamos comprobando tu sesión y permiso de administración.</p>
       </div>
-      <nav class="side-nav" aria-label="Funciones disponibles">
-        <button class="active" type="button">Solicitudes</button>
-        <button type="button" data-admin-edit-map disabled>Editar mapa del territorio</button>
-        <button type="button" disabled>Aclaraciones y adjuntos</button>
-        <button type="button" disabled>Pagos y transferencias</button>
-        <button type="button" disabled>Documentos autorizados</button>
-        <button type="button" disabled>Actividades oficiales</button>
-        <button type="button" disabled>Agendas permitidas</button>
-      </nav>
+      <!-- Toda la navegación privada aparece solo después de validar Auth y rol admin. -->
+      <div class="admin-layout" data-admin-layout hidden>
+        <nav class="admin-nav side-nav" aria-label="Funciones de administración">
+          <button class="active" type="button" data-admin-view-button="applications">Voluntarias y solicitudes</button>
+          <button type="button" data-admin-edit-map>Editar pines del mapa</button>
+          <button type="button" data-admin-view-button="clarifications">Aclaraciones y adjuntos</button>
+          <button type="button" data-admin-view-button="payments">Pagos y transferencias</button>
+          <button type="button" data-admin-view-button="documents">Documentos autorizados</button>
+          <button type="button" data-admin-view-button="activities">Actividades oficiales</button>
+          <button type="button" data-admin-view-button="agendas">Agendas permitidas</button>
+        </nav>
+        <div class="admin-content">
+          <section class="admin-view" data-admin-view="applications" aria-labelledby="applications-title">
+            <div class="admin-section-head"><div><p class="eyebrow">Seguimiento</p><h2 id="applications-title">Voluntarias y solicitudes</h2></div><button class="btn btn-ghost" type="button" data-refresh-applications>Actualizar</button></div>
+            <p class="subtle">Pendientes: enviadas sin revisión. En proceso: borradores, revisión, aclaraciones o aprobación a la espera de pago. Activas: membresía vigente. Las retiradas se conservan en su propia pestaña.</p>
+            <div class="admin-tabs" role="tablist" aria-label="Estado de voluntarias">
+              <button class="admin-tab active" type="button" role="tab" aria-selected="true" data-category="all">Todas <span data-category-count="all">0</span></button>
+              <button class="admin-tab" type="button" role="tab" aria-selected="false" data-category="pending">Pendientes <span data-category-count="pending">0</span></button>
+              <button class="admin-tab" type="button" role="tab" aria-selected="false" data-category="process">En proceso <span data-category-count="process">0</span></button>
+              <button class="admin-tab" type="button" role="tab" aria-selected="false" data-category="rejected">Rechazadas <span data-category-count="rejected">0</span></button>
+              <button class="admin-tab" type="button" role="tab" aria-selected="false" data-category="active">Activas <span data-category-count="active">0</span></button>
+              <button class="admin-tab" type="button" role="tab" aria-selected="false" data-category="withdrawn">Retiradas <span data-category-count="withdrawn">0</span></button>
+            </div>
+            <p data-applications-status role="status" aria-live="polite">Cargando solicitudes…</p>
+            <div data-applications-list aria-label="Voluntarias por estado"></div>
+          </section>
 
-      <!-- El contenido privado permanece oculto hasta validar sesión y rol admin activo. -->
-      <section class="state-panel" data-admin-workspace hidden>
-        <h2>Solicitudes registradas</h2>
-        <p data-applications-status role="status" aria-live="polite">Cargando solicitudes…</p>
-        <div data-applications-list aria-label="Solicitudes registradas"></div>
-      </section>
+          <section class="admin-view" data-admin-view="clarifications" aria-labelledby="clarifications-title" hidden>
+            <p class="eyebrow">Comunicación privada</p><h2 id="clarifications-title">Aclaraciones y adjuntos</h2>
+            <p class="subtle">Abre una solicitud para leer mensajes, revisar archivos recibidos o pedir una aclaración.</p>
+            <p data-clarifications-status role="status" aria-live="polite"></p><div data-clarifications-list></div>
+          </section>
 
-      <section class="state-panel" data-application-detail hidden aria-labelledby="application-detail-title">
-        <button class="btn btn-ghost" type="button" data-close-detail>Volver a solicitudes</button>
+          <section class="admin-view" data-admin-view="payments" aria-labelledby="payments-title" hidden>
+            <p class="eyebrow">Verificación bancaria</p><h2 id="payments-title">Pagos y transferencias</h2>
+            <p class="subtle">Revisa el comprobante y el abono bancario antes de confirmar una transferencia.</p>
+            <p data-payments-status role="status" aria-live="polite"></p><div data-payments-list></div>
+          </section>
+
+          <section class="admin-view" data-admin-view="documents" aria-labelledby="documents-title" hidden>
+            <p class="eyebrow">Archivos privados</p><h2 id="documents-title">Documentos autorizados</h2>
+            <p class="subtle">Consulta la documentación enviada y carga archivos para una voluntaria. Se liberan cuando su membresía está activa.</p>
+            <p data-documents-status role="status" aria-live="polite"></p><div data-documents-list></div>
+          </section>
+
+          <section class="admin-view" data-admin-view="activities" aria-labelledby="activities-title" hidden>
+            <p class="eyebrow">Coordinación</p><h2 id="activities-title">Actividades oficiales</h2>
+            <p class="subtle">Crea y administra actividades dirigidas a una voluntaria. Aparecerán en su agenda privada.</p>
+            <label>Voluntaria<select data-activity-owner></select></label>
+            <p data-activities-status role="status" aria-live="polite"></p>
+            <form class="agenda-form" data-official-agenda-form novalidate>
+              <input type="hidden" name="id">
+              <div class="form-grid">
+                <label>Tipo<select name="type" required><option value="arrival">Llegada</option><option value="departure">Salida</option><option value="meeting">Reunión</option><option value="extra">Actividad extra</option><option value="workshop">Taller</option><option value="other">Otro</option></select></label>
+                <label>Título<input name="title" maxlength="100" required></label>
+                <label>Fecha<input name="date" type="date" required></label>
+                <label>Inicio<input name="start" type="time" required></label>
+                <label>Fecha de término<input name="endDate" type="date" required></label>
+                <label>Término<input name="end" type="time" required></label>
+                <label>Estado<select name="status" required><option value="planned">Planificada</option><option value="confirmed">Confirmada</option><option value="completed">Realizada</option><option value="cancelled">Cancelada</option></select></label>
+                <label class="wide">Lugar general<input name="place" maxlength="140" placeholder="Sector general o en línea"></label>
+                <label class="wide">Notas privadas<textarea name="notes" maxlength="1000"></textarea></label>
+              </div>
+              <div class="button-row"><button class="btn btn-primary" type="submit">Guardar actividad</button><button class="btn btn-ghost" type="button" data-cancel-activity>Cancelar edición</button></div>
+              <p class="field-message" data-activity-message aria-live="polite"></p>
+            </form>
+            <div class="admin-agenda-list" data-activities-list></div>
+          </section>
+
+          <section class="admin-view" data-admin-view="agendas" aria-labelledby="agendas-title" hidden>
+            <p class="eyebrow">Acceso autorizado</p><h2 id="agendas-title">Agendas permitidas</h2>
+            <p class="subtle">Las anotaciones personales se muestran únicamente a administración activa y a coordinación con permiso de agenda.</p>
+            <div data-agenda-permission><label>Voluntaria<select data-agenda-owner></select></label><p data-agendas-status role="status" aria-live="polite"></p><div class="admin-agenda-list" data-agendas-list></div></div>
+            <p class="notice warning" data-agenda-locked hidden>No fue posible validar el permiso de lectura de agendas. Recarga el panel o consulta la administración de roles.</p>
+          </section>
+
+          <section class="admin-view admin-detail" data-application-detail hidden aria-labelledby="application-detail-title">
+        <button class="btn btn-ghost" type="button" data-close-detail>Volver al listado</button>
         <h2 id="application-detail-title">Detalle individual</h2>
         <p data-detail-status role="status" aria-live="polite"></p>
-        <dl data-detail-content hidden>
+        <dl class="admin-detail-grid" data-detail-content hidden>
           <div class="review-box"><dt>Código de solicitud</dt><dd data-detail-field="application_code" style="overflow-wrap:anywhere;user-select:all">—</dd></div>
           <div class="review-box"><dt>Nombre</dt><dd data-detail-field="name">—</dd></div>
           <div class="review-box"><dt>Correo</dt><dd data-detail-field="email">—</dd></div>
@@ -57,21 +117,43 @@
           <div class="review-box"><dt>Fecha</dt><dd data-detail-field="created_at">—</dd></div>
           <div class="review-box"><dt>Membresía</dt><dd data-detail-field="membership">Sin membresía activa</dd></div>
         </dl>
-        <!-- Etapa 005: rechazo permanece bloqueado; aprobación y transferencia usan RPC protegidas. -->
         <div class="button-row" data-admin-actions hidden>
+          <button class="btn btn-ghost" type="button" data-mark-review>Pasar a revisión</button>
           <button class="btn btn-primary" type="button" data-approve-application>Aprobar</button>
-          <button class="btn btn-ghost" type="button" disabled>Rechazar</button>
-          <button class="btn btn-ghost" type="button" data-confirm-transfer>Confirmar pago</button>
+          <button class="btn btn-ghost" type="button" data-show-rejection>Rechazar</button>
         </div>
         <p class="field-message" data-admin-action-message aria-live="polite"></p>
-        <section class="state-panel" aria-labelledby="receipt-title">
+        <form class="agenda-form" data-admin-reject-form hidden>
+          <h3>Rechazar solicitud</h3>
+          <label>Motivo que verá la voluntaria<textarea name="reason" minlength="5" maxlength="3000" required></textarea></label>
+          <div class="button-row"><button class="btn btn-primary" type="submit">Confirmar rechazo</button><button class="btn btn-ghost" type="button" data-cancel-rejection>Cancelar</button></div>
+          <p class="field-message" data-rejection-message aria-live="polite"></p>
+        </form>
+
+        <section class="state-panel" data-detail-section="clarifications" aria-labelledby="messages-title">
+          <h3 id="messages-title">Aclaraciones y adjuntos</h3>
+          <p data-messages-status role="status" aria-live="polite"></p>
+          <div class="admin-message-list" data-admin-messages-list></div>
+          <form data-admin-clarification-form>
+            <label>Solicitar aclaración a la voluntaria<textarea name="message" minlength="5" maxlength="3000" required></textarea></label>
+            <button class="btn btn-ghost" type="submit">Enviar solicitud de aclaración</button>
+            <p class="field-message" data-clarification-message aria-live="polite"></p>
+          </form>
+          <h4>Nota interna</h4>
+          <div class="admin-message-list" data-admin-notes-list></div>
+          <form data-admin-note-form><label>Nota visible solo para coordinación<textarea name="note" maxlength="5000" required></textarea></label><button class="btn btn-ghost" type="submit">Guardar nota</button><p class="field-message" data-note-message aria-live="polite"></p></form>
+          <h4>Adjuntos de aclaraciones</h4><div data-admin-attachments-list></div>
+        </section>
+
+        <section class="state-panel" data-detail-section="payments" aria-labelledby="receipt-title">
           <h3 id="receipt-title">Comprobante de transferencia</h3>
           <p data-admin-receipt-status role="status" aria-live="polite"></p>
           <button class="btn btn-ghost" type="button" data-admin-receipt-download disabled>Descargar comprobante privado</button>
+          <button class="btn btn-primary" type="button" data-confirm-transfer disabled>Confirmar pago</button>
           <p class="help">El comprobante no acredita por sí solo el abono. La moneda de origen puede ser CLP, USD o EUR. Verifica el importe y la moneda efectivamente abonados, las comisiones y su correspondencia con la solicitud; no confirmes diferencias sin resolver.</p>
         </section>
 
-        <section class="state-panel" data-admin-documents>
+        <section class="state-panel" data-admin-documents data-detail-section="documents">
           <h3>Documentación privada</h3>
           <div data-admin-document-list><p>Aún no hay documentación.</p></div>
           <form data-admin-document-form novalidate>
@@ -82,7 +164,9 @@
             <p class="field-message" data-admin-document-message aria-live="polite"></p>
           </form>
         </section>
-      </section>
+          </section>
+        </div>
+      </div>
     </section>
   </main>
   <dialog data-transfer-dialog aria-labelledby="transfer-dialog-title">
@@ -112,6 +196,6 @@
   <script src="../js/loading-overlay.js?v=2"></script>
   <script src="../js/transfer-config.js?v=4"></script>
   <script src="../js/transfer-payments.js?v=3"></script>
-  <script src="../js/coordinacion-voluntariado.js?v=6"></script>
+  <script src="../js/coordinacion-voluntariado.js?v=7"></script>
 </body>
 </html>

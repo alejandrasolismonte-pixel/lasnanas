@@ -122,17 +122,29 @@ test('authorized configuration enables domestic transfers with complete bank det
 
 async function adminPanel({received=true,enabled=true,revoke=false}={}) {
   const nodes=new Map(), calls=[];
-  function node(){return {children:[],events:{},disabled:false,hidden:false,textContent:'',
+  function node(){return {children:[],events:{},dataset:{},disabled:false,hidden:false,textContent:'',
     elements:{reference:{value:'BANK-001'},bankVerified:{checked:false}},
+    classList:{toggle(){}},setAttribute(){},removeAttribute(){},scrollIntoView(){},reset(){},
     addEventListener(name,fn){this.events[name]=fn;},
     append(...items){this.children.push(...items);},replaceChildren(){this.children=[];},
     querySelector(key){return select(key);},reportValidity(){return true;},showModal(){},close(){}};}
   function select(key){if(!nodes.has(key))nodes.set(key,node());return nodes.get(key);}
-  const app={application_id:'10000000-0000-0000-0000-000000000001',application_status:'approved',first_name:'Prueba',last_name:'Uno',currency:'CLP',quoted_amount:10000};
+  const viewNames=['applications','clarifications','payments','documents','activities','agendas'];
+  const views=viewNames.map(name=>{const view=select(`[data-admin-view="${name}"]`);view.dataset.adminView=name;return view;});
+  const viewButtons=viewNames.map(name=>{const button=select(`[data-admin-view-button="${name}"]`);button.dataset.adminViewButton=name;return button;});
+  const categories=['all','pending','process','rejected','active','withdrawn'].map(name=>{
+    const button=select(`[data-category="${name}"]`);button.dataset.category=name;return button;
+  });
+  const app={application_id:'10000000-0000-0000-0000-000000000001',application_status:'approved',first_name:'Prueba',last_name:'Uno',plan_id:'standard',billing:'monthly',application_created_at:'2026-09-23T00:00:00Z',currency:'CLP',quoted_amount:10000};
   let accessCalls=0,confirmed=false;
-  const client={auth:{getUser:async()=>({data:{user:{id:'admin'}}})},async rpc(name){
+  const client={auth:{getUser:async()=>({data:{user:{id:'admin'}}})},from(name){
+    assert.ok(['volunteer_profiles','application_messages','admin_notes'].includes(name),`Unexpected table ${name}`);
+    const query={select(){return query;},eq(){return query;},is(){return query;},async order(){return {data:[]};}};
+    return query;
+  },async rpc(name){
     calls.push(name);
-    if(name==='admin_list_membership_applications')return {data:[app]};
+    if(name==='admin_list_membership_applications_v2')return {data:[app]};
+    if(name==='can_read_agenda')return {data:true};
     if(name==='admin_get_membership_application'){
       accessCalls++;return revoke&&accessCalls>1?{error:{message:'admin_access_required'}}:{data:[app]};
     }
@@ -146,11 +158,19 @@ async function adminPanel({received=true,enabled=true,revoke=false}={}) {
   })};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../js/coordinacion-voluntariado.js'),'utf8'),{
     window:{LasNanasSupabase:{client},LasNanasTransfers:transfers,location:{replace(){},assign(){}}},
-    document:{querySelector:select,createElement:node},Intl,Date
+    document:{querySelector:select,querySelectorAll(key){
+      if(key==='[data-admin-view]')return views;
+      if(key==='[data-admin-view-button]')return viewButtons;
+      if(key==='[data-category]')return categories;
+      throw new Error(`Unexpected selector ${key}`);
+    },createElement:node},Intl,Date
   });
   const flush=()=>new Promise(resolve=>setImmediate(resolve));
   await flush();
-  select('[data-applications-list]').children[0].children[1].events.click();
+  assert.equal(select('[data-admin-layout]').hidden,false,'admin panel should open');
+  viewButtons[2].events.click();
+  assert.equal(views[2].hidden,false,'payment view should be accessible');
+  select('[data-payments-list]').children[0].children[1].events.click();
   await flush();
   return {select,calls,flush};
 }

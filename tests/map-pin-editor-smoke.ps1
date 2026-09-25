@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $PSScriptRoot
-$homeHtml = Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $root 'desarrollo.html')
+$homeHtml = Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $root 'index.html')
 $adminHtml = Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $root 'pages/coordinacion-voluntariado.html')
 $mapJs = Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $root 'js/map-pins.js')
 $adminJs = Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $root 'js/coordinacion-voluntariado.js')
@@ -23,9 +23,9 @@ Assert-True ($homeHtml -match 'data-map-editor hidden') 'private editing control
 Assert-True ($css -match '\.map-editor\[hidden\][\s\S]*display:\s*none\s*!important') 'author styles cannot accidentally reveal private controls'
 Assert-True ($homeHtml -match 'data-map-edit-toggle' -and $homeHtml -match 'data-map-edit-save disabled' -and $homeHtml -match 'data-map-edit-cancel disabled' -and $homeHtml -match 'data-map-edit-reset') 'editor includes toggle, save, cancel, and restore actions'
 Assert-True ($homeHtml -match 'supabase-client\.js' -and $homeHtml -match 'map-pins\.js') 'public map loads shared positions through the existing client'
-Assert-True ($adminHtml -match 'data-admin-edit-map disabled') 'admin map entry remains disabled until access is verified'
-Assert-True ($adminJs -match "admin_list_membership_applications" -and $adminJs -match 'editMapButton\.disabled\s*=\s*false') 'admin entry is enabled only after the existing role check'
-Assert-True ($adminJs -match 'desarrollo\.html\?editar-mapa=1#territorio') 'admin entry opens the visual editor directly'
+Assert-True ($adminHtml -match 'data-admin-layout hidden[\s\S]*data-admin-edit-map') 'admin map entry remains inside the private layout until access is verified'
+Assert-True ($adminJs -match "rpc\('admin_list_membership_applications_v2'\)[\s\S]*layout\.hidden\s*=\s*false") 'admin layout opens only after the existing role check'
+Assert-True ($adminJs -match '\.\./\?editar-mapa=1#territorio') 'admin entry opens the visual editor on the home page directly'
 Assert-True ($mapJs -match "client\.auth\.getUser\(\)" -and $mapJs -match "admin_get_map_pin_positions") 'visual editor validates session and admin authorization'
 Assert-True ($mapJs -match "client\.rpc\('get_map_pin_positions'\)") 'visitors load the published positions'
 Assert-True ($mapJs -match "client\.rpc\('admin_save_map_pin_positions'" -and $mapJs -match 'p_positions:\s*payload') 'save action publishes all visual positions through one protected operation'
