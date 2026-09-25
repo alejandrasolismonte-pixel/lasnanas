@@ -6,8 +6,12 @@
   isolation: isolate;
   padding: clamp(4.5rem, 8vw, 7rem) 1.25rem;
   border-block: 1px solid rgba(255, 154, 84, .16);
-  background: #0b121b;
   color: #e7f2f0;
+}
+
+/* Conserva el espacio de las tarjetas al sumar la franja y las vetas compartidas. */
+body.services-page main > .service-offerings.public-band {
+  padding-block: clamp(4.5rem, 8vw, 7rem);
 }
 
 .service-offerings__container {
@@ -182,8 +186,8 @@
 }
 
 /* Estas tarjetas conservan su fondo oscuro en el tema diurno. */
-html[data-theme='day'] body.services-page main > .service-offerings {
-  background: #0b121b !important;
+html[data-theme='day'] body.services-page main > .service-offerings.public-band {
+  background-color: #0b121b !important;
   color: #e7f2f0;
 }
 
@@ -200,6 +204,7 @@ html[data-theme='day'] body.services-page main > .service-offerings {
 
 @media (max-width: 520px) {
   .service-offerings { padding: 3.75rem 1rem; }
+  body.services-page main > .service-offerings.public-band { padding-block: 3.75rem; }
   .service-offerings__intro { text-align: left; }
   .service-offerings__intro > p:last-child { margin-inline: 0; }
   .offering-card { grid-template-columns: 1fr; border-radius: 1.3rem; }

@@ -811,6 +811,7 @@ h2 {
 }
 .hero__scroll {
   position: absolute;
+  z-index: 4;
   bottom: 1.5rem;
   right: max(20px, calc((100% - 1180px)/2));
   color: var(--muted);
