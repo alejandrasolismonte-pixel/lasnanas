@@ -406,20 +406,32 @@ html.cinema-enabled .loading-overlay__loader .loader-inner { opacity: .55; }
 
 .cinema__skip {
   position: fixed;
-  z-index: 10001;
-  top: 1rem;
-  left: 1rem;
-  padding: .65rem .9rem;
-  border: 1px solid rgba(255, 255, 255, .5);
-  border-radius: 4px;
-  background: #050608;
-  color: #fff;
-  font: 400 1rem/1.2 'Oswald', 'Arial Narrow', Impact, sans-serif;
-  text-decoration: none;
+  z-index: 11;
+  right: calc(1rem + env(safe-area-inset-right, 0px));
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  min-height: 44px;
+  padding: .6rem 1rem;
+  border: 1px solid rgba(255, 255, 255, .42);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .58);
+  color: rgba(255, 255, 255, .9);
+  font: 400 .85rem/1.2 'Oswald', 'Arial Narrow', Impact, sans-serif;
+  letter-spacing: .025em;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
 }
 
-.cinema__skip { transform: translateY(calc(-100% - 2rem)); }
-.cinema__skip:focus-visible { transform: translateY(0); }
+.cinema__skip:hover {
+  background: rgba(0, 0, 0, .78);
+  border-color: rgba(255, 255, 255, .7);
+  color: #fff;
+}
+.cinema__skip:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
 
 @media (max-width: 600px) {
   .cinema__places {
@@ -448,6 +460,7 @@ html.cinema-enabled .loading-overlay__loader .loader-inner { opacity: .55; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cinema__skip { transition: none; }
   .cinema,
   .cinema__scene,
   .cinema__places li,
