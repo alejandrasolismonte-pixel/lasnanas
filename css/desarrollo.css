@@ -936,6 +936,11 @@ body.public-flow-page #inicio .hero__arrival {
   font-weight: 700;
   line-height: 1.08;
 }
+.nanas-cover-headline__mobile { display: none; }
+@media (max-width: 768px), (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
+  .nanas-cover-headline__desktop { display: none; }
+  .nanas-cover-headline__mobile { display: inline; }
+}
 .nanas-cover-instruction {
   display: flex;
   align-items: center;
@@ -1251,13 +1256,14 @@ body.public-flow-page #inicio .hero__arrival {
   #quienes-somos.section { padding: 2.4rem 0 1.4rem; }
 
   .book-scene {
-    width: 100%;
+    width: calc(100% + 12px);
+    max-width: calc(100vw - 16px);
     /* Mantiene la misma reducción proporcional en móvil vertical. */
-    margin: .24rem 0 -.675rem;
+    margin: .24rem -6px -.675rem;
   }
 
   .nanas-book {
-    width: min(100%, calc(100vw - 32px));
+    width: 100%;
     height: auto;
     aspect-ratio: 13 / 8;
     margin: 0;
@@ -1295,20 +1301,21 @@ body.public-flow-page #inicio .hero__arrival {
   }
 
   .nanas-cover-headline {
-    font-size: clamp(.7rem, 3vw, 1rem);
+    font-size: clamp(.63rem, 2.7vw, .9rem);
     padding-bottom: .3em;
   }
 
   .nanas-cover-instruction {
-    font-size: clamp(.58rem, 2.5vw, .8rem);
-    gap: 5px;
-    padding: .3rem;
+    width: 94%;
+    font-size: clamp(.52rem, 2.25vw, .72rem);
+    gap: 4px;
+    padding: .2rem .25rem;
   }
 
   .nanas-cover-instruction .book-turn-cue__dot {
-    width: 28px;
-    height: 28px;
-    flex-basis: 28px;
+    width: 24px;
+    height: 24px;
+    flex-basis: 24px;
   }
 
   .nanas-cover-text h3 {
@@ -1372,6 +1379,26 @@ body.public-flow-page #inicio .hero__arrival {
     min-width: 72px;
     font-size: .68rem;
     white-space: nowrap;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 540px) and (max-width: 1100px) and (pointer: coarse) {
+  .nanas-cover-headline {
+    font-size: clamp(1.305rem, 2.52vw, 2.25rem);
+  }
+
+  .nanas-cover-instruction {
+    width: 94%;
+    align-self: center;
+    padding: .5rem .6rem;
+    gap: 8px;
+    font-size: clamp(.855rem, 1.35vw, 1.08rem);
+  }
+
+  .nanas-cover-instruction .book-turn-cue__dot {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
   }
 }
 
@@ -4301,5 +4328,36 @@ html[data-theme="day"] .contact-form textarea::placeholder {
   .page-fire-hero__sign,
   .services-showcase__card {
     will-change: auto;
+  }
+}
+
+/* En celular horizontal, el acceso a Ecosistema ocupa por sí solo el encabezado. */
+@media (orientation: landscape) and (max-height: 540px) and (max-width: 1100px) and (pointer: coarse) {
+  body.public-flow-page #site-content {
+    --home-header-height: 52px;
+  }
+
+  body.public-flow-page #site-content > .site-header .header__inner {
+    min-height: 52px;
+    justify-content: center;
+  }
+
+  body.public-flow-page #site-content > .site-header :is(.brand, .menu-toggle, .main-nav, .theme-toggle) {
+    display: none !important;
+  }
+
+  body.public-flow-page #site-content > .site-header .header-ecosystem {
+    display: inline-flex !important;
+    position: static !important;
+    margin: 0 !important;
+    min-width: 0;
+    min-height: 40px;
+    max-width: calc(100vw - 24px);
+    padding: 10px 24px;
+    transform: none !important;
+  }
+
+  body.public-flow-page.menu-open {
+    overflow: auto;
   }
 }

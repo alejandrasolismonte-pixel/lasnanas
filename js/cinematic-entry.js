@@ -23,28 +23,72 @@
     let leaving = false;
     let gateIsOpen = false;
     let soundOff = false;
+    let needsSoundGesture = false;
+    let gateOpenedAt = 0;
 
     if (soundButton && !mobileSoundButton) soundButton.hidden = false;
 
     const stopGateAudio = () => {
       gateIsOpen = false;
+      needsSoundGesture = false;
       gateAudio?.pause();
       if (soundButton) soundButton.hidden = true;
     };
     const playGateAudio = () => {
       if (!gateAudio || !gateIsOpen || leaving || soundOff) return;
-      gateAudio.currentTime = 0;
+      try { gateAudio.currentTime = 0; } catch (_) {
+        // En móviles el archivo puede no tener metadatos todavía.
+      }
       const attempt = gateAudio.play();
       attempt?.then(() => {
         if (soundOff || leaving || !gateIsOpen) gateAudio.pause();
       }).catch(() => {
         // La entrada continúa aunque el navegador bloquee el sonido automático.
-        if (soundButton) soundButton.hidden = true;
+        if (mobileSoundButton && soundButton && gateIsOpen && !soundOff && !leaving) {
+          needsSoundGesture = true;
+          soundButton.textContent = 'Activar sonido';
+          soundButton.hidden = false;
+        } else if (soundButton) {
+          soundButton.hidden = true;
+        }
       });
     };
 
     soundButton?.addEventListener('click', () => {
       if (leaving || !gateAudio) return;
+      if (needsSoundGesture && gateIsOpen) {
+        const syncGateAudio = () => {
+          if (!gateIsOpen || leaving || !Number.isFinite(gateAudio.duration) || gateAudio.duration <= 0) return;
+          const elapsed = Math.max(0, (performance.now() - gateOpenedAt) / 1000);
+          if (elapsed >= gateAudio.duration) {
+            gateAudio.pause();
+            soundButton.hidden = true;
+            return;
+          }
+          try {
+            gateAudio.currentTime = Math.min(elapsed, gateAudio.duration - .05);
+          } catch (_) {
+            // La reproducción continúa desde el inicio si el navegador aún no permite buscar.
+          }
+        };
+        if (gateAudio.readyState >= 1) {
+          syncGateAudio();
+          if (soundButton.hidden) return;
+        } else {
+          gateAudio.addEventListener('loadedmetadata', syncGateAudio, { once: true });
+        }
+        const attempt = gateAudio.play();
+        attempt?.then(() => {
+          if (gateIsOpen && !leaving && !soundOff && !gateAudio.paused) {
+            needsSoundGesture = false;
+            soundButton.textContent = 'Apagar sonido';
+            soundButton.hidden = false;
+          }
+        }).catch(() => {
+          if (gateIsOpen && !leaving) soundButton.hidden = false;
+        });
+        return;
+      }
       soundOff = true;
       gateAudio.pause();
       soundButton.hidden = true;
@@ -54,15 +98,20 @@
       if (soundButton) soundButton.hidden = true;
     });
     gateAudio?.addEventListener('playing', () => {
-      if (mobileSoundButton && soundButton && gateIsOpen && !soundOff && !leaving) soundButton.hidden = false;
+      if (mobileSoundButton && soundButton && gateIsOpen && !soundOff && !leaving) {
+        needsSoundGesture = false;
+        soundButton.textContent = 'Apagar sonido';
+        soundButton.hidden = false;
+      }
     });
     gateAudio?.addEventListener('pause', () => {
-      if (mobileSoundButton && soundButton) soundButton.hidden = true;
+      if (mobileSoundButton && soundButton && !needsSoundGesture) soundButton.hidden = true;
     });
 
     gateDoor?.addEventListener('transitionstart', (event) => {
       if (event.target !== gateDoor || event.propertyName !== 'transform' || leaving || gate.classList.contains('is-closing')) return;
       gateIsOpen = true;
+      gateOpenedAt = performance.now();
       playGateAudio();
     });
     gateDoor?.addEventListener('transitionend', (event) => {
@@ -220,6 +269,12 @@
       await wait(TIMING.seamReveal);
       if (leaving) return;
       gate.classList.add('is-opening');
+      window.setTimeout(() => {
+        if (leaving || gateIsOpen || gate.classList.contains('is-closing')) return;
+        gateIsOpen = true;
+        gateOpenedAt = performance.now();
+        playGateAudio();
+      }, TIMING.doorDelay + 50);
       await wait(TIMING.doorDelay + TIMING.doorOpen + 100);
       if (leaving) return;
       gate.classList.add('is-message-visible');
