@@ -936,10 +936,15 @@ body.public-flow-page #inicio .hero__arrival {
   font-weight: 700;
   line-height: 1.08;
 }
-.nanas-cover-headline__mobile { display: none; }
+.nanas-cover-headline__mobile,
+.nanas-cover-headline__portrait { display: none; }
 @media (max-width: 768px), (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
   .nanas-cover-headline__desktop { display: none; }
   .nanas-cover-headline__mobile { display: inline; }
+}
+@media (max-width: 768px) and (orientation: portrait) {
+  .nanas-cover-headline__mobile { display: none; }
+  .nanas-cover-headline__portrait { display: inline; }
 }
 .nanas-cover-instruction {
   display: flex;
@@ -1297,6 +1302,7 @@ body.public-flow-page #inicio .hero__arrival {
   /* Mantiene el texto de la nueva mitad izquierda legible en pantallas pequeñas. */
   .nanas-cover-text {
     padding: clamp(14px, 4vw, 22px);
+    padding-top: clamp(8px, 2.2vw, 12px);
     gap: 4px;
   }
 
@@ -1320,6 +1326,7 @@ body.public-flow-page #inicio .hero__arrival {
 
   .nanas-cover-text h3 {
     font-size: clamp(.9rem, 4vw, 1.2rem);
+    font-weight: 400;
     line-height: 1.18;
   }
 
