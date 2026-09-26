@@ -462,6 +462,18 @@ html.cinema-enabled .loading-overlay__loader .loader-inner { opacity: .55; }
   .cinema__message-line--greeting { font-size: clamp(1.9rem, 6.5vw, 2.55rem); }
 }
 
+@media (max-width: 600px) and (orientation: portrait) {
+  .cinema__sound {
+    top: calc(.75rem + env(safe-area-inset-top, 0px));
+    right: calc(.75rem + env(safe-area-inset-right, 0px));
+    bottom: auto;
+    left: auto;
+    min-height: 40px;
+    padding: .4rem .7rem;
+    font-size: .75rem;
+  }
+}
+
 @media (max-height: 540px) and (orientation: landscape) {
   .cinema__places { top: 8svh; }
   .cinema__identity { top: 56%; }
