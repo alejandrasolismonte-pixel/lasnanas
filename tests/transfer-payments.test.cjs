@@ -62,27 +62,28 @@ test('received receipts are not uploaded again',async()=>{
   assert.equal((await m.service.upload('app',file())).status,'received');assert.equal(m.calls.length,0);
 });
 const testBank={holder:'Test',taxId:'Test',bankName:'Test',accountType:'Test',accountNumber:'Test',referenceInstructions:'Test'};
-test('payment configuration requires complete bank details, without currency matching',()=>{
+test('payment routes stay available while missing bank details are requested from coordination',()=>{
   assert.equal(api.configured({enabled:true,bank:testBank}),true);
   assert.equal(api.configured({enabled:false,bank:testBank}),false);
-  assert.equal(api.configured({enabled:true,bank:{...testBank,accountNumber:''}}),false);
+  assert.equal(api.configured({enabled:true,bank:{...testBank,accountNumber:''}}),true);
+  assert.equal(api.canSend({enabled:true,bank:{}},'domestic','CLP'),true);
 });
 test('CLP USD and EUR origins are allowed independently of quoted currency',()=>{
   for(const origin of ['CLP','USD','EUR']) assert.equal(api.canSend({enabled:true,bank:testBank},'domestic',origin),true);
 });
-test('international route requires explicit confirmation and complete instructions for every origin',()=>{
+test('international receipt flow remains available for every origin, even while bank data is coordinated',()=>{
   for(const origin of ['CLP','USD','EUR']) {
     const config={enabled:true,bank:testBank};
-    assert.equal(api.canSend(config,'international',origin),false);
-    assert.equal(api.canSend({...config,international:{confirmed:true,instructions:[]}},'international',origin),false);
-    assert.equal(api.canSend({...config,international:{confirmed:false,instructions:['Verified bank instructions']}},'international',origin),false);
-    assert.equal(api.canSend({...config,international:{confirmed:true,instructions:['Verified bank instructions']}},'international',origin),true);
+    assert.equal(api.canSend(config,'international',origin),true);
+    assert.equal(api.canSend({...config,international:{[origin]:{confirmed:true,instructions:[]}}},'international',origin),true);
+    assert.equal(api.canSend({...config,international:{[origin]:{confirmed:false,instructions:['Verified bank instructions']}}},'international',origin),true);
+    assert.equal(api.canSend({...config,international:{[origin]:{confirmed:true,instructions:['Verified bank instructions']}}},'international',origin),true);
   }
 });
 test('route must be selected explicitly, not inferred from origin currency',()=>{
   assert.equal(api.canSend({enabled:true,bank:testBank},'', 'USD'),false);
 });
-test('portal preserves USD quote for EUR origin and hides unconfirmed international bank details',async()=>{
+test('portal preserves USD quote for EUR origin and asks coordination for missing international bank details',async()=>{
   const nodes=new Map();
   const node=()=>({value:'',hidden:false,textContent:'',children:[],addEventListener(){},replaceChildren(){this.children=[];},append(p){this.children.push(p);},querySelectorAll(){return [];}});
   const select=key=>{if(!nodes.has(key))nodes.set(key,node());return nodes.get(key);};
@@ -103,8 +104,8 @@ test('portal preserves USD quote for EUR origin and hides unconfirmed internatio
     assert.ok(visibleInstructions.includes(value));
   select('[data-transfer-route]').value='international';
   await panel.refresh(app);
-  assert.equal(select('[data-transfer-instructions]').children.length,0);
-  assert.equal(select('[data-receipt-form]').hidden,true);
+  assert.match(select('[data-transfer-instructions]').children.map(p=>p.textContent).join(' '),/Solicita a coordinación/);
+  assert.equal(select('[data-receipt-form]').hidden,false);
   assert.match(select('[data-transfer-quote]').textContent,/15 USD/);
 });
 test('authorized configuration enables domestic transfers with complete bank details only',()=>{
@@ -114,7 +115,7 @@ test('authorized configuration enables domestic transfers with complete bank det
   assert.equal(api.configured(context.window.LAS_NANAS_TRANSFER),true);
   for (const currency of ['CLP','USD','EUR']) {
     assert.equal(api.canSend(context.window.LAS_NANAS_TRANSFER,'domestic',currency),true);
-    assert.equal(api.canSend(context.window.LAS_NANAS_TRANSFER,'international',currency),false);
+    assert.equal(api.canSend(context.window.LAS_NANAS_TRANSFER,'international',currency),true);
   }
   assert.equal(context.window.LAS_NANAS_TRANSFER.bank.referenceInstructions,
     'Escribe el código de tu solicitud en el comentario o referencia de la transferencia');
@@ -123,7 +124,7 @@ test('authorized configuration enables domestic transfers with complete bank det
 async function adminPanel({received=true,enabled=true,revoke=false}={}) {
   const nodes=new Map(), calls=[];
   function node(){return {children:[],events:{},dataset:{},disabled:false,hidden:false,textContent:'',
-    elements:{reference:{value:'BANK-001'},bankVerified:{checked:false}},
+    elements:{reference:{value:'BANK-001'},route:{value:''},sourceCurrency:{value:''},settledAmount:{value:''},settledCurrency:{value:''},bankVerified:{checked:false}},
     classList:{toggle(){}},setAttribute(){},removeAttribute(){},scrollIntoView(){},reset(){},
     addEventListener(name,fn){this.events[name]=fn;},
     append(...items){this.children.push(...items);},replaceChildren(){this.children=[];},
@@ -141,7 +142,7 @@ async function adminPanel({received=true,enabled=true,revoke=false}={}) {
     assert.ok(['volunteer_profiles','application_messages','admin_notes'].includes(name),`Unexpected table ${name}`);
     const query={select(){return query;},eq(){return query;},is(){return query;},async order(){return {data:[]};}};
     return query;
-  },async rpc(name){
+  },async rpc(name,args){
     calls.push(name);
     if(name==='admin_list_membership_applications_v2')return {data:[app]};
     if(name==='can_read_agenda')return {data:true};
@@ -149,7 +150,11 @@ async function adminPanel({received=true,enabled=true,revoke=false}={}) {
       accessCalls++;return revoke&&accessCalls>1?{error:{message:'admin_access_required'}}:{data:[app]};
     }
     if(name==='admin_get_application_membership')return {data:[{membership_active:confirmed,payment_status:confirmed?'confirmed':null}]};
-    if(name==='admin_confirm_transfer'){confirmed=true;return {data:[{payment_status:'confirmed',membership_active:true}]};}
+    if(name==='admin_confirm_transfer_v2'){
+      assert.equal(args.p_transfer_route,'international');assert.equal(args.p_source_currency,'EUR');
+      assert.equal(args.p_settled_amount,14980);assert.equal(args.p_settled_currency,'CLP');
+      confirmed=true;return {data:[{payment_status:'confirmed',membership_active:true}]};
+    }
     if(name==='admin_list_application_documents')return {data:[]};
     throw new Error('Unexpected RPC '+name);
   }};
@@ -185,17 +190,19 @@ test('admin must download receipt and acknowledge bank verification before confi
     p.select('[data-detail-field="application_code"]').textContent);
   const form=p.select('[data-transfer-form]');
   await form.events.submit({preventDefault(){}});
-  assert.equal(p.calls.includes('admin_confirm_transfer'),false);
+  assert.equal(p.calls.includes('admin_confirm_transfer_v2'),false);
+  form.elements.route.value='international';form.elements.sourceCurrency.value='EUR';
+  form.elements.settledAmount.value='14980';form.elements.settledCurrency.value='CLP';
   form.elements.bankVerified.checked=true;
   await form.events.submit({preventDefault(){}});
-  assert.equal(p.calls.filter(x=>x==='admin_confirm_transfer').length,1);
+  assert.equal(p.calls.filter(x=>x==='admin_confirm_transfer_v2').length,1);
 });
 test('revoked admin is rejected before payment confirmation',async()=>{
   const p=await adminPanel({revoke:true});
   await p.select('[data-admin-receipt-download]').events.click();
   const form=p.select('[data-transfer-form]');form.elements.bankVerified.checked=true;
   await form.events.submit({preventDefault(){}});
-  assert.equal(p.calls.includes('admin_confirm_transfer'),false);
+  assert.equal(p.calls.includes('admin_confirm_transfer_v2'),false);
 });
 for(const options of [{received:false},{enabled:false}])test('admin confirmation stays blocked '+JSON.stringify(options),async()=>{
   const p=await adminPanel(options);
@@ -203,5 +210,5 @@ for(const options of [{received:false},{enabled:false}])test('admin confirmation
   assert.equal(p.select('[data-confirm-transfer]').disabled,true);
   const form=p.select('[data-transfer-form]');form.elements.bankVerified.checked=true;
   await form.events.submit({preventDefault(){}});
-  assert.equal(p.calls.includes('admin_confirm_transfer'),false);
+  assert.equal(p.calls.includes('admin_confirm_transfer_v2'),false);
 });

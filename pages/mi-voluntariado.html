@@ -55,7 +55,7 @@
             </div></fieldset>
             <fieldset><legend>Periodicidad</legend><div class="option-grid option-grid--two">
               <label><input type="radio" name="billing" value="monthly"><span>Mensual</span></label>
-              <label><input type="radio" name="billing" value="yearly"><span>Anual · 20 % de ahorro</span></label>
+              <label><input type="radio" name="billing" value="yearly"><span>Anual · 50 % de ahorro</span></label>
             </div></fieldset>
             <div class="review-box"><div><strong>Resumen</strong><p data-plan-summary>—</p></div><strong data-total>—</strong></div>
             <div class="email-gate" data-email-gate><strong>Correo pendiente de verificación</strong><p>La solicitud se habilita después de verificar el correo.</p></div>
@@ -117,7 +117,7 @@
           </form>
         </section>
 
-        <section class="content-card" data-view="profile" aria-labelledby="profile-title" hidden><p class="eyebrow">Mi perfil</p><h2 id="profile-title">Perfil y credencial</h2><form data-profile-form><label>Nombre de uso<input name="displayName" maxlength="80" required></label><label>Fotografía opcional<input name="photo" type="file" accept="image/jpeg,image/png,image/webp"></label><div class="button-row"><button class="btn btn-primary" type="submit">Guardar perfil</button><button class="btn btn-ghost" type="button" data-remove-photo>Quitar fotografía</button></div></form><article class="credential" data-credential><span>LAS ÑAÑAS</span><div class="credential-body"><div class="credential-photo" data-credential-photo>V</div><div><small>Nombre</small><h3 data-credential-name>—</h3><small>Plan</small><strong data-credential-plan>—</strong></div></div></article><button class="btn btn-primary" type="button" data-download-credential disabled>Credencial pendiente de habilitación</button></section>
+        <section class="content-card" data-view="profile" aria-labelledby="profile-title" hidden><p class="eyebrow">Mi perfil</p><h2 id="profile-title">Perfil y credencial</h2><form data-profile-form><label>Nombre de uso<input name="displayName" maxlength="80" required></label><label>Fotografía opcional (JPG, PNG o WebP, hasta 4 MiB)<input name="photo" type="file" accept="image/jpeg,image/png,image/webp"></label><div class="button-row"><button class="btn btn-primary" type="submit">Guardar perfil</button><button class="btn btn-ghost" type="button" data-remove-photo>Quitar fotografía</button></div><p class="field-message" data-profile-message aria-live="polite"></p></form><article class="credential" data-credential><span>LAS ÑAÑAS</span><div class="credential-body"><div class="credential-photo" data-credential-photo>V</div><div><small>Nombre</small><h3 data-credential-name>—</h3><small>Plan</small><strong data-credential-plan>—</strong></div></div></article><button class="btn btn-primary" type="button" data-download-credential disabled>Credencial pendiente de habilitación</button></section>
 
         <section class="content-card" data-view="agenda" aria-labelledby="agenda-title" hidden>
           <p class="eyebrow">Privada</p><h2 id="agenda-title">Mi agenda de voluntariado</h2><p class="subtle">Solo tú y coordinación autorizada pueden consultar estos registros. No modifica cupos ni reservas.</p>
@@ -138,10 +138,10 @@
   <!-- SUPABASE: solamente URL y clave publicable; RLS protege cada consulta. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-config.js"></script>
-  <script src="../js/supabase-client.js?v=1"></script>
+  <script src="../js/supabase-client.js?v=2"></script>
   <script src="../js/loading-overlay.js?v=2"></script>
-  <script src="../js/transfer-config.js?v=4"></script>
- <script src="../js/transfer-payments.js?v=4"></script>
-  <script src="../js/mi-voluntariado.js?v=8"></script>
+  <script src="../js/transfer-config.js?v=5"></script>
+  <script src="../js/transfer-payments.js?v=5"></script>
+  <script src="../js/mi-voluntariado.js?v=10"></script>
 </body>
 </html>

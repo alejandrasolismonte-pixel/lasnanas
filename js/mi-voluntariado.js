@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   // Retira estados ficticios de versiones anteriores sin utilizarlos.
   try { sessionStorage.removeItem('lasnanas_visual_demo_v1'); } catch (_) {}
-  let photoPreview = '';
+  let photoPreview = '', storedPhotoUrl = '', removePhotoOnSave = false;
 
   const money = (value, currency = application?.currency || 'CLP') => new Intl.NumberFormat(currency === 'USD' ? 'en-US' : 'es-CL', { style:'currency', currency, maximumFractionDigits:0 }).format(value || 0);
   const showMessage = (selector, message, error = false) => { const node=$(selector); if(node){node.textContent=message;node.style.color=error?'#9f2f2f':'';} };
@@ -61,6 +61,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     return data;
   }
   const quote = (row, billing, currency) => row[`${billing}_${currency.toLowerCase()}`];
+  const photoBucket = () => supabase.storage.from('volunteer-profile-photos');
+  const photoExtension = { 'image/jpeg':'jpg', 'image/png':'png', 'image/webp':'webp' };
+  async function validPhotoFile(file) {
+    if (!file || !photoExtension[file.type] || file.size < 1 || file.size > 4 * 1024 * 1024) return false;
+    const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    return file.type === 'image/jpeg' ? bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff
+      : file.type === 'image/png' ? [0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a].every((value,index) => bytes[index] === value)
+      : bytes.slice(0,4).every((value,index) => value === [0x52,0x49,0x46,0x46][index]) &&
+        bytes.slice(8,12).every((value,index) => value === [0x57,0x45,0x42,0x50][index]);
+  }
+  async function loadStoredPhoto() {
+    if (storedPhotoUrl) URL.revokeObjectURL(storedPhotoUrl);
+    storedPhotoUrl = '';
+    if (!profile.photo_path) return;
+    try {
+      const { data, error } = await photoBucket().download(profile.photo_path);
+      if (!error && data) storedPhotoUrl = URL.createObjectURL(data);
+    } catch (_) { /* El perfil sigue disponible aunque falle la fotografía. */ }
+  }
 
   // Crea únicamente un borrador: la cuenta ya existe y no se envía ni cobra automáticamente.
   async function ensureDraftSelection() {
@@ -97,7 +116,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       if(failure)throw failure.error;
       if(sessionInvalidated)throw new Error('La sesión cambió durante la carga.');
       profile=profileResult.data; application=applicationResult.data; price=application?.plan_prices || null; messages=messagesResult.data || []; agenda=agendaResult.data || []; membership=membershipResult.data; volunteerDocuments=documentsResult.data || [];
+      // Si el enlace se abrió en otro dispositivo, sessionStorage no viaja con él.
+      // Usa la selección verificada de Auth solo cuando aún no hay una solicitud.
+      if (!application && !requested.plan) {
+        const meta = user.user_metadata || {};
+        if (PLAN_ORDER.includes(meta.selected_plan)) {
+          requested.plan = meta.selected_plan;
+          if (!['monthly','yearly'].includes(requestedBilling) && !['monthly','yearly'].includes(pending.billing) && ['monthly','yearly'].includes(meta.selected_billing)) requested.billing = meta.selected_billing;
+          if (!['CLP','USD'].includes(requestedCurrency) && !['CLP','USD'].includes(pending.currency) && ['CLP','USD'].includes(meta.selected_currency)) requested.currency = meta.selected_currency;
+        }
+      }
       await ensureDraftSelection();
+      await loadStoredPhoto();
       if(sessionInvalidated)throw new Error('La sesión cambió durante la carga.');
       setGlobal('Datos de tu cuenta actualizados.');
       renderAll();
@@ -139,7 +169,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   function renderDocuments(){
     const root=$('[data-documents]');
     root.replaceChildren();
-    if(!volunteerDocuments.length){const empty=document.createElement('div');empty.className='locked';empty.textContent=membership?'Aún no tienes documentos disponibles.':'Los archivos de Las Ñañas se habilitarán únicamente después del pago confirmado. Puedes enviar documentación para tu propia solicitud.';root.append(empty);return;}
+    if(hasActiveMembership()){
+      const protocol=document.createElement('a');protocol.className='btn btn-ghost';protocol.href='protocolo-acuerdos-voluntariado.html';protocol.textContent='Protocolo y acuerdos de voluntariado';root.append(protocol);
+    }
+    if(!volunteerDocuments.length){const empty=document.createElement('div');empty.className='locked';empty.textContent=membership?'Aún no tienes otros documentos disponibles.':'Los archivos de Las Ñañas se habilitarán únicamente después del pago confirmado. Puedes enviar documentación para tu propia solicitud.';root.append(empty);return;}
     const grid=document.createElement('div');grid.className='document-grid';
     volunteerDocuments.forEach(record=>{const card=document.createElement('article');card.className='document';const title=document.createElement('h3');title.textContent=record.original_name;const status=document.createElement('p');status.textContent=record.document_kind==='volunteer_submission'?'Enviado para revisión':'Disponible para descarga';const button=document.createElement('button');button.className='btn btn-ghost';button.type='button';button.textContent='Descargar';button.onclick=()=>downloadVolunteerDocument(record.document_id);card.append(title,status,button);grid.append(card);});
     root.append(grid);
@@ -147,8 +180,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function validDocumentFile(file){if(!file||!['application/pdf','image/jpeg','image/png'].includes(file.type)||file.size<1||file.size>10*1024*1024)return false;const bytes=new Uint8Array(await file.slice(0,8).arrayBuffer());const pdf=bytes[0]===0x25&&bytes[1]===0x50&&bytes[2]===0x44&&bytes[3]===0x46&&bytes[4]===0x2d;const jpg=bytes[0]===0xff&&bytes[1]===0xd8&&bytes[2]===0xff;const png=[0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a].every((value,index)=>bytes[index]===value);return(file.type==='application/pdf'&&pdf)||(file.type==='image/jpeg'&&jpg)||(file.type==='image/png'&&png);}
   async function downloadVolunteerDocument(documentId){const pathResult=await supabase.rpc('authorize_volunteer_document_download',{p_document_id:documentId});if(pathResult.error||!pathResult.data){showMessage('[data-volunteer-document-message]','No fue posible autorizar la descarga.',true);return;}const signed=await supabase.storage.from('volunteer-documents').createSignedUrl(pathResult.data,60);if(signed.error||!signed.data?.signedUrl){showMessage('[data-volunteer-document-message]','No fue posible generar el enlace privado.',true);return;}window.open(signed.data.signedUrl,'_blank','noopener,noreferrer');}
-  function renderProfile(){
-    const name=profile.display_name || `${profile.first_name} ${profile.last_name}`; $('[data-profile-form]').elements.displayName.value=name; $('[data-credential-name]').textContent=name; $('[data-credential-plan]').textContent=price?.plan_id || membership?.plan_prices?.plan_id || '—'; $('[data-credential-photo]').innerHTML=photoPreview?`<img src="${photoPreview}" alt="Fotografía seleccionada">`:(name[0]||'V').toUpperCase(); $('[data-download-credential]').disabled=true;
+  function renderProfile(syncInput = false){
+    const name=profile.display_name || `${profile.first_name} ${profile.last_name}`;
+    if (syncInput) $('[data-profile-form]').elements.displayName.value=name;
+    $('[data-credential-name]').textContent=name;
+    $('[data-credential-plan]').textContent=price?.plan_id || membership?.plan_prices?.plan_id || '—';
+    const photo=$('[data-credential-photo]');
+    const source=photoPreview || (removePhotoOnSave ? '' : storedPhotoUrl);
+    photo.replaceChildren();
+    if (source) { const img=document.createElement('img'); img.src=source; img.alt='Fotografía de la voluntaria'; photo.append(img); }
+    else photo.textContent=(name[0]||'V').toUpperCase();
+    const download=$('[data-download-credential]');
+    download.disabled=!hasActiveMembership() || Boolean(photoPreview || removePhotoOnSave);
+    download.textContent=!hasActiveMembership()?'Credencial pendiente de habilitación':download.disabled?'Guarda el perfil para descargar':'Descargar credencial PNG';
   }
   const agendaRecord=(item)=>{const start=new Date(item.starts_at),end=new Date(item.ends_at);return{id:item.id,official:item.official,type:item.type,title:item.title,date:start.toLocaleDateString('en-CA'),start:start.toTimeString().slice(0,5),end:end.toTimeString().slice(0,5),place:item.general_place||'',notes:item.private_notes||'',status:item.status};};
   function renderAgenda(){
@@ -158,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const days=[...new Set(items.map(item=>item.date))].sort(); $('[data-agenda-calendar]').innerHTML=days.length?days.map(day=>`<div class="calendar-day"><strong>${day}</strong>${items.filter(item=>item.date===day).map(item=>`<div class="calendar-event ${item.official?'official':''}">${item.start} ${escapeHtml(item.title)}</div>`).join('')}</div>`).join(''):'<p>Sin fechas registradas.</p>';
   }
   const escapeHtml=value=>String(value||'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-  const renderAll=()=>{renderHeader();renderMembership();renderDocuments();renderProfile();renderAgenda();};
+  const renderAll=()=>{renderHeader();renderMembership();renderDocuments();renderProfile(true);renderAgenda();};
 
   $$('[data-view-button]').forEach(button=>button.onclick=()=>{$$('[data-view-button]').forEach(item=>item.classList.toggle('active',item===button));$$('[data-view]').forEach(view=>{view.hidden=view.dataset.view!==button.dataset.viewButton;});});
   $('[data-membership-form]').addEventListener('change',async event=>{
@@ -174,11 +218,69 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Adjuntos siguen fuera de alcance: no se suben hasta implementar la Edge Function segura.
   $('[data-clarification-form]').elements.attachments.addEventListener('change',event=>{event.target.value='';showMessage('[data-clarification-message]','Los adjuntos permanecen deshabilitados hasta conectar su función segura.',true);});
 
-  $('[data-profile-form]').addEventListener('submit',async event=>{event.preventDefault();const displayName=event.currentTarget.elements.displayName.value.trim();if(displayName.length<2)return;setBusy(event.currentTarget,true);const{data,error}=await supabase.from('volunteer_profiles').update({display_name:displayName,updated_at:new Date().toISOString()}).eq('id',user.id).select().single();setBusy(event.currentTarget,false);if(error){setGlobal('No se pudo actualizar el perfil.',true);return;}profile=data;renderProfile();});
+  $('[data-profile-form]').addEventListener('submit',async event=>{
+    event.preventDefault();
+    const form=event.currentTarget;
+    const displayName=form.elements.displayName.value.trim();
+    const file=form.elements.photo.files[0];
+    if(displayName.length<2){showMessage('[data-profile-message]','Escribe un nombre de uso válido.',true);return;}
+    if(file && !(await validPhotoFile(file))){showMessage('[data-profile-message]','Selecciona una imagen JPG, PNG o WebP válida de hasta 4 MiB.',true);return;}
+    const previousPath=profile.photo_path;
+    let newPath='', committed=false;
+    setBusy(form,true);
+    showMessage('[data-profile-message]','Guardando perfil y fotografía…');
+    try{
+      if(file){
+        newPath=`${user.id}/${crypto.randomUUID()}.${photoExtension[file.type]}`;
+        const uploaded=await photoBucket().upload(newPath,file,{contentType:file.type,upsert:false});
+        if(uploaded.error)throw uploaded.error;
+      }
+      const values={display_name:displayName,updated_at:new Date().toISOString()};
+      if(newPath || removePhotoOnSave)values.photo_path=newPath || null;
+      const{data,error}=await supabase.from('volunteer_profiles').update(values).eq('id',user.id).select().single();
+      if(error)throw error;
+      profile=data;
+      committed=true;
+      if((newPath || removePhotoOnSave) && previousPath && previousPath!==newPath) await photoBucket().remove([previousPath]);
+      photoPreview='';removePhotoOnSave=false;form.elements.photo.value='';
+      await loadStoredPhoto();
+      renderProfile();
+      showMessage('[data-profile-message]','Perfil y fotografía guardados.');
+    }catch(_){
+      if(newPath && !committed)await photoBucket().remove([newPath]);
+      showMessage('[data-profile-message]','No se pudo guardar el perfil o la fotografía. Intenta nuevamente.',true);
+    }finally{setBusy(form,false);}
+  });
 
   $('[data-volunteer-document-form]').addEventListener('submit',async event=>{event.preventDefault();const form=event.currentTarget;const file=form.elements.document.files[0];if(!application){showMessage('[data-volunteer-document-message]','Primero debes tener una solicitud guardada.',true);return;}if(!(await validDocumentFile(file))){showMessage('[data-volunteer-document-message]','Selecciona un PDF, JPG o PNG válido de hasta 10 MB.',true);return;}setBusy(form,true);showMessage('[data-volunteer-document-message]','Preparando carga privada…');const reserve=await supabase.rpc('reserve_volunteer_document_upload',{p_application_id:application.id,p_original_name:file.name,p_mime_type:file.type,p_byte_size:file.size});const reservation=reserve.data?.[0];if(reserve.error||!reservation){setBusy(form,false);showMessage('[data-volunteer-document-message]','No fue posible reservar el archivo para tu solicitud.',true);return;}const uploaded=await supabase.storage.from('volunteer-documents').upload(reservation.storage_path,file,{contentType:file.type,upsert:false});setBusy(form,false);if(uploaded.error){showMessage('[data-volunteer-document-message]','No fue posible completar la carga.',true);return;}form.reset();const refreshed=await supabase.rpc('list_my_volunteer_documents');if(!refreshed.error)volunteerDocuments=refreshed.data||[];renderDocuments();showMessage('[data-volunteer-document-message]','Documento enviado de forma privada.');});
-  $('[data-profile-form]').elements.photo.addEventListener('change',event=>{const file=event.target.files[0];if(!file||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>4*1024*1024){event.target.value='';return;}const reader=new FileReader();reader.onload=()=>{photoPreview=reader.result;renderProfile();};reader.readAsDataURL(file);});
-  $('[data-remove-photo]').onclick=()=>{photoPreview='';$('[data-profile-form]').elements.photo.value='';renderProfile();};
+  $('[data-profile-form]').elements.photo.addEventListener('change',async event=>{
+    const file=event.target.files[0];
+    if(!file)return;
+    if(!(await validPhotoFile(file))){event.target.value='';showMessage('[data-profile-message]','Selecciona una imagen JPG, PNG o WebP válida de hasta 4 MiB.',true);return;}
+    removePhotoOnSave=false;
+    const reader=new FileReader();
+    reader.onload=()=>{if(event.target.files[0]===file){photoPreview=reader.result;renderProfile();}};
+    reader.readAsDataURL(file);
+    showMessage('[data-profile-message]','Fotografía lista. Pulsa “Guardar perfil” para conservarla.');
+  });
+  $('[data-remove-photo]').onclick=()=>{photoPreview='';removePhotoOnSave=true;$('[data-profile-form]').elements.photo.value='';renderProfile();showMessage('[data-profile-message]','Pulsa “Guardar perfil” para quitar la fotografía.');};
+  $('[data-download-credential]').onclick=async()=>{
+    if(!hasActiveMembership())return;
+    const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=720;
+    const ctx=canvas.getContext('2d');if(!ctx)return;
+    const gradient=ctx.createLinearGradient(0,0,1200,720);gradient.addColorStop(0,'#0f5037');gradient.addColorStop(1,'#197d50');ctx.fillStyle=gradient;ctx.fillRect(0,0,1200,720);
+    ctx.fillStyle='#ffffff';ctx.font='bold 47px Georgia, serif';ctx.fillText('LAS ÑAÑAS',75,105);
+    ctx.font='27px system-ui, sans-serif';ctx.fillText('CREDENCIAL DE VOLUNTARIADO',75,152);
+    const source=storedPhotoUrl;
+    ctx.fillStyle='#dcedea';ctx.beginPath();ctx.arc(215,365,110,0,Math.PI*2);ctx.fill();
+    if(source){try{const img=new Image();img.src=source;await img.decode();ctx.save();ctx.beginPath();ctx.arc(215,365,110,0,Math.PI*2);ctx.clip();ctx.drawImage(img,105,255,220,220);ctx.restore();}catch(_){/* La credencial conserva el nombre. */}}
+    const name=profile.display_name || `${profile.first_name} ${profile.last_name}`;
+    ctx.fillStyle='#ffffff';ctx.font='bold 51px system-ui, sans-serif';ctx.fillText(name,385,327,750);
+    ctx.font='35px system-ui, sans-serif';ctx.fillText(`Plan: ${membership.plan_prices?.plan_id || price?.plan_id || '—'}`,385,390,740);
+    ctx.font='27px system-ui, sans-serif';ctx.fillText(`Vigente hasta: ${new Intl.DateTimeFormat('es-CL',{dateStyle:'long'}).format(new Date(membership.ends_at))}`,385,447,740);
+    ctx.fillText('Membresía activa · Las Ñañas',75,630);
+    canvas.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download='credencial-las-nanas.png';link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);},'image/png');
+  };
 
   const agendaForm=$('[data-agenda-form]');
   agendaForm.addEventListener('submit',async event=>{event.preventDefault();if(!agendaForm.reportValidity())return;const data=Object.fromEntries(new FormData(agendaForm));const start=new Date(`${data.date}T${data.start}`),end=new Date(`${data.date}T${data.end}`);if(end<=start){showMessage('[data-agenda-message]','La hora de término debe ser posterior al inicio.',true);return;}const values={owner_id:user.id,created_by:user.id,official:false,type:data.type,title:data.title.trim(),starts_at:start.toISOString(),ends_at:end.toISOString(),timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,general_place:data.place.trim()||null,private_notes:data.notes.trim()||null,status:data.status,updated_at:new Date().toISOString()};setBusy(agendaForm,true);const result=data.id?await supabase.from('agenda_entries').update(values).eq('id',data.id).eq('owner_id',user.id).eq('official',false):await supabase.from('agenda_entries').insert(values);setBusy(agendaForm,false);if(result.error){showMessage('[data-agenda-message]','No se pudo guardar el registro.',true);return;}agendaForm.reset();showMessage('[data-agenda-message]','Registro guardado.');await reloadAgenda();});

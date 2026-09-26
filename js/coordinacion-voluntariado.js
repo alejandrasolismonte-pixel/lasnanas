@@ -747,6 +747,10 @@
     transferDialog.querySelector('[data-transfer-summary="currency"]').textContent = currentApplication.currency;
     transferDialog.querySelector('[data-transfer-summary="date"]').textContent = formatDate(new Date().toISOString());
     transferForm.elements.reference.value = '';
+    transferForm.elements.route.value = '';
+    transferForm.elements.sourceCurrency.value = '';
+    transferForm.elements.settledAmount.value = '';
+    transferForm.elements.settledCurrency.value = '';
     transferForm.elements.bankVerified.checked = false;
     document.querySelector('[data-transfer-message]').textContent = '';
     transferDialog.showModal();
@@ -769,7 +773,14 @@
       if (access.error || !access.data?.[0]) throw new Error('admin_access_required');
       const latestReceipt = await transfers.receipt(applicationId);
       if (latestReceipt?.status !== 'received') throw new Error('receipt_required');
-      const { data, error } = await client.rpc('admin_confirm_transfer', { p_application_id:applicationId, p_transfer_reference:transferForm.elements.reference.value.trim() });
+      const { data, error } = await client.rpc('admin_confirm_transfer_v2', {
+        p_application_id:applicationId,
+        p_transfer_reference:transferForm.elements.reference.value.trim(),
+        p_settled_amount:Number(transferForm.elements.settledAmount.value),
+        p_settled_currency:transferForm.elements.settledCurrency.value,
+        p_source_currency:transferForm.elements.sourceCurrency.value,
+        p_transfer_route:transferForm.elements.route.value
+      });
       if (error || data?.[0]?.payment_status !== 'confirmed') throw new Error('confirmation_failed');
       transferDialog.close();
       await loadApplicationDetail(applicationId);

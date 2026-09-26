@@ -29,7 +29,7 @@
   <script src="../js/theme-init.js?v=1"></script>
   
   <!-- Estilos base del proyecto -->
-  <link rel="stylesheet" href="../css/desarrollo.css?v=93">
+  <link rel="stylesheet" href="../css/desarrollo.css?v=99">
   <!-- Estilos específicos para los efectos del Voluntariado (Planeta, Glow, Acordeón) -->
   <!-- CAMBIO: versión actualizada para cargar sin caché el nuevo hero de voluntariado. -->
   <link rel="stylesheet" href="../css/voluntariado.css?v=24">
@@ -274,7 +274,7 @@
             </label>
             <label class="membership-switch__option">
               <input type="radio" name="billing" value="yearly">
-              <span>Anual <small>· Ahorra 20 %</small></span>
+              <span>Anual <small>· Ahorra 50 %</small></span>
             </label>
           </fieldset>
 
@@ -305,7 +305,7 @@
               <p>Para acompañar la red desde cualquier lugar del mundo.</p>
             </div>
             <p class="membership-card__price" aria-live="polite">
-              <strong data-price data-monthly-clp="10000" data-yearly-clp="96000" data-monthly-usd="10" data-yearly-usd="96">$10.000</strong>
+              <strong data-price data-monthly-clp="10000" data-yearly-clp="60000" data-monthly-usd="10" data-yearly-usd="60">$10.000</strong>
               <span data-currency-label>CLP</span><small>/ <span data-period-label>mes</span></small>
             </p>
             <div class="membership-card__includes" tabindex="0">
@@ -330,7 +330,7 @@
               <p>Para participar, aprender y comenzar a vincularte con el territorio.</p>
             </div>
             <p class="membership-card__price" aria-live="polite">
-              <strong data-price data-monthly-clp="15000" data-yearly-clp="144000" data-monthly-usd="15" data-yearly-usd="144">$15.000</strong>
+              <strong data-price data-monthly-clp="15000" data-yearly-clp="90000" data-monthly-usd="15" data-yearly-usd="90">$15.000</strong>
               <span data-currency-label>CLP</span><small>/ <span data-period-label>mes</span></small>
             </p>
             <div class="membership-card__includes" tabindex="0">
@@ -356,7 +356,7 @@
               <p>Para vivir una experiencia territorial más profunda y acompañada.</p>
             </div>
             <p class="membership-card__price" aria-live="polite">
-              <strong data-price data-monthly-clp="25000" data-yearly-clp="240000" data-monthly-usd="25" data-yearly-usd="240">$25.000</strong>
+              <strong data-price data-monthly-clp="25000" data-yearly-clp="150000" data-monthly-usd="25" data-yearly-usd="150">$25.000</strong>
               <span data-currency-label>CLP</span><small>/ <span data-period-label>mes</span></small>
             </p>
             <div class="membership-card__includes" tabindex="0">
@@ -575,6 +575,7 @@
           <label>Contraseña<span class="password-field"><input name="password" type="password" maxlength="256" autocomplete="current-password" aria-describedby="login-password-error" required><button type="button" data-toggle-password>Mostrar</button></span></label>
           <p class="field-error" id="login-password-error"></p>
           <button class="membership-auth__recovery" type="button" data-demo-recovery>Recuperar el acceso</button>
+          <button class="membership-auth__recovery" type="button" data-resend-confirmation hidden>Reenviar confirmación de correo</button>
           <button class="button button--primary" type="submit">Iniciar sesión</button>
           <p class="field-message" data-login-status aria-live="polite"></p>
         </form>
@@ -619,10 +620,10 @@
   <!-- SUPABASE: cliente público; la autorización real continúa en RLS. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-config.js"></script>
-  <script src="../js/supabase-client.js?v=1"></script>
+  <script src="../js/supabase-client.js?v=2"></script>
   <script src="../js/loading-overlay.js?v=2"></script>
   <!-- Acceso y registro mediante Supabase Auth. -->
-  <script src="../js/voluntariado-demo.js?v=5"></script>
+  <script src="../js/voluntariado-demo.js?v=6"></script>
   <script src="../js/whatsapp-floating.js?v=4"></script>
 </body>
 </html>

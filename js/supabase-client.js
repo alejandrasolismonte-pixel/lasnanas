@@ -11,7 +11,8 @@
   }
   window.LasNanasSupabase = {
     client: window.supabase.createClient(config.supabaseUrl, config.supabasePublishableKey, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce', storageKey: 'lasnanas-auth-v1' }
+      // El sitio es 100 % cliente: la confirmación debe poder abrirse en otro dispositivo.
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit', storageKey: 'lasnanas-auth-v1' }
     }),
     error: ''
   };

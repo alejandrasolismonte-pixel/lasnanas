@@ -5,17 +5,21 @@
   const BUCKET = 'transfer-receipts';
   const fail = code => { throw new Error(code); };
   const unwrap = result => { if (result.error) throw result.error; return result.data; };
-  const configured = config => config?.enabled === true &&
+  const configured = config => config?.enabled === true;
+  const bankReady = config =>
     ['holder','taxId','bankName','accountType','accountNumber','referenceInstructions'].every(key =>
       typeof config.bank?.[key] === 'string' && config.bank[key].trim());
-  const internationalReady = config => config?.international?.confirmed === true &&
-    Array.isArray(config.international.instructions) && config.international.instructions.length > 0 &&
-    config.international.instructions.every(line => typeof line === 'string' && line.trim());
+  const internationalReady = (config, sourceCurrency) => {
+    const details = config?.international?.[sourceCurrency];
+    return details?.confirmed === true && Array.isArray(details.instructions) &&
+      details.instructions.length > 0 &&
+      details.instructions.every(line => typeof line === 'string' && line.trim());
+  };
   // La moneda de origen no modifica ni limita la moneda cotizada.
   // El tipo de transferencia se elige explícitamente; no se deduce de la moneda.
   const canSend = (config, route, sourceCurrency) => configured(config) &&
     ['CLP','USD','EUR'].includes(sourceCurrency) &&
-    (route === 'domestic' || (route === 'international' && internationalReady(config)));
+    ['domestic','international'].includes(route);
 
   async function validate(file) {
     if (!file || !['application/pdf','image/jpeg','image/png'].includes(file.type) ||
@@ -116,23 +120,32 @@
         if (!configured(config)) {
           status.textContent = 'La transferencia todavía no está habilitada. No realices un pago por ahora.'; return;
         }
-        if (route.value === 'international' && !internationalReady(config)) {
-          status.textContent = 'Las instrucciones para recibir transferencias internacionales están pendientes de confirmación. No envíes una transferencia internacional todavía.'; return;
-        }
         if (!readyToSend()) {
           status.textContent = 'Selecciona la moneda desde la que envías y el tipo de transferencia.'; return;
         }
         const instructions = find('[data-transfer-instructions]');
-        const bank = config.bank;
-        const bankLines = route.value === 'international' ? config.international.instructions :
-          [`Titular: ${bank.holder}`, `Identificador: ${bank.taxId}`, `Banco: ${bank.bankName}`,
-          `Tipo de cuenta: ${bank.accountType}`, `Número de cuenta: ${bank.accountNumber}`,
-          `Referencia del pago: ${bank.referenceInstructions}`];
-        for (const line of [...bankLines, `Código de tu solicitud: ${application.id}`, `Moneda desde la que envías: ${sourceCurrency.value}`,
+        const bank = config.bank || {};
+        const needsCoordination = route.value === 'international'
+          ? !internationalReady(config, sourceCurrency.value) : !bankReady(config);
+        const knownBankLines = [['Titular',bank.holder],['Identificador',bank.taxId],
+          ['Banco',bank.bankName],['Tipo de cuenta',bank.accountType],
+          ['Número de cuenta',bank.accountNumber],['Referencia del pago',bank.referenceInstructions]]
+          .filter(([,value]) => typeof value === 'string' && value.trim())
+          .map(([label,value]) => `${label}: ${value}`);
+        const bankLines = route.value === 'international' ? (needsCoordination
+          ? knownBankLines.filter(line => line.startsWith('Titular:') || line.startsWith('Banco:')).concat(
+             `Solicita a coordinación los datos bancarios que falten para enviar ${sourceCurrency.value} desde el extranjero antes de transferir.`)
+          : config.international[sourceCurrency.value].instructions) : needsCoordination
+          ? [...knownBankLines, 'Solicita a coordinación los datos bancarios que falten antes de transferir.']
+          : knownBankLines;
+        const currencyGuidance = route.value === 'domestic' && sourceCurrency.value !== 'CLP'
+          ? ['Para la transferencia nacional, solicita a tu banco la conversión a CLP antes de transferir; no envíes USD o EUR directamente a una cuenta en CLP.'] : [];
+        for (const line of [...bankLines, ...currencyGuidance, `Código de tu solicitud: ${application.id}`, `Moneda desde la que envías: ${sourceCurrency.value}`,
           'Consulta con tu banco la conversión y las comisiones que correspondan. Administración verificará el importe efectivamente abonado antes de confirmar el pago.']) {
           const p = document.createElement('p'); p.textContent = line; instructions.append(p);
         }
         status.textContent = record ? 'Carga pendiente de completar. Puedes reintentar su recepción o subir el mismo archivo.' :
+          needsCoordination ? 'Solicita a coordinación cualquier dato bancario faltante antes de transferir. Si ya coordinaste el pago, adjunta el comprobante. Subirlo no confirma el abono.' :
           'Realiza la transferencia con estos datos y adjunta el comprobante. Subirlo no confirma el pago.';
         retry.hidden = !record; form.hidden = false;
       } catch (_) {

@@ -1,5 +1,9 @@
 # Correos de inscripción de voluntariado
 
+## Extensión local del 26 de septiembre de 2026
+
+La cola privada admite ahora `payment_confirmed` y `membership_activated`. Ambas se encolan cuando una membresía nace a partir de un pago confirmado. El primer correo contiene una constancia del pago con código, importe del plan, abono bancario registrado, fecha y referencia; el segundo informa la vigencia y enlaza el documento de protocolo y acuerdos. El navegador no puede encolar esos avisos. Los correos conservan la idempotencia y los reintentos existentes. Esta extensión está preparada en `202609260002_payment_activation_notifications.sql` y en la Edge Function; aún requiere migración y despliegue.
+
 ## Alcance implementado
 
 Esta etapa prepara dos notificaciones independientes e idempotentes:

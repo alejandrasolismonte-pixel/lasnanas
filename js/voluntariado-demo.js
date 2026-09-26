@@ -174,8 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const login = dialog.querySelector('[data-login-form]');
+  const resendConfirmation = dialog.querySelector('[data-resend-confirmation]');
   login.addEventListener('submit', async event => {
-    event.preventDefault(); clearErrors(login); status('[data-login-status]','');
+    event.preventDefault(); clearErrors(login); status('[data-login-status]',''); resendConfirmation.hidden = true;
     if (!requireClient('[data-login-status]')) return;
     const email=normalizeEmail(login.elements.email.value); const password=login.elements.password.value;
     if (!login.elements.email.validity.valid) { setError(login,'email','login-email-error','Escribe un correo válido.'); return; }
@@ -188,13 +189,29 @@ document.addEventListener('DOMContentLoaded', () => {
       login.elements.password.value = '';
       await routeAuthenticatedUser(true);
     } catch (error) {
+      const needsConfirmation = error.code === 'email_not_confirmed' || /email not confirmed/i.test(error.message || '');
+      resendConfirmation.hidden = !needsConfirmation;
       const message = /^(admin_route_unavailable|session_unavailable)$/.test(error.message)
         ? 'Ingresaste, pero no pudimos comprobar el acceso. Intenta nuevamente.'
-        : /confirm/i.test(error.message)
-          ? 'Debes confirmar tu correo antes de ingresar.'
+        : needsConfirmation
+          ? 'Debes confirmar tu correo antes de ingresar. Puedes reenviar el enlace.'
           : 'Correo o contraseña incorrectos.';
       status('[data-login-status]', message, true);
     } finally { busy(login,false); }
+  });
+
+  resendConfirmation.addEventListener('click', async () => {
+    if (!requireClient('[data-login-status]')) return;
+    const email = normalizeEmail(login.elements.email.value);
+    if (!login.elements.email.validity.valid) { setError(login,'email','login-email-error','Escribe primero un correo válido.'); return; }
+    resendConfirmation.disabled = true;
+    loader?.show('Enviando confirmación…');
+    try {
+      const { error } = await supabase.auth.resend({ type:'signup', email, options:{ emailRedirectTo:callbackUrl() } });
+      status('[data-login-status]', error ? 'No pudimos reenviar el enlace. Intenta nuevamente más tarde.' : 'Si el correo tiene una cuenta pendiente, recibirás un nuevo enlace de confirmación.', Boolean(error));
+    } catch (_) {
+      status('[data-login-status]', 'No pudimos reenviar el enlace. Intenta nuevamente más tarde.', true);
+    } finally { resendConfirmation.disabled = false; loader?.hide(); }
   });
 
   // El mensaje es deliberadamente neutro para evitar revelar si un correo existe.

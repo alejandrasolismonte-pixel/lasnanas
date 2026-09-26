@@ -1,5 +1,13 @@
 # Transferencia manual: preparación y bloqueos
 
+## Actualización local del 26 de septiembre de 2026
+
+La interfaz permite seleccionar transferencia nacional o internacional y moneda de origen CLP, USD o EUR. Si falta cualquier dato bancario, muestra los datos disponibles, indica solicitar lo restante a coordinación y permite cargar el comprobante una vez realizado el pago. No se publican identificadores SWIFT, corresponsales ni tipos de cambio no confirmados. Para transferencias nacionales desde USD o EUR, se indica convertir a CLP antes de usar una cuenta nacional en CLP.
+
+La confirmación administrativa registra por separado el precio cotizado y el importe/moneda realmente abonados mediante `admin_confirm_transfer_v2`. Los avisos de pago confirmado y membresía activa se generan desde la transacción de activación. El protocolo y los acuerdos se entregan mediante un enlace imprimible en el aviso de activación y en Mi voluntariado. La fotografía de credencial usa un bucket privado nuevo.
+
+Estos cambios requieren aplicar en orden `202609260001_volunteer_profile_photos.sql`, `202609260002_payment_activation_notifications.sql` y `202609260003_transfer_settlement_details.sql`, después de las migraciones de transferencia y notificaciones existentes; desplegar la Edge Function y publicar el sitio. No se han ejecutado esas operaciones remotas ni probado un abono real en esta revisión.
+
 ## Estado operativo verificado
 
 La versión v20 (`5f216a4`) está publicada en Render. La reserva remota detectó un bloqueo real: el ejecutor no tiene `USAGE` en el esquema administrado `auth`, aunque la migración original intentaba concederlo. Se aplicó `202609230001_transfer_receipt_identity.sql`: las dos RPC y sus siete políticas usan una función sin privilegios elevados con la misma expresión de identidad que `auth.uid()`. Se conservan FORCE RLS, el propietario NOBYPASSRLS y las restricciones de carga y lectura.
