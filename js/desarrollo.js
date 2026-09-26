@@ -813,7 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Dibuja la figura del botón Ecosistema antes de navegar.
 function iniciarBotonEcosistema() {
-  const botones = document.querySelectorAll('.luxury-btn[href]');
+  const botones = document.querySelectorAll('.luxury-btn[href]:not([data-ecosystem-registration])');
   const reducirMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   botones.forEach((boton) => {

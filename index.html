@@ -51,13 +51,13 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="css/desarrollo.css?v=94">
-    <link rel="stylesheet" href="css/monthly-story.css?v=1">
+    <link rel="stylesheet" href="css/desarrollo.css?v=95">
+    <link rel="stylesheet" href="css/monthly-story.css?v=2">
     <link rel="stylesheet" href="css/whatsapp-floating.css?v=4">
     <link rel="stylesheet" href="css/loading-overlay.css?v=2">
     <link rel="stylesheet" href="css/public-faq.css?v=1">
     <link rel="stylesheet" href="css/public-backgrounds.css?v=2">
-    <link rel="stylesheet" href="css/cinematic-entry.css?v=7">
+    <link rel="stylesheet" href="css/cinematic-entry.css?v=9">
     <script>
         // Las visitas a una sección o al editor del mapa entran directamente al Inicio.
         if (!window.location.hash && new URLSearchParams(window.location.search).get('editar-mapa') !== '1') {
@@ -69,6 +69,7 @@
 <body class="public-flow-page">
     <div class="cinema" role="region" data-motion-unmanaged aria-label="Introducción a Las Ñañas">
         <button class="cinema__skip" type="button" data-skip-intro>Saltar e ingresar</button>
+        <button class="cinema__skip cinema__sound" type="button" data-mute-gate-audio>Apagar sonido</button>
         <section class="cinema__scene cinema__scene--fire is-active" data-scene="fire" aria-label="Fuego de bienvenida">
             <video class="cinema__video" muted loop playsinline preload="auto" aria-hidden="true">
                 <source src="assets/videos/video-header" type="video/webm">
@@ -91,6 +92,7 @@
         </section>
 
         <section class="cinema__scene cinema__scene--gate" data-scene="gate" aria-hidden="true" aria-label="Compuerta hacia Las Ñañas">
+            <audio data-gate-audio src="assets/compuerta/las-nanas-compuerta-24-42.mp3" preload="auto" aria-hidden="true"></audio>
             <div class="cinema__stars" aria-hidden="true"></div>
             <div class="cinema__portal" aria-hidden="true"></div>
             <div class="cinema__door cinema__door--left" aria-hidden="true"></div>
@@ -232,7 +234,9 @@
                 <!-- CAMBIO: el texto inicial ahora ocupa la mitad izquierda que antes contenía el logo. -->
                 <div class="nanas-cover">
                     <div class="nanas-cover-text">
-                        <h3>Las Ñañas: trabajo colaborativo, territorio y saberes compartidos.</h3>
+                        <p class="nanas-cover-headline">Este libro es un resumen de quienes somos , nuestros sueños y metas</p>
+                        <h3>Las Ñañas, con resistencia y proposito por el kume mognem</h3>
+                        <p class="nanas-cover-instruction"><span>toca</span><span class="book-turn-cue__dot" aria-hidden="true"></span><span>para girar la hoja</span></p>
                     </div>
                 </div>
                 <div class="nanas-spine"></div>
@@ -244,48 +248,60 @@
                     </div>
                     <div class="nanas-face nanas-back is-image">
                         <!-- Viviana vuelve a acompañar la primera presentación al abrir la portada. -->
-                        <img src="assets/img/vivi.jpeg" alt="Integrante de Las Ñañas compartiendo su palabra">
+                        <img src="assets/img/libro-3d/somos0.webp" alt="Alejandra y Viviana en Las Ñañas">
                     </div>
                 </div>
 
                 <!-- La segunda hoja completa la primera apertura y revela la imagen de la misión. -->
                 <div class="nanas-leaf" id="l1" style="z-index:4;">
                     <div class="nanas-face nanas-face--text">
-                        <h3>Quiénes somos</h3>
-                        <p>Somos una red de mujeres que une experiencias, oficios y aprendizajes para cuidar la vida comunitaria desde Wallmapu.</p>
+                        <p>Somos <strong>Alejandra Llanquel y Viviana Catrileo</strong>, compañeras de vida, amor, cuidados y trabajo.</p>
+                        <p>Nuestro camino está profundamente ligado a la tierra, los territorios y convivir en armonía con la ñuke mapu</p>
                     </div>
                     <div class="nanas-face nanas-back is-image">
-                        <img src="assets/img/semilas.jpg" alt="Mazorca con semillas de distintos colores cultivada en la huerta">
+                        <img src="assets/img/libro-3d/somos1.webp" alt="Las Ñañas y su camino compartido">
                     </div>
                 </div>
 
                 <!-- La tercera hoja presenta la misión y revela la imagen de los sueños. -->
                 <div class="nanas-leaf" id="l2" style="z-index:3;">
                     <div class="nanas-face nanas-face--text nanas-face--green">
-                        <h3>Nuestra misión</h3>
-                        <p>Fortalecemos la colaboración, resguardamos los saberes y acompañamos iniciativas que cuidan las semillas, la biodiversidad y el territorio.</p>
+                        <p>Hemos trabajado en agroecología, defensa de las semillas, derechos de las mujeres campesinas , indígenas y educación ambiental.</p>
+                        <p>También hemos aprendido desde la experiencia directa de sembrar, cultivar y vivir los ciclos de la naturaleza.</p>
                     </div>
                     <div class="nanas-face nanas-back is-image">
-                        <img src="assets/img/prisci.jpeg" alt="Integrante de Las Ñañas en un encuentro comunitario">
+                        <img src="assets/img/libro-3d/somos2.webp" alt="Las Ñañas en el territorio">
                     </div>
                 </div>
 
                 <!-- La cuarta hoja presenta los sueños y revela la imagen de la invitación final. -->
                 <div class="nanas-leaf" id="l3" style="z-index:2;">
                     <div class="nanas-face nanas-face--text nanas-face--orange">
-                        <h3>Nuestros sueños</h3>
-                        <p>Soñamos con comunidades conectadas, autónomas y solidarias, donde los conocimientos circulen y cada generación pueda sembrar un futuro digno.</p>
+                        <p>De ese camino compartido nace <strong>Las Ñañas</strong>:</p>
+                        <p>una red para conectar mujeres, territorios y saberes, creando vínculos basados en el respeto, la reciprocidad y el cuidado de la vida.</p>
                     </div>
                     <div class="nanas-face nanas-back is-image">
-                        <img src="assets/img/machi.jpeg" alt="Mujer mapuche rodeada de flores y vegetación">
+                        <img src="assets/img/libro-3d/somos3.webp" alt="Las Ñañas y su camino compartido">
                     </div>
                 </div>
 
                 <!-- La quinta hoja cierra el recorrido con una invitación a participar. -->
                 <div class="nanas-leaf" id="l4" style="z-index:1;">
                     <div class="nanas-face nanas-face--text nanas-face--invitation">
-                        <h3>Vivamos este viaje</h3>
-                        <p>Te invitamos a aprender, compartir y aportar junto a Las Ñañas, en una red que crece desde el cuidado y la reciprocidad.</p>
+                        <p>Te invitamos a ser parte de <strong>Las Ñañas</strong>: a encontrarnos, aprender, colaborar y construir vínculos entre mujeres, territorios y experiencias.</p>
+                        <p>Cada persona que se suma amplía esta red y abre nuevas posibilidades de intercambio, apoyo y trabajo colectivo.</p>
+                    </div>
+                    <div class="nanas-face nanas-back is-image">
+                        <img src="assets/img/libro-3d/despedida.webp" alt="Despedida de Las Ñañas">
+                    </div>
+                </div>
+
+                <div class="nanas-leaf" id="l5" style="z-index:0;">
+                    <div class="nanas-face nanas-face--text nanas-face--invitation">
+                        <p><strong>Las Ñañas crece con quienes deciden ser parte.</strong></p>
+                        <p>Participa, comparte esta iniciativa y ayúdanos a fortalecer una red capaz de conectar más mujeres, más territorios y nuevas experiencias.</p>
+                        <p>Gracias por llegar hasta aquí y conocer nuestro camino.</p>
+                        <p><strong>Chaltumay!!</strong></p>
                     </div>
                 </div>
             </div>
@@ -293,7 +309,7 @@
 
         <!-- El libro se gira tocando sus páginas; aquí sólo se muestra el contador. -->
         <div class="book-nav" aria-live="polite" aria-atomic="true">
-            <span id="book-pg">Página 1 de 5</span>
+            <span id="book-pg">Página 1 de 6</span>
         </div>
 
     </div>
@@ -361,9 +377,9 @@
                 <article class="monthly-story reveal" data-monthly-story aria-labelledby="monthly-story-title">
                     <div class="monthly-story__copy">
                         <p class="eyebrow">Voces del territorio</p>
-                        <h3 id="monthly-story-title" data-monthly-story-title>La historia del mes</h3>
-                        <p class="monthly-story__description" data-monthly-story-description>Cada mes, una Ñaña compartirá una historia</p>
-                        <p class="monthly-story__meta" data-monthly-story-meta></p>/
+                        <h3 id="monthly-story-title" data-monthly-story-title>El fuego de bienvenida</h3>
+                        <p class="monthly-story__description" data-monthly-story-description>Cada mes, una Ñaña compartirá una historia, un saber o una invitación desde su territorio,</p>
+                        <p class="monthly-story__meta" data-monthly-story-meta hidden></p>
                         <a class="monthly-story__action" data-monthly-story-action hidden></a>
                     </div>
                     <div class="monthly-story__media">
@@ -387,7 +403,6 @@
                 <div class="section-heading section-heading--wide reveal">
                     <p class="eyebrow">Mapu · territorio vivo</p>
                     <h2 id="territory-title">Un mapa para recorrer nuestras conexiones.</h2>
-                    <p>Selecciona un pin para conocer iniciativas, lugares y aprendizajes.</p>
                 </div>
 
                 <div class="map-experience reveal" data-map-experience>
@@ -395,6 +410,7 @@
                         <button class="map-filter filter-choice filter-choice--all is-active" type="button" data-filter="all" aria-pressed="true">Todos</button>
                         <button class="map-filter filter-choice filter-choice--nanas" type="button" data-filter="nanas" aria-pressed="false">Ñañas</button>
                         <button class="map-filter filter-choice filter-choice--experiences" type="button" data-filter="experiences" aria-pressed="false">Experiencias</button>
+                        <p class="map-toolbar__hint">Selecciona un pin para conocer iniciativas, lugares y aprendizajes.</p>
                     </div>
                     <div class="map-editor" data-map-editor hidden aria-label="Edición privada de posiciones del mapa">
                         <div class="map-editor__copy">
@@ -518,7 +534,7 @@
             </a>
 
             <!-- Tarjeta Productos -->
-            <a class="ecosystem-card zoom-card" href="pages/productos.html">
+            <a class="ecosystem-card zoom-card" href="pages/nanas.html#productos-proximamente">
                 <img src="assets/icons/productos-still.png" data-motion-static-src="assets/icons/productos-still.png" data-motion-animated-src="assets/icons/productos-web.webp" alt="Ícono de Productos" class="icono-gif" aria-hidden="true" width="160" height="160" loading="lazy" decoding="async">
                 <h3>Productos</h3>
                 <p>Del territorio a tu mesa.</p>
@@ -660,14 +676,14 @@
     </div>
 
     <script src="js/loading-overlay.js?v=2"></script>
-    <script src="js/cinematic-entry.js?v=7"></script>
+    <script src="js/cinematic-entry.js?v=12"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/supabase-client.js?v=1"></script>
     <script src="js/map-pins.js?v=2"></script>
     <script src="js/motion-lifecycle.js?v=2"></script>
     <script src="js/desarrollo.js?v=35"></script>
-    <script src="js/monthly-story.js?v=1"></script>
+    <script src="js/monthly-story.js?v=2"></script>
     <script src="js/star-field.js?v=2"></script>
     <script src="js/whatsapp-floating.js?v=4"></script>
 </body>

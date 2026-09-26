@@ -66,35 +66,46 @@
   margin-bottom: 0.75rem;
 }
 
-.nanas-ecosystem-page .header-registration {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .55rem;
-  flex: 0 0 auto;
-  min-height: 44px;
-  padding: .65rem 1.1rem;
-  border: 1px solid rgba(168, 230, 181, .5);
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--nn-green), var(--nn-flame-gold));
-  box-shadow: 0 8px 20px rgba(22, 101, 52, .3);
-  color: #fff;
-  font: 700 .95rem var(--nn-font-body);
-  letter-spacing: .04em;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: transform .2s ease, box-shadow .2s ease;
+.nanas-ecosystem-page .header-registration.header-ecosystem.luxury-btn {
+  background: linear-gradient(135deg, #11522b 0%, var(--nn-green) 55%, var(--nn-flame-gold) 100%);
+  box-shadow: 0 4.4px 16.5px rgba(22, 101, 52, .31), 0 2px 7px rgba(0, 0, 0, .2);
+  animation: registration-float-pulse 3.2s ease-in-out infinite;
 }
 
-.nanas-ecosystem-page .header-registration:hover,
-.nanas-ecosystem-page .header-registration:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(22, 101, 52, .42);
+@keyframes registration-float-pulse {
+  0%, 100% {
+    translate: 0 0;
+    scale: 1;
+    box-shadow: 0 4.4px 16.5px rgba(22, 101, 52, .31), 0 2px 7px rgba(0, 0, 0, .2);
+  }
+  50% {
+    translate: 0 -4px;
+    scale: 1.025;
+    box-shadow: 0 13px 29px rgba(22, 101, 52, .48), 0 7px 15px rgba(0, 0, 0, .3);
+  }
 }
 
-.nanas-ecosystem-page .header-registration:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 3px;
+.nanas-ecosystem-page .header-registration .luxury-btn__ornament-left,
+.nanas-ecosystem-page .header-registration .luxury-btn__ornament-right {
+  color: #c9f3d3;
+}
+
+.nanas-ecosystem-page .header-registration.header-ecosystem.luxury-btn:hover {
+  background: linear-gradient(135deg, #176837 0%, #218147 55%, #49a667 100%);
+  box-shadow: 0 8.8px 22px rgba(22, 101, 52, .44), 0 3px 9px rgba(0, 0, 0, .22);
+}
+
+.nanas-ecosystem-page .header-registration.header-ecosystem.luxury-btn:active {
+  background: linear-gradient(135deg, #0d4724 0%, #166534 100%);
+  box-shadow: 0 2.2px 11px rgba(22, 101, 52, .22), 0 1px 4px rgba(0, 0, 0, .18);
+}
+
+.nanas-ecosystem-page .header-registration.header-ecosystem.luxury-btn.is-activating {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nanas-ecosystem-page .header-registration.header-ecosystem.luxury-btn { animation: none; }
 }
 
 /* ============================================================
@@ -773,10 +784,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  max-width: 820px;
+  gap: .9rem;
+  width: 60%;
+  min-width: 225px;
+  max-width: 492px;
   margin: 0 auto clamp(2.25rem, 5vw, 3.5rem);
-  padding: clamp(1.1rem, 2.5vw, 1.5rem);
+  padding: clamp(.66rem, 1.5vw, .9rem);
   border: 1px solid rgba(121, 198, 197, .42);
   border-radius: var(--nn-radius);
   background: rgba(11, 18, 27, .86);
@@ -788,14 +801,16 @@
   margin: 0;
   color: #f4fbfa;
   font-family: var(--nn-font-display);
-  font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+  font-size: clamp(.9rem, 1.45vw, 1.08rem);
   line-height: 1.25;
 }
 
 .nn-ecosystem__register .nn-btn {
   justify-content: center;
   flex: 0 0 auto;
-  padding: .8rem 1.4rem;
+  gap: .36rem;
+  padding: .48rem .84rem;
+  font-size: .75rem;
   box-shadow: 0 8px 25px rgba(22, 101, 52, .35);
 }
 
@@ -831,20 +846,6 @@ html[data-theme="day"] .nn-ecosystem__register > p {
 }
 
 @media (max-width: 767px) {
-  .nanas-ecosystem-page .header-registration {
-    position: absolute;
-    top: 70px;
-    right: 14px;
-    z-index: 100;
-    min-width: 132px;
-    transform: translateY(-40%);
-  }
-
-  .nanas-ecosystem-page .header-registration:hover,
-  .nanas-ecosystem-page .header-registration:focus-visible {
-    transform: translateY(calc(-40% - 2px));
-  }
-
   .nanas-ecosystem-page .menu-toggle[aria-expanded="true"] ~ .header-registration {
     visibility: hidden;
   }
@@ -869,7 +870,7 @@ html[data-theme="day"] .nn-ecosystem__register > p {
 
   .nn-ecosystem__register {
     flex-direction: column;
-    gap: 1rem;
+    gap: .6rem;
     text-align: center;
   }
 
@@ -900,6 +901,7 @@ html[data-theme="day"] .nn-ecosystem__register > p {
   display: flex !important;
   flex-direction: column !important;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
   padding: 2.5rem 1.5rem 2rem;
   border-radius: var(--nn-radius);
@@ -912,6 +914,97 @@ html[data-theme="day"] .nn-ecosystem__register > p {
               box-shadow 0.4s ease,
               background 0.4s ease;
               /* <-- Añadida transición para el borde */
+}
+
+.nanas-ecosystem-page .nn-eco-card--button {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.nn-products-notice {
+  width: min(520px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 1.5rem;
+  overflow-y: auto;
+  border: 1px solid rgba(91, 181, 112, .65);
+  border-radius: 20px;
+  background: #15221e;
+  color: #f5fff6;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, .55);
+  text-align: center;
+}
+
+.nn-products-notice::backdrop {
+  background: rgba(4, 10, 8, .78);
+  backdrop-filter: blur(5px);
+}
+
+.nn-products-notice__close {
+  display: block;
+  margin-left: auto;
+  padding: .15rem .5rem;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.nn-products-notice__visual {
+  display: grid;
+  place-items: center;
+  min-height: 145px;
+  margin: .25rem 0 1.25rem;
+  border-radius: 14px;
+  background: radial-gradient(circle, rgba(45, 135, 78, .35), rgba(15, 38, 25, .9) 70%);
+}
+
+.nn-products-notice__visual img {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+}
+
+.nn-products-notice__eyebrow {
+  margin: 0 0 .6rem;
+  color: #a9e0b7;
+  font: 700 .75rem/1.4 var(--nn-font-body);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.nn-products-notice h2 {
+  margin: 0 0 .85rem;
+  color: #fff;
+  font-size: clamp(1.7rem, 5vw, 2.2rem);
+}
+
+.nn-products-notice #products-notice-copy {
+  max-width: 40ch;
+  margin: 0 auto 1.5rem;
+  color: #d7e7da;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.nn-products-notice__button {
+  padding: .7rem 1.5rem;
+  border: 1px solid #85ca98;
+  border-radius: 999px;
+  background: #166534;
+  color: #fff;
+  font: 700 .9rem var(--nn-font-body);
+  cursor: pointer;
+}
+
+.nn-products-notice__close:focus-visible,
+.nn-products-notice__button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
 }
 
 .nn-eco-card__icon-ring {
@@ -933,8 +1026,20 @@ html[data-theme="day"] .nn-ecosystem__register > p {
 
 .nn-eco-card h3 {
   color: var(--nn-ember-light);
-  font-size: 1.2rem;
+  font-size: clamp(1.7rem, 2.5vw, 2.1rem);
   margin: 0;
+  text-shadow: 0 3px 14px rgba(234, 88, 12, .28);
+}
+
+.nn-eco-card__touch {
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .nn-eco-card p {
@@ -1003,7 +1108,7 @@ html[data-theme="day"] .nn-ecosystem__register > p {
   }
 
   .nanas-ecosystem-page .nn-eco-card h3 {
-    font-size: .9rem;
+    font-size: clamp(1.5rem, 6vw, 1.8rem);
     line-height: 1.25;
   }
 

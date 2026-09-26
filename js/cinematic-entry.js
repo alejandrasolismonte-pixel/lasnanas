@@ -9,6 +9,9 @@
     const story = document.querySelector('[data-scene="story"]');
     const gate = document.querySelector('[data-scene="gate"]');
     const video = fire?.querySelector('video');
+    const gateAudio = gate.querySelector('[data-gate-audio]');
+    const gateDoor = gate.querySelector('.cinema__door--left');
+    const soundButton = cinema.querySelector('[data-mute-gate-audio]');
     const places = [...story.querySelectorAll('.cinema__places li')];
     const title = story.querySelector('.cinema__title');
     const subtitle = story.querySelector('.cinema__subtitle');
@@ -16,6 +19,47 @@
     const translationTooltip = gate.querySelector('.cinema__translation');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let leaving = false;
+    let gateIsOpen = false;
+    let soundOff = false;
+
+    const stopGateAudio = () => {
+      gateIsOpen = false;
+      gateAudio?.pause();
+      if (soundButton) soundButton.hidden = true;
+    };
+    const playGateAudio = () => {
+      if (!gateAudio || !gateIsOpen || leaving || soundOff) return;
+      gateAudio.currentTime = 0;
+      const attempt = gateAudio.play();
+      attempt?.then(() => {
+        if (soundOff || leaving || !gateIsOpen) gateAudio.pause();
+      }).catch(() => {
+        // La entrada continúa aunque el navegador bloquee el sonido automático.
+        if (soundButton) soundButton.hidden = true;
+      });
+    };
+
+    soundButton?.addEventListener('click', () => {
+      if (leaving || !gateAudio) return;
+      soundOff = true;
+      gateAudio.pause();
+      soundButton.hidden = true;
+    });
+
+    gateAudio?.addEventListener('ended', () => {
+      if (soundButton) soundButton.hidden = true;
+    });
+
+    gateDoor?.addEventListener('transitionstart', (event) => {
+      if (event.target !== gateDoor || event.propertyName !== 'transform' || leaving || gate.classList.contains('is-closing')) return;
+      gateIsOpen = true;
+      playGateAudio();
+    });
+    gateDoor?.addEventListener('transitionend', (event) => {
+      if (event.target === gateDoor && event.propertyName === 'transform' && gate.classList.contains('is-closing')) {
+        stopGateAudio();
+      }
+    });
 
     if (translationButton && translationTooltip) {
       translationTooltip.textContent = translationButton.dataset.translation || '';
@@ -55,7 +99,7 @@
       messageWindow: 5000,
       messageExit: 550,
       afterClose: 300,
-      exitFade: 950
+      exitFade: 1600
     };
 
     // Mantiene los fundidos CSS sincronizados con los tiempos anteriores.
@@ -99,6 +143,7 @@
       if (leaving) return;
       leaving = true;
       video?.pause();
+      stopGateAudio();
       cinema.classList.add('is-leaving');
       await wait(reducedMotion.matches ? 0 : TIMING.exitFade);
       revealSite(focusSite);
@@ -109,6 +154,7 @@
     window.addEventListener('pagehide', () => {
       leaving = true;
       video?.pause();
+      stopGateAudio();
     }, { once: true });
     window.addEventListener('pageshow', (event) => {
       if (event.persisted && leaving) revealSite();

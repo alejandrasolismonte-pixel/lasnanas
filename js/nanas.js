@@ -250,6 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   entry.addEventListener('click', () => {
+    entry.classList.add('is-activating');
+    window.setTimeout(() => entry.classList.remove('is-activating'), 720);
     activateRegistration();
     requestAnimationFrame(() => form.focus({ preventScroll: true }));
   });
@@ -263,4 +265,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (intent) intent.hidden = true;
     if (submitLabel) submitLabel.textContent = 'Enviar mensaje';
   });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const trigger = document.querySelector('[data-products-preview]');
+  const notice = document.querySelector('#productos-proximamente');
+  if (!trigger || !notice) return;
+
+  const openNotice = () => {
+    if (!notice.open) notice.showModal();
+  };
+
+  trigger.addEventListener('click', openNotice);
+  if (window.location.hash === '#productos-proximamente') openNotice();
 });

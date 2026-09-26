@@ -902,7 +902,7 @@ body.public-flow-page #inicio .hero__arrival {
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: linear-gradient(145deg, #0f151c, #17202b);
+  background: linear-gradient(145deg, #174d59 0%, #103746 52%, #0b2534 100%);
   border-radius: 14px 0 0 14px;
 }
 
@@ -910,12 +910,46 @@ body.public-flow-page #inicio .hero__arrival {
 .nanas-cover-text {
   width: 100%;
   height: 100%;
-  padding: 40px 30px;
+  padding: 40px 30px 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(12px, 2vw, 26px);
+  color: #fff;
+  background: linear-gradient(145deg, #01090adc 0%, #041115 52%, #000406d9 100%);
+  border: 1px solid rgba(234,88,12,.55);
+}
+.nanas-cover-headline,
+.nanas-cover-instruction {
+  margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  text-align: center;
+  line-height: 1.2;
+}
+.nanas-cover-headline {
+  width: 100%;
+  padding-bottom: .55em;
+  border-bottom: 2px solid currentColor;
+  color: #f36b3c;
+  font-size: clamp(1.45rem, 2.8vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.08;
+}
+.nanas-cover-instruction {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: .7rem .8rem;
+  border: 1px solid #fff;
   color: #fff;
-  background: linear-gradient(145deg, #17202b, #0f151c);
-  border: 1px solid rgba(234,88,12,.55);
+  font-size: clamp(.95rem, 1.5vw, 1.2rem);
+  font-weight: 600;
+}
+.nanas-cover-instruction .book-turn-cue__dot {
+  flex: 0 0 44px;
 }
 .nanas-cover-text h3 {
   font-family: var(--font-display);
@@ -1257,6 +1291,24 @@ body.public-flow-page #inicio .hero__arrival {
   /* Mantiene el texto de la nueva mitad izquierda legible en pantallas pequeñas. */
   .nanas-cover-text {
     padding: clamp(14px, 4vw, 22px);
+    gap: 4px;
+  }
+
+  .nanas-cover-headline {
+    font-size: clamp(.7rem, 3vw, 1rem);
+    padding-bottom: .3em;
+  }
+
+  .nanas-cover-instruction {
+    font-size: clamp(.58rem, 2.5vw, .8rem);
+    gap: 5px;
+    padding: .3rem;
+  }
+
+  .nanas-cover-instruction .book-turn-cue__dot {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
   }
 
   .nanas-cover-text h3 {
@@ -1371,8 +1423,15 @@ body.public-flow-page #inicio .hero__arrival {
   grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: .9rem;
   padding: .35rem 0 .25rem .45rem;
+}
+.map-toolbar__hint {
+  flex: 1 1 28rem;
+  margin: 0 0 0 auto;
+  color: var(--muted);
+  text-align: right;
 }
 
 .map-editor {
@@ -2360,6 +2419,7 @@ body.public-flow-page #inicio .hero__arrival {
   .section-heading--wide { display: block; }
   .section-heading--wide > p:not(.eyebrow) { max-width: 620px; }
   .map-experience { grid-template-columns: 1fr; }
+  .map-toolbar__hint { text-align: left; }
   .map-editor { grid-template-columns: 1fr; align-items: start; }
   .map-editor__actions { justify-content: flex-start; }
   .map-editor__detail { grid-template-columns: 1fr 1fr; }
@@ -4058,6 +4118,11 @@ html[data-theme="day"] .product-card {
 
 html[data-theme="day"] .map-experience {
   border-radius: 22px;
+  background: #A8DDD8;
+}
+
+html[data-theme="day"] .map-toolbar__hint {
+  color: var(--day-ink);
 }
 
 html[data-theme="day"] .person-card__face--front {

@@ -8,7 +8,7 @@
     month: '',
     territory: '',
     title: 'El fuego de bienvenida',
-    description: 'Cada mes, una Ñaña compartirá una historia, un saber o una invitación desde su territorio, en dos minutos o menos. Mientras llega la primera entrega, te compartimos nuestro fuego de bienvenida.',
+    description: 'Cada mes, una Ñaña compartirá una historia, un saber o una invitación desde su territorio,',
     src: 'assets/videos/video-header.mp4',
     poster: 'assets/img/carrusel/paisaje-territorio-02-web.webp',
     captionsSrc: '',
@@ -31,8 +31,8 @@
     video.pause();
     video.hidden = true;
     placeholder.hidden = false;
-    title.textContent = 'La historia del mes';
-    description.textContent = 'Cada mes, una Ñaña compartirá una historia, un saber o una invitación desde su territorio, en dos minutos o menos.';
+    title.textContent = 'El fuego de bienvenida';
+    description.textContent = 'Cada mes, una Ñaña compartirá una historia, un saber o una invitación desde su territorio,';
     meta.textContent = 'Primer video próximamente · Hasta 2 minutos';
     if (action) action.hidden = true;
   };

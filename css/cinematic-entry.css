@@ -38,7 +38,7 @@ html.cinema-enabled .back-to-top { visibility: hidden !important; }
   --cinema-message-reveal: 3000ms;
   --cinema-message-stagger: 3000ms;
   --cinema-message-exit: 550ms;
-  --cinema-exit-fade: 950ms;
+  --cinema-exit-fade: 1600ms;
 }
 
 .cinema__scene {
@@ -433,6 +433,12 @@ html.cinema-enabled .loading-overlay__loader .loader-inner { opacity: .55; }
   outline-offset: 3px;
 }
 
+.cinema__sound {
+  right: auto;
+  left: calc(1rem + env(safe-area-inset-left, 0px));
+}
+.cinema__sound[hidden] { display: none; }
+
 @media (max-width: 600px) {
   .cinema__places {
     top: clamp(2.5rem, 14svh, 7rem);
@@ -461,6 +467,7 @@ html.cinema-enabled .loading-overlay__loader .loader-inner { opacity: .55; }
 
 @media (prefers-reduced-motion: reduce) {
   .cinema__skip { transition: none; }
+  .cinema__sound { display: none; }
   .cinema,
   .cinema__scene,
   .cinema__places li,
