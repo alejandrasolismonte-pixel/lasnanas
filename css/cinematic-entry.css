@@ -432,12 +432,18 @@ html.cinema-enabled .loading-overlay__loader .loader-inner { opacity: .55; }
   outline: 2px solid #fff;
   outline-offset: 3px;
 }
+.cinema__skip[hidden] { display: none; }
 
 .cinema__sound {
   right: auto;
   left: calc(1rem + env(safe-area-inset-left, 0px));
 }
 .cinema__sound[hidden] { display: none; }
+
+@media (max-width: 480px) {
+  .cinema__skip { max-width: calc(100vw - 2rem); }
+  .cinema__sound { bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px)); }
+}
 
 @media (max-width: 600px) {
   .cinema__places {

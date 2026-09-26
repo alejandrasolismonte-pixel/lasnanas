@@ -11,6 +11,7 @@
     const video = fire?.querySelector('video');
     const gateAudio = gate.querySelector('[data-gate-audio]');
     const gateDoor = gate.querySelector('.cinema__door--left');
+    const skipButton = cinema.querySelector('[data-skip-intro]');
     const soundButton = cinema.querySelector('[data-mute-gate-audio]');
     const places = [...story.querySelectorAll('.cinema__places li')];
     const title = story.querySelector('.cinema__title');
@@ -18,9 +19,12 @@
     const translationButton = gate.querySelector('.cinema__translate');
     const translationTooltip = gate.querySelector('.cinema__translation');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mobileSoundButton = window.matchMedia('(max-width: 600px)').matches;
     let leaving = false;
     let gateIsOpen = false;
     let soundOff = false;
+
+    if (soundButton && !mobileSoundButton) soundButton.hidden = false;
 
     const stopGateAudio = () => {
       gateIsOpen = false;
@@ -48,6 +52,12 @@
 
     gateAudio?.addEventListener('ended', () => {
       if (soundButton) soundButton.hidden = true;
+    });
+    gateAudio?.addEventListener('playing', () => {
+      if (mobileSoundButton && soundButton && gateIsOpen && !soundOff && !leaving) soundButton.hidden = false;
+    });
+    gateAudio?.addEventListener('pause', () => {
+      if (mobileSoundButton && soundButton) soundButton.hidden = true;
     });
 
     gateDoor?.addEventListener('transitionstart', (event) => {
@@ -149,7 +159,7 @@
       revealSite(focusSite);
     };
 
-    cinema.querySelector('[data-skip-intro]')?.addEventListener('click', () => enterSite(true));
+    skipButton?.addEventListener('click', () => enterSite(true));
 
     window.addEventListener('pagehide', () => {
       leaving = true;
@@ -162,6 +172,7 @@
 
     if (reducedMotion.matches) {
       video?.pause();
+      if (skipButton) skipButton.hidden = false;
       activate(gate);
       gate.classList.add('is-opening', 'is-message-visible');
       window.setTimeout(async () => {
@@ -194,6 +205,7 @@
         if (leaving) return;
       }
       title.classList.add('is-visible');
+      if (skipButton) skipButton.hidden = false;
       await wait(TIMING.titleHold);
       if (leaving) return;
       subtitle.classList.add('is-visible');
