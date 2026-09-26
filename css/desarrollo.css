@@ -964,7 +964,7 @@ body.public-flow-page #inicio .hero__arrival {
 .nanas-cover-text h3 {
   font-family: var(--font-display);
   font-size: 1.8rem;
-  margin: 0;
+  margin: auto 0;
   text-align: center;
 }
 
