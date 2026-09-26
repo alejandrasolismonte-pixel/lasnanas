@@ -71,8 +71,8 @@
         <button class="cinema__skip" type="button" data-skip-intro hidden>Saltar e ingresar</button>
         <button class="cinema__skip cinema__sound" type="button" data-mute-gate-audio hidden>Apagar sonido</button>
         <section class="cinema__scene cinema__scene--fire is-active" data-scene="fire" aria-label="Fuego de bienvenida">
-            <video class="cinema__video" muted loop playsinline preload="auto" aria-hidden="true">
-                <source src="assets/videos/video-header" type="video/webm">
+            <video class="cinema__video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+                <source src="assets/videos/video-header-web.webm" type="video/webm">
                 <source src="assets/videos/video-header-iphone.mp4" type="video/mp4">
             </video>
         </section>
@@ -676,7 +676,7 @@
     </div>
 
     <script src="js/loading-overlay.js?v=2"></script>
-    <script src="js/cinematic-entry.js?v=15"></script>
+    <script src="js/cinematic-entry.js?v=16"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/supabase-client.js?v=1"></script>

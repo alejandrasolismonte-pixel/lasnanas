@@ -19,7 +19,7 @@
     const translationButton = gate.querySelector('.cinema__translate');
     const translationTooltip = gate.querySelector('.cinema__translation');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const mobileSoundButton = window.matchMedia('(max-width: 600px)').matches;
+    const mobileSoundButton = window.matchMedia('(max-width: 600px), (orientation: landscape) and (max-height: 540px) and (pointer: coarse)').matches;
     let leaving = false;
     let gateIsOpen = false;
     let soundOff = false;
@@ -36,6 +36,10 @@
     };
     const playGateAudio = () => {
       if (!gateAudio || !gateIsOpen || leaving || soundOff) return;
+      if (mobileSoundButton && soundButton) {
+        soundButton.textContent = 'Apagar sonido';
+        soundButton.hidden = false;
+      }
       try { gateAudio.currentTime = 0; } catch (_) {
         // En móviles el archivo puede no tener metadatos todavía.
       }
@@ -54,44 +58,55 @@
       });
     };
 
+    const resumeGateAudio = () => {
+      if (!gateAudio || !soundButton || !needsSoundGesture || !gateIsOpen || leaving || soundOff) return;
+      const syncGateAudio = () => {
+        if (!gateIsOpen || leaving || !Number.isFinite(gateAudio.duration) || gateAudio.duration <= 0) return;
+        const elapsed = Math.max(0, (performance.now() - gateOpenedAt) / 1000);
+        if (elapsed >= gateAudio.duration) {
+          gateAudio.pause();
+          soundButton.hidden = true;
+          return;
+        }
+        try {
+          gateAudio.currentTime = Math.min(elapsed, gateAudio.duration - .05);
+        } catch (_) {
+          // La reproducción continúa desde el inicio si el navegador aún no permite buscar.
+        }
+      };
+      if (gateAudio.readyState >= 1) {
+        syncGateAudio();
+        if (soundButton.hidden) return;
+      } else {
+        gateAudio.addEventListener('loadedmetadata', syncGateAudio, { once: true });
+      }
+      const attempt = gateAudio.play();
+      attempt?.then(() => {
+        if (gateIsOpen && !leaving && !soundOff && !gateAudio.paused) {
+          needsSoundGesture = false;
+          soundButton.textContent = 'Apagar sonido';
+          soundButton.hidden = false;
+        }
+      }).catch(() => {
+        if (gateIsOpen && !leaving) soundButton.hidden = false;
+      });
+    };
+
     soundButton?.addEventListener('click', () => {
       if (leaving || !gateAudio) return;
       if (needsSoundGesture && gateIsOpen) {
-        const syncGateAudio = () => {
-          if (!gateIsOpen || leaving || !Number.isFinite(gateAudio.duration) || gateAudio.duration <= 0) return;
-          const elapsed = Math.max(0, (performance.now() - gateOpenedAt) / 1000);
-          if (elapsed >= gateAudio.duration) {
-            gateAudio.pause();
-            soundButton.hidden = true;
-            return;
-          }
-          try {
-            gateAudio.currentTime = Math.min(elapsed, gateAudio.duration - .05);
-          } catch (_) {
-            // La reproducción continúa desde el inicio si el navegador aún no permite buscar.
-          }
-        };
-        if (gateAudio.readyState >= 1) {
-          syncGateAudio();
-          if (soundButton.hidden) return;
-        } else {
-          gateAudio.addEventListener('loadedmetadata', syncGateAudio, { once: true });
-        }
-        const attempt = gateAudio.play();
-        attempt?.then(() => {
-          if (gateIsOpen && !leaving && !soundOff && !gateAudio.paused) {
-            needsSoundGesture = false;
-            soundButton.textContent = 'Apagar sonido';
-            soundButton.hidden = false;
-          }
-        }).catch(() => {
-          if (gateIsOpen && !leaving) soundButton.hidden = false;
-        });
+        resumeGateAudio();
         return;
       }
       soundOff = true;
       gateAudio.pause();
       soundButton.hidden = true;
+    });
+
+    cinema.addEventListener('click', (event) => {
+      if (!event.target.closest?.('[data-mute-gate-audio]') && needsSoundGesture && gateIsOpen && !leaving && !soundOff) {
+        resumeGateAudio();
+      }
     });
 
     gateAudio?.addEventListener('ended', () => {
