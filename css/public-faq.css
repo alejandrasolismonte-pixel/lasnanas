@@ -52,10 +52,10 @@
   max-width: 790px;
   margin: 0;
   color: var(--volunteer-faq-ink);
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(1.9rem, 3.8vw, 3.15rem);
-  font-weight: 500;
-  line-height: 1.02;
+  font-family: var(--font-display);
+  font-size: clamp(1.71rem, 3.42vw, 2.835rem);
+  font-weight: 400;
+  line-height: 1.15;
   text-wrap: balance;
 }
 
@@ -339,7 +339,7 @@ html[data-theme="day"] body.public-flow-page .volunteer-faq__note { color: #315a
 @media (max-width: 600px) {
   .volunteer-faq { padding: 4rem 1rem; }
   .volunteer-faq__heading { margin-bottom: 2.5rem; }
-  .volunteer-faq__heading h2 { font-size: clamp(1.85rem, 9vw, 2.55rem); }
+  .volunteer-faq__heading h2 { font-size: clamp(1.665rem, 8.1vw, 2.295rem); }
   .volunteer-faq__layout { gap: 2.5rem; }
   .volunteer-faq__guide { display: block; max-width: 330px; }
   .volunteer-faq__portrait { width: min(78vw, 255px); }

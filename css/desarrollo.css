@@ -683,6 +683,14 @@ h2 {
   letter-spacing: 0;
   line-height: 1.15;
 }
+body.public-flow-page h1,
+body.public-flow-page h2,
+body.public-flow-page h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+body.public-flow-page h1 { font-size: clamp(1.98rem, 4.86vw, 3.06rem); }
+body.public-flow-page h2 { font-size: clamp(1.8rem, 3.78vw, 2.7rem); }
 .hero__lead {
   max-width: 600px;
   color: #d1ddd2;
@@ -705,7 +713,7 @@ body.public-flow-page #inicio .hero__arrival {
   margin: 0;
   color: #fff;
   font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2vw, 1.85rem);
+  font-size: clamp(1.215rem, 1.8vw, 1.665rem);
   font-weight: 400;
   line-height: 1.34;
   letter-spacing: .01em;
@@ -963,7 +971,7 @@ body.public-flow-page #inicio .hero__arrival {
 }
 .nanas-cover-text h3 {
   font-family: var(--font-display);
-  font-size: 1.8rem;
+  font-size: 1.62rem;
   margin: auto 0;
   text-align: center;
 }
@@ -1059,7 +1067,7 @@ body.public-flow-page #inicio .hero__arrival {
 /* Textos dentro del libro */
 .nanas-face h3 {
   font-family: var(--font-display);
-  font-size: 1.8rem;
+  font-size: 1.62rem;
   margin: 0;
 }
 .nanas-face p {
@@ -1067,6 +1075,7 @@ body.public-flow-page #inicio .hero__arrival {
   opacity: .95;
   line-height: 1.6;
 }
+.nanas-book-copy--portrait { display: none; }
 
 /* Señal visual y táctil que descubre el giro de cada hoja activa. */
 .book-turn-cue {
@@ -1172,7 +1181,7 @@ body.public-flow-page #inicio .hero__arrival {
 @media (min-width: 900px) {
   .nanas-face h3,
   .nanas-cover-text h3 {
-    font-size: 2.16rem;
+    font-size: 1.944rem;
   }
   .nanas-face p {
     font-size: 1.26rem;
@@ -1295,7 +1304,7 @@ body.public-flow-page #inicio .hero__arrival {
   }
 
   .nanas-face h3 {
-    font-size: clamp(.9rem, 4vw, 1.2rem);
+    font-size: clamp(.81rem, 3.6vw, 1.08rem);
     line-height: 1.18;
   }
 
@@ -1325,7 +1334,7 @@ body.public-flow-page #inicio .hero__arrival {
   }
 
   .nanas-cover-text h3 {
-    font-size: clamp(.9rem, 4vw, 1.2rem);
+    font-size: clamp(.81rem, 3.6vw, 1.08rem);
     font-weight: 400;
     line-height: 1.18;
   }
@@ -1333,6 +1342,18 @@ body.public-flow-page #inicio .hero__arrival {
   .nanas-face p {
     font-size: clamp(.7rem, 2.8vw, .88rem);
     line-height: 1.4;
+  }
+
+  .nanas-book-copy--full { display: none; }
+  .nanas-book-copy--portrait { display: inline; }
+  .nanas-face--text {
+    padding: clamp(9px, 2.5vw, 14px);
+    gap: clamp(3px, .7vw, 6px);
+  }
+  .nanas-face--text p {
+    margin: 0;
+    font-size: clamp(.62rem, 2.6vw, .78rem);
+    line-height: 1.25;
   }
 
   .pill-list-book {
@@ -1717,7 +1738,7 @@ body.public-flow-page #inicio .hero__arrival {
 }
 .map-detail h3 {
   margin-bottom: .65rem;
-  font-size: 1.6rem;
+  font-size: 1.44rem;
 }
 .map-detail p:not(.map-detail__eyebrow) {
   color: var(--muted);
@@ -1903,7 +1924,7 @@ body.public-flow-page #inicio .hero__arrival {
 }
 .ecosystem-card h3 {
   margin: .9rem 0 .5rem;
-  font-size: 1.45rem;
+  font-size: 1.305rem;
   color: #ff9900; /* <-- Agrega esta línea con el color que quieras */
 }
 .ecosystem-card:hover {
@@ -1917,7 +1938,7 @@ body.public-flow-page #inicio .hero__arrival {
 }
 .ecosystem-card h3 {
   margin: .9rem 0 .5rem;
-  font-size: 1.45rem;
+  font-size: 1.305rem;
 }
 .ecosystem-card p {
   color: var(--muted);
@@ -2195,7 +2216,7 @@ body.public-flow-page #inicio .hero__arrival {
 }
 .product-card h3 {
   margin-bottom: .6rem;
-  font-size: 1.48rem;
+  font-size: 1.332rem;
 }
 .product-card p:not(.product-card__category) {
   color: var(--muted);
@@ -2276,7 +2297,7 @@ body.public-flow-page #inicio .hero__arrival {
 }
 .footer-side h3 {
   color: var(--text);
-  font-size: 1.4rem;
+  font-size: 1.26rem;
   margin: 0;
 }
 .footer-side p {
@@ -2605,7 +2626,7 @@ body.public-flow-page #inicio .hero__arrival {
   body.public-flow-page #inicio .hero__arrival {
     margin-top: calc(var(--home-header-height) + 3.25rem);
   }
-  .hero__arrival-message { font-size: clamp(1.35rem, 5.4vw, 1.65rem); }
+  .hero__arrival-message { font-size: clamp(1.215rem, 4.86vw, 1.485rem); }
   .hero__days { gap: .8rem; margin-top: 1.25rem; }
   .hero__calendar { flex-basis: 58px; width: 58px; height: 67px; grid-template-rows: 1.05rem 1fr; border-radius: 12px; }
   .hero__calendar-date { font-size: .4rem; }
@@ -2852,8 +2873,9 @@ html.is-document-hidden *::after {
 .services-showcase__heading h2 {
   margin: .35rem 0 .8rem;
   color: var(--text);
-  font-family: "Fraunces", serif;
-  font-size: clamp(2rem, 3.8vw, 3.4rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.42vw, 3.06rem);
+  font-weight: 400;
   line-height: 1.04;
   text-wrap: balance;
 }
@@ -3010,8 +3032,9 @@ html.is-document-hidden *::after {
 .services-showcase__content h3 {
   margin: 0 0 .45rem;
   color: var(--text);
-  font-family: "Fraunces", serif;
-  font-size: clamp(1.3rem, 2vw, 1.65rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.17rem, 1.8vw, 1.485rem);
+  font-weight: 400;
   line-height: 1.12;
 }
 
@@ -3191,12 +3214,13 @@ html.is-document-hidden *::after {
 
 .services-showcase__modal h3 {
   margin: 0 3rem .8rem 0;
-  font-family: "Fraunces", serif;
-  font-size: clamp(1.8rem, 5vw, 2.65rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.62rem, 4.5vw, 2.385rem);
+  font-weight: 400;
   line-height: 1.08;
 }
 
-.services-showcase__modal h4 { margin: 1.5rem 0 .5rem; font-family: "Fraunces", serif; font-size: 1.1rem; }
+.services-showcase__modal h4 { margin: 1.5rem 0 .5rem; font-family: var(--font-display); font-size: .99rem; font-weight: 400; }
 .services-showcase__modal p, .services-showcase__modal li { color: var(--muted); }
 .services-showcase__modal ul { margin: .5rem 0 1.8rem; padding-left: 1.25rem; }
 .services-showcase__modal li::marker { color: var(--orange); }
@@ -3305,7 +3329,7 @@ html.is-document-hidden *::after {
     transform: scale(1.01);
     transition: none;
   }
-  .services-showcase__content h3 { font-size: 1.35rem; }
+  .services-showcase__content h3 { font-size: 1.215rem; }
   .services-showcase__content p { font-size: .83rem; }
   .services-showcase__arrow {
     position: absolute;
@@ -3326,7 +3350,7 @@ html.is-document-hidden *::after {
   .services-showcase__card { width: calc(100% - 34px); height: 518px; grid-template-rows: 62% 38%; }
   .services-showcase__arrow { top: 225px; width: 38px; height: 38px; font-size: 1.7rem; }
   .services-showcase__content { padding: 1rem 1.1rem 3rem; }
-  .services-showcase__content h3 { font-size: 1.2rem; }
+  .services-showcase__content h3 { font-size: 1.08rem; }
   .services-showcase__content p { -webkit-line-clamp: 3; font-size: .78rem; }
   .services-showcase__dots { bottom: 20px; gap: 5px; }
   .services-showcase__autoplay { bottom: 10px; left: calc(50% + 76px); }
@@ -3350,7 +3374,7 @@ html.is-document-hidden *::after {
 
   .services-page .services-showcase__heading h1 {
     margin-block: .2rem .45rem;
-    font-size: clamp(1.65rem, 5vw, 2.3rem);
+    font-size: clamp(1.485rem, 4.5vw, 2.07rem);
   }
 
   .services-page .services-showcase__heading > p:last-child {
@@ -3408,7 +3432,7 @@ html.is-document-hidden *::after {
 
   .services-page .services-showcase__content h3 {
     margin-bottom: .25rem;
-    font-size: 1.08rem;
+    font-size: .972rem;
   }
 
   .services-page .services-showcase__content p {
@@ -4254,7 +4278,7 @@ html[data-theme="day"] .contact-form textarea::placeholder {
   .ecosystem-intro h2,
   .services-showcase__heading h1,
   .services-showcase__heading h2 {
-    font-size: clamp(1.85rem, 7.4vw, 2.35rem);
+    font-size: clamp(1.665rem, 6.66vw, 2.115rem);
     line-height: 1.12;
     text-wrap: balance;
   }
@@ -4278,7 +4302,7 @@ html[data-theme="day"] .contact-form textarea::placeholder {
 
   .section--ecosystem .ecosystem-card h3 {
     margin: .6rem 0 .35rem;
-    font-size: 1.02rem;
+    font-size: .918rem;
     line-height: 1.22;
   }
 

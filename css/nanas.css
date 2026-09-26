@@ -169,7 +169,7 @@
 }
 
 .nn-hero__content h1 {
-  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  font-size: clamp(1.89rem, 4.5vw, 3.06rem);
   color: #0b7c2d;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
   margin: 0 0 1.1rem;
@@ -265,7 +265,7 @@
 }
 
 .nn-faces__heading h2 {
-  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  font-size: clamp(1.44rem, 2.88vw, 1.98rem);
   color: var(--nn-text);
 }
 
@@ -303,11 +303,11 @@
 /* ANCHO DEL CONJUNTO: cambia 80% o 1060px para ajustar su proporción. */
 .reciprocity__shell { width: 80%; max-width: 1060px; margin: 0 auto; }
 .reciprocity__kicker { margin: 0 0 10px; color: var(--reciprocity-orange); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-align: center; text-transform: uppercase; }
-.reciprocity h2 { max-width: 680px; margin: 0 auto 14px; color: #eef2ec; font-family: 'Fraunces', Georgia, serif; font-size: clamp(29px, 4vw, 44px); font-weight: 500; line-height: 1.06; text-align: center; }
+.reciprocity h2 { max-width: 680px; margin: 0 auto 14px; color: #eef2ec; font-family: var(--nn-font-display); font-size: clamp(26.1px, 3.6vw, 39.6px); font-weight: 400; line-height: 1.15; text-align: center; }
 .reciprocity__intro { max-width: 640px; margin: 0 auto 32px; color: var(--reciprocity-muted); font-size: 14px; line-height: 1.55; text-align: center; }
 /* Separa visualmente las necesidades del bloque de saberes que se transmiten. */
 .reciprocity__group + .reciprocity__group { margin-top: clamp(56px, 6vw, 80px); }
-.reciprocity__group-title { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; color: #f5efe2; font-family: 'Fraunces', Georgia, serif; font-size: clamp(20px, 2.4vw, 27px); font-weight: 500; }
+.reciprocity__group-title { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; color: #f5efe2; font-family: var(--nn-font-display); font-size: clamp(18px, 2.16vw, 24.3px); font-weight: 400; }
 .reciprocity__group-title::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, var(--reciprocity-orange), rgba(242, 106, 33, 0)); }
 .reciprocity__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; padding-bottom: 40px; }
 
@@ -342,7 +342,7 @@
   transition: transform var(--reciprocity-transition) cubic-bezier(.22, .82, .22, 1);
 }
 .reciprocity-card__number { margin-bottom: 10px; color: #3d1b0b; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
-.reciprocity-card__heading { display: block; margin: 0 0 9px; font-family: 'Fraunces', Georgia, serif; font-size: 21px; font-weight: 500; line-height: 1.08; }
+.reciprocity-card__heading { display: block; margin: 0 0 9px; font-family: var(--nn-font-display); font-size: 18.9px; font-weight: 400; line-height: 1.15; }
 .reciprocity-card__body { display: block; color: #2d1a0f; font-family: 'DM Sans', Arial, sans-serif; font-size: 13px; line-height: 1.43; }
 .reciprocity-card__extra { display: block; margin-top: 7px; color: var(--reciprocity-green); font-weight: 700; }
 .reciprocity-card__hint { margin-top: auto; padding-top: 10px; color: #173d29; font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
@@ -376,7 +376,7 @@
 @media (max-width: 900px) {
   .reciprocity__shell { width: 94%; }
   .reciprocity__grid { gap: 11px; }
-  .reciprocity-card__heading { font-size: 18px; }
+  .reciprocity-card__heading { font-size: 16.2px; }
   .reciprocity-card__body { font-size: 12px; }
   .reciprocity-card__copy { padding: 18px 16px 14px; }
 }
@@ -384,7 +384,7 @@
 @media (max-width: 680px) {
   .reciprocity__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-bottom: 0; }
   .reciprocity__group .reciprocity-card:nth-child(n) { transform: none; }
-  .reciprocity-card__heading { font-size: 21px; }
+  .reciprocity-card__heading { font-size: 18.9px; }
   .reciprocity-card__body { font-size: 13px; }
   .reciprocity-card__copy { padding: 22px 21px 17px; }
   /* En móvil deja respirar el segundo título respecto de la última tarjeta clara. */
@@ -532,7 +532,8 @@
 
 .carousel-slide figcaption strong {
   font-family: var(--nn-font-display);
-  font-size: 1.15rem;
+  font-size: 1.035rem;
+  font-weight: 400;
   color: var(--nn-ember-light);
 }
 
@@ -710,7 +711,7 @@
 }
 
 .nn-card h3 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   color: var(--nn-ember-light);
   margin: 0;
   line-height: 1.25;
@@ -766,7 +767,7 @@
 .nn-ecosystem__heading h2 {
   max-width: 620px;
   margin: 0 auto;
-  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-size: clamp(1.8rem, 4.05vw, 2.7rem);
   line-height: 1.15;
 }
 
@@ -888,7 +889,7 @@ html[data-theme="day"] .nn-ecosystem__register > p {
 
   .nn-ecosystem__heading h2 {
     max-width: 18ch;
-    font-size: clamp(1.75rem, 8vw, 2.1rem);
+    font-size: clamp(1.575rem, 7.2vw, 1.89rem);
     line-height: 1.18;
   }
 
@@ -980,7 +981,7 @@ html[data-theme="day"] .nn-ecosystem__register > p {
 .nn-products-notice h2 {
   margin: 0 0 .85rem;
   color: #fff;
-  font-size: clamp(1.7rem, 5vw, 2.2rem);
+  font-size: clamp(1.53rem, 4.5vw, 1.98rem);
 }
 
 .nn-products-notice #products-notice-copy {
@@ -1026,7 +1027,7 @@ html[data-theme="day"] .nn-ecosystem__register > p {
 
 .nn-eco-card h3 {
   color: var(--nn-ember-light);
-  font-size: clamp(1.7rem, 2.5vw, 2.1rem);
+  font-size: clamp(1.53rem, 2.25vw, 1.89rem);
   margin: 0;
   text-shadow: 0 3px 14px rgba(234, 88, 12, .28);
 }
@@ -1108,7 +1109,7 @@ html[data-theme="day"] .nn-ecosystem__register > p {
   }
 
   .nanas-ecosystem-page .nn-eco-card h3 {
-    font-size: clamp(1.5rem, 6vw, 1.8rem);
+    font-size: clamp(1.35rem, 5.4vw, 1.62rem);
     line-height: 1.25;
   }
 

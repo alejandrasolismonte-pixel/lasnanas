@@ -30,10 +30,10 @@
 .volunteer-activities__intro h2 {
   margin: 0;
   color: #f4fbfa;
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(1.95rem, 4.2vw, 3.3rem);
-  font-weight: 500;
-  line-height: 1.08;
+  font-family: var(--font-display);
+  font-size: clamp(1.755rem, 3.78vw, 2.97rem);
+  font-weight: 400;
+  line-height: 1.15;
 }
 
 .volunteer-activities__intro > p:not(.eyebrow) {
@@ -56,9 +56,9 @@
   max-width: 620px;
   margin: 0;
   color: #f4fbfa;
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(1.45rem, 3vw, 2.2rem);
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-size: clamp(1.305rem, 2.7vw, 1.98rem);
+  font-weight: 400;
   line-height: 1.2;
   text-align: right;
 }
@@ -230,9 +230,9 @@
   max-width: calc(100% - 2.5rem);
   margin: 0 0 .7rem;
   color: #f4fbfa;
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(1.3rem, 2.2vw, 1.65rem);
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-size: clamp(1.17rem, 1.98vw, 1.485rem);
+  font-weight: 400;
   line-height: 1.2;
 }
 
@@ -335,7 +335,7 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
 .participation__container { max-width: 1100px; margin-inline: auto; }
 .participation__heading { max-width: 760px; margin: 0 auto; text-align: center; }
 .participation__eyebrow { margin: 0 0 .75rem; color: var(--orange, #ea580c); font-weight: 700; letter-spacing: .14em; }
-.participation__heading h1 { max-width: 760px; margin: 0 auto; color: var(--membership-copy); font-family: 'Fraunces', Georgia, serif; font-size: clamp(2rem, 4.4vw, 3.6rem); font-style: italic; font-weight: 500; line-height: 1.08; text-wrap: balance; }
+.participation__heading h1 { max-width: 760px; margin: 0 auto; color: var(--membership-copy); font-family: var(--font-display); font-size: clamp(1.8rem, 3.96vw, 3.24rem); font-weight: 400; line-height: 1.15; text-wrap: balance; }
 .participation__heading > p:last-child { max-width: 68ch; margin: 1rem auto 0; color: var(--membership-copy-soft); font-size: clamp(.98rem, 1.35vw, 1.08rem); line-height: 1.65; }
 
 /* Estilos de los controles deslizables de periodicidad y moneda */
@@ -375,7 +375,7 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
 }
 
 .membership-card__heading { min-height: 0; text-align: left; }
-.membership-card__heading h2 { margin: 0; color: var(--membership-copy); font-family: 'Fraunces', Georgia, serif; font-size: 1.7rem; font-weight: 500; line-height: 1.25; }
+.membership-card__heading h2 { margin: 0; color: var(--membership-copy); font-family: var(--font-display); font-size: 1.53rem; font-weight: 400; line-height: 1.25; }
 .membership-card__heading p { min-height: 3.2rem; margin: .5rem 0 1rem; color: var(--membership-copy-soft); line-height: 1.45; }
 .membership-card__price { display: block; min-height: 0; margin: 0 0 1.1rem; color: var(--membership-green-bright); text-align: left; }
 .membership-card__price strong { font-family: 'DM Sans', Arial, sans-serif; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; line-height: 1.2; white-space: nowrap; }
@@ -409,7 +409,7 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
   .membership-card__icon-slot { width: 68px; height: 68px; margin-bottom: .9rem; }
   .membership-card__icon-slot svg,
   .membership-card__icon-slot img { width: 32px; height: 32px; }
-  .membership-card__heading h2 { font-size: 1.4rem; }
+  .membership-card__heading h2 { font-size: 1.26rem; }
   .membership-card__heading p { min-height: 4.4rem; font-size: .88rem; }
   .membership-card__price strong { font-size: clamp(1.45rem, 3.2vw, 2rem); }
   .membership-card__includes li { gap: .4rem; font-size: .86rem; }
@@ -439,7 +439,7 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
 /* Encabezado editorial y textos introductorios */
 .volunteer-experiences__heading { max-width: 780px; margin-bottom: clamp(2.4rem,6vw,4rem); }
 .volunteer-experiences__eyebrow { color: #ff6816; }
-.volunteer-experiences__heading h2 { max-width: 760px; margin: 0 0 1rem; font-family: 'Fraunces',serif; font-size: clamp(1.9rem,3.8vw,3.15rem); font-style: italic; line-height: 1.1; text-wrap: balance; }
+.volunteer-experiences__heading h2 { max-width: 760px; margin: 0 0 1rem; font-family: var(--font-display); font-size: clamp(1.71rem,3.42vw,2.835rem); font-weight: 400; line-height: 1.15; text-wrap: balance; }
 .volunteer-experiences__heading > p:last-child { max-width: 620px; color: #c7d1d4; font-size: 1.05rem; line-height: 1.65; }
 
 /* Distribución de selectores a la izquierda y bitácora a la derecha */
@@ -474,7 +474,7 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
 .volunteer-entry[hidden] { display: none; }
 .volunteer-entry__image { width: 100%; height: clamp(220px,30vw,310px); margin-bottom: 1.5rem; object-fit: cover; border-radius: 1rem; filter: saturate(.9) contrast(1.05); }
 .volunteer-entry__tag { margin: 0; color: #d94f08; font-size: .74rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
-.volunteer-entry h3 { margin: .35rem 0 .8rem; color: #273126; font-family: 'Fraunces',serif; font-size: clamp(1.8rem,4vw,2.4rem); font-style: italic; line-height: 1.08; }
+.volunteer-entry h3 { margin: .35rem 0 .8rem; color: #273126; font-family: var(--font-display); font-size: clamp(1.62rem,3.6vw,2.16rem); font-weight: 400; line-height: 1.15; }
 .volunteer-entry blockquote { max-width: 590px; margin: 0; color: #273126; font-family: 'Fraunces',serif; font-size: clamp(1.05rem,2vw,1.2rem); line-height: 1.65; }
 .volunteer-entry blockquote::before { content: "“"; color: #087a42; font-size: 3rem; line-height: 0; vertical-align: -.75rem; }
 .volunteer-experiences__note { margin: 1rem 0 0; color: #9babb1; font-size: .84rem; }
@@ -562,7 +562,7 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
 
   .volunteer-entry h3 {
     margin: .25rem 0 .5rem;
-    font-size: 1.44rem;
+    font-size: 1.296rem;
   }
 
   .volunteer-entry blockquote {
@@ -665,10 +665,9 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
   background: linear-gradient(180deg, #ffffff 0%, #d7dde2 38%, #929da5 68%, #f3f6f8 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  font-family: "Fraunces", Georgia, serif;
-  font-size: clamp(1.6rem, 2.7vw, 2rem);
-  font-style: italic;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: clamp(1.44rem, 2.43vw, 1.8rem);
+  font-weight: 400;
   line-height: .98;
   text-align: center;
   -webkit-text-fill-color: transparent;
@@ -679,9 +678,9 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
   display: block;
   margin-bottom: .12rem;
   color: #dce3e8;
-  font-family: "Fraunces", Georgia, serif;
+  font-family: var(--font-display);
   font-size: 1.28em;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: .02em;
   text-transform: none;
   -webkit-text-fill-color: #edf2f5;
@@ -1215,4 +1214,3 @@ html[data-theme="day"] body.volunteer-page .activity-card__icon-flame { fill: rg
   .ruka-access__smoke,
   .ruka-access__plants { animation: none; transition: none; }
 }
-
