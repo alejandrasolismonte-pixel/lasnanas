@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>Coordinación de voluntariado · Las Ñañas</title>
-  <link rel="stylesheet" href="../css/mi-voluntariado.css?v=1">
-  <link rel="stylesheet" href="../css/coordinacion-voluntariado.css?v=1">
+  <link rel="stylesheet" href="../css/mi-voluntariado.css?v=4">
+  <link rel="stylesheet" href="../css/coordinacion-voluntariado.css?v=3">
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
 </head>
 <body>
@@ -30,7 +30,7 @@
         <nav class="admin-nav side-nav" aria-label="Funciones de administración">
           <button class="active" type="button" data-admin-view-button="applications">Voluntarias y solicitudes</button>
           <button type="button" data-admin-edit-map>Editar pines del mapa</button>
-          <button type="button" data-admin-view-button="clarifications">Aclaraciones y adjuntos</button>
+          <button type="button" data-admin-view-button="clarifications">Aclaraciones y adjuntos <span class="message-count" data-admin-unread-count hidden></span></button>
           <button type="button" data-admin-view-button="payments">Pagos y transferencias</button>
           <button type="button" data-admin-view-button="documents">Documentos autorizados</button>
           <button type="button" data-admin-view-button="activities">Actividades oficiales</button>
@@ -134,6 +134,7 @@
           <h3 id="messages-title">Aclaraciones y adjuntos</h3>
           <p data-messages-status role="status" aria-live="polite"></p>
           <div class="admin-message-list" data-admin-messages-list></div>
+          <button class="btn btn-ghost" type="button" data-admin-mark-messages-read hidden>Marcar mensajes como leídos</button>
           <form data-admin-clarification-form>
             <label>Solicitar aclaración a la voluntaria<textarea name="message" minlength="5" maxlength="3000" required></textarea></label>
             <button class="btn btn-ghost" type="submit">Enviar solicitud de aclaración</button>
@@ -208,6 +209,6 @@
   <script src="../js/loading-overlay.js?v=2"></script>
   <script src="../js/transfer-config.js?v=5"></script>
   <script src="../js/transfer-payments.js?v=5"></script>
-  <script src="../js/coordinacion-voluntariado.js?v=8"></script>
+  <script src="../js/coordinacion-voluntariado.js?v=9"></script>
 </body>
 </html>

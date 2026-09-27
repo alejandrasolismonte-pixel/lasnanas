@@ -23,6 +23,7 @@
   const rejectButton = document.querySelector('[data-show-rejection]');
   const rejectForm = document.querySelector('[data-admin-reject-form]');
   const clarificationForm = document.querySelector('[data-admin-clarification-form]');
+  const markAdminMessagesRead = document.querySelector('[data-admin-mark-messages-read]');
   const noteForm = document.querySelector('[data-admin-note-form]');
   const confirmTransferButton = document.querySelector('[data-confirm-transfer]');
   const actionMessage = document.querySelector('[data-admin-action-message]');
@@ -38,6 +39,8 @@
   const agendaStatusLabels = { planned: 'Planificada', confirmed: 'Confirmada', completed: 'Realizada', cancelled: 'Cancelada' };
   let currentApplication = null;
   let applications = [], volunteers = [], adminUser = null, agendaAccess = false;
+  let unreadByApplication = new Map();
+  let unreadGeneration = 0;
   let selectedCategory = 'all', activeView = 'applications';
   let applicationsGeneration = 0;
   const transfers = window.LasNanasTransfers.createService(client);
@@ -93,6 +96,9 @@
 
   function redirectMissingSession() {
     // Ruta fija: voluntariado abrirá directamente la pestaña de acceso de Mi Ruka.
+    const requested = new URLSearchParams(window.location.search).get('application');
+    if (/^[0-9a-f-]{36}$/i.test(requested || ''))
+      sessionStorage.setItem('lasnanas_admin_pending_application', requested);
     window.location.replace('voluntariado.html?access=mi-ruka');
   }
 
@@ -171,6 +177,8 @@
     const card = document.createElement('article');
     card.className = 'admin-card';
     card.dataset.category = applicationCategory(application);
+    const unreadCount = unreadByApplication.get(application.application_id) || 0;
+    if (unreadCount) card.classList.add('has-new-messages');
     const summary = document.createElement('div');
     const name = document.createElement('strong');
     const metadata = document.createElement('p');
@@ -181,6 +189,12 @@
     badge.dataset.category = applicationCategory(application);
     badge.textContent = application.membership_active ? 'Activa' : statusLabels[application.application_status] || application.application_status;
     summary.append(name, badge, metadata);
+    if (unreadCount) {
+      const newMessages = document.createElement('span');
+      newMessages.className = 'message-count';
+      newMessages.textContent = `${unreadCount} mensaje${unreadCount === 1 ? '' : 's'} nuevo${unreadCount === 1 ? '' : 's'}`;
+      summary.append(newMessages);
+    }
     if (context === 'payments') {
       const payment = document.createElement('p');
       payment.textContent = `Pago: ${application.payment_status === 'confirmed' ? 'Confirmado' : application.payment_status === 'pending' ? 'Pendiente' : 'Sin confirmar'}`;
@@ -217,13 +231,35 @@
     const clarificationPriority = { needs_clarification: 0, submitted: 1, in_review: 2 };
     const clarifications = [...applications].sort((a, b) =>
       (clarificationPriority[a.application_status] ?? 3) - (clarificationPriority[b.application_status] ?? 3));
-    document.querySelector('[data-clarifications-status]').textContent = `${clarifications.length} expediente${clarifications.length === 1 ? '' : 's'} para consultar.`;
+    const unreadCount = [...unreadByApplication.values()].reduce((total, value) => total + value, 0);
+    document.querySelector('[data-clarifications-status]').textContent = `${clarifications.length} expediente${clarifications.length === 1 ? '' : 's'} para consultar.${unreadCount ? ` ${unreadCount} mensaje${unreadCount === 1 ? '' : 's'} nuevo${unreadCount === 1 ? '' : 's'} de voluntarias.` : ''}`;
     renderList('[data-clarifications-list]', clarifications, 'clarifications', 'No hay aclaraciones pendientes.');
     const payments = applications.filter(application => application.application_status === 'approved' || application.membership_active);
     document.querySelector('[data-payments-status]').textContent = `${payments.length} solicitud${payments.length === 1 ? '' : 'es'} con pago o aprobación para revisar.`;
     renderList('[data-payments-list]', payments, 'payments', 'No hay pagos para revisar.');
     document.querySelector('[data-documents-status]').textContent = `${applications.length} expediente${applications.length === 1 ? '' : 's'} disponible${applications.length === 1 ? '' : 's'}.`;
     renderList('[data-documents-list]', applications, 'documents', 'Aún no hay expedientes.');
+  }
+
+  async function refreshUnreadMessages() {
+    if (!adminUser || document.hidden) return;
+    const generation = ++unreadGeneration;
+    const { data, error } = await client.from('application_messages')
+      .select('application_id,author_id').is('deleted_at', null).is('admin_read_at', null);
+    if (error || generation !== unreadGeneration) return;
+    const owners = new Map(applications.map(row => [row.application_id, row.owner_id]));
+    const unread = new Map();
+    (data || []).forEach(row => {
+      if (owners.get(row.application_id) !== row.author_id) return;
+      unread.set(row.application_id, (unread.get(row.application_id) || 0) + 1);
+    });
+    unreadByApplication = unread;
+    const count = [...unread.values()].reduce((total, value) => total + value, 0);
+    const badge = document.querySelector('[data-admin-unread-count]');
+    badge.hidden = !count;
+    badge.textContent = `${count} nuevo${count === 1 ? '' : 's'}`;
+    document.querySelector('[data-admin-view-button="clarifications"]').classList.toggle('has-new-messages', count > 0);
+    renderApplicationLists();
   }
 
   async function loadApplications(initialApplications) {
@@ -248,6 +284,7 @@
     }
     applications = Array.isArray(data) ? data : [];
     renderApplicationLists();
+    await refreshUnreadMessages();
     return true;
   }
 
@@ -344,9 +381,10 @@
     clarificationForm.querySelector('[type="submit"]').disabled = !['submitted', 'in_review'].includes(status);
   }
 
-  function appendTextRecord(list, heading, body, date) {
+  function appendTextRecord(list, heading, body, date, unread = false) {
     const article = document.createElement('article');
     article.className = 'admin-card';
+    if (unread) article.classList.add('message-card', 'is-unread');
     const title = document.createElement('strong'); title.textContent = heading;
     const content = document.createElement('p'); content.textContent = body;
     const time = document.createElement('small'); time.textContent = formatDate(date);
@@ -360,17 +398,22 @@
     const attachmentList = document.querySelector('[data-admin-attachments-list]');
     const status = document.querySelector('[data-messages-status]');
     messageList.replaceChildren(); noteList.replaceChildren(); attachmentList.replaceChildren();
+    markAdminMessagesRead.hidden = true;
     status.textContent = 'Cargando comunicaciones…';
     const [messagesResult, notesResult] = await Promise.all([
-      client.from('application_messages').select('id,author_id,body,created_at').eq('application_id', applicationId).is('deleted_at', null).order('created_at', { ascending: true }),
+      client.from('application_messages').select('id,author_id,body,created_at,admin_read_at').eq('application_id', applicationId).is('deleted_at', null).order('created_at', { ascending: true }),
       client.from('admin_notes').select('id,author_id,body,created_at').eq('application_id', applicationId).is('deleted_at', null).order('created_at', { ascending: false })
     ]);
     if (token !== detailGeneration) return;
     if (messagesResult.error) status.textContent = 'No fue posible consultar los mensajes.';
     else {
       const messages = messagesResult.data || [];
-      status.textContent = messages.length ? `${messages.length} mensaje${messages.length === 1 ? '' : 's'} en esta solicitud.` : 'Todavía no hay mensajes.';
-      messages.forEach(row => appendTextRecord(messageList, row.author_id === currentApplication?.owner_id ? 'Voluntaria' : 'Administración', row.body, row.created_at));
+      const unread = messages.filter(row => row.author_id === currentApplication?.owner_id && !row.admin_read_at);
+      markAdminMessagesRead.hidden = !unread.length;
+      status.textContent = unread.length
+        ? `${unread.length} mensaje${unread.length === 1 ? '' : 's'} nuevo${unread.length === 1 ? '' : 's'} de la voluntaria.`
+        : messages.length ? `${messages.length} mensaje${messages.length === 1 ? '' : 's'} en esta solicitud.` : 'Todavía no hay mensajes.';
+      messages.forEach(row => appendTextRecord(messageList, row.author_id === currentApplication?.owner_id ? 'Voluntaria' : 'Administración', row.body, row.created_at, row.author_id === currentApplication?.owner_id && !row.admin_read_at));
       if (messages.length) {
         const attachmentResult = await client.from('clarification_attachments')
           .select('id,message_id,original_name,storage_path,scan_status,created_at')
@@ -401,6 +444,22 @@
     else if (!notesResult.data?.length) noteList.textContent = 'No hay notas internas.';
     else notesResult.data.forEach(row => appendTextRecord(noteList, 'Nota interna', row.body, row.created_at));
   }
+
+  markAdminMessagesRead.addEventListener('click', async () => {
+    if (!currentApplication) return;
+    const applicationId = currentApplication.application_id;
+    const token = detailGeneration;
+    ++unreadGeneration;
+    markAdminMessagesRead.disabled = true;
+    const { error } = await client.rpc('mark_application_messages_read', { p_application_id: applicationId });
+    markAdminMessagesRead.disabled = false;
+    if (token !== detailGeneration) return;
+    if (error) {
+      document.querySelector('[data-messages-status]').textContent = 'No se pudo guardar la lectura. Inténtalo nuevamente.';
+      return;
+    }
+    await Promise.all([loadApplicationMessages(applicationId, token), refreshUnreadMessages()]);
+  });
 
   async function setApplicationStatus(nextStatus, message, target) {
     if (!currentApplication || target.disabled) return false;
@@ -577,12 +636,27 @@
     layout.hidden = false;
     logoutButton.hidden = false;
     await loadApplications(initialApplications);
+    const requestedApplication = new URLSearchParams(window.location.search).get('application') ||
+      sessionStorage.getItem('lasnanas_admin_pending_application');
+    sessionStorage.removeItem('lasnanas_admin_pending_application');
+    if (/^[0-9a-f-]{36}$/i.test(requestedApplication || '') &&
+        applications.some(row => row.application_id === requestedApplication)) {
+      await loadApplicationDetail(requestedApplication, 'applications');
+    }
     await loadVolunteerOptions();
     const agendaPermission = await client.rpc('can_read_agenda');
     agendaAccess = !agendaPermission.error && agendaPermission.data === true;
     document.querySelector('[data-agenda-permission]').hidden = !agendaAccess;
     document.querySelector('[data-agenda-locked]').hidden = agendaAccess;
   }
+
+  function refreshVisibleMessages() {
+    refreshUnreadMessages();
+    if (currentApplication && !detail.hidden && !document.hidden)
+      loadApplicationMessages(currentApplication.application_id, detailGeneration);
+  }
+  setInterval(refreshVisibleMessages, 30000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshVisibleMessages(); });
 
   editMapButton.addEventListener('click', function () {
     window.location.assign('../?editar-mapa=1#territorio');

@@ -1,11 +1,11 @@
 /* Las Ñañas · worker privado para correos de inscripción, pago y membresía.
    No registra destinatarios, contenido de correo, tokens ni secretos. */
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 export type NotificationRow = {
   notification_id: string;
   application_id: string;
-  notification_type: "admin_registration" | "volunteer_welcome" | "transfer_receipt_received" | "payment_confirmed" | "membership_activated";
+  notification_type: "admin_registration" | "volunteer_welcome" | "transfer_receipt_received" | "payment_confirmed" | "membership_activated" | "admin_payment_confirmed";
   recipient_email: string | null;
   first_name: string;
   last_name: string;
@@ -51,17 +51,18 @@ export const escapeHtml = (value: unknown): string => String(value ?? "").replac
 }[character] as string));
 
 // CORREO SEGURO: elimina controles en texto plano y nombres de destinatario.
+// deno-lint-ignore no-control-regex
 export const cleanPlainText = (value: unknown): string => String(value ?? "").replace(/[\u0000-\u001f\u007f]+/g, " ").trim();
 
 export function validateNotification(row: NotificationRow): void {
-  if (!["admin_registration", "volunteer_welcome", "transfer_receipt_received", "payment_confirmed", "membership_activated"].includes(row.notification_type) ||
+  if (!["admin_registration", "volunteer_welcome", "transfer_receipt_received", "payment_confirmed", "membership_activated", "admin_payment_confirmed"].includes(row.notification_type) ||
       !ALLOWED_PLANS.has(row.plan_id) || !ALLOWED_BILLING.has(row.billing) ||
       !ALLOWED_CURRENCIES.has(row.currency) || !ALLOWED_STATUSES.has(row.application_status)) {
     throw new Error("invalid_notification_payload");
   }
   if (!EMAIL_PATTERN.test(row.volunteer_email) ||
       (["volunteer_welcome", "payment_confirmed", "membership_activated"].includes(row.notification_type) && (!row.recipient_email || row.recipient_email !== row.volunteer_email)) ||
-      (["admin_registration", "transfer_receipt_received"].includes(row.notification_type) && row.recipient_email !== null)) {
+      (["admin_registration", "transfer_receipt_received", "admin_payment_confirmed"].includes(row.notification_type) && row.recipient_email !== null)) {
     throw new Error("invalid_notification_recipient");
   }
   if (!/^[0-9a-f-]{36}$/i.test(row.idempotency_key) || Number.isNaN(Date.parse(row.application_created_at))) {
@@ -74,7 +75,10 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
   const baseUrl = new URL(config.publicSiteUrl);
   if (baseUrl.protocol !== "https:") throw new Error("invalid_public_site_url");
   const volunteerUrl = new URL("pages/mi-voluntariado.html", baseUrl).href;
-  const protocolUrl = new URL("pages/protocolo-acuerdos-voluntariado.html", baseUrl).href;
+  const documentsUrl = new URL("pages/mi-voluntariado.html?view=documents", baseUrl).href;
+  const logoUrl = new URL("assets/img/logo-web.png", baseUrl).href;
+  const welcomeImageUrl = new URL("assets/img/voluntariado/nana-bienvenida.png", baseUrl).href;
+  const brand = `<p><img src="${escapeHtml(logoUrl)}" alt="Las Ñañas" width="180" style="max-width:180px;height:auto"></p>`;
   const coordinationUrl = new URL("pages/coordinacion-voluntariado.html", baseUrl);
   coordinationUrl.searchParams.set("application", row.application_id);
   const periodicity = row.billing === "yearly" ? "Anual" : "Mensual";
@@ -83,7 +87,7 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
   const createdAt = new Intl.DateTimeFormat("es-CL", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Santiago" }).format(new Date(row.application_created_at));
   const firstName = cleanPlainText(row.first_name);
   const lastName = cleanPlainText(row.last_name);
-  const isPaymentNotice = row.notification_type === "payment_confirmed" || row.notification_type === "membership_activated";
+  const isPaymentNotice = ["payment_confirmed", "membership_activated", "admin_payment_confirmed"].includes(row.notification_type);
   if (isPaymentNotice && (!payment || !/^[0-9a-f-]{36}$/i.test(payment.paymentId) ||
       !Number.isSafeInteger(payment.amount) || payment.amount < 1 || payment.currency !== row.currency ||
       Number.isNaN(Date.parse(payment.confirmedAt)) || Number.isNaN(Date.parse(payment.startsAt)) ||
@@ -140,26 +144,28 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
 
   if (row.notification_type === "payment_confirmed" && payment) {
     const amount = new Intl.NumberFormat("es-CL", { style: "currency", currency: payment.currency, maximumFractionDigits: 0 }).format(payment.amount);
-    const date = new Intl.DateTimeFormat("es-CL", { dateStyle: "long", timeStyle: "short", timeZone: "America/Santiago" }).format(new Date(payment.confirmedAt));
-    const reference = cleanPlainText(payment.reference);
-    const settled = payment.settledAmount != null && payment.settledCurrency
-      ? new Intl.NumberFormat("es-CL", { style: "currency", currency: payment.settledCurrency, maximumFractionDigits: 2 }).format(payment.settledAmount)
-      : null;
     return {
       sender: { name: "Las Ñañas", email: config.senderEmail },
       to: [{ email: row.recipient_email!, name: `${firstName} ${lastName}`.trim() }],
       subject: "Comprobante de pago confirmado · Las Ñañas",
-      htmlContent: `<html lang="es"><body><h1>Comprobante de pago confirmado</h1>
-        <p>Hola, ${escapeHtml(firstName)}. Confirmamos la recepción de tu aporte para Las Ñañas.</p>
-        <table><tr><th align="left">Código de pago</th><td>${escapeHtml(payment.paymentId)}</td></tr>
-        <tr><th align="left">Plan</th><td>${escapeHtml(plan)}</td></tr>
-        <tr><th align="left">Periodicidad</th><td>${periodicity}</td></tr>
-        <tr><th align="left">Importe del plan</th><td>${escapeHtml(amount)}</td></tr>
-        ${settled ? `<tr><th align="left">Abono bancario verificado</th><td>${escapeHtml(settled)}</td></tr>` : ""}
-        <tr><th align="left">Fecha de confirmación</th><td>${escapeHtml(date)}</td></tr>
-        <tr><th align="left">Referencia</th><td>${escapeHtml(reference)}</td></tr></table>
-        <p><a href="${escapeHtml(volunteerUrl)}">Consultar mi membresía</a></p></body></html>`,
-      textContent: `Comprobante de pago confirmado\nHola, ${firstName}. Confirmamos la recepción de tu aporte para Las Ñañas.\nCódigo de pago: ${payment.paymentId}\nPlan: ${plan}\nPeriodicidad: ${periodicity}\nImporte del plan: ${amount}${settled ? `\nAbono bancario verificado: ${settled}` : ""}\nFecha de confirmación: ${date}\nReferencia: ${reference}\nMi membresía: ${volunteerUrl}`,
+      htmlContent: `<html lang="es"><body>${brand}<h1>Pago confirmado</h1>
+        <p>Hola, ${escapeHtml(firstName)}. Confirmamos tu aporte al plan ${escapeHtml(plan)} por ${escapeHtml(amount)}.</p>
+        <p>En <strong>Mi voluntariado → Mis documentos</strong> puedes descargar el comprobante con la fecha, referencia e importe verificado.</p>
+        <p><a href="${escapeHtml(documentsUrl)}">Descargar mi comprobante</a></p></body></html>`,
+      textContent: `Pago confirmado\nHola, ${firstName}. Confirmamos tu aporte al plan ${plan} por ${amount}.\nDescarga el comprobante en Mi voluntariado, sección Mis documentos: ${documentsUrl}`,
+      headers: { idempotencyKey: row.idempotency_key },
+    };
+  }
+
+  if (row.notification_type === "admin_payment_confirmed" && payment) {
+    return {
+      sender: { name: "Las Ñañas", email: config.senderEmail },
+      to: [{ email: config.adminEmail, name: "Coordinación Las Ñañas" }],
+      subject: "Pago confirmado · Voluntariado Las Ñañas",
+      htmlContent: `<html lang="es"><body>${brand}<h1>Pago confirmado</h1>
+        <p>La suscripción de ${escapeHtml(firstName)} ${escapeHtml(lastName)} (${escapeHtml(plan)}) fue activada.</p>
+        <p><a href="${escapeHtml(coordinationUrl.href)}">Abrir expediente en administración</a></p></body></html>`,
+      textContent: `Pago confirmado\nLa suscripción de ${firstName} ${lastName} (${plan}) fue activada.\nAbrir expediente en administración: ${coordinationUrl.href}`,
       headers: { idempotencyKey: row.idempotency_key },
     };
   }
@@ -171,13 +177,13 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
       sender: { name: "Las Ñañas", email: config.senderEmail },
       to: [{ email: row.recipient_email!, name: `${firstName} ${lastName}`.trim() }],
       subject: "Tu suscripción a Las Ñañas está activa",
-      htmlContent: `<html lang="es"><body><h1>Tu suscripción está activa</h1>
+      htmlContent: `<html lang="es"><body>${brand}<h1>Tu suscripción está activa</h1>
         <p>Hola, ${escapeHtml(firstName)}. Tu membresía ${escapeHtml(plan)} está activa.</p>
         <p>Vigencia: ${escapeHtml(start)} al ${escapeHtml(end)}.</p>
-        <p><a href="${escapeHtml(volunteerUrl)}">Abrir Mi voluntariado y descargar mi credencial</a></p>
-        <p><a href="${escapeHtml(protocolUrl)}">Leer y guardar el documento de protocolo y acuerdos</a></p>
+        <p>En <strong>Mis documentos</strong> puedes descargar la constancia de activación, el comprobante de pago y el protocolo. En <strong>Mi perfil</strong> puedes descargar tu credencial.</p>
+        <p><a href="${escapeHtml(documentsUrl)}">Abrir Mis documentos</a></p>
         </body></html>`,
-      textContent: `Tu suscripción está activa\nHola, ${firstName}. Tu membresía ${plan} está activa.\nVigencia: ${start} al ${end}.\nMi voluntariado: ${volunteerUrl}\nDocumento de protocolo y acuerdos: ${protocolUrl}`,
+      textContent: `Tu suscripción está activa\nHola, ${firstName}. Tu membresía ${plan} está activa del ${start} al ${end}.\nDescarga la constancia, el comprobante y el protocolo en Mis documentos; tu credencial está en Mi perfil.\nMis documentos: ${documentsUrl}`,
       headers: { idempotencyKey: row.idempotency_key },
     };
   }
@@ -186,19 +192,23 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
     sender: { name: "Las Ñañas", email: config.senderEmail },
     to: [{ email: row.recipient_email!, name: `${firstName} ${lastName}`.trim() }],
     subject: "Bienvenida a Las Ñañas",
-    htmlContent: `<html><body><h1>Bienvenida a Las Ñañas, ${escapeHtml(firstName)}</h1>
-      <p>Tu inscripción fue guardada correctamente y será revisada por coordinación.</p><table>${commonRows}</table>
-      <p><a href="${escapeHtml(volunteerUrl)}">Ir a Mi voluntariado</a></p></body></html>`,
-    textContent: `Bienvenida a Las Ñañas, ${firstName}.\nTu inscripción fue guardada correctamente y será revisada por coordinación.\nPlan: ${plan}\nPeriodicidad: ${periodicity}\nMoneda: ${row.currency}\nEstado de la solicitud: ${status}\nMi voluntariado: ${volunteerUrl}`,
+    htmlContent: `<html lang="es"><body>${brand}<h1>Bienvenida a Las Ñañas, ${escapeHtml(firstName)}</h1>
+      <p>Tu inscripción al plan ${escapeHtml(plan)} fue guardada y será revisada por coordinación.</p>
+      <p><img src="${escapeHtml(welcomeImageUrl)}" alt="Una ñaña te da la bienvenida" width="260" style="max-width:260px;height:auto"></p>
+      <p><a href="${escapeHtml(volunteerUrl)}">Abrir mi panel de voluntariado</a></p>
+      <p>Cuando tu suscripción esté activa, podrás descargar tu credencial desde <strong>Mi perfil</strong>.</p></body></html>`,
+    textContent: `Bienvenida a Las Ñañas, ${firstName}.\nTu inscripción al plan ${plan} fue guardada y será revisada por coordinación.\nAbre tu panel: ${volunteerUrl}\nCuando tu suscripción esté activa, descarga tu credencial en Mi perfil.`,
     headers: { idempotencyKey: row.idempotency_key },
   };
 }
 
-async function loadConfirmedPayment(client: ReturnType<typeof createClient>, row: NotificationRow): Promise<ConfirmedPayment> {
+export async function loadConfirmedPayment(client: SupabaseClient, row: NotificationRow): Promise<ConfirmedPayment> {
+  const { data: application, error: applicationError } = await client.from("membership_applications")
+    .select("owner_id").eq("id", row.application_id).is("deleted_at", null).single();
   const { data: payment, error: paymentError } = await client.from("payments")
     .select("id,owner_id,application_id,status,amount,currency,provider_reference,confirmed_at,settled_amount,settled_currency,source_currency,transfer_route")
     .eq("application_id", row.application_id).eq("status", "confirmed").single();
-  if (paymentError || !payment || payment.owner_id !== row.owner_id ||
+  if (applicationError || !application || paymentError || !payment || payment.owner_id !== application.owner_id ||
       payment.application_id !== row.application_id) throw new Error("confirmed_payment_unavailable");
   const { data: membership, error: membershipError } = await client.from("memberships")
     .select("owner_id,application_id,payment_id,active,starts_at,ends_at")
@@ -275,7 +285,7 @@ export async function handler(request: Request): Promise<Response> {
   let sent = 0; let failed = 0;
   for (const row of (data ?? []) as NotificationRow[]) {
     try {
-      const payment = row.notification_type === "payment_confirmed" || row.notification_type === "membership_activated"
+      const payment = ["payment_confirmed", "membership_activated", "admin_payment_confirmed"].includes(row.notification_type)
         ? await loadConfirmedPayment(supabase, row) : undefined;
       const message = buildBrevoMessage(row, config, payment);
       const response = await fetch("https://api.brevo.com/v3/smtp/email", {

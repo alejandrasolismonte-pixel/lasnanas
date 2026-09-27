@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Espacio personal y privado de voluntariado de Las Ñañas">
   <title>Mi voluntariado · Las Ñañas</title>
-<link rel="stylesheet" href="../css/mi-voluntariado.css?v=3">
+<link rel="stylesheet" href="../css/mi-voluntariado.css?v=4">
   <!-- CARGA GLOBAL: indicador central para esperas que bloquean el portal. -->
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
 </head>
@@ -33,7 +33,7 @@
 
     <div class="portal-grid">
       <nav class="side-nav" aria-label="Secciones de Mi voluntariado">
-        <button class="active" type="button" data-view-button="membership">Mi inscripción</button>
+        <button class="active" type="button" data-view-button="membership">Mi inscripción <span class="message-count" data-member-unread-count hidden></span></button>
         <button type="button" data-view-button="documents">Mis documentos</button>
         <button type="button" data-view-button="profile">Mi perfil</button>
         <button type="button" data-view-button="agenda">Mi agenda de voluntariado</button>
@@ -46,6 +46,10 @@
           <button class="back-button" type="button" data-previous-step>← Volver al paso anterior</button>
           <p class="eyebrow">Inscripción y membresía</p><h2 id="membership-title">Revisa tu plan</h2>
           <p class="subtle">Tu cuenta existe aunque aún no envíes la solicitud ni realices un pago.</p>
+          <div class="message-alert" data-member-new-message-alert hidden>
+            <strong data-member-new-message-text></strong>
+            <button class="btn btn-ghost" type="button" data-jump-member-messages>Ver mensajes</button>
+          </div>
 
           <form data-membership-form novalidate>
             <fieldset><legend>Plan seleccionado</legend><div class="option-grid">
@@ -101,6 +105,14 @@
             <p class="help">Recibir el comprobante no confirma el pago ni activa la membresía. Administración debe verificar el abono bancario.</p>
           </section>
 
+          <section class="state-panel message-panel" data-member-message-panel hidden tabindex="-1" aria-labelledby="member-messages-title">
+            <h3 id="member-messages-title">Mensajes de coordinación</h3>
+            <p data-member-message-status role="status" aria-live="polite"></p>
+            <div data-member-messages-list></div>
+            <button class="btn btn-ghost" type="button" data-mark-member-messages-read hidden>Marcar mensajes como leídos</button>
+            <p class="field-message" data-member-message-error role="status"></p>
+          </section>
+
         </section>
 
         <section class="content-card" data-view="documents" aria-labelledby="documents-title" hidden>
@@ -142,6 +154,6 @@
   <script src="../js/loading-overlay.js?v=2"></script>
   <script src="../js/transfer-config.js?v=5"></script>
   <script src="../js/transfer-payments.js?v=5"></script>
-  <script src="../js/mi-voluntariado.js?v=10"></script>
+  <script src="../js/mi-voluntariado.js?v=11"></script>
 </body>
 </html>

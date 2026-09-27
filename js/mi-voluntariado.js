@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     billing: ['monthly','yearly'].includes(requestedBilling) ? requestedBilling : (pending.billing === 'yearly' ? 'yearly' : 'monthly'),
     currency: ['CLP','USD'].includes(requestedCurrency) ? requestedCurrency : (pending.currency === 'USD' ? 'USD' : 'CLP')
   };
-  let user, profile, application, price, messages = [], agenda = [], membership = null, volunteerDocuments = [];
+  let user, profile, application, price, messages = [], agenda = [], membership = null, confirmedPayment = null, volunteerDocuments = [];
+  let messagesGeneration = 0;
   let sessionInvalidated = false;
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT' || (user && session?.user && session.user.id !== user.id)) {
@@ -109,13 +110,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         supabase.from('membership_applications').select('*,plan_prices(*)').eq('owner_id',user.id).is('deleted_at',null).order('created_at',{ascending:false}).limit(1).maybeSingle(),
         supabase.from('application_messages').select('*').is('deleted_at',null).order('created_at',{ascending:true}),
         supabase.from('agenda_entries').select('*').is('deleted_at',null).order('starts_at',{ascending:true}),
-        supabase.from('memberships').select('*,plan_prices(*)').eq('owner_id',user.id).eq('active',true).gt('ends_at',new Date().toISOString()).order('ends_at',{ascending:false}).limit(1).maybeSingle(),
+        supabase.from('memberships').select('*,plan_prices(*)').eq('owner_id',user.id).order('created_at',{ascending:false}).limit(1).maybeSingle(),
         supabase.rpc('list_my_volunteer_documents')
       ]);
       const failure=[profileResult,applicationResult,messagesResult,agendaResult,membershipResult,documentsResult].find(result=>result.error);
       if(failure)throw failure.error;
       if(sessionInvalidated)throw new Error('La sesión cambió durante la carga.');
       profile=profileResult.data; application=applicationResult.data; price=application?.plan_prices || null; messages=messagesResult.data || []; agenda=agendaResult.data || []; membership=membershipResult.data; volunteerDocuments=documentsResult.data || [];
+      confirmedPayment=null;
+      if(membership?.payment_id){
+        const paymentResult=await supabase.from('payments')
+          .select('id,application_id,amount,currency,status,provider_reference,confirmed_at,settled_amount,settled_currency')
+          .eq('id',membership.payment_id).eq('owner_id',user.id).eq('status','confirmed').maybeSingle();
+        if(!paymentResult.error)confirmedPayment=paymentResult.data;
+      }
       // Si el enlace se abrió en otro dispositivo, sessionStorage no viaja con él.
       // Usa la selección verificada de Auth solo cuando aún no hay una solicitud.
       if (!application && !requested.plan) {
@@ -166,12 +174,114 @@ document.addEventListener('DOMContentLoaded', async () => {
     rejectionReason.textContent=latestRequest ? `Motivo comunicado por el equipo: ${latestRequest.body}` : '';
     $('[data-conditions]').hidden=currentStatus()!=='approved';
   }
+  function renderMemberMessages(){
+    const rows=messages.filter(row=>row.application_id===application?.id && row.visible_to_member);
+    const incoming=rows.filter(row=>row.author_id!==user.id && !row.member_read_at);
+    const panel=$('[data-member-message-panel]');
+    const list=$('[data-member-messages-list]');
+    const badge=$('[data-member-unread-count]');
+    const nav=$('[data-view-button="membership"]');
+    const mark=$('[data-mark-member-messages-read]');
+    const alert=$('[data-member-new-message-alert]');
+    panel.hidden=!rows.length;
+    alert.hidden=!incoming.length;
+    $('[data-member-new-message-text]').textContent=incoming.length
+      ? `${incoming.length} mensaje${incoming.length===1?'':'s'} nuevo${incoming.length===1?'':'s'} de coordinación` : '';
+    badge.hidden=!incoming.length;
+    badge.textContent=`${incoming.length} nuevo${incoming.length===1?'':'s'}`;
+    nav.classList.toggle('has-new-messages',incoming.length>0);
+    mark.hidden=!incoming.length;
+    $('[data-member-message-status]').textContent=incoming.length
+      ? `Tienes ${incoming.length} mensaje${incoming.length===1?'':'s'} nuevo${incoming.length===1?'':'s'} de coordinación.`
+      : `${rows.length} mensaje${rows.length===1?'':'s'} en esta solicitud.`;
+    list.replaceChildren();
+    rows.forEach(row=>{
+      const card=document.createElement('article');
+      card.className='message-card';
+      if(row.author_id!==user.id && !row.member_read_at)card.classList.add('is-unread');
+      const author=document.createElement('strong');author.textContent=row.author_id===user.id?'Tú':'Coordinación';
+      const body=document.createElement('p');body.textContent=row.body;
+      const date=document.createElement('small');date.textContent=new Intl.DateTimeFormat('es-CL',{dateStyle:'medium',timeStyle:'short'}).format(new Date(row.created_at));
+      card.append(author,body,date);list.append(card);
+    });
+  }
+  async function refreshMemberMessages(){
+    if(!user || !application || sessionInvalidated || document.hidden)return;
+    const generation=++messagesGeneration;
+    const applicationId=application.id;
+    const {data,error}=await supabase.from('application_messages').select('*')
+      .eq('application_id',applicationId).is('deleted_at',null).order('created_at',{ascending:true});
+    if(error || generation!==messagesGeneration || application?.id!==applicationId)return;
+    messages=data||[];
+    renderMemberMessages();
+    renderMembership();
+  }
+  $('[data-mark-member-messages-read]').addEventListener('click',async()=>{
+    if(!application)return;
+    ++messagesGeneration;
+    const button=$('[data-mark-member-messages-read]');button.disabled=true;
+    const {error}=await supabase.rpc('mark_application_messages_read',{p_application_id:application.id});
+    button.disabled=false;
+    if(error){showMessage('[data-member-message-error]','No se pudo guardar la lectura. Inténtalo nuevamente.',true);return;}
+    showMessage('[data-member-message-error]','');
+    const readAt=new Date().toISOString();
+    messages.forEach(row=>{if(row.application_id===application.id && row.author_id!==user.id)row.member_read_at=readAt;});
+    renderMemberMessages();
+  });
+  $('[data-jump-member-messages]').addEventListener('click',()=>{
+    const panel=$('[data-member-message-panel]');
+    panel.scrollIntoView({block:'start',behavior:'smooth'});
+    panel.focus({preventScroll:true});
+  });
+  setInterval(refreshMemberMessages,30000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshMemberMessages();});
+  function downloadMembershipStatement(kind){
+    if(!confirmedPayment || !membership || confirmedPayment.application_id!==membership.application_id)return;
+    const isReceipt=kind==='payment';
+    const title=isReceipt?'Comprobante de pago confirmado':'Constancia de suscripción activada';
+    const name=profile.display_name || `${profile.first_name} ${profile.last_name}`;
+    const plan=membership.plan_prices?.plan_id || '—';
+    const date=value=>new Intl.DateTimeFormat('es-CL',{dateStyle:'long',timeZone:'America/Santiago'}).format(new Date(value));
+    const rows=[
+      ['Titular',name],['Plan',plan],['Código de pago',confirmedPayment.id],
+      ['Importe del plan',money(confirmedPayment.amount,confirmedPayment.currency)],
+      ['Fecha de confirmación',date(confirmedPayment.confirmed_at)]
+    ];
+    if(isReceipt){
+      if(confirmedPayment.provider_reference)rows.push(['Referencia bancaria',confirmedPayment.provider_reference]);
+      if(confirmedPayment.settled_amount && confirmedPayment.settled_currency)
+        rows.push(['Abono bancario verificado',new Intl.NumberFormat('es-CL',{style:'currency',currency:confirmedPayment.settled_currency,maximumFractionDigits:2}).format(confirmedPayment.settled_amount)]);
+    }else{
+      rows.push(['Inicio de vigencia',date(membership.starts_at)],['Término de vigencia',date(membership.ends_at)]);
+    }
+    const protocolUrl=new URL('protocolo-acuerdos-voluntariado.html',location.href).href;
+    const html=`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escapeHtml(title)} · Las Ñañas</title>
+      <style>body{font:16px/1.55 system-ui,sans-serif;color:#12343a;max-width:720px;margin:48px auto;padding:0 24px}h1{font:700 2rem Georgia,serif}header{border-bottom:3px solid #197d50;margin-bottom:28px}table{width:100%;border-collapse:collapse}th,td{padding:12px;text-align:left;border-bottom:1px solid #c7ddd8;vertical-align:top}th{width:42%}td{overflow-wrap:anywhere}.note{margin-top:28px;color:#526c70}@media print{body{margin:0;max-width:none}}</style></head>
+      <body><header><strong>LAS ÑAÑAS · VOLUNTARIADO</strong><h1>${escapeHtml(title)}</h1></header>
+      <p>${isReceipt?'Este comprobante acredita un pago confirmado por administración.':'Esta constancia acredita la activación de la membresía indicada.'}</p>
+      <table>${rows.map(([label,value])=>`<tr><th>${escapeHtml(label)}</th><td>${escapeHtml(value)}</td></tr>`).join('')}</table>
+      <p class="note">Documento generado desde Mi voluntariado. Protocolo y acuerdos: <a href="${escapeHtml(protocolUrl)}">${escapeHtml(protocolUrl)}</a>.</p></body></html>`;
+    const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
+    const link=document.createElement('a');link.href=url;
+    link.download=isReceipt?'comprobante-pago-las-nanas.html':'suscripcion-activada-las-nanas.html';
+    document.body.append(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }
   function renderDocuments(){
     const root=$('[data-documents]');
     root.replaceChildren();
-    if(hasActiveMembership()){
-      const protocol=document.createElement('a');protocol.className='btn btn-ghost';protocol.href='protocolo-acuerdos-voluntariado.html';protocol.textContent='Protocolo y acuerdos de voluntariado';root.append(protocol);
+    const builtIn=document.createElement('div');builtIn.className='button-row';
+    const protocol=document.createElement('a');protocol.className='btn btn-ghost';
+    protocol.href='protocolo-acuerdos-voluntariado.html';
+    protocol.download='protocolo-acuerdos-voluntariado.html';
+    protocol.textContent='Descargar protocolo y acuerdos';builtIn.append(protocol);
+    if(confirmedPayment && membership && confirmedPayment.application_id===membership.application_id){
+      for(const [kind,label] of [['payment','Descargar comprobante de pago'],['activation','Descargar constancia de activación']]){
+        const button=document.createElement('button');button.className='btn btn-ghost';button.type='button';
+        button.textContent=label;button.onclick=()=>downloadMembershipStatement(kind);builtIn.append(button);
+      }
     }
+    root.append(builtIn);
     if(!volunteerDocuments.length){const empty=document.createElement('div');empty.className='locked';empty.textContent=membership?'Aún no tienes otros documentos disponibles.':'Los archivos de Las Ñañas se habilitarán únicamente después del pago confirmado. Puedes enviar documentación para tu propia solicitud.';root.append(empty);return;}
     const grid=document.createElement('div');grid.className='document-grid';
     volunteerDocuments.forEach(record=>{const card=document.createElement('article');card.className='document';const title=document.createElement('h3');title.textContent=record.original_name;const status=document.createElement('p');status.textContent=record.document_kind==='volunteer_submission'?'Enviado para revisión':'Disponible para descarga';const button=document.createElement('button');button.className='btn btn-ghost';button.type='button';button.textContent='Descargar';button.onclick=()=>downloadVolunteerDocument(record.document_id);card.append(title,status,button);grid.append(card);});
@@ -202,7 +312,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const days=[...new Set(items.map(item=>item.date))].sort(); $('[data-agenda-calendar]').innerHTML=days.length?days.map(day=>`<div class="calendar-day"><strong>${day}</strong>${items.filter(item=>item.date===day).map(item=>`<div class="calendar-event ${item.official?'official':''}">${item.start} ${escapeHtml(item.title)}</div>`).join('')}</div>`).join(''):'<p>Sin fechas registradas.</p>';
   }
   const escapeHtml=value=>String(value||'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-  const renderAll=()=>{renderHeader();renderMembership();renderDocuments();renderProfile(true);renderAgenda();};
+  const renderAll=()=>{renderHeader();renderMembership();renderMemberMessages();renderDocuments();renderProfile(true);renderAgenda();};
 
   $$('[data-view-button]').forEach(button=>button.onclick=()=>{$$('[data-view-button]').forEach(item=>item.classList.toggle('active',item===button));$$('[data-view]').forEach(view=>{view.hidden=view.dataset.view!==button.dataset.viewButton;});});
   $('[data-membership-form]').addEventListener('change',async event=>{
@@ -291,5 +401,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   $$('[data-agenda-view]').forEach(button=>button.onclick=()=>{$$('[data-agenda-view]').forEach(item=>{item.classList.toggle('active',item===button);item.setAttribute('aria-selected',String(item===button));});$('[data-agenda-list]').hidden=button.dataset.agendaView!=='list';$('[data-agenda-calendar]').hidden=button.dataset.agendaView!=='calendar';});
   $('[data-logout]').onclick=async()=>{setGlobal('Cerrando sesión…');loader?.show('Cerrando tu sesión…');try{await supabase.auth.signOut();sessionStorage.removeItem('lasnanas_pending_selection_v3');sessionStorage.removeItem('lasnanas_visual_demo_v1');location.assign('voluntariado.html#membresias');}finally{loader?.hide();}};
 
-  try{await loadAll();}catch(error){setGlobal('No se pudo cargar tu espacio privado. Revisa la conexión o las políticas RLS.',true);}
+  try{
+    await loadAll();
+    if(user && !workspace.hidden && query.get('view')==='documents')$('[data-view-button="documents"]').click();
+  }catch(error){setGlobal('No se pudo cargar tu espacio privado. Revisa la conexión o las políticas RLS.',true);}
 });

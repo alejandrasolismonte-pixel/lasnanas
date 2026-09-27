@@ -1,5 +1,6 @@
-import { assert, assertEquals, assertThrows } from "jsr:@std/assert@1";
-import { buildBrevoMessage, cleanPlainText, escapeHtml, type ConfirmedPayment, type NotificationRow } from "./index.ts";
+import { assert, assertEquals, assertRejects, assertThrows } from "@std/assert";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { buildBrevoMessage, cleanPlainText, escapeHtml, loadConfirmedPayment, type ConfirmedPayment, type NotificationRow } from "./index.ts";
 
 const base: NotificationRow = {
   notification_id: "10000000-0000-4000-8000-000000000001",
@@ -35,7 +36,10 @@ Deno.test("bienvenida usa destinatario propio, HTTPS e idempotencia estable", ()
   assertEquals(message.to[0].email, base.volunteer_email);
   assertEquals(message.headers.idempotencyKey, base.idempotency_key);
   assert(message.htmlContent.includes("https://example.test/pages/mi-voluntariado.html"));
-  assert(!message.htmlContent.match(/password|contraseñ|adjunto|credencial|comprobante/i));
+  assert(message.htmlContent.includes("assets/img/logo-web.png"));
+  assert(message.htmlContent.includes("assets/img/voluntariado/nana-bienvenida.png"));
+  assert(message.htmlContent.includes("Mi perfil"));
+  assert(!message.htmlContent.match(/password|contraseña|comprobante de pago/i));
 });
 
 Deno.test("aviso administrativo queda separado", () => {
@@ -58,24 +62,66 @@ Deno.test("el comprobante de pago solo usa datos de un pago confirmado y se env�
   const message = buildBrevoMessage(row, config, payment);
   assertEquals(message.to[0].email, base.volunteer_email);
   assert(message.htmlContent.includes("15.000"));
-  assert(message.htmlContent.includes(payment.paymentId));
-  assert(message.htmlContent.includes(payment.reference));
-  assert(message.htmlContent.includes("Abono bancario verificado"));
+  assert(message.htmlContent.includes("Mi voluntariado"));
+  assert(message.htmlContent.includes("Mis documentos"));
+  assert(message.htmlContent.includes("mi-voluntariado.html?view=documents"));
+  assert(!message.htmlContent.includes(payment.reference));
   assertEquals(message.headers.idempotencyKey, base.idempotency_key);
   assertThrows(() => buildBrevoMessage(row, config), Error, "invalid_confirmed_payment");
 });
 
-Deno.test("la activación enlaza un documento distinto y exige fechas de vigencia", () => {
+Deno.test("la activación dirige a las constancias descargables y exige fechas de vigencia", () => {
   const row = { ...base, notification_type: "membership_activated" as const };
   const message = buildBrevoMessage(row, config, payment);
   assertEquals(message.to[0].email, base.volunteer_email);
-  assert(message.htmlContent.includes("protocolo-acuerdos-voluntariado.html"));
+  assert(message.htmlContent.includes("protocolo"));
+  assert(message.htmlContent.includes("Mi perfil"));
   assert(message.htmlContent.includes("mi-voluntariado.html"));
+  assert(message.htmlContent.includes("view=documents"));
   assertThrows(() => buildBrevoMessage(row, config, { ...payment, endsAt: payment.startsAt }), Error, "invalid_confirmed_payment");
+});
+
+Deno.test("el aviso de pago a administración enlaza el expediente sin exponerlo a la voluntaria", () => {
+  const row = { ...base, notification_type: "admin_payment_confirmed" as const, recipient_email: null };
+  const message = buildBrevoMessage(row, config, payment);
+  assertEquals(message.to[0].email, config.adminEmail);
+  assert(message.htmlContent.includes(`coordinacion-voluntariado.html?application=${base.application_id}`));
+  assertThrows(() => buildBrevoMessage({ ...row, recipient_email: base.volunteer_email }, config, payment), Error, "invalid_notification_recipient");
 });
 
 Deno.test("los nuevos avisos rechazan otro destinatario", () => {
   for (const notification_type of ["payment_confirmed", "membership_activated"] as const) {
     assertThrows(() => buildBrevoMessage({ ...base, notification_type, recipient_email: "other@example.test" }, config, payment), Error, "invalid_notification_recipient");
   }
+});
+
+Deno.test("el pago se vincula a la titular de la solicitud, no a un campo ausente de la cola", async () => {
+  const ownerId = "50000000-0000-4000-8000-000000000005";
+  const records: Record<string, Record<string, unknown>> = {
+    membership_applications: { owner_id: ownerId },
+    payments: {
+      id: payment.paymentId, owner_id: ownerId, application_id: base.application_id,
+      amount: payment.amount, currency: payment.currency, provider_reference: payment.reference,
+      confirmed_at: payment.confirmedAt, settled_amount: payment.settledAmount,
+      settled_currency: payment.settledCurrency, source_currency: payment.sourceCurrency,
+      transfer_route: payment.transferRoute,
+    },
+    memberships: {
+      owner_id: ownerId, application_id: base.application_id, payment_id: payment.paymentId,
+      active: true, starts_at: payment.startsAt, ends_at: payment.endsAt,
+    },
+  };
+  const fakeClient = {
+    from(table: string) {
+      const query = {
+        select() { return query; }, eq() { return query; }, is() { return query; },
+        single() { return Promise.resolve({ data: records[table], error: null }); },
+      };
+      return query;
+    },
+  } as unknown as SupabaseClient;
+  const row = { ...base, notification_type: "payment_confirmed" as const };
+  assertEquals((await loadConfirmedPayment(fakeClient, row)).paymentId, payment.paymentId);
+  records.membership_applications.owner_id = "60000000-0000-4000-8000-000000000006";
+  await assertRejects(() => loadConfirmedPayment(fakeClient, row), Error, "confirmed_payment_unavailable");
 });

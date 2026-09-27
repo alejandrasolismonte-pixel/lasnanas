@@ -57,3 +57,53 @@
 .state-panel--success h3 {
   color: var(--green);
 }
+
+.message-count {
+  display: inline-block;
+  margin-left: .35rem;
+  padding: .12rem .5rem;
+  border-radius: 999px;
+  background: #a93c12;
+  color: #fff;
+  font-size: .78rem;
+  font-weight: 800;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.message-panel { border-left-color: #b65519; }
+.message-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 2px solid #d6813f;
+  border-radius: 12px;
+  background: #fff4e9;
+}
+.message-card {
+  margin: .65rem 0;
+  padding: .8rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.message-card p { margin: .35rem 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.message-card small { display: block; color: var(--muted); }
+.message-card.is-unread {
+  border-color: #d6813f;
+  background: #fff4e9;
+  box-shadow: 0 0 0 2px #f5ddc8;
+}
+.message-card.is-unread strong::after { content: ' · Nuevo'; color: #9b3b0d; }
+.side-nav button.has-new-messages { box-shadow: inset 0 0 0 2px #d6813f; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .side-nav button.has-new-messages .message-count { animation: new-message-pulse 2.5s ease-in-out infinite; }
+}
+@keyframes new-message-pulse {
+  50% { box-shadow: 0 0 0 5px #d6813f55; }
+}
