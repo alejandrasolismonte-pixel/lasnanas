@@ -29,6 +29,9 @@
   const actionMessage = document.querySelector('[data-admin-action-message]');
   const transferDialog = document.querySelector('[data-transfer-dialog]');
   const transferForm = document.querySelector('[data-transfer-form]');
+  const activationDialog = document.querySelector('[data-activation-dialog]');
+  const activationMailStatus = document.querySelector('[data-activation-mail-status]');
+  const checkActivationMailButton = document.querySelector('[data-check-activation-mail]');
   const adminDocumentForm = document.querySelector('[data-admin-document-form]');
   const adminDocumentList = document.querySelector('[data-admin-document-list]');
   const adminDocumentMessage = document.querySelector('[data-admin-document-message]');
@@ -48,11 +51,12 @@
   const receiptDownload = document.querySelector('[data-admin-receipt-download]');
   let currentReceipt = null, receiptOpened = false, workflowState = null, confirming = false;
   let detailGeneration = 0;
+  let activationNoticeApplicationId = null, activationNoticeGeneration = 0, activationNoticeChecking = false;
   const transferEnabled = () => window.LasNanasTransfers.configured(window.LAS_NANAS_TRANSFER);
   const canConfirm = () => transferEnabled() && currentApplication?.application_status === 'approved' &&
     currentReceipt?.status === 'received' && receiptOpened && workflowState &&
     !workflowState.membership_active && (!workflowState.payment_status || workflowState.payment_status === 'pending');
-  function syncTransferButton() { confirmTransferButton.disabled = confirming || !canConfirm(); }
+  function syncTransferButton() { confirmTransferButton.disabled = confirming || !canConfirm(); syncNextStep(); }
   async function loadReceipt(applicationId, token) {
     if (token !== detailGeneration) return;
     currentReceipt = null; receiptOpened = false; receiptDownload.disabled = true; syncTransferButton();
@@ -117,7 +121,9 @@
 
   function formatDate(value) {
     const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? 'Fecha no disponible' : new Intl.DateTimeFormat('es-CL', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+    return Number.isNaN(date.getTime()) ? 'Fecha no disponible' : new Intl.DateTimeFormat('es-CL', {
+      dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Santiago', hour12: false
+    }).format(date);
   }
 
   function formatAmount(amount, currency) {
@@ -350,7 +356,9 @@
     const workflow = await client.rpc('admin_get_application_membership', { p_application_id: application.application_id });
     if (token !== detailGeneration) return;
     workflowState = !workflow.error && workflow.data?.[0] ? workflow.data[0] : null;
-    setDetailField('membership', workflow.error ? 'No fue posible consultar la membresía' : workflowState?.membership_active ? `Activa hasta ${formatDate(workflowState.ends_at)}` : 'Sin membresía activa');
+    setDetailField('membership', workflow.error ? 'No fue posible consultar la membresía' : workflowState?.membership_active
+      ? `Activada ${formatDate(workflowState.starts_at)} · vence ${formatDate(workflowState.ends_at)} (hora de Chile)`
+      : 'Sin membresía activa');
     detailStatus.textContent = workflow.error ? 'No fue posible consultar el estado de pago. Algunas acciones permanecerán bloqueadas.' : '';
     detailContent.hidden = false;
     adminActions.hidden = false;
@@ -379,6 +387,32 @@
       (status === 'approved' && !workflowState) ||
       workflowState?.payment_status === 'confirmed' || workflowState?.membership_active === true;
     clarificationForm.querySelector('[type="submit"]').disabled = !['submitted', 'in_review'].includes(status);
+    syncNextStep();
+  }
+
+  function syncNextStep() {
+    const box = document.querySelector('[data-admin-next-step]');
+    const text = document.querySelector('[data-admin-next-step-text]');
+    const paymentSection = detail.querySelector('[data-detail-section="payments"]');
+    const status = currentApplication?.application_status;
+    const active = workflowState?.membership_active === true;
+    box.classList.toggle('is-complete', active);
+    box.classList.toggle('is-next-step', Boolean(status) && !active);
+    document.querySelector('[data-admin-step-title]').textContent = active ? 'Activación completada' : 'Siguiente paso';
+    document.querySelector('[data-open-activation-notice]').hidden = !active;
+    adminActions.classList.toggle('is-next-step', ['submitted', 'in_review'].includes(status) && !active);
+    adminActions.classList.toggle('is-complete', active);
+    paymentSection.classList.toggle('is-next-step', status === 'approved' && !active);
+    paymentSection.classList.toggle('is-complete', active);
+    text.textContent = !status ? 'Selecciona una solicitud para ver el siguiente paso.'
+      : active ? 'Pago confirmado y membresía activa. Comprueba el estado del correo de bienvenida.'
+      : status === 'approved' && currentReceipt?.status === 'received'
+        ? 'Descarga el comprobante, verifica el abono bancario y pulsa Confirmar pago para activar la membresía.'
+      : status === 'approved' ? 'Solicitud aprobada. Espera el comprobante de transferencia para revisar el pago y activar la membresía.'
+      : ['submitted', 'in_review'].includes(status) ? 'Revisa la solicitud y pulsa Aprobar antes de confirmar cualquier pago.'
+      : status === 'needs_clarification' ? 'Espera la respuesta de la voluntaria y continúa la revisión.'
+      : status === 'draft' ? 'La voluntaria debe enviar la solicitud para que puedas revisarla.'
+      : 'Revisa el estado de la solicitud antes de continuar.';
   }
 
   function appendTextRecord(list, heading, body, date, unread = false) {
@@ -812,6 +846,77 @@
     await loadActivities();
   });
 
+  async function checkActivationNotice(applicationId, generation) {
+    const { data, error } = await client.rpc('admin_get_activation_notification_status', { p_application_id: applicationId });
+    if (generation !== activationNoticeGeneration || applicationId !== activationNoticeApplicationId) return 'stale';
+    const row = Array.isArray(data) ? data[0] : data;
+    if (error || !row) {
+      activationMailStatus.textContent = 'La membresía está activa. No se pudo comprobar el estado del correo; revisa los registros de la función.';
+      return 'error';
+    }
+    if (row.activation_status === 'sent') {
+      const timestamp = row.activation_sent_at ? ` el ${formatDate(row.activation_sent_at)} (hora de Chile)` : '';
+      activationMailStatus.textContent = `El correo de bienvenida y las instrucciones se enviaron al servicio de correo para la voluntaria${timestamp}. ${row.payment_status === 'sent' ? 'También se envió el aviso del comprobante de pago.' : 'El aviso del comprobante de pago sigue en proceso.'}`;
+    } else if (row.activation_status === 'failed') {
+      activationMailStatus.textContent = 'La membresía está activa, pero el correo de bienvenida todavía no pudo enviarse. Revisa los registros de la función.';
+    } else if (row.activation_status === 'missing') {
+      activationMailStatus.textContent = 'La membresía está activa, pero no aparece un correo de bienvenida en la cola. Revisa la migración de notificaciones.';
+    } else {
+      activationMailStatus.textContent = 'La membresía está activa. El correo de bienvenida y las instrucciones están pendientes de envío.';
+    }
+    return row.activation_status;
+  }
+
+  async function openActivationNotice(applicationId) {
+    const generation = ++activationNoticeGeneration;
+    activationNoticeApplicationId = applicationId;
+    activationMailStatus.textContent = 'Membresía activada. Enviando el correo de bienvenida y las instrucciones…';
+    activationDialog.showModal();
+    activationNoticeChecking = true;
+    checkActivationMailButton.disabled = true;
+    try {
+      const queued = await client.rpc('admin_queue_activation_notice', { p_application_id: applicationId });
+      if (queued.error) {
+        activationMailStatus.textContent = 'La membresía está activa, pero no se pudo preparar el correo de bienvenida. Revisa los registros de Supabase.';
+        return;
+      }
+      try {
+        const dispatch = await client.functions.invoke('send-volunteer-registration-notifications', { body: { application_id: applicationId } });
+        if (dispatch.error) activationMailStatus.textContent = 'La membresía está activa. El envío no pudo iniciarse desde el panel; comprobando la cola de correos…';
+      } catch (_) {
+        activationMailStatus.textContent = 'La membresía está activa. El envío no pudo iniciarse desde el panel; comprobando la cola de correos…';
+      }
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const state = await checkActivationNotice(applicationId, generation);
+        if (state === 'sent' || state === 'failed' || state === 'missing' || state === 'error' || state === 'stale') break;
+        await new Promise(resolve => setTimeout(resolve, 2500));
+        if (generation !== activationNoticeGeneration) break;
+      }
+    } catch (_) {
+      if (generation === activationNoticeGeneration)
+        activationMailStatus.textContent = 'La membresía está activa. No se pudo comprobar el correo ahora; revisa el estado de notificaciones en Supabase.';
+    } finally {
+      if (generation === activationNoticeGeneration) {
+        activationNoticeChecking = false;
+        checkActivationMailButton.disabled = false;
+      }
+    }
+  }
+  document.querySelector('[data-close-activation-dialog]').addEventListener('click', () => activationDialog.close());
+  activationDialog.addEventListener('close', () => { ++activationNoticeGeneration; activationNoticeApplicationId = null; });
+  document.querySelector('[data-open-activation-notice]').addEventListener('click', () => {
+    if (workflowState?.membership_active && currentApplication?.application_id)
+      void openActivationNotice(currentApplication.application_id);
+  });
+  checkActivationMailButton.addEventListener('click', async () => {
+    if (!activationNoticeApplicationId || activationNoticeChecking) return;
+    const generation = activationNoticeGeneration;
+    activationNoticeChecking = true;
+    checkActivationMailButton.disabled = true;
+    try { await checkActivationNotice(activationNoticeApplicationId, generation); }
+    finally { activationNoticeChecking = false; checkActivationMailButton.disabled = false; }
+  });
+
   confirmTransferButton.addEventListener('click', function () {
     if (!canConfirm()) return;
     transferDialog.querySelector('[data-transfer-summary="application_code"]').textContent = currentApplication.application_id;
@@ -857,8 +962,9 @@
       });
       if (error || data?.[0]?.payment_status !== 'confirmed') throw new Error('confirmation_failed');
       transferDialog.close();
+      if (data[0].membership_active) void openActivationNotice(applicationId);
       await loadApplicationDetail(applicationId);
-      actionMessage.textContent = data[0].membership_active ? 'Transferencia confirmada y membresía activa.' : 'Transferencia confirmada. Revisa el estado de la membresía.';
+      actionMessage.textContent = data[0].membership_active ? 'Transferencia confirmada y membresía activa. Revisa el estado del correo en la ventana de activación.' : 'Transferencia confirmada. Revisa el estado de la membresía.';
     } catch (_) {
       transferMessage.textContent = 'No se pudo verificar la confirmación. Consulta el estado antes de reintentar.';
     } finally { confirming = false; submit.disabled = false; syncTransferButton(); loader?.hide(); }

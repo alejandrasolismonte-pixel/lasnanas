@@ -107,3 +107,180 @@
 @keyframes new-message-pulse {
   50% { box-shadow: 0 0 0 5px #d6813f55; }
 }
+
+/* Jerarquía del recorrido y de cada tema del espacio personal. */
+.progress-card {
+  border: 1px solid #75aa9e;
+  border-top: 6px solid #17633f;
+  box-shadow: 0 12px 32px rgba(14, 56, 61, .13);
+}
+.steps li {
+  min-width: 0;
+  border-top-width: 5px;
+  border-radius: 4px;
+  padding: 9px 3px 4px;
+}
+.steps li.done { background: #e5f4eb; }
+.steps li.current {
+  background: #fff0df;
+  color: #78340c;
+  font-weight: 850;
+}
+.portal-grid .side-nav {
+  border: 1px solid #9ec7bc;
+  box-shadow: 0 8px 22px rgba(14, 56, 61, .1);
+}
+.portal-grid .side-nav button {
+  border-left: 4px solid transparent;
+}
+.portal-grid .side-nav button.active {
+  border-left-color: #17633f;
+  background: #d9efe3;
+  color: #12492f;
+  box-shadow: inset 0 0 0 1px #8dbca4;
+}
+.content-card[data-view] {
+  border: 1px solid #a5cdc2;
+  border-top: 6px solid #197454;
+  box-shadow: 0 14px 32px rgba(14, 56, 61, .12);
+}
+.content-card[data-view="documents"] { border-top-color: #196b83; }
+.content-card[data-view="profile"] { border-top-color: #ae5d16; }
+.content-card[data-view="agenda"] { border-top-color: #6b5794; }
+.content-card[data-view] > h2 {
+  padding-bottom: 12px;
+  border-bottom: 2px solid #d4e8e1;
+}
+[data-view="membership"] fieldset {
+  border: 1px solid #a7cbc1;
+  border-left: 5px solid #248461;
+  border-radius: 15px;
+  background: #f4faf7;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(14, 56, 61, .06);
+}
+[data-view="membership"] fieldset legend {
+  padding: 0 7px;
+  color: #114d37;
+  font-weight: 850;
+}
+.option-grid label > span {
+  border-width: 2px;
+  background: #fff;
+  box-shadow: 0 3px 9px rgba(14, 56, 61, .05);
+}
+.option-grid input:checked + span {
+  border-color: #ba5315;
+  background: #fff0df;
+  box-shadow: 0 0 0 2px #efc8a6;
+}
+[data-view="membership"] > form .review-box {
+  border: 2px solid #6caf91;
+  border-left: 6px solid #17633f;
+  background: #e8f6ed;
+  box-shadow: 0 5px 15px rgba(14, 56, 61, .08);
+}
+.state-panel {
+  border: 2px solid #e3a875;
+  border-left-width: 6px;
+  border-radius: 15px;
+  padding: clamp(16px, 2.5vw, 23px);
+  margin: 24px 0;
+  box-shadow: 0 7px 18px rgba(14, 56, 61, .08);
+}
+.state-panel--warning {
+  border-color: #d68240;
+  border-left-color: #b04b11;
+  background: #fff2e7;
+}
+.state-panel--info {
+  border-color: #89c8cd;
+  border-left-color: #23758a;
+  background: #e9f6f7;
+}
+.state-panel--success {
+  border-color: #8fc5a6;
+  border-left-color: #17633f;
+  background: #e9f6ee;
+}
+[data-conditions].state-panel {
+  border-color: #dcaa65;
+  border-left-color: #ab590f;
+  background: #fff4e4;
+}
+.state-panel.is-next-step,
+fieldset.is-next-step,
+form.is-next-step {
+  border-color: #bd6015;
+  border-left-color: #ad4a0d;
+  background: #fff0dc;
+  box-shadow: 0 0 0 3px #f2ca9d, 0 12px 24px rgba(111, 57, 12, .14);
+}
+.state-panel.is-complete {
+  border-color: #5ca67b;
+  border-left-color: #17633f;
+  background: #e5f5eb;
+}
+.message-panel {
+  border-color: #cc9b6c;
+  border-left-color: #a44a13;
+  background: #fff7ef;
+}
+.document {
+  border: 2px solid #9fc7cf;
+  border-left: 5px solid #196b83;
+  background: #f0f8fa;
+  box-shadow: 0 5px 14px rgba(14, 56, 61, .07);
+}
+.content-card[data-view="documents"] [data-volunteer-document-form],
+.content-card[data-view="profile"] [data-profile-form] {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #a4c9c2;
+  border-left: 5px solid #237d61;
+  border-radius: 14px;
+  background: #f3faf7;
+}
+.agenda-form {
+  border-width: 2px;
+  border-left: 5px solid #6b5794;
+  background: #f7f4fc;
+}
+@media (max-width: 560px) {
+  .portal-grid .side-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    overflow: visible;
+  }
+  .portal-grid .side-nav button {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  [data-view="membership"] fieldset { padding: 12px; }
+  .content-card[data-view] { padding: 18px; }
+  .steps { gap: 3px; }
+  .steps li { font-size: .68rem; }
+}
+@media (max-width: 420px) {
+  .portal-grid .side-nav { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Vista previa idéntica al PNG descargable de la credencial. */
+.credential {
+  width: min(100%, 780px);
+  max-width: none;
+  margin: 22px 0 10px;
+  padding: 0;
+  border-radius: 18px;
+  background: #003e33;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 48, 39, .2);
+}
+.credential canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1586 / 992;
+}
+[data-credential-document-message]:empty { display: none; }

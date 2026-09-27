@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   // Retira estados ficticios de versiones anteriores sin utilizarlos.
   try { sessionStorage.removeItem('lasnanas_visual_demo_v1'); } catch (_) {}
-  let photoPreview = '', storedPhotoUrl = '', removePhotoOnSave = false;
+  let photoPreview = '', storedPhotoUrl = '', removePhotoOnSave = false, photoLoadFailed = false;
+  let credentialRenderGeneration = 0;
 
   const money = (value, currency = application?.currency || 'CLP') => new Intl.NumberFormat(currency === 'USD' ? 'en-US' : 'es-CL', { style:'currency', currency, maximumFractionDigits:0 }).format(value || 0);
   const showMessage = (selector, message, error = false) => { const node=$(selector); if(node){node.textContent=message;node.style.color=error?'#9f2f2f':'';} };
@@ -75,11 +76,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function loadStoredPhoto() {
     if (storedPhotoUrl) URL.revokeObjectURL(storedPhotoUrl);
     storedPhotoUrl = '';
+    photoLoadFailed = false;
     if (!profile.photo_path) return;
     try {
       const { data, error } = await photoBucket().download(profile.photo_path);
       if (!error && data) storedPhotoUrl = URL.createObjectURL(data);
-    } catch (_) { /* El perfil sigue disponible aunque falle la fotografía. */ }
+      else photoLoadFailed = true;
+    } catch (_) { photoLoadFailed = true; }
   }
 
   // Crea únicamente un borrador: la cuenta ya existe y no se envía ni cobra automáticamente.
@@ -173,6 +176,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     rejectionReason.hidden=currentStatus()!=='rejected' || !latestRequest;
     rejectionReason.textContent=latestRequest ? `Motivo comunicado por el equipo: ${latestRequest.body}` : '';
     $('[data-conditions]').hidden=currentStatus()!=='approved';
+    const next=$('[data-member-next-step]');
+    const nextText=$('[data-member-next-step-text]');
+    next.classList.toggle('is-complete',hasActiveMembership());
+    next.classList.toggle('is-next-step',!hasActiveMembership());
+    nextText.textContent=hasActiveMembership()
+      ? `Tu membresía está activa hasta el ${new Intl.DateTimeFormat('es-CL',{dateStyle:'medium',timeStyle:'short',timeZone:'America/Santiago',hour12:false}).format(new Date(membership.ends_at))} (hora de Chile). Descarga tu comprobante, protocolo y credencial en Mis documentos.`
+      : currentStatus()==='approved'
+        ? 'Completa la transferencia y envía el comprobante. Coordinación activará tu membresía después de verificar el abono.'
+        : currentStatus()==='needs_clarification'
+          ? 'Responde la aclaración solicitada para que coordinación pueda continuar.'
+          : currentStatus()==='submitted' || currentStatus()==='in_review'
+            ? 'Tu solicitud está en revisión. Estamos cerca: pronto te indicaremos el siguiente paso para activar tu membresía.'
+            : currentStatus()==='rejected'
+              ? 'Lee el motivo comunicado por coordinación antes de enviar una nueva solicitud.'
+              : 'Completa los acuerdos y envía tu solicitud para iniciar la revisión.';
   }
   function renderMemberMessages(){
     const rows=messages.filter(row=>row.application_id===application?.id && row.visible_to_member);
@@ -201,7 +219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if(row.author_id!==user.id && !row.member_read_at)card.classList.add('is-unread');
       const author=document.createElement('strong');author.textContent=row.author_id===user.id?'Tú':'Coordinación';
       const body=document.createElement('p');body.textContent=row.body;
-      const date=document.createElement('small');date.textContent=new Intl.DateTimeFormat('es-CL',{dateStyle:'medium',timeStyle:'short'}).format(new Date(row.created_at));
+      const date=document.createElement('small');date.textContent=`${new Intl.DateTimeFormat('es-CL',{dateStyle:'medium',timeStyle:'short',timeZone:'America/Santiago',hour12:false}).format(new Date(row.created_at))} · hora de Chile`;
       card.append(author,body,date);list.append(card);
     });
   }
@@ -281,7 +299,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         button.textContent=label;button.onclick=()=>downloadMembershipStatement(kind);builtIn.append(button);
       }
     }
+    if(hasActiveMembership()){
+      const credential=document.createElement('button');credential.className='btn btn-primary';credential.type='button';
+      credential.disabled=hasUnsavedProfileChanges() || photoLoadFailed;
+      credential.textContent=photoLoadFailed?'Fotografía no disponible; recarga el panel':credential.disabled?'Guarda el perfil para descargar la credencial':'Descargar credencial PNG';
+      credential.onclick=()=>$('[data-download-credential]').click();builtIn.append(credential);
+    }
     root.append(builtIn);
+    const credentialMessage=document.createElement('p');
+    credentialMessage.className='field-message';credentialMessage.dataset.credentialDocumentMessage='';credentialMessage.setAttribute('aria-live','polite');
+    root.append(credentialMessage);
     if(!volunteerDocuments.length){const empty=document.createElement('div');empty.className='locked';empty.textContent=membership?'Aún no tienes otros documentos disponibles.':'Los archivos de Las Ñañas se habilitarán únicamente después del pago confirmado. Puedes enviar documentación para tu propia solicitud.';root.append(empty);return;}
     const grid=document.createElement('div');grid.className='document-grid';
     volunteerDocuments.forEach(record=>{const card=document.createElement('article');card.className='document';const title=document.createElement('h3');title.textContent=record.original_name;const status=document.createElement('p');status.textContent=record.document_kind==='volunteer_submission'?'Enviado para revisión':'Disponible para descarga';const button=document.createElement('button');button.className='btn btn-ghost';button.type='button';button.textContent='Descargar';button.onclick=()=>downloadVolunteerDocument(record.document_id);card.append(title,status,button);grid.append(card);});
@@ -290,19 +317,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function validDocumentFile(file){if(!file||!['application/pdf','image/jpeg','image/png'].includes(file.type)||file.size<1||file.size>10*1024*1024)return false;const bytes=new Uint8Array(await file.slice(0,8).arrayBuffer());const pdf=bytes[0]===0x25&&bytes[1]===0x50&&bytes[2]===0x44&&bytes[3]===0x46&&bytes[4]===0x2d;const jpg=bytes[0]===0xff&&bytes[1]===0xd8&&bytes[2]===0xff;const png=[0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a].every((value,index)=>bytes[index]===value);return(file.type==='application/pdf'&&pdf)||(file.type==='image/jpeg'&&jpg)||(file.type==='image/png'&&png);}
   async function downloadVolunteerDocument(documentId){const pathResult=await supabase.rpc('authorize_volunteer_document_download',{p_document_id:documentId});if(pathResult.error||!pathResult.data){showMessage('[data-volunteer-document-message]','No fue posible autorizar la descarga.',true);return;}const signed=await supabase.storage.from('volunteer-documents').createSignedUrl(pathResult.data,60);if(signed.error||!signed.data?.signedUrl){showMessage('[data-volunteer-document-message]','No fue posible generar el enlace privado.',true);return;}window.open(signed.data.signedUrl,'_blank','noopener,noreferrer');}
+  const savedProfileName=()=>profile.display_name || `${profile.first_name} ${profile.last_name}`;
+  function hasUnsavedProfileChanges(){
+    const form=$('[data-profile-form]');
+    return form.elements.displayName.value.trim()!==savedProfileName() ||
+      Boolean(form.elements.photo.files.length || photoPreview || removePhotoOnSave);
+  }
+  function credentialData(preview=false){
+    const active=hasActiveMembership();
+    const expired=Boolean(membership?.ends_at && Date.parse(membership.ends_at)<=Date.now());
+    const form=$('[data-profile-form]');
+    return {
+      templateUrl:$('[data-credential-canvas]').dataset.template,
+      name:preview ? (form.elements.displayName.value.trim() || savedProfileName()) : savedProfileName(),
+      planId:active ? (membership.plan_prices?.plan_id || price?.plan_id) : (price?.plan_id || membership?.plan_prices?.plan_id),
+      expiresAt:active || expired ? membership?.ends_at : null,
+      status:active ? 'active' : expired ? 'expired' : 'pending',
+      photoUrl:preview ? (photoPreview || (removePhotoOnSave ? '' : storedPhotoUrl)) : storedPhotoUrl
+    };
+  }
+  async function renderCredentialPreview(){
+    const generation=++credentialRenderGeneration;
+    const preview=document.createElement('canvas');
+    try{
+      await window.LasNanasCredential.renderToCanvas(preview,credentialData(true));
+      if(generation!==credentialRenderGeneration)return;
+      const canvas=$('[data-credential-canvas]');
+      canvas.width=preview.width;canvas.height=preview.height;
+      canvas.getContext('2d').drawImage(preview,0,0);
+      canvas.setAttribute('aria-label',`Credencial de ${credentialData(true).name}`);
+      showMessage('[data-credential-error]','');
+    }catch(_){
+      if(generation===credentialRenderGeneration){
+        const canvas=$('[data-credential-canvas]');
+        canvas.width=0;canvas.height=0;
+        showMessage('[data-credential-error]','No se pudo cargar la vista previa de la credencial.',true);
+      }
+    }
+  }
   function renderProfile(syncInput = false){
-    const name=profile.display_name || `${profile.first_name} ${profile.last_name}`;
-    if (syncInput) $('[data-profile-form]').elements.displayName.value=name;
-    $('[data-credential-name]').textContent=name;
-    $('[data-credential-plan]').textContent=price?.plan_id || membership?.plan_prices?.plan_id || '—';
-    const photo=$('[data-credential-photo]');
-    const source=photoPreview || (removePhotoOnSave ? '' : storedPhotoUrl);
-    photo.replaceChildren();
-    if (source) { const img=document.createElement('img'); img.src=source; img.alt='Fotografía de la voluntaria'; photo.append(img); }
-    else photo.textContent=(name[0]||'V').toUpperCase();
+    if(syncInput)$('[data-profile-form]').elements.displayName.value=savedProfileName();
+    void renderCredentialPreview();
+    showMessage('[data-photo-load-message]',photoLoadFailed?'No se pudo recuperar la fotografía guardada. Recarga el panel antes de descargar la credencial.':'',photoLoadFailed);
     const download=$('[data-download-credential]');
-    download.disabled=!hasActiveMembership() || Boolean(photoPreview || removePhotoOnSave);
-    download.textContent=!hasActiveMembership()?'Credencial pendiente de habilitación':download.disabled?'Guarda el perfil para descargar':'Descargar credencial PNG';
+    download.disabled=!hasActiveMembership() || hasUnsavedProfileChanges() || photoLoadFailed;
+    download.textContent=!hasActiveMembership()?'Credencial pendiente de habilitación':photoLoadFailed?'Fotografía no disponible; recarga el panel':download.disabled?'Guarda el perfil para descargar':'Descargar credencial PNG';
   }
   const agendaRecord=(item)=>{const start=new Date(item.starts_at),end=new Date(item.ends_at);return{id:item.id,official:item.official,type:item.type,title:item.title,date:start.toLocaleDateString('en-CA'),start:start.toTimeString().slice(0,5),end:end.toTimeString().slice(0,5),place:item.general_place||'',notes:item.private_notes||'',status:item.status};};
   function renderAgenda(){
@@ -312,13 +371,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const days=[...new Set(items.map(item=>item.date))].sort(); $('[data-agenda-calendar]').innerHTML=days.length?days.map(day=>`<div class="calendar-day"><strong>${day}</strong>${items.filter(item=>item.date===day).map(item=>`<div class="calendar-event ${item.official?'official':''}">${item.start} ${escapeHtml(item.title)}</div>`).join('')}</div>`).join(''):'<p>Sin fechas registradas.</p>';
   }
   const escapeHtml=value=>String(value||'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-  const renderAll=()=>{renderHeader();renderMembership();renderMemberMessages();renderDocuments();renderProfile(true);renderAgenda();};
+  const renderAll=()=>{renderHeader();renderMembership();renderMemberMessages();renderProfile(true);renderDocuments();renderAgenda();};
 
   $$('[data-view-button]').forEach(button=>button.onclick=()=>{$$('[data-view-button]').forEach(item=>item.classList.toggle('active',item===button));$$('[data-view]').forEach(view=>{view.hidden=view.dataset.view!==button.dataset.viewButton;});});
   $('[data-membership-form]').addEventListener('change',async event=>{
     if(!application || application.status!=='draft')return;
     const form=event.currentTarget; const plan=form.elements.plan.value; const billing=form.elements.billing.value; const currency=application.currency;
-    try{setBusy(form,true);const selectedPrice=await currentPrice(plan);const values={plan_price_id:selectedPrice.id,billing,currency,quoted_amount:quote(selectedPrice,billing,currency),respect_accepted:form.elements.respect.checked,coordination_accepted:form.elements.coordination.checked,updated_at:new Date().toISOString()};const{data,error}=await supabase.from('membership_applications').update(values).eq('id',application.id).eq('status','draft').select('*,plan_prices(*)').single();if(error)throw error;application=data;price=data.plan_prices;showMessage('[data-membership-message]','Cambios guardados.');renderMembership();}catch(error){showMessage('[data-membership-message]','No se pudieron guardar los cambios.',true);}finally{setBusy(form,false);renderMembership();}
+    try{setBusy(form,true);const selectedPrice=await currentPrice(plan);const values={plan_price_id:selectedPrice.id,billing,currency,quoted_amount:quote(selectedPrice,billing,currency),respect_accepted:form.elements.respect.checked,coordination_accepted:form.elements.coordination.checked,updated_at:new Date().toISOString()};const{data,error}=await supabase.from('membership_applications').update(values).eq('id',application.id).eq('status','draft').select('*,plan_prices(*)').single();if(error)throw error;application=data;price=data.plan_prices;showMessage('[data-membership-message]','Cambios guardados.');renderMembership();renderProfile();}catch(error){showMessage('[data-membership-message]','No se pudieron guardar los cambios.',true);}finally{setBusy(form,false);renderMembership();}
   });
   $$('[data-save-later]').forEach(button=>button.onclick=()=>showMessage(button.closest('[data-clarification-form]')?'[data-clarification-message]':'[data-membership-message]','Los cambios enviados ya están guardados en tu cuenta.'));
   $('[data-membership-form]').addEventListener('submit',async event=>{event.preventDefault();const button=$('[data-submit-application]');button.disabled=true;showMessage('[data-membership-message]','Enviando solicitud…');const{error}=await supabase.rpc('submit_membership_application',{p_application_id:application.id});if(error){showMessage('[data-membership-message]','No se pudo enviar la solicitud.',true);button.disabled=false;return;}await loadAll();showMessage('[data-membership-message]','Solicitud enviada correctamente.');});
@@ -355,7 +414,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       photoPreview='';removePhotoOnSave=false;form.elements.photo.value='';
       await loadStoredPhoto();
       renderProfile();
-      showMessage('[data-profile-message]','Perfil y fotografía guardados.');
+      renderDocuments();
+      showMessage('[data-profile-message]',photoLoadFailed?'Perfil guardado, pero no pudimos recuperar la fotografía. Recarga el panel.':'Perfil y fotografía guardados.',photoLoadFailed);
     }catch(_){
       if(newPath && !committed)await photoBucket().remove([newPath]);
       showMessage('[data-profile-message]','No se pudo guardar el perfil o la fotografía. Intenta nuevamente.',true);
@@ -369,27 +429,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     if(!(await validPhotoFile(file))){event.target.value='';showMessage('[data-profile-message]','Selecciona una imagen JPG, PNG o WebP válida de hasta 4 MiB.',true);return;}
     removePhotoOnSave=false;
     const reader=new FileReader();
-    reader.onload=()=>{if(event.target.files[0]===file){photoPreview=reader.result;renderProfile();}};
+    reader.onload=()=>{if(event.target.files[0]===file){photoPreview=reader.result;renderProfile();renderDocuments();}};
     reader.readAsDataURL(file);
     showMessage('[data-profile-message]','Fotografía lista. Pulsa “Guardar perfil” para conservarla.');
   });
-  $('[data-remove-photo]').onclick=()=>{photoPreview='';removePhotoOnSave=true;$('[data-profile-form]').elements.photo.value='';renderProfile();showMessage('[data-profile-message]','Pulsa “Guardar perfil” para quitar la fotografía.');};
+  $('[data-profile-form]').elements.displayName.addEventListener('input',()=>{renderProfile();renderDocuments();});
+  $('[data-remove-photo]').onclick=()=>{photoPreview='';removePhotoOnSave=true;$('[data-profile-form]').elements.photo.value='';renderProfile();renderDocuments();showMessage('[data-profile-message]','Pulsa “Guardar perfil” para quitar la fotografía.');};
   $('[data-download-credential]').onclick=async()=>{
-    if(!hasActiveMembership())return;
-    const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=720;
-    const ctx=canvas.getContext('2d');if(!ctx)return;
-    const gradient=ctx.createLinearGradient(0,0,1200,720);gradient.addColorStop(0,'#0f5037');gradient.addColorStop(1,'#197d50');ctx.fillStyle=gradient;ctx.fillRect(0,0,1200,720);
-    ctx.fillStyle='#ffffff';ctx.font='bold 47px Georgia, serif';ctx.fillText('LAS ÑAÑAS',75,105);
-    ctx.font='27px system-ui, sans-serif';ctx.fillText('CREDENCIAL DE VOLUNTARIADO',75,152);
-    const source=storedPhotoUrl;
-    ctx.fillStyle='#dcedea';ctx.beginPath();ctx.arc(215,365,110,0,Math.PI*2);ctx.fill();
-    if(source){try{const img=new Image();img.src=source;await img.decode();ctx.save();ctx.beginPath();ctx.arc(215,365,110,0,Math.PI*2);ctx.clip();ctx.drawImage(img,105,255,220,220);ctx.restore();}catch(_){/* La credencial conserva el nombre. */}}
-    const name=profile.display_name || `${profile.first_name} ${profile.last_name}`;
-    ctx.fillStyle='#ffffff';ctx.font='bold 51px system-ui, sans-serif';ctx.fillText(name,385,327,750);
-    ctx.font='35px system-ui, sans-serif';ctx.fillText(`Plan: ${membership.plan_prices?.plan_id || price?.plan_id || '—'}`,385,390,740);
-    ctx.font='27px system-ui, sans-serif';ctx.fillText(`Vigente hasta: ${new Intl.DateTimeFormat('es-CL',{dateStyle:'long'}).format(new Date(membership.ends_at))}`,385,447,740);
-    ctx.fillText('Membresía activa · Las Ñañas',75,630);
-    canvas.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download='credencial-las-nanas.png';link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);},'image/png');
+    if(!hasActiveMembership() || hasUnsavedProfileChanges() || photoLoadFailed)return;
+    const button=$('[data-download-credential]');
+    button.disabled=true;
+    try{
+      const canvas=document.createElement('canvas');
+      await window.LasNanasCredential.renderToCanvas(canvas,credentialData());
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+      if(!blob)throw new Error('No se pudo generar el archivo PNG.');
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');link.href=url;link.download='credencial-las-nanas.png';
+      document.body.append(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+      showMessage('[data-credential-error]','');
+      showMessage('[data-credential-document-message]','');
+    }catch(_){
+      showMessage('[data-credential-error]','No se pudo generar la credencial. Intenta nuevamente.',true);
+      showMessage('[data-credential-document-message]','No se pudo generar la credencial. Intenta nuevamente.',true);
+    }
+    finally{button.disabled=!hasActiveMembership() || hasUnsavedProfileChanges() || photoLoadFailed;}
   };
 
   const agendaForm=$('[data-agenda-form]');

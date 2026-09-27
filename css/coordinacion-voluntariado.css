@@ -359,3 +359,181 @@
     width: 100%;
   }
 }
+
+/* Diferenciar solicitudes, datos, mensajes, pago y documentación. */
+.admin-view:not(.admin-detail) {
+  border-top: 5px solid #287b61;
+  border-radius: 13px 13px 0 0;
+  padding-top: 17px;
+}
+.admin-view[data-admin-view="payments"] { border-top-color: #b95b16; }
+.admin-view[data-admin-view="clarifications"] { border-top-color: #21778c; }
+.admin-view[data-admin-view="documents"] { border-top-color: #79609e; }
+.admin-section-head {
+  border-bottom: 2px solid #a8d0c3;
+  padding-bottom: 17px;
+}
+.admin-tab {
+  box-shadow: 0 3px 10px rgba(14, 56, 61, .07);
+}
+.admin-tab.active,
+.admin-tab[aria-selected="true"] {
+  box-shadow: inset 0 -4px 0 var(--category-border), 0 5px 14px rgba(14, 56, 61, .13);
+}
+.admin-card {
+  border-width: 2px;
+  border-left: 5px solid #287b61;
+  background: #f2faf6;
+  box-shadow: 0 5px 15px rgba(14, 56, 61, .07);
+}
+.admin-card.has-new-messages {
+  border-color: #d6813f;
+  border-left-color: #b34f13;
+  background: #fff1e1;
+  box-shadow: 0 0 0 2px #f4d3b5, 0 7px 18px rgba(111, 57, 12, .12);
+}
+.admin-detail > h2 {
+  margin-top: 18px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid #84b9a9;
+}
+.admin-detail-grid {
+  gap: 12px;
+  margin: 18px 0 22px;
+}
+.admin-detail-grid .review-box {
+  border: 1px solid #a4cbbf;
+  border-left: 5px solid #277b61;
+  background: #ecf7f2;
+  box-shadow: 0 4px 12px rgba(14, 56, 61, .07);
+}
+.admin-detail-grid .review-box:nth-child(n+4):nth-child(-n+7) {
+  border-color: #9bc2d0;
+  border-left-color: #22718b;
+  background: #edf6fa;
+}
+.admin-detail-grid .review-box:nth-child(n+8) {
+  border-color: #ddb890;
+  border-left-color: #ae5b16;
+  background: #fff4e7;
+}
+.admin-detail-grid dt {
+  color: #295269;
+  font-weight: 800;
+}
+.admin-detail-grid dd {
+  color: #0e3037;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+.admin-detail [data-detail-section] {
+  border: 2px solid #9cc9d0;
+  border-left: 6px solid #23778d;
+  border-radius: 16px;
+  background: #f0f8fa;
+  padding: clamp(17px, 2.5vw, 24px);
+  margin: 22px 0;
+  box-shadow: 0 8px 19px rgba(14, 56, 61, .09);
+}
+.admin-detail [data-detail-section] > h3 {
+  margin-top: 0;
+  padding-bottom: 9px;
+  border-bottom: 2px solid currentColor;
+  color: #145a70;
+}
+.admin-detail [data-detail-section="payments"] {
+  border-color: #dfac70;
+  border-left-color: #aa520c;
+  background: #fff3e1;
+}
+.admin-detail [data-detail-section="payments"] > h3 { color: #8c430b; }
+.admin-detail [data-detail-section="documents"] {
+  border-color: #94c4a8;
+  border-left-color: #267450;
+  background: #eff8f1;
+}
+.admin-detail [data-detail-section="documents"] > h3 { color: #195a3e; }
+.admin-detail [data-detail-section].is-next-step,
+.admin-detail [data-admin-actions].is-next-step {
+  border: 2px solid #bc6018;
+  border-left: 7px solid #a74909;
+  border-radius: 15px;
+  background: #ffebcf;
+  box-shadow: 0 0 0 3px #f1ca9d, 0 12px 26px rgba(111, 57, 12, .17);
+}
+.admin-detail [data-detail-section].is-complete,
+.admin-detail [data-admin-actions].is-complete {
+  border-color: #69a982;
+  border-left-color: #17633f;
+  background: #e7f5eb;
+}
+.admin-detail [data-admin-actions].is-next-step,
+.admin-detail [data-admin-actions].is-complete {
+  padding: 14px;
+  margin: 19px 0 8px;
+}
+.admin-next-step {
+  margin: 18px 0;
+  padding: 16px 19px;
+  border: 2px solid #bd6015;
+  border-left: 7px solid #a74909;
+  border-radius: 15px;
+  background: #fff0dc;
+  box-shadow: 0 8px 20px rgba(111, 57, 12, .13);
+}
+.admin-next-step.is-complete {
+  border-color: #5ca67b;
+  border-left-color: #17633f;
+  background: #e5f5eb;
+}
+.admin-next-step strong { display: block; color: #69310d; font-size: 1.08rem; }
+.admin-next-step.is-complete strong { color: #17633f; }
+.admin-next-step p { margin: 7px 0 0; line-height: 1.5; }
+.admin-next-step .btn { margin-top: 12px; }
+.activation-dialog {
+  width: min(520px, calc(100% - 28px));
+  max-height: min(85vh, 700px);
+  margin: auto;
+  padding: clamp(20px, 4vw, 32px);
+  border: 3px solid #2a8a5b;
+  border-radius: 20px;
+  background: #f3fbf5;
+  color: #12343a;
+  box-shadow: 0 20px 70px rgba(0, 28, 30, .3);
+}
+.activation-dialog::backdrop { background: rgba(7, 29, 32, .62); }
+.activation-dialog h2 { margin-top: 0; color: #17633f; }
+.activation-dialog [data-activation-mail-status] {
+  padding: 14px 16px;
+  border-radius: 11px;
+  background: #e1f2e8;
+  line-height: 1.5;
+}
+.admin-detail [data-detail-section="payments"] [data-confirm-transfer]:not(:disabled),
+.admin-detail [data-admin-actions] .btn-primary:not(:disabled) {
+  background: #9d420c;
+  box-shadow: 0 5px 13px rgba(111, 57, 12, .2);
+}
+.admin-detail [data-detail-section="payments"] [data-confirm-transfer]:not(:disabled):hover,
+.admin-detail [data-admin-actions] .btn-primary:not(:disabled):hover {
+  background: #783109;
+}
+.admin-detail [data-detail-section="payments"] .help {
+  display: block;
+  margin-top: 16px;
+  padding: 10px 13px;
+  border-left: 4px solid #bc7437;
+  border-radius: 8px;
+  background: #fffaf3;
+  color: #704016;
+}
+@media (max-width: 600px) {
+  .admin-nav { grid-template-columns: minmax(0, 1fr); }
+  .admin-nav button { padding: 10px; }
+  .admin-detail [data-detail-section] { padding: 17px; }
+  .admin-detail [data-detail-section="payments"] [data-confirm-transfer] {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+  }
+}

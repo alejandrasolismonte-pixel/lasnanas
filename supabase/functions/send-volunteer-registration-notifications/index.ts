@@ -151,8 +151,9 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
       htmlContent: `<html lang="es"><body>${brand}<h1>Pago confirmado</h1>
         <p>Hola, ${escapeHtml(firstName)}. Confirmamos tu aporte al plan ${escapeHtml(plan)} por ${escapeHtml(amount)}.</p>
         <p>En <strong>Mi voluntariado → Mis documentos</strong> puedes descargar el comprobante con la fecha, referencia e importe verificado.</p>
-        <p><a href="${escapeHtml(documentsUrl)}">Descargar mi comprobante</a></p></body></html>`,
-      textContent: `Pago confirmado\nHola, ${firstName}. Confirmamos tu aporte al plan ${plan} por ${amount}.\nDescarga el comprobante en Mi voluntariado, sección Mis documentos: ${documentsUrl}`,
+        <p><a href="${escapeHtml(documentsUrl)}">Descargar mi comprobante</a></p>
+        <p><a href="${escapeHtml(volunteerUrl)}">Entrar a mi panel</a></p></body></html>`,
+      textContent: `Pago confirmado\nHola, ${firstName}. Confirmamos tu aporte al plan ${plan} por ${amount}.\nDescarga el comprobante en Mi voluntariado, sección Mis documentos: ${documentsUrl}\nEntrar a mi panel: ${volunteerUrl}`,
       headers: { idempotencyKey: row.idempotency_key },
     };
   }
@@ -176,14 +177,16 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
     return {
       sender: { name: "Las Ñañas", email: config.senderEmail },
       to: [{ email: row.recipient_email!, name: `${firstName} ${lastName}`.trim() }],
-      subject: "Tu suscripción a Las Ñañas está activa",
-      htmlContent: `<html lang="es"><body>${brand}<h1>Tu suscripción está activa</h1>
-        <p>Hola, ${escapeHtml(firstName)}. Tu membresía ${escapeHtml(plan)} está activa.</p>
+      subject: "Bienvenida a Las Ñañas · Tu membresía está activa",
+      htmlContent: `<html lang="es"><body>${brand}<h1>Bienvenida a Las Ñañas, ${escapeHtml(firstName)}</h1>
+        <p>Gracias por acompañarnos en este camino. Coordinación aprobó tu solicitud, confirmó tu pago y activó tu membresía ${escapeHtml(plan)}.</p>
         <p>Vigencia: ${escapeHtml(start)} al ${escapeHtml(end)}.</p>
-        <p>En <strong>Mis documentos</strong> puedes descargar la constancia de activación, el comprobante de pago y el protocolo. En <strong>Mi perfil</strong> puedes descargar tu credencial.</p>
+        <p>Tu comprobante de pago, el protocolo y tu credencial están en la pestaña <strong>Mis documentos</strong> de tu panel.</p>
+        <p><img src="${escapeHtml(welcomeImageUrl)}" alt="Una ñaña te da la bienvenida" width="260" style="max-width:260px;height:auto"></p>
         <p><a href="${escapeHtml(documentsUrl)}">Abrir Mis documentos</a></p>
+        <p><a href="${escapeHtml(volunteerUrl)}">Entrar a mi panel</a></p>
         </body></html>`,
-      textContent: `Tu suscripción está activa\nHola, ${firstName}. Tu membresía ${plan} está activa del ${start} al ${end}.\nDescarga la constancia, el comprobante y el protocolo en Mis documentos; tu credencial está en Mi perfil.\nMis documentos: ${documentsUrl}`,
+      textContent: `Bienvenida a Las Ñañas, ${firstName}. Gracias por acompañarnos en este camino. Coordinación aprobó tu solicitud, confirmó tu pago y activó tu membresía ${plan} del ${start} al ${end}.\nTu comprobante de pago, el protocolo y tu credencial están en la pestaña Mis documentos: ${documentsUrl}\nEntrar a mi panel: ${volunteerUrl}`,
       headers: { idempotencyKey: row.idempotency_key },
     };
   }
@@ -191,24 +194,23 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
   return {
     sender: { name: "Las Ñañas", email: config.senderEmail },
     to: [{ email: row.recipient_email!, name: `${firstName} ${lastName}`.trim() }],
-    subject: "Bienvenida a Las Ñañas",
-    htmlContent: `<html lang="es"><body>${brand}<h1>Bienvenida a Las Ñañas, ${escapeHtml(firstName)}</h1>
-      <p>Tu inscripción al plan ${escapeHtml(plan)} fue guardada y será revisada por coordinación.</p>
-      <p><img src="${escapeHtml(welcomeImageUrl)}" alt="Una ñaña te da la bienvenida" width="260" style="max-width:260px;height:auto"></p>
-      <p><a href="${escapeHtml(volunteerUrl)}">Abrir mi panel de voluntariado</a></p>
-      <p>Cuando tu suscripción esté activa, podrás descargar tu credencial desde <strong>Mi perfil</strong>.</p></body></html>`,
-    textContent: `Bienvenida a Las Ñañas, ${firstName}.\nTu inscripción al plan ${plan} fue guardada y será revisada por coordinación.\nAbre tu panel: ${volunteerUrl}\nCuando tu suscripción esté activa, descarga tu credencial en Mi perfil.`,
+    subject: "Recibimos tu inscripción · Las Ñañas",
+    htmlContent: `<html lang="es"><body>${brand}<h1>Recibimos tu inscripción, ${escapeHtml(firstName)}</h1>
+      <p>Tu inscripción al plan ${escapeHtml(plan)} fue guardada. Estamos cerca de completar tu incorporación: coordinación revisará tu solicitud y, cuando apruebe y active tu cuenta tras confirmar el pago, tu membresía quedará activa.</p>
+      <p><a href="${escapeHtml(volunteerUrl)}">Entrar a mi panel de voluntariado</a></p></body></html>`,
+    textContent: `Recibimos tu inscripción, ${firstName}.\nTu inscripción al plan ${plan} fue guardada. Estamos cerca de completar tu incorporación: coordinación revisará tu solicitud y, cuando apruebe y active tu cuenta tras confirmar el pago, tu membresía quedará activa.\nEntrar a mi panel: ${volunteerUrl}`,
     headers: { idempotencyKey: row.idempotency_key },
   };
 }
 
 export async function loadConfirmedPayment(client: SupabaseClient, row: NotificationRow): Promise<ConfirmedPayment> {
   const { data: application, error: applicationError } = await client.from("membership_applications")
-    .select("owner_id").eq("id", row.application_id).is("deleted_at", null).single();
+    .select("owner_id,status").eq("id", row.application_id).is("deleted_at", null).single();
   const { data: payment, error: paymentError } = await client.from("payments")
     .select("id,owner_id,application_id,status,amount,currency,provider_reference,confirmed_at,settled_amount,settled_currency,source_currency,transfer_route")
     .eq("application_id", row.application_id).eq("status", "confirmed").single();
-  if (applicationError || !application || paymentError || !payment || payment.owner_id !== application.owner_id ||
+  if (applicationError || !application || application.status !== "approved" ||
+      paymentError || !payment || payment.owner_id !== application.owner_id ||
       payment.application_id !== row.application_id) throw new Error("confirmed_payment_unavailable");
   const { data: membership, error: membershipError } = await client.from("memberships")
     .select("owner_id,application_id,payment_id,active,starts_at,ends_at")
@@ -228,7 +230,7 @@ export async function loadConfirmedPayment(client: SupabaseClient, row: Notifica
   } as ConfirmedPayment;
 }
 
-function requireRuntimeConfig(): RuntimeConfig & { webhookSecret: string; supabaseUrl: string; supabaseSecretKey: string } {
+function requireRuntimeConfig(): RuntimeConfig & { webhookSecret?: string; supabaseUrl: string; supabaseSecretKey: string } {
   // SECRETOS: todos se leen solo en el runtime de Supabase; jamás desde el frontend.
   const brevoApiKey = Deno.env.get("BREVO_API_KEY")?.trim();
   const senderEmail = Deno.env.get("BREVO_SENDER_EMAIL")?.trim();
@@ -248,10 +250,13 @@ function requireRuntimeConfig(): RuntimeConfig & { webhookSecret: string; supaba
     }
   }
   supabaseSecretKey ||= Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")?.trim();
-  if (!brevoApiKey || !senderEmail || !adminEmail || !publicSiteUrl || !webhookSecret || !supabaseUrl || !supabaseSecretKey) {
+  if (!brevoApiKey || !senderEmail || !adminEmail || !publicSiteUrl || !supabaseUrl || !supabaseSecretKey) {
     throw new Error("missing_server_configuration");
   }
   if (!EMAIL_PATTERN.test(senderEmail) || !EMAIL_PATTERN.test(adminEmail)) throw new Error("invalid_server_email_configuration");
+  try {
+    if (new URL(publicSiteUrl).protocol !== "https:") throw new Error("invalid_public_site_url");
+  } catch { throw new Error("invalid_public_site_url"); }
   return { brevoApiKey, senderEmail, adminEmail, publicSiteUrl, webhookSecret, supabaseUrl, supabaseSecretKey };
 }
 
@@ -269,18 +274,73 @@ async function secretsMatch(received: string, expected: string): Promise<boolean
   return difference === 0;
 }
 
+export async function authorizeAdminDispatch(client: SupabaseClient, request: Request): Promise<string> {
+  const authorization = request.headers.get("authorization") ?? "";
+  const bearer = /^Bearer ([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/i.exec(authorization);
+  if (!bearer || bearer[1].length > 4096) throw new Error("admin_auth_required");
+  const { data: { user }, error: authError } = await client.auth.getUser(bearer[1]);
+  if (authError || !user) throw new Error("admin_auth_required");
+  const { data: role, error: roleError } = await client.from("staff_roles")
+    .select("user_id").eq("user_id", user.id).eq("role", "admin").is("revoked_at", null).maybeSingle();
+  if (roleError) throw new Error("admin_role_unavailable");
+  if (!role) throw new Error("admin_access_required");
+  const rawBody = await request.text();
+  if (rawBody.length > 512) throw new Error("invalid_application_id");
+  let body: unknown;
+  try { body = JSON.parse(rawBody); } catch { throw new Error("invalid_application_id"); }
+  const applicationId = typeof body === "object" && body !== null && !Array.isArray(body)
+    ? (body as Record<string, unknown>).application_id : undefined;
+  if (typeof applicationId !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(applicationId)) {
+    throw new Error("invalid_application_id");
+  }
+  return applicationId;
+}
+
 export async function handler(request: Request): Promise<Response> {
-  if (request.method !== "POST") return new Response("Método no permitido", { status: 405 });
   let config: ReturnType<typeof requireRuntimeConfig>;
   try { config = requireRuntimeConfig(); } catch { return Response.json({ error: "server_not_configured" }, { status: 503 }); }
-  if (!await secretsMatch(request.headers.get("x-notification-secret") ?? "", config.webhookSecret)) {
-    return Response.json({ error: "unauthorized" }, { status: 401 });
+  const origin = request.headers.get("origin");
+  const allowedOrigin = new URL(config.publicSiteUrl).origin;
+  if (origin && origin !== allowedOrigin) return Response.json({ error: "forbidden_origin" }, { status: 403 });
+  const corsHeaders = new Headers();
+  if (origin) {
+    corsHeaders.set("access-control-allow-origin", allowedOrigin);
+    corsHeaders.set("access-control-allow-methods", "POST, OPTIONS");
+    corsHeaders.set("access-control-allow-headers", "authorization, apikey, x-client-info, content-type");
+    corsHeaders.set("vary", "Origin");
   }
-
+  const json = (body: Record<string, unknown>, status = 200) => Response.json(body, { status, headers: corsHeaders });
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders });
+  if (request.method !== "POST") return new Response("Método no permitido", { status: 405, headers: corsHeaders });
   const worker = crypto.randomUUID();
   const supabase = createClient(config.supabaseUrl, config.supabaseSecretKey, { auth: { persistSession: false, autoRefreshToken: false } });
-  const { data, error } = await supabase.rpc("claim_volunteer_notifications", { p_worker: worker, p_limit: 10 });
-  if (error) return Response.json({ error: "queue_unavailable" }, { status: 503 });
+  let applicationId: string | undefined;
+  const webhookHeader = request.headers.get("x-notification-secret");
+  if (webhookHeader !== null) {
+    if (!config.webhookSecret || !await secretsMatch(webhookHeader, config.webhookSecret)) {
+      return json({ error: "unauthorized" }, 401);
+    }
+  } else {
+    try {
+      applicationId = await authorizeAdminDispatch(supabase, request);
+    } catch (caught) {
+      const code = caught instanceof Error ? caught.message : "admin_auth_required";
+      const status = code === "invalid_application_id" ? 400
+        : code === "admin_access_required" ? 403
+        : code === "admin_role_unavailable" ? 503 : 401;
+      return json({ error: code }, status);
+    }
+  }
+  if (applicationId) {
+    const ensured = await supabase.rpc("ensure_activation_notifications", { p_application_id: applicationId });
+    if (ensured.error) return json({ error: "queue_unavailable" }, 503);
+  }
+  const { data, error } = applicationId
+    ? await supabase.rpc("claim_volunteer_notifications_for_application", {
+      p_worker: worker, p_application_id: applicationId, p_limit: 10,
+    })
+    : await supabase.rpc("claim_volunteer_notifications", { p_worker: worker, p_limit: 10 });
+  if (error) return json({ error: "queue_unavailable" }, 503);
 
   let sent = 0; let failed = 0;
   for (const row of (data ?? []) as NotificationRow[]) {
@@ -313,7 +373,7 @@ export async function handler(request: Request): Promise<Response> {
       failed++;
     }
   }
-  return Response.json({ processed: sent + failed, sent, failed });
+  return json({ processed: sent + failed, sent, failed });
 }
 
 if (import.meta.main) Deno.serve(handler);

@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>Coordinación de voluntariado · Las Ñañas</title>
-  <link rel="stylesheet" href="../css/mi-voluntariado.css?v=4">
-  <link rel="stylesheet" href="../css/coordinacion-voluntariado.css?v=3">
+  <link rel="stylesheet" href="../css/mi-voluntariado.css?v=6">
+  <link rel="stylesheet" href="../css/coordinacion-voluntariado.css?v=4">
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
 </head>
 <body>
@@ -114,9 +114,14 @@
           <div class="review-box"><dt>Moneda cotizada</dt><dd data-detail-field="currency">—</dd></div>
           <div class="review-box"><dt>Importe cotizado</dt><dd data-detail-field="amount">—</dd></div>
           <div class="review-box"><dt>Estado</dt><dd data-detail-field="status">—</dd></div>
-          <div class="review-box"><dt>Fecha</dt><dd data-detail-field="created_at">—</dd></div>
+          <div class="review-box"><dt>Solicitud creada (hora de Chile)</dt><dd data-detail-field="created_at">—</dd></div>
           <div class="review-box"><dt>Membresía</dt><dd data-detail-field="membership">Sin membresía activa</dd></div>
         </dl>
+        <div class="admin-next-step" data-admin-next-step role="status" aria-live="polite">
+          <strong data-admin-step-title>Siguiente paso</strong>
+          <p data-admin-next-step-text>Consultando el estado de esta solicitud…</p>
+          <button class="btn btn-ghost" type="button" data-open-activation-notice hidden>Comprobar o enviar bienvenida</button>
+        </div>
         <div class="button-row" data-admin-actions hidden>
           <button class="btn btn-ghost" type="button" data-mark-review>Pasar a revisión</button>
           <button class="btn btn-primary" type="button" data-approve-application>Aprobar</button>
@@ -178,7 +183,7 @@
       <div class="review-box"><strong>Plan</strong><span data-transfer-summary="plan">—</span></div>
       <div class="review-box"><strong>Importe cotizado</strong><span data-transfer-summary="amount">—</span></div>
       <div class="review-box"><strong>Moneda cotizada</strong><span data-transfer-summary="currency">—</span></div>
-      <div class="review-box"><strong>Fecha</strong><span data-transfer-summary="date">—</span></div>
+      <div class="review-box"><strong>Fecha de confirmación (hora de Chile)</strong><span data-transfer-summary="date">—</span></div>
       <p class="help">Coteja el código de solicitud con el comentario del abono. Registra abajo la referencia bancaria de la operación.</p>
       <label>Referencia bancaria de la transferencia
         <input type="text" name="reference" minlength="3" maxlength="120" autocomplete="off" required>
@@ -203,12 +208,21 @@
       </div>
     </form>
   </dialog>
+  <dialog class="activation-dialog" data-activation-dialog aria-labelledby="activation-dialog-title">
+    <h2 id="activation-dialog-title">Membresía activada</h2>
+    <p data-activation-result>El pago y la membresía quedaron confirmados.</p>
+    <p data-activation-mail-status role="status" aria-live="polite">Comprobando el envío del correo de bienvenida y las instrucciones…</p>
+    <div class="button-row">
+      <button class="btn btn-ghost" type="button" data-check-activation-mail>Comprobar envío</button>
+      <button class="btn btn-primary" type="button" data-close-activation-dialog>Cerrar</button>
+    </div>
+  </dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-config.js"></script>
   <script src="../js/supabase-client.js?v=2"></script>
   <script src="../js/loading-overlay.js?v=2"></script>
   <script src="../js/transfer-config.js?v=5"></script>
   <script src="../js/transfer-payments.js?v=5"></script>
-  <script src="../js/coordinacion-voluntariado.js?v=9"></script>
+  <script src="../js/coordinacion-voluntariado.js?v=10"></script>
 </body>
 </html>
