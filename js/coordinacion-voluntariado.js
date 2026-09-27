@@ -856,7 +856,7 @@
     }
     if (row.activation_status === 'sent') {
       const timestamp = row.activation_sent_at ? ` el ${formatDate(row.activation_sent_at)} (hora de Chile)` : '';
-      activationMailStatus.textContent = `El correo de bienvenida y las instrucciones se enviaron al servicio de correo para la voluntaria${timestamp}. ${row.payment_status === 'sent' ? 'También se envió el aviso del comprobante de pago.' : 'El aviso del comprobante de pago sigue en proceso.'}`;
+      activationMailStatus.textContent = `El correo de bienvenida y activación se envió al servicio de correo para la voluntaria${timestamp}. El comprobante de pago se puede descargar en Mis documentos de su panel.`;
     } else if (row.activation_status === 'failed') {
       activationMailStatus.textContent = 'La membresía está activa, pero el correo de bienvenida todavía no pudo enviarse. Revisa los registros de la función.';
     } else if (row.activation_status === 'missing') {

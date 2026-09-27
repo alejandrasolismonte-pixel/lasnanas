@@ -468,6 +468,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try{
     await loadAll();
-    if(user && !workspace.hidden && query.get('view')==='documents')$('[data-view-button="documents"]').click();
+    if (user && !workspace.hidden && ['documents', 'profile'].includes(query.get('view')))
+      $(`[data-view-button="${query.get('view')}"]`).click();
   }catch(error){setGlobal('No se pudo cargar tu espacio privado. Revisa la conexión o las políticas RLS.',true);}
 });

@@ -10,7 +10,7 @@ Este manual explica el recorrido de una voluntaria y las tareas de coordinación
 
 1. En la página de voluntariado, la persona elige Keyuwün, Kimün o Pülli, periodicidad mensual o anual y precio en CLP o USD.
 2. El botón del plan abre el formulario de registro o ingreso. La selección se conserva durante el registro, incluso si el enlace de confirmación se abre en otro dispositivo.
-3. Supabase Auth envía el enlace de confirmación. Al abrirlo, la persona llega a **Mi voluntariado**, donde se crea un borrador de solicitud con el plan elegido.
+3. Supabase Auth envía el **primer correo a la voluntaria**, con el logo de Las Ñañas, la imagen de la ñaña y el enlace de confirmación. Al abrirlo, la persona llega a **Mi voluntariado**, donde se crea un borrador de solicitud con el plan elegido.
 4. Si el enlace ya se utilizó o expiró, debe entrar desde **Mi Ruka** con su contraseña. Si el correo sigue pendiente de confirmación, desde el mismo acceso puede solicitar un nuevo enlace.
 
 Los importes previstos por la nueva versión de precios son:
@@ -27,7 +27,7 @@ El precio anual equivale a seis mensualidades: **50 % del total de doce meses**.
 
 En **Mi voluntariado**, la persona puede revisar el plan, editar el borrador y guardar su perfil. Para enviar la solicitud debe tener el correo confirmado y aceptar los acuerdos de respeto y privacidad y de coordinación de fechas, cupos, traslados y alojamiento.
 
-Al enviarla, el estado pasa a **Solicitud enviada**. Coordinación recibe un aviso de nueva inscripción y la voluntaria recibe una bienvenida por correo. El equipo puede ponerla en revisión, pedir una aclaración visible para la voluntaria, aprobarla o rechazarla con un motivo. Una aclaración respondida vuelve a revisión. Los adjuntos de aclaraciones todavía están deshabilitados.
+Al enviarla, el estado pasa a **Solicitud enviada**. Coordinación recibe su aviso de nueva inscripción; la voluntaria sigue el estado en **Mi voluntariado**, sin un correo adicional. El equipo puede ponerla en revisión, pedir una aclaración visible para la voluntaria, aprobarla o rechazarla con un motivo. Una aclaración respondida vuelve a revisión. Los adjuntos de aclaraciones todavía están deshabilitados.
 
 La aprobación **no activa** la membresía ni autoriza cobrar por sí sola: abre la etapa de transferencia.
 
@@ -48,14 +48,13 @@ Una cuenta con rol administrativo vigente abre el panel de coordinación, revisa
 
 Al confirmar, coordinación registra la referencia bancaria, el origen nacional o internacional, la moneda enviada y el **importe y moneda realmente abonados**. El sistema conserva por separado el precio cotizado. La confirmación crea una membresía activa por un mes o un año, según la periodicidad elegida.
 
-## 5. Correos y documentos tras la activación
+## 5. Correo y documentos tras la activación
 
-La confirmación del pago coloca dos avisos independientes en una cola privada:
+Cuando coordinación confirma el abono y activa la membresía, la voluntaria recibe su **segundo y último correo del recorrido**: bienvenida y activación en un solo mensaje. Lleva el logo y la imagen de la ñaña, la vigencia, un enlace directo a **Mi voluntariado** y una **credencial PNG inicial adjunta, sin fotografía**. El mensaje invita a cargar una foto en **Mi perfil**, guardar el perfil y descargar después la credencial actualizada.
 
-1. **Comprobante de pago confirmado:** correo con código de pago, plan, importe cotizado, abono bancario registrado, fecha y referencia.
-2. **Suscripción activada:** correo con las fechas de vigencia y enlaces a **Mi voluntariado** y al [protocolo y acuerdos](../pages/protocolo-acuerdos-voluntariado.html).
+En **Mi voluntariado → Mis documentos** puede descargar el comprobante de pago confirmado, la constancia de activación, el [protocolo y acuerdos](../pages/protocolo-acuerdos-voluntariado.html) y la credencial. El protocolo es imprimible. No se envían correos separados por el pago, por el protocolo ni por la creación de la solicitud. Coordinación conserva sus avisos de inscripción, comprobante recibido y pago confirmado.
 
-El protocolo es un documento imprimible para que la voluntaria lo guarde o revise. Los correos se envían mediante la función de servidor y requieren que sus migraciones, secretos y despliegue estén operativos. No salen directamente desde el navegador.
+El correo de activación se envía mediante la función de servidor y requiere que sus migraciones, secretos y despliegue estén operativos. No sale directamente desde el navegador. El correo de confirmación de cuenta corresponde a Supabase Auth.
 
 ## 6. Uso de la membresía
 
@@ -73,6 +72,6 @@ El [borrador del protocolo](../pages/protocolo-acuerdos-voluntariado.html) dice 
 2. Desplegar la función de notificaciones con sus secretos y publicar la versión actual del sitio.
 3. Probar el registro y la confirmación de correo de los tres planes con cuentas nuevas, incluidos enlaces abiertos en otro dispositivo.
 4. Probar una transferencia nacional y una internacional de prueba, la carga privada del comprobante y la confirmación bancaria por administración. Verificar que una persona ajena no pueda leer comprobantes ni fotografías.
-5. Verificar la recepción de los dos correos de activación y la descarga de la credencial con foto guardada.
+5. Verificar que la voluntaria reciba solo el correo de confirmación de cuenta y el de bienvenida tras activar la membresía. Comprobar el logo, la ñaña, la credencial inicial adjunta sin foto y la descarga de la credencial actualizada después de guardar la fotografía.
 
 Las notas técnicas y el historial de pruebas están en [transferencias](transferencia-habilitacion.md), [notificaciones](notificaciones-administrativas-voluntariado.md) y [panel administrativo](panel-admin-voluntariado.md).

@@ -1,6 +1,7 @@
 /* Las Ñañas · worker privado para correos de inscripción, pago y membresía.
    No registra destinatarios, contenido de correo, tokens ni secretos. */
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { encodeCredentialAttachment, renderInitialCredentialPng } from "./credential-image.ts";
 
 export type NotificationRow = {
   notification_id: string;
@@ -76,6 +77,7 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
   if (baseUrl.protocol !== "https:") throw new Error("invalid_public_site_url");
   const volunteerUrl = new URL("pages/mi-voluntariado.html", baseUrl).href;
   const documentsUrl = new URL("pages/mi-voluntariado.html?view=documents", baseUrl).href;
+  const profileUrl = new URL("pages/mi-voluntariado.html?view=profile", baseUrl).href;
   const logoUrl = new URL("assets/img/logo-web.png", baseUrl).href;
   const welcomeImageUrl = new URL("assets/img/voluntariado/nana-bienvenida.png", baseUrl).href;
   const brand = `<p><img src="${escapeHtml(logoUrl)}" alt="Las Ñañas" width="180" style="max-width:180px;height:auto"></p>`;
@@ -181,12 +183,14 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
       htmlContent: `<html lang="es"><body>${brand}<h1>Bienvenida a Las Ñañas, ${escapeHtml(firstName)}</h1>
         <p>Gracias por acompañarnos en este camino. Coordinación aprobó tu solicitud, confirmó tu pago y activó tu membresía ${escapeHtml(plan)}.</p>
         <p>Vigencia: ${escapeHtml(start)} al ${escapeHtml(end)}.</p>
-        <p>Tu comprobante de pago, el protocolo y tu credencial están en la pestaña <strong>Mis documentos</strong> de tu panel.</p>
+        <p>Adjuntamos una copia inicial de tu credencial sin fotografía. En <strong>Mi perfil</strong> carga tu foto y guarda los cambios; después descarga tu credencial actualizada en <strong>Mis documentos</strong>.</p>
+        <p>Tu comprobante de pago y el protocolo también están en <strong>Mis documentos</strong>.</p>
         <p><img src="${escapeHtml(welcomeImageUrl)}" alt="Una ñaña te da la bienvenida" width="260" style="max-width:260px;height:auto"></p>
+        <p><a href="${escapeHtml(profileUrl)}">Cargar mi fotografía en Mi perfil</a></p>
         <p><a href="${escapeHtml(documentsUrl)}">Abrir Mis documentos</a></p>
         <p><a href="${escapeHtml(volunteerUrl)}">Entrar a mi panel</a></p>
         </body></html>`,
-      textContent: `Bienvenida a Las Ñañas, ${firstName}. Gracias por acompañarnos en este camino. Coordinación aprobó tu solicitud, confirmó tu pago y activó tu membresía ${plan} del ${start} al ${end}.\nTu comprobante de pago, el protocolo y tu credencial están en la pestaña Mis documentos: ${documentsUrl}\nEntrar a mi panel: ${volunteerUrl}`,
+      textContent: `Bienvenida a Las Ñañas, ${firstName}. Gracias por acompañarnos en este camino. Coordinación aprobó tu solicitud, confirmó tu pago y activó tu membresía ${plan} del ${start} al ${end}.\nAdjuntamos una copia inicial de tu credencial sin fotografía. Carga tu foto en Mi perfil y guarda los cambios: ${profileUrl}\nDescarga tu credencial actualizada, tu comprobante de pago y el protocolo en Mis documentos: ${documentsUrl}\nEntrar a mi panel: ${volunteerUrl}`,
       headers: { idempotencyKey: row.idempotency_key },
     };
   }
@@ -228,6 +232,31 @@ export async function loadConfirmedPayment(client: SupabaseClient, row: Notifica
     settledAmount: payment.settled_amount, settledCurrency: payment.settled_currency,
     sourceCurrency: payment.source_currency, transferRoute: payment.transfer_route,
   } as ConfirmedPayment;
+}
+
+let credentialBackground: Promise<Uint8Array> | undefined;
+async function loadCredentialBackground(config: RuntimeConfig): Promise<Uint8Array> {
+  credentialBackground ??= (async () => {
+    const url = new URL("assets/img/voluntariado/credencial-voluntariado-fondo.png", config.publicSiteUrl);
+    const response = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+    if (!response.ok) throw new Error("credential_template_unavailable");
+    const size = Number(response.headers.get("content-length") || "0");
+    if (size > 3_000_000) throw new Error("invalid_credential_background");
+    return new Uint8Array(await response.arrayBuffer());
+  })();
+  try { return await credentialBackground; }
+  catch (error) { credentialBackground = undefined; throw error; }
+}
+
+export async function buildInitialCredentialAttachment(row: NotificationRow, payment: ConfirmedPayment, background: Uint8Array) {
+  validateNotification(row);
+  if (row.notification_type !== "membership_activated") throw new Error("invalid_credential_notification_type");
+  const png = await renderInitialCredentialPng(background, {
+    name: `${cleanPlainText(row.first_name)} ${cleanPlainText(row.last_name)}`.trim(),
+    planId: row.plan_id,
+    expiresAt: payment.endsAt,
+  });
+  return encodeCredentialAttachment(png);
 }
 
 function requireRuntimeConfig(): RuntimeConfig & { webhookSecret?: string; supabaseUrl: string; supabaseSecretKey: string } {
@@ -282,7 +311,10 @@ export async function authorizeAdminDispatch(client: SupabaseClient, request: Re
   if (authError || !user) throw new Error("admin_auth_required");
   const { data: role, error: roleError } = await client.from("staff_roles")
     .select("user_id").eq("user_id", user.id).eq("role", "admin").is("revoked_at", null).maybeSingle();
-  if (roleError) throw new Error("admin_role_unavailable");
+  if (roleError) {
+    console.error("notification_admin_role_unavailable", roleError.code ?? "unknown");
+    throw new Error("admin_role_unavailable");
+  }
   if (!role) throw new Error("admin_access_required");
   const rawBody = await request.text();
   if (rawBody.length > 512) throw new Error("invalid_application_id");
@@ -333,14 +365,20 @@ export async function handler(request: Request): Promise<Response> {
   }
   if (applicationId) {
     const ensured = await supabase.rpc("ensure_activation_notifications", { p_application_id: applicationId });
-    if (ensured.error) return json({ error: "queue_unavailable" }, 503);
+    if (ensured.error) {
+      console.error("notification_queue_ensure_unavailable", ensured.error.code ?? "unknown");
+      return json({ error: "queue_unavailable" }, 503);
+    }
   }
   const { data, error } = applicationId
     ? await supabase.rpc("claim_volunteer_notifications_for_application", {
       p_worker: worker, p_application_id: applicationId, p_limit: 10,
     })
     : await supabase.rpc("claim_volunteer_notifications", { p_worker: worker, p_limit: 10 });
-  if (error) return json({ error: "queue_unavailable" }, 503);
+  if (error) {
+    console.error("notification_queue_claim_unavailable", error.code ?? "unknown");
+    return json({ error: "queue_unavailable" }, 503);
+  }
 
   let sent = 0; let failed = 0;
   for (const row of (data ?? []) as NotificationRow[]) {
@@ -348,6 +386,9 @@ export async function handler(request: Request): Promise<Response> {
       const payment = ["payment_confirmed", "membership_activated", "admin_payment_confirmed"].includes(row.notification_type)
         ? await loadConfirmedPayment(supabase, row) : undefined;
       const message = buildBrevoMessage(row, config, payment);
+      if (row.notification_type === "membership_activated" && payment) {
+        message.attachment = [await buildInitialCredentialAttachment(row, payment, await loadCredentialBackground(config))];
+      }
       const response = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
         headers: { accept: "application/json", "content-type": "application/json", "api-key": config.brevoApiKey },
