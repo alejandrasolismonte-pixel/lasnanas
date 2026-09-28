@@ -84,7 +84,7 @@ deno test --allow-read tests/site-activity-tracking.test.cjs tests/site-activity
 deno check supabase/functions/collect-site-activity/index.ts js/site-activity.js js/site-activity-dashboard.js js/coordinacion-voluntariado.js
 ```
 
-Resultado local: **81 pruebas pasan**. Cubren captura, privacidad, permisos de interfaz, filtros, concurrencia de respuestas, logout, resumen y regresiones de registro/portal/pagos. La migración incluye verificaciones transaccionales de permisos. El smoke de PostgreSQL está preparado en `tests/site-activity-database.sql`; no se ejecutó porque no hay motor PostgreSQL local y no se aplicaron cambios a una base remota.
+Resultado local: **97 pruebas pasan**. Cubren captura, privacidad, permisos de interfaz, filtros, concurrencia de respuestas, logout, resumen y regresiones de registro/portal/pagos. La migración incluye verificaciones transaccionales de permisos. El smoke de PostgreSQL está preparado en `tests/site-activity-database.sql`; se reserva para un proyecto de prueba sin tráfico concurrente. En producción se comprobaron permisos, consultas administrativas reales, captura de visitas y almacenamiento de un único resumen diario.
 
 ## Archivos de esta implementación
 
