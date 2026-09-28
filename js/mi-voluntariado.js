@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
   let user, profile, application, price, messages = [], agenda = [], membership = null, confirmedPayment = null, volunteerDocuments = [];
   let messagesGeneration = 0;
+  let markingMemberMessages = false;
   let sessionInvalidated = false;
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT' || (user && session?.user && session.user.id !== user.id)) {
@@ -160,10 +161,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     $('[data-status-pill]').textContent=hasActiveMembership()?'Membresía activa':STATUS_LABELS[currentStatus()] || 'Cuenta creada';
     $('#portal-title').textContent=hasActiveMembership()?'Tu membresía está activa':currentStatus()==='draft'?'Tu inscripción está guardada':'Revisa el estado de tu proceso';
   }
+  let membershipSelectionSaving=false;
   function renderMembership(){
+    if(membershipSelectionSaving)return;
     const form=$('[data-membership-form]');
     const planId=price?.plan_id || requested.plan || 'keyuwün'; const billing=application?.billing || requested.billing; const currency=application?.currency || requested.currency;
-    form.elements.plan.value=planId; form.elements.billing.value=billing; form.elements.respect.checked=Boolean(application?.respect_accepted); form.elements.coordination.checked=Boolean(application?.coordination_accepted);
+    form.elements.plan.value=planId; form.elements.billing.value=billing; form.elements.currency.value=currency; form.elements.respect.checked=Boolean(application?.respect_accepted); form.elements.coordination.checked=Boolean(application?.coordination_accepted);
     $('[data-plan-summary]').textContent=`${planId} · ${billing==='yearly'?'anual':'mensual'} · ${currency}`; $('[data-total]').textContent=money(application?.quoted_amount || quote(price || {},billing,currency),currency);
     const editable=application?.status==='draft'; form.querySelectorAll('input').forEach(input=>{input.disabled=!editable;});
     const verified=Boolean(user.email_confirmed_at); $('[data-email-gate]').classList.toggle('verified',verified); $('[data-email-gate] strong').textContent=verified?'Correo verificado':'Correo pendiente de verificación'; $('[data-email-gate] p').textContent=verified?'Ya puedes enviar la solicitud cuando completes los acuerdos.':'Confirma el enlace enviado a tu correo.';
@@ -193,21 +196,23 @@ document.addEventListener('DOMContentLoaded', async () => {
               : 'Completa los acuerdos y envía tu solicitud para iniciar la revisión.';
   }
   function renderMemberMessages(){
-    const rows=messages.filter(row=>row.application_id===application?.id && row.visible_to_member);
+    const rows=messages.filter(row=>row.application_id===application?.id && row.visible_to_member && !row.deleted_at);
     const incoming=rows.filter(row=>row.author_id!==user.id && !row.member_read_at);
     const panel=$('[data-member-message-panel]');
     const list=$('[data-member-messages-list]');
-    const badge=$('[data-member-unread-count]');
-    const nav=$('[data-view-button="membership"]');
     const mark=$('[data-mark-member-messages-read]');
-    const alert=$('[data-member-new-message-alert]');
     panel.hidden=!rows.length;
-    alert.hidden=!incoming.length;
-    $('[data-member-new-message-text]').textContent=incoming.length
-      ? `${incoming.length} mensaje${incoming.length===1?'':'s'} nuevo${incoming.length===1?'':'s'} de coordinación` : '';
-    badge.hidden=!incoming.length;
-    badge.textContent=`${incoming.length} nuevo${incoming.length===1?'':'s'}`;
-    nav.classList.toggle('has-new-messages',incoming.length>0);
+    $$('[data-member-new-message-alert]').forEach(alert=>{alert.hidden=!incoming.length;});
+    $$('[data-member-new-message-text]').forEach(text=>{
+      text.textContent=incoming.length
+        ? `${incoming.length} mensaje${incoming.length===1?'':'s'} nuevo${incoming.length===1?'':'s'} de coordinación` : '';
+    });
+    $$('[data-member-unread-count]').forEach(badge=>{
+      badge.hidden=!incoming.length;
+      badge.textContent=`${incoming.length} nuevo${incoming.length===1?'':'s'}`;
+    });
+    for(const view of ['membership','documents'])
+      $(`[data-view-button="${view}"]`).classList.toggle('has-new-messages',incoming.length>0);
     mark.hidden=!incoming.length;
     $('[data-member-message-status]').textContent=incoming.length
       ? `Tienes ${incoming.length} mensaje${incoming.length===1?'':'s'} nuevo${incoming.length===1?'':'s'} de coordinación.`
@@ -224,33 +229,58 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
   async function refreshMemberMessages(){
-    if(!user || !application || sessionInvalidated || document.hidden)return;
+    if(!user || !application || sessionInvalidated || markingMemberMessages || document.hidden)return;
     const generation=++messagesGeneration;
     const applicationId=application.id;
-    const {data,error}=await supabase.from('application_messages').select('*')
-      .eq('application_id',applicationId).is('deleted_at',null).order('created_at',{ascending:true});
-    if(error || generation!==messagesGeneration || application?.id!==applicationId)return;
+    const results=await Promise.allSettled([
+      supabase.from('application_messages').select('*')
+        .eq('application_id',applicationId).is('deleted_at',null).order('created_at',{ascending:true}),
+      supabase.rpc('list_my_volunteer_documents')
+    ]);
+    if(generation!==messagesGeneration || application?.id!==applicationId || sessionInvalidated)return;
+    const [messageResult,documentResult]=results.map(result=>result.status==='fulfilled'?result.value:{error:result.reason});
+    if(!documentResult.error){
+      const documents=documentResult.data||[];
+      if(JSON.stringify(documents)!==JSON.stringify(volunteerDocuments)){
+        volunteerDocuments=documents;renderDocuments();
+      }
+    }
+    const {data,error}=messageResult;
+    if(error)return;
     messages=data||[];
     renderMemberMessages();
     renderMembership();
   }
-  $('[data-mark-member-messages-read]').addEventListener('click',async()=>{
-    if(!application)return;
+  async function markMemberMessagesRead(){
+    if(!application || sessionInvalidated || markingMemberMessages)return;
+    const applicationId=application.id;
+    const incoming=messages.filter(row=>row.application_id===applicationId && row.visible_to_member && !row.deleted_at && row.author_id!==user.id && !row.member_read_at);
+    if(!incoming.length)return;
+    markingMemberMessages=true;
     ++messagesGeneration;
     const button=$('[data-mark-member-messages-read]');button.disabled=true;
-    const {error}=await supabase.rpc('mark_application_messages_read',{p_application_id:application.id});
-    button.disabled=false;
-    if(error){showMessage('[data-member-message-error]','No se pudo guardar la lectura. Inténtalo nuevamente.',true);return;}
-    showMessage('[data-member-message-error]','');
-    const readAt=new Date().toISOString();
-    messages.forEach(row=>{if(row.application_id===application.id && row.author_id!==user.id)row.member_read_at=readAt;});
-    renderMemberMessages();
-  });
-  $('[data-jump-member-messages]').addEventListener('click',()=>{
+    try{
+      const {error}=await supabase.rpc('mark_application_messages_read',{p_application_id:applicationId});
+      if(error)throw error;
+      if(sessionInvalidated || application?.id!==applicationId)return;
+      ++messagesGeneration;
+      showMessage('[data-member-message-error]','');
+      const readAt=new Date().toISOString();
+      incoming.forEach(row=>{row.member_read_at=readAt;});
+      renderMemberMessages();
+    }catch(_){
+      if(!sessionInvalidated && application?.id===applicationId)
+        showMessage('[data-member-message-error]','No se pudo guardar la lectura. Inténtalo nuevamente.',true);
+    }finally{button.disabled=false;markingMemberMessages=false;}
+  }
+  $('[data-mark-member-messages-read]').addEventListener('click',markMemberMessagesRead);
+  $$('[data-jump-member-messages]').forEach(button=>button.addEventListener('click',async()=>{
+    $('[data-view-button="membership"]').click();
     const panel=$('[data-member-message-panel]');
     panel.scrollIntoView({block:'start',behavior:'smooth'});
     panel.focus({preventScroll:true});
-  });
+    await markMemberMessagesRead();
+  }));
   setInterval(refreshMemberMessages,30000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshMemberMessages();});
   function downloadMembershipStatement(kind){
@@ -368,16 +398,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     const items=agenda.map(agendaRecord); const root=$('[data-agenda-list]');
     root.innerHTML=items.length?items.map(item=>`<article class="agenda-item ${item.official?'official':''}"><header><div><span class="badge">${item.official?'Actividad oficial':'Anotación personal'}</span><h3>${escapeHtml(item.title)}</h3></div><strong>${item.status}</strong></header><p>${item.date} · ${item.start}–${item.end} · ${escapeHtml(item.place||'Sin lugar indicado')}</p><p>${escapeHtml(item.notes)}</p>${item.official?'':`<div class="button-row"><button class="btn btn-ghost" data-edit-agenda="${item.id}">Editar</button><button class="btn btn-ghost" data-delete-agenda="${item.id}">Eliminar</button></div>`}</article>`).join(''):'<p class="locked">Aún no tienes registros en tu agenda privada.</p>';
     $$('[data-edit-agenda]').forEach(button=>button.onclick=()=>editAgenda(button.dataset.editAgenda)); $$('[data-delete-agenda]').forEach(button=>button.onclick=()=>deleteAgenda(button.dataset.deleteAgenda));
-    const days=[...new Set(items.map(item=>item.date))].sort(); $('[data-agenda-calendar]').innerHTML=days.length?days.map(day=>`<div class="calendar-day"><strong>${day}</strong>${items.filter(item=>item.date===day).map(item=>`<div class="calendar-event ${item.official?'official':''}">${item.start} ${escapeHtml(item.title)}</div>`).join('')}</div>`).join(''):'<p>Sin fechas registradas.</p>';
+    const calendar=$('[data-agenda-calendar]');
+    const states={confirmed:'Confirmada',planned:'Planificada',completed:'Realizada',cancelled:'Cancelada'};
+    const months=[...new Set(items.map(item=>item.date.slice(0,7)))].sort();
+    if(!months.length){calendar.innerHTML='<p class="locked">Sin fechas registradas.</p>';return;}
+    const weekdays=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+    const legend=`<div class="calendar-legend" aria-label="Estados de la agenda">${Object.entries(states).map(([status,label])=>`<span><i class="calendar-mark is-status-${status}" aria-hidden="true"></i>${label}</span>`).join('')}</div>`;
+    calendar.innerHTML=legend+months.map(month=>{
+      const [year,monthNumber]=month.split('-').map(Number);
+      const first=new Date(year,monthNumber-1,1);
+      const dayCount=new Date(year,monthNumber,0).getDate();
+      const offset=(first.getDay()+6)%7;
+      const monthLabel=new Intl.DateTimeFormat('es-CL',{month:'long',year:'numeric'}).format(first);
+      const cells=Array.from({length:Math.ceil((offset+dayCount)/7)*7},(_,index)=>{
+        const day=index-offset+1;
+        if(day<1 || day>dayCount)return '<td class="calendar-empty" aria-hidden="true"></td>';
+        const date=`${month}-${String(day).padStart(2,'0')}`;
+        const entries=items.filter(item=>item.date===date);
+        const statuses=[...new Set(entries.map(item=>Object.hasOwn(states,item.status)?item.status:'planned'))];
+        const details=entries.map(item=>`${states[item.status]||'Planificada'} · ${item.start}–${item.end} · ${item.title}${item.official?' · Actividad oficial':''}`).join('\n');
+        const label=`${day} de ${monthLabel}${entries.length?`\n${details}`:': sin registros'}`;
+        const statusClass=statuses.length===1?` is-status-${statuses[0]}`:'';
+        return `<td><div class="calendar-date${entries.length?' has-events':''}${statusClass}" role="group"${entries.length?' tabindex="0"':''} title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}"><time datetime="${date}">${day}</time>${entries.length?`<span class="calendar-date-marks" aria-hidden="true">${statuses.map(status=>`<i class="calendar-mark is-status-${status}"></i>`).join('')}</span>`:''}</div></td>`;
+      });
+      const rows=Array.from({length:cells.length/7},(_,index)=>`<tr>${cells.slice(index*7,index*7+7).join('')}</tr>`).join('');
+      return `<table class="calendar-month"><caption>${monthLabel}</caption><thead><tr>${weekdays.map(day=>`<th scope="col"><abbr title="${day}">${day.slice(0,2)}</abbr></th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+    }).join('');
   }
   const escapeHtml=value=>String(value||'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const renderAll=()=>{renderHeader();renderMembership();renderMemberMessages();renderProfile(true);renderDocuments();renderAgenda();};
 
   $$('[data-view-button]').forEach(button=>button.onclick=()=>{$$('[data-view-button]').forEach(item=>item.classList.toggle('active',item===button));$$('[data-view]').forEach(view=>{view.hidden=view.dataset.view!==button.dataset.viewButton;});});
   $('[data-membership-form]').addEventListener('change',async event=>{
-    if(!application || application.status!=='draft')return;
-    const form=event.currentTarget; const plan=form.elements.plan.value; const billing=form.elements.billing.value; const currency=application.currency;
-    try{setBusy(form,true);const selectedPrice=await currentPrice(plan);const values={plan_price_id:selectedPrice.id,billing,currency,quoted_amount:quote(selectedPrice,billing,currency),respect_accepted:form.elements.respect.checked,coordination_accepted:form.elements.coordination.checked,updated_at:new Date().toISOString()};const{data,error}=await supabase.from('membership_applications').update(values).eq('id',application.id).eq('status','draft').select('*,plan_prices(*)').single();if(error)throw error;application=data;price=data.plan_prices;showMessage('[data-membership-message]','Cambios guardados.');renderMembership();renderProfile();}catch(error){showMessage('[data-membership-message]','No se pudieron guardar los cambios.',true);}finally{setBusy(form,false);renderMembership();}
+    if(!application || application.status!=='draft' || membershipSelectionSaving)return;
+    membershipSelectionSaving=true;
+    const form=event.currentTarget; const plan=form.elements.plan.value; const billing=form.elements.billing.value; const currency=form.elements.currency.value;
+    const saveState=$('[data-save-state]');
+    form.querySelectorAll('button,input').forEach(control=>{control.disabled=true;});
+    form.setAttribute('aria-busy','true');
+    saveState.classList.add('saving');saveState.textContent='Guardando tu selección…';
+    let saved=false;
+    try{const selectedPrice=await currentPrice(plan);const values={plan_price_id:selectedPrice.id,billing,currency,quoted_amount:quote(selectedPrice,billing,currency),respect_accepted:form.elements.respect.checked,coordination_accepted:form.elements.coordination.checked,updated_at:new Date().toISOString()};const{data,error}=await supabase.from('membership_applications').update(values).eq('id',application.id).eq('status','draft').select('*,plan_prices(*)').single();if(error)throw error;application=data;price=data.plan_prices;saved=true;showMessage('[data-membership-message]','Cambios guardados.');renderProfile();}catch(error){showMessage('[data-membership-message]','No se pudieron guardar los cambios.',true);}finally{membershipSelectionSaving=false;form.querySelectorAll('button,input').forEach(control=>{control.disabled=false;});form.setAttribute('aria-busy','false');saveState.classList.remove('saving');saveState.textContent=saved?'Todos los cambios están guardados.':'No se pudieron guardar los cambios.';renderMembership();}
   });
   $$('[data-save-later]').forEach(button=>button.onclick=()=>showMessage(button.closest('[data-clarification-form]')?'[data-clarification-message]':'[data-membership-message]','Los cambios enviados ya están guardados en tu cuenta.'));
   $('[data-membership-form]').addEventListener('submit',async event=>{event.preventDefault();const button=$('[data-submit-application]');button.disabled=true;showMessage('[data-membership-message]','Enviando solicitud…');const{error}=await supabase.rpc('submit_membership_application',{p_application_id:application.id});if(error){showMessage('[data-membership-message]','No se pudo enviar la solicitud.',true);button.disabled=false;return;}await loadAll();showMessage('[data-membership-message]','Solicitud enviada correctamente.');});

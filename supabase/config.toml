@@ -6,3 +6,7 @@ verify_jwt = false
 # No hay endpoint público de lectura de métricas ni de resúmenes.
 [functions.collect-site-activity]
 verify_jwt = false
+
+# Worker de servidor: exige secreto de webhook privado; jamás admite llamadas del navegador.
+[functions.send-site-activity-reports]
+verify_jwt = false

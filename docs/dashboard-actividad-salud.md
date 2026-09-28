@@ -2,6 +2,8 @@
 
 El dashboard y la captura están activos en el sitio real. El usuario aplicó la migración y autorizó la publicación; se desplegó `collect-site-activity` y se comprobó el dashboard con una sesión administradora real. La captura empezó el 27 de septiembre de 2026 a las 23:21, hora de Chile. WhatsApp sigue sin integrar ni programar.
 
+El 28 de septiembre el usuario cambió la estrategia: reportes por correo al alcanzar 100, 200, 300… visitas de cada día de Chile. La nueva cola y su worker están preparados y probados localmente; su publicación y activación siguen pendientes. Ver [reportes de actividad por correo](reportes-actividad-correo.md).
+
 La comprobación de activación devolvió `ready = true`; las 17 comprobaciones HTTP pasaron, incluidas las respuestas 401 para consultas anónimas a la RPC administrativa y a la tabla de eventos. Se verificó que los archivos publicados corresponden al código local. El resumen del 27 de septiembre quedó guardado una sola vez y se comprobó su contenido; esto no implica que se haya enviado por WhatsApp.
 
 ## Dónde se abre
@@ -48,11 +50,11 @@ El dashboard se actualiza cada minuto mientras esa vista está abierta y la pest
 
 La captura respeta Do Not Track y Global Privacy Control. Guarda solamente UUID aleatorios, ruta pública permitida, tipo de evento, duración de carga y país disponible en infraestructura. No guarda IP, correo, nombres, campos de formularios, tokens, querystrings ni fragmentos. No instrumenta paneles privados, callbacks de Auth ni páginas de maqueta. Los fallos de medición no interrumpen ningún flujo.
 
-## Resumen diario y horario solicitado
+## Resumen diario disponible y solicitud anterior de WhatsApp
 
 `generate_daily_site_activity_summary(p_date, p_cutoff_hour)` genera o recupera un resumen en hora de Chile. Admite corte a las 23:00 o a las 24:00 y exige que el corte ya haya ocurrido. Sin parámetros, el panel pide ayer completo. Devuelve `{summary_date, generated_at, metrics, message}`; `metrics.period` contiene el intervalo y el corte. La fecha es clave primaria y un bloqueo transaccional evita duplicados simultáneos: volver a pedir la misma fecha recupera el mismo resumen, sin recalcular ni enviar mensajes. Si se solicita otro corte para una fecha ya resumida, prevalece el primer snapshot y su intervalo se conserva explícito en el mensaje.
 
-Se solicitó entrega por WhatsApp **desde el 27 de septiembre de 2026, a las 23:00, zona `America/Santiago`**, respetando cambios de horario de Chile. El resumen admite el período del día en curso desde las 00:00 hasta las 23:00. **No existe envío ni programación automática habilitada.** Ya se recibió el número de destino y la autorización de publicación/captura; falta configurar un canal de envío. La integración y la tarea programada se harán al resolver ese requisito. El horario UTC no debe fijarse permanentemente porque Chile cambia su desfase.
+La solicitud anterior era entrega por WhatsApp a las 23:00, zona `America/Santiago`; fue reemplazada por la estrategia de correo por hitos. El resumen admite el período del día en curso desde las 00:00 hasta las 23:00. **No existe envío ni programación por WhatsApp habilitada.** No se configura ese canal como parte de la nueva entrega por correo. El horario UTC no debe fijarse permanentemente porque Chile cambia su desfase.
 
 El resumen usa las mismas consultas y definiciones del dashboard. Incluye métricas, países, páginas, muestras de carga y la última comprobación de salud anterior al cierre, con su fecha. Un estado antiguo no equivale a la disponibilidad de todo el día. La generación autoriza únicamente a admin activo o `service_role`; no permite consultas anónimas.
 

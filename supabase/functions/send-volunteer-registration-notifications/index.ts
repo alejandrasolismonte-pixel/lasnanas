@@ -6,7 +6,7 @@ import { encodeCredentialAttachment, renderInitialCredentialPng } from "./creden
 export type NotificationRow = {
   notification_id: string;
   application_id: string;
-  notification_type: "admin_registration" | "volunteer_welcome" | "transfer_receipt_received" | "payment_confirmed" | "membership_activated" | "admin_payment_confirmed";
+  notification_type: "admin_registration" | "volunteer_welcome" | "transfer_receipt_received" | "payment_confirmed" | "membership_activated" | "admin_payment_confirmed" | "document_available";
   recipient_email: string | null;
   first_name: string;
   last_name: string;
@@ -56,13 +56,13 @@ export const escapeHtml = (value: unknown): string => String(value ?? "").replac
 export const cleanPlainText = (value: unknown): string => String(value ?? "").replace(/[\u0000-\u001f\u007f]+/g, " ").trim();
 
 export function validateNotification(row: NotificationRow): void {
-  if (!["admin_registration", "volunteer_welcome", "transfer_receipt_received", "payment_confirmed", "membership_activated", "admin_payment_confirmed"].includes(row.notification_type) ||
+  if (!["admin_registration", "volunteer_welcome", "transfer_receipt_received", "payment_confirmed", "membership_activated", "admin_payment_confirmed", "document_available"].includes(row.notification_type) ||
       !ALLOWED_PLANS.has(row.plan_id) || !ALLOWED_BILLING.has(row.billing) ||
       !ALLOWED_CURRENCIES.has(row.currency) || !ALLOWED_STATUSES.has(row.application_status)) {
     throw new Error("invalid_notification_payload");
   }
   if (!EMAIL_PATTERN.test(row.volunteer_email) ||
-      (["volunteer_welcome", "payment_confirmed", "membership_activated"].includes(row.notification_type) && (!row.recipient_email || row.recipient_email !== row.volunteer_email)) ||
+      (["volunteer_welcome", "payment_confirmed", "membership_activated", "document_available"].includes(row.notification_type) && (!row.recipient_email || row.recipient_email !== row.volunteer_email)) ||
       (["admin_registration", "transfer_receipt_received", "admin_payment_confirmed"].includes(row.notification_type) && row.recipient_email !== null)) {
     throw new Error("invalid_notification_recipient");
   }
@@ -116,6 +116,20 @@ export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, p
     <tr><th align="left">Periodicidad</th><td>${periodicity}</td></tr>
     <tr><th align="left">Moneda</th><td>${escapeHtml(row.currency)}</td></tr>
     <tr><th align="left">Estado de la solicitud</th><td>${escapeHtml(status)}</td></tr>`;
+
+  if (row.notification_type === "document_available") {
+    return {
+      sender: { name: "Las Ñañas", email: config.senderEmail },
+      to: [{ email: row.recipient_email!, name: `${firstName} ${lastName}`.trim() }],
+      subject: "Tienes un nuevo documento en Las Ñañas",
+      htmlContent: `<html lang="es"><body>${brand}<h1>Tienes un nuevo documento</h1>
+        <p>Hola, ${escapeHtml(firstName)}. Coordinación dejó un documento disponible en tu panel.</p>
+        <p>En <strong>Mis documentos</strong> puedes leer el mensaje de coordinación y abrir el archivo.</p>
+        <p><a href="${escapeHtml(documentsUrl)}">Abrir Mis documentos</a></p></body></html>`,
+      textContent: `Hola, ${firstName}. Coordinación dejó un documento disponible en tu panel. Lee el mensaje y abre el archivo en Mis documentos: ${documentsUrl}`,
+      headers: { idempotencyKey: row.idempotency_key },
+    };
+  }
 
   if (row.notification_type === "admin_registration") {
     return {
@@ -313,7 +327,9 @@ async function secretsMatch(received: string, expected: string): Promise<boolean
   return difference === 0;
 }
 
-export async function authorizeAdminDispatch(client: SupabaseClient, request: Request): Promise<string> {
+export type AdminDispatchTarget = { applicationId: string; documentId?: string };
+
+export async function authorizeAdminDispatch(client: SupabaseClient, request: Request): Promise<AdminDispatchTarget> {
   const authorization = request.headers.get("authorization") ?? "";
   const bearer = /^Bearer ([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/i.exec(authorization);
   if (!bearer || bearer[1].length > 4096) throw new Error("admin_auth_required");
@@ -335,7 +351,20 @@ export async function authorizeAdminDispatch(client: SupabaseClient, request: Re
   if (typeof applicationId !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(applicationId)) {
     throw new Error("invalid_application_id");
   }
-  return applicationId;
+  const documentId = (body as Record<string, unknown>).document_id;
+  if (documentId !== undefined && (typeof documentId !== "string" ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(documentId))) {
+    throw new Error("invalid_document_id");
+  }
+  return { applicationId, ...(documentId === undefined ? {} : { documentId: documentId as string }) };
+}
+
+export async function validateAvailableDocument(client: SupabaseClient, row: NotificationRow, worker: string): Promise<void> {
+  const { data, error } = await client.rpc("authorize_volunteer_document_notification", {
+    p_notification_id: row.notification_id, p_worker: worker,
+  });
+  if (error) throw new Error("document_notification_unavailable");
+  if (!data) throw new Error("invalid_document_notification");
 }
 
 export async function handler(request: Request): Promise<Response> {
@@ -356,7 +385,7 @@ export async function handler(request: Request): Promise<Response> {
   if (request.method !== "POST") return new Response("Método no permitido", { status: 405, headers: corsHeaders });
   const worker = crypto.randomUUID();
   const supabase = createClient(config.supabaseUrl, config.supabaseSecretKey, { auth: { persistSession: false, autoRefreshToken: false } });
-  let applicationId: string | undefined;
+  let target: AdminDispatchTarget | undefined;
   const webhookHeader = request.headers.get("x-notification-secret");
   if (webhookHeader !== null) {
     if (!config.webhookSecret || !await secretsMatch(webhookHeader, config.webhookSecret)) {
@@ -364,25 +393,28 @@ export async function handler(request: Request): Promise<Response> {
     }
   } else {
     try {
-      applicationId = await authorizeAdminDispatch(supabase, request);
+      target = await authorizeAdminDispatch(supabase, request);
     } catch (caught) {
       const code = caught instanceof Error ? caught.message : "admin_auth_required";
-      const status = code === "invalid_application_id" ? 400
+      const status = ["invalid_application_id", "invalid_document_id"].includes(code) ? 400
         : code === "admin_access_required" ? 403
         : code === "admin_role_unavailable" ? 503 : 401;
       return json({ error: code }, status);
     }
   }
-  if (applicationId) {
-    const ensured = await supabase.rpc("ensure_activation_notifications", { p_application_id: applicationId });
+  if (target && !target.documentId) {
+    const ensured = await supabase.rpc("ensure_activation_notifications", { p_application_id: target.applicationId });
     if (ensured.error) {
       console.error("notification_queue_ensure_unavailable", ensured.error.code ?? "unknown");
       return json({ error: "queue_unavailable" }, 503);
     }
   }
-  const { data, error } = applicationId
-    ? await supabase.rpc("claim_volunteer_notifications_for_application", {
-      p_worker: worker, p_application_id: applicationId, p_limit: 2,
+  const { data, error } = target?.documentId
+    ? await supabase.rpc("claim_volunteer_document_notifications", {
+      p_worker: worker, p_application_id: target.applicationId, p_document_id: target.documentId, p_limit: 1,
+    })
+    : target ? await supabase.rpc("claim_volunteer_notifications_for_application", {
+      p_worker: worker, p_application_id: target.applicationId, p_limit: 2,
     })
     // Una credencial por invocación conserva margen de CPU para el renderizado.
     : await supabase.rpc("claim_volunteer_notifications", { p_worker: worker, p_limit: 1 });
@@ -391,8 +423,18 @@ export async function handler(request: Request): Promise<Response> {
     return json({ error: "queue_unavailable" }, 503);
   }
 
+  const notifications = (data ?? []) as NotificationRow[];
+  if (target && !target.documentId) {
+    // La activación también libera archivos administrativos cargados previamente.
+    // Su aviso usa la misma cola y no altera el resultado del pago o la bienvenida.
+    const documents = await supabase.rpc("claim_volunteer_document_notifications", {
+      p_worker: worker, p_application_id: target.applicationId, p_document_id: null, p_limit: 10,
+    });
+    if (documents.error) console.error("notification_document_claim_unavailable", documents.error.code ?? "unknown");
+    else notifications.push(...((documents.data ?? []) as NotificationRow[]));
+  }
   let sent = 0; let failed = 0;
-  for (const row of (data ?? []) as NotificationRow[]) {
+  for (const row of notifications) {
     try {
       if (["volunteer_welcome", "payment_confirmed"].includes(row.notification_type)) {
         await supabase.rpc("mark_volunteer_notification_failed", {
@@ -403,6 +445,7 @@ export async function handler(request: Request): Promise<Response> {
       }
       const payment = ["payment_confirmed", "membership_activated", "admin_payment_confirmed"].includes(row.notification_type)
         ? await loadConfirmedPayment(supabase, row) : undefined;
+      if (row.notification_type === "document_available") await validateAvailableDocument(supabase, row, worker);
       const message = buildBrevoMessage(row, config, payment);
       if (row.notification_type === "membership_activated" && payment) {
         message.attachment = [await buildInitialCredentialAttachment(row, payment, await loadCredentialBackground(config))];

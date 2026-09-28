@@ -30,7 +30,7 @@ Has $worker 'Deno.env.get("ADMIN_NOTIFICATION_EMAIL")' 'admin recipient comes fr
 Has $worker 'headers: { idempotencyKey: row.idempotency_key }' 'stable Brevo idempotency key is used'
 Has $worker 'https://api.brevo.com/v3/smtp/email' 'official Brevo transactional endpoint is used'
 Has $worker 'notification_type === "admin_registration"' 'admin email is rendered separately'
-Has $worker '["volunteer_welcome", "payment_confirmed", "membership_activated"].includes(row.notification_type)' 'member email recipient is validated separately'
+Has $worker '["volunteer_welcome", "payment_confirmed", "membership_activated", "document_available"].includes(row.notification_type)' 'member email recipient is validated separately'
 Has $workerTest 'rechaza destinatario de bienvenida alterado' 'recipient tampering has a unit test'
 
 if ($worker -match '(?i)(xkeysib-|sb_secret_|service_role\s*=|BREVO_API_KEY\s*=\s*["''][^"'']+)') {

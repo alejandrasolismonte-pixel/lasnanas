@@ -29,7 +29,7 @@ function element() {
     removeAttribute(name) { delete this.attributes[name]; },
     append(...nodes) { this.children.push(...nodes); },
     replaceChildren(...nodes) { this.children = nodes; },
-    reset() {}, reportValidity() { return true; },
+    reset() { this.resetCount = (this.resetCount || 0) + 1; }, reportValidity() { return true; },
     scrollIntoView() {},
     querySelector(selector) {
       this.queried ||= new Map();
@@ -40,7 +40,8 @@ function element() {
   };
 }
 
-async function mount({ authorized = true, failStatusOnce = false } = {}) {
+async function mount({ authorized = true, failStatusOnce = false, membershipActive = false,
+  releaseErrorOnce = null, invokeError = false, deliveryStatus = 'sent', uploadError = false } = {}) {
   const nodes = new Map();
   const select = selector => {
     if (!nodes.has(selector)) nodes.set(selector, element());
@@ -69,6 +70,7 @@ async function mount({ authorized = true, failStatusOnce = false } = {}) {
   const redirects = [];
   const statusCalls = [];
   const activityCalls = [];
+  const documentCalls = { reservations: [], uploads: [], releases: [], dispatches: [], documents: [], messages: [] };
   const applications = [
     { application_id: 'pending', first_name: 'Paula', last_name: 'Pendiente', plan_id: 'base', billing: 'monthly', application_created_at: '2026-01-01T12:00:00Z', application_status: 'submitted', membership_active: false },
     { application_id: 'process', first_name: 'Inés', last_name: 'Proceso', plan_id: 'base', billing: 'monthly', application_created_at: '2026-01-01T12:00:00Z', application_status: 'in_review', membership_active: false },
@@ -87,8 +89,32 @@ async function mount({ authorized = true, failStatusOnce = false } = {}) {
       if (name === 'admin_get_membership_application')
         return { data: applications.filter(application => application.application_id === args.p_application_id), error: null };
       if (name === 'admin_get_application_membership')
-        return { data: [{ membership_active: false, payment_status: 'pending' }], error: null };
-      if (name === 'admin_list_application_documents') return { data: [], error: null };
+        return { data: [{ membership_active: membershipActive, payment_status: 'pending' }], error: null };
+      if (name === 'admin_list_application_documents') return { data: documentCalls.documents, error: null };
+      if (name === 'admin_reserve_document_upload') {
+        documentCalls.reservations.push(args);
+        const record = { document_id: `document-${documentCalls.reservations.length}`, document_kind: 'admin_release',
+          storage_path: `owner/${args.p_application_id}/document-${documentCalls.reservations.length}.pdf`,
+          original_name: args.p_original_name, released_at: null };
+        documentCalls.documents.push(record);
+        return { data: [record], error: null };
+      }
+      if (name === 'admin_release_volunteer_document') {
+        documentCalls.releases.push(args);
+        if (releaseErrorOnce) {
+          const message = releaseErrorOnce; releaseErrorOnce = null;
+          return { data: null, error: { message } };
+        }
+        if (!membershipActive) return { data: null, error: { message: 'active_membership_required' } };
+        const record = documentCalls.documents.find(row => row.document_id === args.p_document_id);
+        if (!record.released_at) {
+          record.released_at = '2026-09-28T12:00:00Z';
+          documentCalls.messages.push({ id: `message-${record.document_id}`, author_id: 'admin-1', body: 'Documento disponible en Mis documentos',
+            application_id: 'pending', visible_to_member: true, created_at: record.released_at });
+        }
+        return { data: record.released_at, error: null };
+      }
+      if (name === 'admin_get_document_notification_status') return { data: [{ delivery_status: deliveryStatus }], error: null };
       if (name === 'admin_set_application_status') {
         statusCalls.push(args);
         if (failStatusOnce) { failStatusOnce = false; return { error: { message: 'temporary_error' } }; }
@@ -99,14 +125,30 @@ async function mount({ authorized = true, failStatusOnce = false } = {}) {
       throw new Error(`Unexpected RPC: ${name}`);
     },
     from(table) {
-      assert.ok(['volunteer_profiles', 'application_messages', 'admin_notes'].includes(table));
+      assert.ok(['volunteer_profiles', 'application_messages', 'admin_notes', 'clarification_attachments'].includes(table));
       const query = {
-        select() { return query; }, eq() { return query; }, is() { return query; },
+        select() { return query; }, eq() { return query; }, is() { return query; }, in() { return query; },
         order() { return query; },
-        then(accept, reject) { return Promise.resolve({ data: [], error: null }).then(accept, reject); }
+        then(accept, reject) { return Promise.resolve({ data: table === 'application_messages' ? documentCalls.messages : [], error: null }).then(accept, reject); }
       };
       return query;
-    }
+    },
+    storage: {
+      from(bucket) {
+        assert.equal(bucket, 'volunteer-documents');
+        return { upload: async (path, file, options) => {
+          documentCalls.uploads.push({ path, file, options });
+          return { error: uploadError ? { message: 'upload_failed' } : null };
+        } };
+      }
+    },
+    functions: {
+      invoke: async (name, options) => {
+        documentCalls.dispatches.push({ name, ...options });
+        return invokeError ? { data: null, error: { message: 'delivery_unavailable' } }
+          : { data: { processed: 1, sent: 1, failed: 0 }, error: null };
+      }
+    },
   };
   const document = {
     addEventListener() {},
@@ -135,7 +177,8 @@ async function mount({ authorized = true, failStatusOnce = false } = {}) {
     setInterval: () => 0, clearInterval() {}, setTimeout, clearTimeout
   });
   await new Promise(resolve => setImmediate(resolve));
-  return { select, categories, viewButtons, views, layout, redirects, statusCalls, activityCalls };
+  return { select, categories, viewButtons, views, layout, redirects, statusCalls, activityCalls, documentCalls,
+    setMembershipActive(value) { membershipActive = value; }, setDeliveryStatus(value) { deliveryStatus = value; } };
 }
 
 async function openPendingApplication(panel) {
@@ -232,4 +275,95 @@ test('clarification updates the application category and shows confirmation', as
   assert.equal(panel.select('[data-category-count="process"]').textContent, 3);
   assert.equal(panel.select('[data-detail-field="status"]').textContent, 'Aclaración solicitada');
   assert.equal(panel.select('[data-clarification-message]').textContent, 'Aclaración enviada.');
+});
+
+function documentFile() {
+  return { name: 'acuerdos.pdf', type: 'application/pdf', size: 100,
+    slice: () => ({ arrayBuffer: async () => Uint8Array.from([0x25, 0x50, 0x44, 0x46, 0x2d, 0, 0, 0]).buffer }) };
+}
+
+test('administrative document keeps the existing storage and dispatches its own notice after release', async () => {
+  const panel = await mount({ membershipActive: true });
+  await openPendingApplication(panel);
+  const form = panel.select('[data-admin-document-form]');
+  const resetsBeforeUpload = form.resetCount || 0;
+  form.elements.document.files = [documentFile()];
+  await Promise.all([form.dispatch('submit'), form.dispatch('submit')]);
+  assert.equal(panel.documentCalls.reservations.length, 1);
+  assert.equal(panel.documentCalls.uploads.length, 1);
+  assert.equal(panel.documentCalls.uploads[0].options.upsert, false);
+  assert.deepEqual(panel.documentCalls.releases.map(call => call.p_document_id), ['document-1']);
+  assert.equal(panel.documentCalls.dispatches[0].name, 'send-volunteer-registration-notifications');
+  assert.equal(panel.documentCalls.dispatches[0].body.application_id, 'pending');
+  assert.equal(panel.documentCalls.dispatches[0].body.document_id, 'document-1');
+  assert.equal(panel.select('[data-admin-messages-list]').children.length, 1);
+  assert.equal(form.resetCount, resetsBeforeUpload + 1);
+  assert.match(panel.select('[data-admin-document-message]').textContent, /Aviso por correo enviado/);
+  assert.equal(form.querySelector('[type="submit"]').disabled, false);
+});
+
+test('a notice failure is distinguished from inactive membership and retry reuses the uploaded document', async () => {
+  const panel = await mount({ membershipActive: true, releaseErrorOnce: 'document_notification_unavailable' });
+  await openPendingApplication(panel);
+  const form = panel.select('[data-admin-document-form]');
+  form.elements.document.files = [documentFile()];
+  await form.dispatch('submit');
+  assert.match(panel.select('[data-admin-document-message]').textContent, /no se pudo enviar su aviso/);
+  assert.doesNotMatch(panel.select('[data-admin-document-message]').textContent, /membresía activa/);
+  assert.equal(panel.documentCalls.dispatches.length, 0);
+  const retry = panel.select('[data-admin-document-list]').children[0].children[2];
+  assert.equal(retry.textContent, 'Enviar documento');
+  await retry.click();
+  assert.equal(panel.documentCalls.reservations.length, 1);
+  assert.equal(panel.documentCalls.uploads.length, 1);
+  assert.deepEqual(panel.documentCalls.releases.map(call => call.p_document_id), ['document-1', 'document-1']);
+  assert.equal(panel.documentCalls.messages.length, 1);
+  assert.match(panel.select('[data-admin-document-message]').textContent, /Aviso por correo enviado/);
+});
+
+test('a document without active membership stays pending and can be sent later without uploading again', async () => {
+  const panel = await mount();
+  await openPendingApplication(panel);
+  const form = panel.select('[data-admin-document-form]');
+  form.elements.document.files = [documentFile()];
+  await form.dispatch('submit');
+  assert.match(panel.select('[data-admin-document-message]').textContent, /cuando exista una membresía activa/);
+  assert.equal(panel.documentCalls.dispatches.length, 0);
+  assert.equal(panel.documentCalls.messages.length, 0);
+  assert.equal(panel.select('[data-admin-document-list]').children[0].children[2].disabled, true);
+  panel.setMembershipActive(true);
+  await openPendingApplication(panel);
+  await panel.select('[data-admin-document-list]').children[0].children[2].click();
+  assert.equal(panel.documentCalls.uploads.length, 1);
+  assert.equal(panel.documentCalls.messages.length, 1);
+  assert.equal(panel.documentCalls.dispatches.length, 1);
+});
+
+test('a delivery failure preserves the document and message, and checking its notice never uploads another copy', async () => {
+  const panel = await mount({ membershipActive: true, invokeError: true, deliveryStatus: 'failed' });
+  await openPendingApplication(panel);
+  const form = panel.select('[data-admin-document-form]');
+  form.elements.document.files = [documentFile()];
+  await form.dispatch('submit');
+  assert.match(panel.select('[data-admin-document-message]').textContent, /Documento y mensaje disponibles.*correo no se pudo enviar/);
+  const retry = panel.select('[data-admin-document-list]').children[0].children[2];
+  assert.equal(retry.textContent, 'Revisar aviso');
+  panel.setDeliveryStatus('sent');
+  await retry.click();
+  assert.equal(panel.documentCalls.uploads.length, 1);
+  assert.equal(panel.documentCalls.messages.length, 1);
+  assert.match(panel.select('[data-admin-document-message]').textContent, /Aviso por correo enviado/);
+});
+
+test('a failed storage upload never releases or dispatches a document notice', async () => {
+  const panel = await mount({ membershipActive: true, uploadError: true });
+  await openPendingApplication(panel);
+  const form = panel.select('[data-admin-document-form]');
+  form.elements.document.files = [documentFile()];
+  await form.dispatch('submit');
+  assert.equal(panel.documentCalls.releases.length, 0);
+  assert.equal(panel.documentCalls.dispatches.length, 0);
+  assert.equal(panel.documentCalls.messages.length, 0);
+  assert.equal(form.querySelector('[type="submit"]').disabled, false);
+  assert.match(panel.select('[data-admin-document-message]').textContent, /La carga no pudo completarse/);
 });

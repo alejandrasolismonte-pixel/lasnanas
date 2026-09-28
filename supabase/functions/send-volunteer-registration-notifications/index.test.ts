@@ -1,6 +1,6 @@
 import { assert, assertEquals, assertRejects, assertThrows } from "@std/assert";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { authorizeAdminDispatch, buildBrevoMessage, buildInitialCredentialAttachment, cleanPlainText, escapeHtml, handler, loadConfirmedPayment, type ConfirmedPayment, type NotificationRow } from "./index.ts";
+import { authorizeAdminDispatch, buildBrevoMessage, buildInitialCredentialAttachment, cleanPlainText, escapeHtml, handler, loadConfirmedPayment, validateAvailableDocument, type ConfirmedPayment, type NotificationRow } from "./index.ts";
 
 const base: NotificationRow = {
   notification_id: "10000000-0000-4000-8000-000000000001",
@@ -181,7 +181,7 @@ Deno.test("despacho inmediato exige token validado, rol admin vigente y solicitu
     new Request("https://example.test/functions/v1/send-volunteer-registration-notifications", {
       method: "POST", headers: { authorization }, body: JSON.stringify(body),
     });
-  assertEquals(await authorizeAdminDispatch(fakeClient, makeRequest()), base.application_id);
+  assertEquals(await authorizeAdminDispatch(fakeClient, makeRequest()), { applicationId: base.application_id });
   hasRole = false;
   await assertRejects(() => authorizeAdminDispatch(fakeClient, makeRequest()), Error, "admin_access_required");
   hasRole = true;
@@ -215,3 +215,107 @@ Deno.test("preflight del panel permite solo el origen público configurado", asy
     }
   }
 });
+
+Deno.test("el aviso de documento enlaza el panel privado y conserva destinataria e idempotencia", () => {
+  const row = { ...base, notification_type: "document_available" as const };
+  const message = buildBrevoMessage(row, config);
+  assertEquals(message.to[0].email, base.volunteer_email);
+  assertEquals(message.headers.idempotencyKey, base.idempotency_key);
+  assert(message.htmlContent.includes("mi-voluntariado.html?view=documents"));
+  assert(message.textContent.includes("Mis documentos"));
+  assertEquals(message.attachment, undefined);
+  assert(!message.htmlContent.includes("storage/v1"));
+  assertThrows(() => buildBrevoMessage({ ...row, recipient_email: "other@example.test" }, config), Error, "invalid_notification_recipient");
+});
+
+Deno.test("el worker exige autorización actual del documento antes de enviar el aviso", async () => {
+  const row = { ...base, notification_type: "document_available" as const };
+  const worker = "60000000-0000-4000-8000-000000000006";
+  let allowed = true, failure = false;
+  const client = {
+    rpc(name: string, args: Record<string, string>) {
+      assertEquals(name, "authorize_volunteer_document_notification");
+      assertEquals(args, { p_notification_id: row.notification_id, p_worker: worker });
+      return Promise.resolve({ data: allowed, error: failure ? { message: "unavailable" } : null });
+    },
+  } as unknown as SupabaseClient;
+  await validateAvailableDocument(client, row, worker);
+  allowed = false;
+  await assertRejects(() => validateAvailableDocument(client, row, worker), Error, "invalid_document_notification");
+  failure = true;
+  await assertRejects(() => validateAvailableDocument(client, row, worker), Error, "document_notification_unavailable");
+});
+
+for (const specificDocument of [true, false]) {
+  Deno.test(`despacho de documentos usa la cola y no repite un correo ya enviado (${specificDocument ? "documento" : "activación"})`, async () => {
+    const documentId = "50000000-0000-4000-8000-000000000005";
+    const row = { ...base, notification_type: "document_available" as const, application_status: "approved" as const };
+    const values: Record<string, string> = {
+      BREVO_API_KEY: "test-key", BREVO_SENDER_EMAIL: "sender@example.test",
+      ADMIN_NOTIFICATION_EMAIL: "admin@example.test", PUBLIC_SITE_URL: "https://example.test/",
+      SUPABASE_URL: "https://example.supabase.co", SUPABASE_SERVICE_ROLE_KEY: "test-role-key",
+      SUPABASE_SECRET_KEYS: "",
+    };
+    const previous = Object.fromEntries(Object.keys(values).map(key => [key, Deno.env.get(key)]));
+    const originalFetch = globalThis.fetch;
+    const claims: Record<string, unknown>[] = [];
+    const operations: string[] = [];
+    let delivered = false, mailCount = 0;
+    const jsonResponse = (value: unknown) => new Response(JSON.stringify(value), { headers: { "content-type": "application/json" } });
+    try {
+      for (const [key, value] of Object.entries(values)) Deno.env.set(key, value);
+      globalThis.fetch = async (input, init) => {
+        const url = new URL(input instanceof Request ? input.url : String(input));
+        const body = typeof init?.body === "string" ? JSON.parse(init.body) : {};
+        if (url.origin === "https://api.brevo.com") {
+          assertEquals(url.pathname, "/v3/smtp/email");
+          assertEquals(body.to[0].email, row.volunteer_email);
+          assertEquals(body.headers.idempotencyKey, row.idempotency_key);
+          mailCount++;
+          return jsonResponse({ messageId: "test-document-mail" });
+        }
+        assertEquals(url.origin, "https://example.supabase.co");
+        if (url.pathname === "/auth/v1/user") return jsonResponse({ id: "admin-id" });
+        if (url.pathname === "/rest/v1/staff_roles") return jsonResponse([{ user_id: "admin-id" }]);
+        const operation = url.pathname.replace("/rest/v1/rpc/", "");
+        operations.push(operation);
+        if (operation === "ensure_activation_notifications") return jsonResponse(0);
+        if (operation === "claim_volunteer_notifications_for_application") return jsonResponse([]);
+        if (operation === "claim_volunteer_document_notifications") {
+          claims.push(body);
+          return jsonResponse(delivered ? [] : [row]);
+        }
+        if (operation === "authorize_volunteer_document_notification") return jsonResponse(true);
+        if (operation === "mark_volunteer_notification_sent") {
+          delivered = true;
+          return jsonResponse(null);
+        }
+        throw new Error(`Unexpected request: ${url.pathname}`);
+      };
+      const request = (id: string | null = documentId) => new Request("https://example.supabase.co/functions/v1/send-volunteer-registration-notifications", {
+        method: "POST", headers: { authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiJ9.signature" },
+        body: JSON.stringify({ application_id: base.application_id, ...(specificDocument ? { document_id: id } : {}) }),
+      });
+      const first = await handler(request());
+      assertEquals(first.status, 200);
+      assertEquals(await first.json(), { processed: 1, sent: 1, failed: 0 });
+      const repeated = await handler(request());
+      assertEquals(await repeated.json(), { processed: 0, sent: 0, failed: 0 });
+      assertEquals(mailCount, 1);
+      assertEquals(claims[0].p_application_id, base.application_id);
+      assertEquals(claims[0].p_document_id, specificDocument ? documentId : null);
+      assertEquals(claims[0].p_limit, specificDocument ? 1 : 10);
+      assertEquals(operations.includes("ensure_activation_notifications"), !specificDocument);
+      if (specificDocument) {
+        assertEquals((await handler(request(null))).status, 400);
+        assertEquals(mailCount, 1);
+      }
+    } finally {
+      globalThis.fetch = originalFetch;
+      for (const [key, value] of Object.entries(previous)) {
+        if (value === undefined) Deno.env.delete(key);
+        else Deno.env.set(key, value);
+      }
+    }
+  });
+}

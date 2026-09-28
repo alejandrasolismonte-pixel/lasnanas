@@ -35,6 +35,7 @@
   const adminDocumentForm = document.querySelector('[data-admin-document-form]');
   const adminDocumentList = document.querySelector('[data-admin-document-list]');
   const adminDocumentMessage = document.querySelector('[data-admin-document-message]');
+  let uploadingAdminDocument = false;
   const editMapButton = document.querySelector('[data-admin-edit-map]');
   const statusLabels = { draft: 'Borrador', submitted: 'Enviada', in_review: 'En revisión', needs_clarification: 'Aclaración solicitada', approved: 'Aprobada', rejected: 'Rechazada', withdrawn: 'Retirada' };
   const billingLabels = { monthly: 'Mensual', yearly: 'Anual' };
@@ -170,8 +171,72 @@
       button.addEventListener('click', async function () {
         try { await downloadDocument(documentRecord.document_id); } catch (_) { adminDocumentMessage.textContent = 'No fue posible abrir el archivo.'; }
       });
-      row.append(label, button); adminDocumentList.append(row);
+      row.append(label, button);
+      if (documentRecord.document_kind === 'admin_release') {
+        const send = document.createElement('button');
+        send.className = 'btn btn-ghost'; send.type = 'button';
+        send.textContent = documentRecord.released_at ? 'Revisar aviso' : 'Enviar documento';
+        send.disabled = !workflowState?.membership_active;
+        send.addEventListener('click', async function () {
+          if (send.disabled) return;
+          send.disabled = true;
+          loader?.show('Enviando aviso del documento…');
+          try {
+            await sendAdminDocument(applicationId, documentRecord.document_id, token);
+            await refreshAdminDocumentSection(applicationId, token);
+          } finally {
+            send.disabled = !workflowState?.membership_active;
+            if (token === detailGeneration) loader?.hide();
+          }
+        });
+        row.append(send);
+      }
+      adminDocumentList.append(row);
     });
+  }
+
+  async function sendAdminDocument(applicationId, documentId, token) {
+    const isCurrent = () => token === detailGeneration && currentApplication?.application_id === applicationId;
+    const show = message => { if (isCurrent()) adminDocumentMessage.textContent = message; };
+    show('Preparando documento y aviso…');
+    try {
+      const { data: releasedAt, error } = await client.rpc('admin_release_volunteer_document', { p_document_id: documentId });
+      if (error || !releasedAt) {
+        if (/active_membership_required/.test(error?.message || ''))
+          show('Archivo guardado. El documento y su aviso se enviarán cuando exista una membresía activa.');
+        else if (/document_upload_incomplete/.test(error?.message || ''))
+          show('El archivo no terminó de cargarse. Selecciónalo nuevamente para completar la carga.');
+        else
+          show('Archivo guardado, pero no se pudo enviar su aviso. Reintenta desde este documento.');
+        return;
+      }
+      show('Documento y mensaje disponibles. Enviando el aviso por correo…');
+      // La función solo despierta la cola existente; el servidor fija destinatario e idempotencia.
+      try {
+        await client.functions.invoke('send-volunteer-registration-notifications', {
+          body: { application_id: applicationId, document_id: documentId }
+        });
+      } catch (_) { /* La consulta posterior conserva el estado real de entrega. */ }
+      const delivery = await client.rpc('admin_get_document_notification_status', { p_document_id: documentId });
+      const status = Array.isArray(delivery.data) ? delivery.data[0]?.delivery_status : null;
+      if (delivery.error || !status)
+        show('Documento y mensaje disponibles. No se pudo comprobar el envío del correo; revisa el aviso de este documento.');
+      else if (status === 'sent')
+        show('Documento y mensaje disponibles. Aviso por correo enviado.');
+      else if (status === 'failed')
+        show('Documento y mensaje disponibles. El correo no se pudo enviar; revisa el aviso de este documento.');
+      else
+        show('Documento y mensaje disponibles. El aviso por correo está pendiente de envío.');
+    } catch (_) {
+      show('Archivo guardado. No se pudo comprobar su aviso; reintenta desde este documento.');
+    }
+  }
+
+  async function refreshAdminDocumentSection(applicationId, token) {
+    if (token !== detailGeneration || currentApplication?.application_id !== applicationId) return;
+    await Promise.allSettled([
+      loadAdminDocuments(applicationId, token), loadApplicationMessages(applicationId, token)
+    ]);
   }
 
   function applicationCategory(application) {
@@ -982,15 +1047,17 @@
 
   adminDocumentForm.addEventListener('submit', async function (event) {
     event.preventDefault();
-    if (!currentApplication) return;
+    if (!currentApplication || uploadingAdminDocument) return;
     const applicationId = currentApplication.application_id;
     const token = detailGeneration;
     const file = adminDocumentForm.elements.document.files[0];
-    if (!(await validDocumentFile(file))) { adminDocumentMessage.textContent = 'Selecciona un PDF, JPG o PNG válido de hasta 10 MB.'; return; }
+    uploadingAdminDocument = true;
     const button = adminDocumentForm.querySelector('[type="submit"]'); button.disabled = true;
-    loader?.show('Cargando documento…');
-    adminDocumentMessage.textContent = 'Preparando carga privada…';
+    let uploaded = false;
     try {
+      if (!(await validDocumentFile(file))) { adminDocumentMessage.textContent = 'Selecciona un PDF, JPG o PNG válido de hasta 10 MB.'; return; }
+      loader?.show('Cargando documento…');
+      adminDocumentMessage.textContent = 'Preparando carga privada…';
       const { data: reserved, error: reserveError } = await client.rpc('admin_reserve_document_upload', {
         p_application_id: applicationId, p_original_name: file.name, p_mime_type: file.type, p_byte_size: file.size
       });
@@ -998,15 +1065,16 @@
       if (reserveError || !reservation) throw new Error('reserve_failed');
       const { error: uploadError } = await client.storage.from('volunteer-documents').upload(reservation.storage_path, file, { contentType: file.type, upsert: false });
       if (uploadError) throw new Error('upload_failed');
-      const releaseResult = await client.rpc('admin_release_volunteer_document', { p_document_id: reservation.document_id });
-      if (token !== detailGeneration || currentApplication?.application_id !== applicationId) return;
-      adminDocumentForm.reset();
-      adminDocumentMessage.textContent = releaseResult.error ? 'Archivo guardado. Se liberará cuando exista una membresía activa.' : 'Archivo guardado y liberado para la voluntaria.';
-      await loadAdminDocuments(applicationId, token);
+      uploaded = true;
+      if (token === detailGeneration && currentApplication?.application_id === applicationId) adminDocumentForm.reset();
+      await sendAdminDocument(applicationId, reservation.document_id, token);
+      await refreshAdminDocumentSection(applicationId, token);
     } catch (error) {
       if (token === detailGeneration && currentApplication?.application_id === applicationId)
-        adminDocumentMessage.textContent = error.message === 'reserve_failed' ? 'No fue posible reservar el archivo.' : 'La carga no pudo completarse.';
+        adminDocumentMessage.textContent = uploaded ? 'Archivo guardado. Revisa su aviso desde la lista de documentos.'
+          : error.message === 'reserve_failed' ? 'No fue posible reservar el archivo.' : 'La carga no pudo completarse.';
     } finally {
+      uploadingAdminDocument = false;
       button.disabled = false;
       if (token === detailGeneration) loader?.hide();
     }
