@@ -1,10 +1,10 @@
 # Manual de funcionamiento del voluntariado
 
-**Las Ñañas · versión de revisión · 26 de septiembre de 2026**
+**Las Ñañas · versión de revisión · 27 de septiembre de 2026**
 
 Este manual explica el recorrido de una voluntaria y las tareas de coordinación para los planes **Keyuwün, Kimün y Pülli**. El [diagrama del flujo](diagrama-flujo-voluntariado.md) muestra las decisiones principales en una página.
 
-> **Estado:** el flujo descrito está preparado en el código local. Las migraciones nuevas, la función de correo y la versión actual del sitio aún deben publicarse y probarse con cuentas y transferencias reales. Este manual no confirma que ya funcione en lasnanas.cl.
+> **Correos:** el recorrido normal usa dos para la voluntaria: confirmación al crear la cuenta y bienvenida tras activar la membresía. Los avisos internos a coordinación se conservan. Los reenvíos solicitados y la recuperación de contraseña son acciones independientes.
 
 ## 1. Elegir plan y crear cuenta
 

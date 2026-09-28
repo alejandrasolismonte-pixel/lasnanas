@@ -1,6 +1,7 @@
 {
   "imports": {
     "@supabase/supabase-js": "jsr:@supabase/supabase-js@2",
-    "@std/assert": "jsr:@std/assert@1"
+    "@std/assert": "jsr:@std/assert@1",
+    "@resvg/resvg-wasm": "npm:@resvg/resvg-wasm@2.6.2"
   }
 }

@@ -1,6 +1,21 @@
 # Correos de inscripción de voluntariado
 
-## Extensión local del 26 de septiembre de 2026
+## Funcionamiento vigente: 27 de septiembre de 2026
+
+La voluntaria recibe **dos correos durante el recorrido normal**:
+
+1. Confirmación de cuenta de Supabase Auth, con logo, ñaña y enlace de confirmación. La copia versionada está en `supabase/email-templates/confirm-sign-up.html`; la plantilla alojada se guarda en Authentication → Emails → Confirm sign up.
+2. Bienvenida `membership_activated`, solo tras aprobar, confirmar el abono y activar la membresía. Lleva logo, ñaña, vigencia, enlace al panel y credencial PNG inicial adjunta sin fotografía. Invita a subir la foto en Mi perfil; el comprobante, protocolo y credencial actualizada se descargan en Mis documentos.
+
+`202609270003_two_volunteer_emails.sql` elimina el encolado de `volunteer_welcome` y `payment_confirmed`, filtra esos tipos en las RPC de reclamo y desactiva sus filas pendientes. La función también impide enviarlos. El historial ya enviado se conserva. Se mantienen los tres avisos a coordinación: inscripción, comprobante recibido y pago confirmado.
+
+La función incluye el renderizador WASM y la fuente en el código; usa el mismo fondo público de la credencial del panel y adjunta una copia con nombre, plan, vencimiento y avatar genérico. Esa copia del correo permanece como inicial; la descarga posterior del panel usa la fotografía guardada. El estado `sent` del panel significa que Brevo aceptó el correo, sin garantizar su ubicación en la bandeja de entrada.
+
+La migración de dos correos y la función actualizada fueron aplicadas en Supabase. Los ajustes del panel se publican con el push habitual del sitio. Los reenvíos solicitados y la recuperación de contraseña son acciones independientes.
+
+## Historial de implementación del 26 de septiembre de 2026
+
+Las secciones siguientes documentan las versiones anteriores; el funcionamiento vigente es el descrito arriba.
 
 La cola privada admite ahora `payment_confirmed` y `membership_activated`. Ambas se encolan cuando una membresía nace a partir de un pago confirmado. El primer correo contiene una constancia del pago con código, importe del plan, abono bancario registrado, fecha y referencia; el segundo informa la vigencia y enlaza el documento de protocolo y acuerdos. El navegador no puede encolar esos avisos. Los correos conservan la idempotencia y los reintentos existentes. Esta extensión está preparada en `202609260002_payment_activation_notifications.sql` y en la Edge Function; aún requiere migración y despliegue.
 

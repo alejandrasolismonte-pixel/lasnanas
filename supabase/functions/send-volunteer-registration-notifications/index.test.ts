@@ -1,6 +1,6 @@
 import { assert, assertEquals, assertRejects, assertThrows } from "@std/assert";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { authorizeAdminDispatch, buildBrevoMessage, cleanPlainText, escapeHtml, handler, loadConfirmedPayment, type ConfirmedPayment, type NotificationRow } from "./index.ts";
+import { authorizeAdminDispatch, buildBrevoMessage, buildInitialCredentialAttachment, cleanPlainText, escapeHtml, handler, loadConfirmedPayment, type ConfirmedPayment, type NotificationRow } from "./index.ts";
 
 const base: NotificationRow = {
   notification_id: "10000000-0000-4000-8000-000000000001",
@@ -81,12 +81,31 @@ Deno.test("la bienvenida tras activación dirige a Documentos y al panel", () =>
   assert(message.htmlContent.includes("Gracias por acompañarnos en este camino"));
   assert(message.htmlContent.includes("protocolo"));
   assert(message.htmlContent.includes("credencial"));
-  assert(message.htmlContent.includes("pestaña <strong>Mis documentos</strong>"));
+  assert(message.htmlContent.includes("<strong>Mis documentos</strong>"));
+  assert(message.htmlContent.includes("copia inicial de tu credencial sin fotografía"));
+  assert(message.htmlContent.includes("view=profile"));
   assert(message.htmlContent.includes("assets/img/voluntariado/nana-bienvenida.png"));
   assert(message.htmlContent.includes("mi-voluntariado.html"));
   assert(message.htmlContent.includes("view=documents"));
   assert(message.htmlContent.includes("Entrar a mi panel"));
   assertThrows(() => buildBrevoMessage(row, config, { ...payment, endsAt: payment.startsAt }), Error, "invalid_confirmed_payment");
+});
+
+Deno.test("la credencial inicial adjunta es un PNG personalizado para los tres planes", async () => {
+  const background = await Deno.readFile(new URL("../../../assets/img/voluntariado/credencial-voluntariado-fondo.png", import.meta.url));
+  for (const plan_id of ["keyuwün", "kimün", "pülli"] as const) {
+    const row = { ...base, notification_type: "membership_activated" as const, plan_id, first_name: "Ana María", last_name: "Pérez Ñancupil" };
+    const attachment = await buildInitialCredentialAttachment(row, payment, background);
+    assertEquals(attachment.name, "credencial-las-nanas-inicial.png");
+    const png = Uint8Array.from(atob(attachment.content), (char) => char.charCodeAt(0));
+    assertEquals([...png.slice(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+    assert(png.length > 100_000 && png.length < 3_000_000);
+    assertEquals(new DataView(png.buffer).getUint32(16), 1200);
+    assertEquals(new DataView(png.buffer).getUint32(20), 751);
+  }
+  const longName = { ...base, notification_type: "membership_activated" as const, first_name: "W".repeat(60), last_name: "W".repeat(60) };
+  assert((await buildInitialCredentialAttachment(longName, payment, background)).content.length > 100_000);
+  await assertRejects(() => buildInitialCredentialAttachment(base, payment, background), Error, "invalid_credential_notification_type");
 });
 
 Deno.test("el aviso de pago a administración enlaza el expediente sin exponerlo a la voluntaria", () => {

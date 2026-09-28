@@ -71,7 +71,17 @@ export function validateNotification(row: NotificationRow): void {
   }
 }
 
-export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, payment?: ConfirmedPayment) {
+type BrevoMessage = {
+  sender: { name: string; email: string };
+  to: { email: string; name: string }[];
+  subject: string;
+  htmlContent: string;
+  textContent: string;
+  headers: { idempotencyKey: string };
+  attachment?: { name: string; content: string }[];
+};
+
+export function buildBrevoMessage(row: NotificationRow, config: RuntimeConfig, payment?: ConfirmedPayment): BrevoMessage {
   validateNotification(row);
   const baseUrl = new URL(config.publicSiteUrl);
   if (baseUrl.protocol !== "https:") throw new Error("invalid_public_site_url");
@@ -372,9 +382,10 @@ export async function handler(request: Request): Promise<Response> {
   }
   const { data, error } = applicationId
     ? await supabase.rpc("claim_volunteer_notifications_for_application", {
-      p_worker: worker, p_application_id: applicationId, p_limit: 10,
+      p_worker: worker, p_application_id: applicationId, p_limit: 2,
     })
-    : await supabase.rpc("claim_volunteer_notifications", { p_worker: worker, p_limit: 10 });
+    // Una credencial por invocación conserva margen de CPU para el renderizado.
+    : await supabase.rpc("claim_volunteer_notifications", { p_worker: worker, p_limit: 1 });
   if (error) {
     console.error("notification_queue_claim_unavailable", error.code ?? "unknown");
     return json({ error: "queue_unavailable" }, 503);
@@ -383,6 +394,13 @@ export async function handler(request: Request): Promise<Response> {
   let sent = 0; let failed = 0;
   for (const row of (data ?? []) as NotificationRow[]) {
     try {
+      if (["volunteer_welcome", "payment_confirmed"].includes(row.notification_type)) {
+        await supabase.rpc("mark_volunteer_notification_failed", {
+          p_notification_id: row.notification_id, p_worker: worker,
+          p_error_code: "suppressed_two_email_policy", p_retryable: false,
+        });
+        failed++; continue;
+      }
       const payment = ["payment_confirmed", "membership_activated", "admin_payment_confirmed"].includes(row.notification_type)
         ? await loadConfirmedPayment(supabase, row) : undefined;
       const message = buildBrevoMessage(row, config, payment);

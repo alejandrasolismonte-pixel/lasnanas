@@ -1,5 +1,6 @@
-import { Resvg, initWasm } from "npm:@resvg/resvg-wasm@2.6.2";
+import { Resvg, initWasm } from "@resvg/resvg-wasm";
 import { CREDENTIAL_FONT_BASE64 } from "./credential-font.ts";
+import { CREDENTIAL_WASM_BASE64 } from "./credential-renderer-wasm.ts";
 
 const width = 1586;
 const height = 992;
@@ -23,7 +24,7 @@ function escapeXml(value: string): string {
 
 function textWidth(value: string, size: number): number {
   return [...value].reduce((sum, char) => {
-    const proportion = char === " " ? .29 : /[ilI1.,:]/u.test(char) ? .3 : /[MWmw]/u.test(char) ? .82 : .55;
+    const proportion = char === " " ? .29 : /[ilI1.,:]/u.test(char) ? .3 : /[MWmw]/u.test(char) ? .9 : .6;
     return sum + proportion * size;
   }, 0);
 }
@@ -45,18 +46,30 @@ function wrapName(value: string, size: number, maxWidth: number): string[] {
 }
 
 function nameMarkup(name: string): string {
-  for (let size = 88; size >= 30; size -= 2) {
-    const lines = wrapName(name, size, 725);
-    if (lines.length > (size >= 40 ? 2 : 3)) continue;
-    const lineHeight = size * 1.1;
-    const firstBaseline = lines.length === 1 ? 466 : lines.length === 2 ? 422 : 389;
-    return lines.map((line, index) => {
-      const measured = textWidth(line, size);
-      const fit = measured > 725 ? ' textLength="725" lengthAdjust="spacingAndGlyphs"' : "";
-      return `<text x="595" y="${Math.round(firstBaseline + index * lineHeight)}" font-size="${size}"${fit}>${escapeXml(line)}</text>`;
-    }).join("");
+  for (let size = 88; size >= 52; size -= 2) {
+    if (textWidth(name, size) <= 725)
+      return `<text x="595" y="466" font-size="${size}">${escapeXml(name)}</text>`;
   }
-  throw new Error("credential_name_too_long");
+  for (let size = 62; size >= 30; size -= 2) {
+    const lines = wrapName(name, size, 725);
+    if (lines.length > 2) continue;
+    return lines.map((line, index) =>
+      `<text x="595" y="${lines.length === 1 ? 466 : 420 + index * 58}" font-size="${size}">${escapeXml(line)}</text>`
+    ).join("");
+  }
+  for (let size = 28; size >= 18; size -= 2) {
+    const lines = wrapName(name, size, 725);
+    if (lines.length > 3) continue;
+    return lines.map((line, index) =>
+      `<text x="595" y="${386 + index * 44}" font-size="${size}">${escapeXml(line)}</text>`
+    ).join("");
+  }
+  const characters = [...name];
+  const lineLength = Math.ceil(characters.length / 3);
+  return [0, 1, 2].map((index) => fittedText(
+    characters.slice(index * lineLength, (index + 1) * lineLength).join(""),
+    595, 386 + index * 44, 725, 28, 16, "#fff6e6"
+  )).join("");
 }
 
 function fittedText(value: string, x: number, y: number, maxWidth: number, maxSize: number, minSize: number, color: string): string {
@@ -68,8 +81,8 @@ function fittedText(value: string, x: number, y: number, maxWidth: number, maxSi
 
 async function initializeRenderer(): Promise<void> {
   wasmReady ??= (async () => {
-    const path = new URL("./index_bg.wasm", import.meta.resolve("npm:@resvg/resvg-wasm@2.6.2"));
-    await initWasm(await Deno.readFile(path));
+    const bytes = Uint8Array.from(atob(CREDENTIAL_WASM_BASE64), (char) => char.charCodeAt(0));
+    await initWasm(bytes);
   })();
   try { await wasmReady; } catch (error) { wasmReady = undefined; throw error; }
 }
@@ -85,6 +98,7 @@ export type InitialCredentialDetails = {
 export async function renderInitialCredentialPng(background: Uint8Array, details: InitialCredentialDetails): Promise<Uint8Array> {
   if (background.length < 100 || background.length > 3_000_000 ||
       !pngSignature.every((byte, index) => background[index] === byte)) throw new Error("invalid_credential_background");
+  // deno-lint-ignore no-control-regex
   const name = String(details.name).normalize("NFC").replace(/[\u0000-\u001f\u007f]+/g, " ").trim().replace(/\s+/g, " ");
   const plans = { "keyuwün": "Keyuwün", "kimün": "Kimün", "pülli": "Pülli" } as const;
   if (!name || name.length > 125 || !Object.hasOwn(plans, details.planId) || Number.isNaN(Date.parse(details.expiresAt))) {

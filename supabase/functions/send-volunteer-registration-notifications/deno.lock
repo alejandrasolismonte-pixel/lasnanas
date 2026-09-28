@@ -5,6 +5,7 @@
     "jsr:@std/internal@^1.0.12": "1.0.14",
     "jsr:@supabase/supabase-js@2": "2.117.1",
     "npm:@resvg/resvg-wasm@2.4.0": "2.4.0",
+    "npm:@resvg/resvg-wasm@2.6.2": "2.6.2",
     "npm:@supabase/auth-js@2.117.1": "2.117.1",
     "npm:@supabase/functions-js@2.117.1": "2.117.1",
     "npm:@supabase/postgrest-js@2.117.1": "2.117.1",
@@ -35,6 +36,9 @@
   "npm": {
     "@resvg/resvg-wasm@2.4.0": {
       "integrity": "sha512-C7c51Nn4yTxXFKvgh2txJFNweaVcfUPQxwEUFw4aWsCmfiBDJsTSwviIF8EcwjQ6k8bPyMWCl1vw4BdxE569Cg=="
+    },
+    "@resvg/resvg-wasm@2.6.2": {
+      "integrity": "sha512-FqALmHI8D4o6lk/LRWDnhw95z5eO+eAa6ORjVg09YRR7BkcM6oPHU9uyC0gtQG5vpFLvgpeU4+zEAz2H8APHNw=="
     },
     "@supabase/auth-js@2.117.1": {
       "integrity": "sha512-3vJpc5thxaovbZ2zrWagzp/ZtCcXpQk1xftinzneNB1XLdhAmjqChOnj2Y8wpriYEFVvlqC+sFbR0JBUi83hDA==",
@@ -81,7 +85,8 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1",
-      "jsr:@supabase/supabase-js@2"
+      "jsr:@supabase/supabase-js@2",
+      "npm:@resvg/resvg-wasm@2.6.2"
     ]
   }
 }
