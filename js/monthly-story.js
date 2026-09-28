@@ -8,9 +8,9 @@
     month: '',
     territory: '',
     title: 'El fuego de bienvenida',
-    description: 'Cada mes, una Ñaña compartirá una historia, un saber o una invitación desde su territorio,',
-    src: 'assets/videos/video-header.mp4',
-    poster: 'assets/img/carrusel/paisaje-territorio-02-web.webp',
+    description: 'Las Ñañas compartirán en un video, un saber o una invitación desde su territorio.',
+    src: 'assets/videos/video-mes.mp4',
+    poster: 'assets/img/post/post-1.jpeg',
     captionsSrc: '',
     actionLabel: '',
     actionUrl: ''

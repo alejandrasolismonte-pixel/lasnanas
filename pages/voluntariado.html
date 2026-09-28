@@ -250,7 +250,7 @@
           </article>
         </div>
 
-        <p class="volunteer-activities__note reveal">Detalles, fechas y la forma de participación de cada actividad se acuerdan junto al equipo de coordinación.</p>
+        <p class="volunteer-activities__note reveal"></p>
       </div>
     </section>
 
@@ -312,7 +312,7 @@
               <h3>Aporte contempla</h3>
               <ul>
                 <li>Novedades de la red.</li>
-                <li>Charla introductoria en línea.</li>
+                <li>Descuentos 20% en cualquier producto, servicio o voluntariado.</li>
                 <li>Prioridad para conocer convocatorias.</li>
               </ul>
             </div>
@@ -327,7 +327,7 @@
             </div>
             <div class="membership-card__heading">
               <h2>kimün</h2>
-              <p>Para participar, aprender y comenzar a vincularte con el territorio.</p>
+              <p>Para participar y comenzar a vincularte con el territorio,talleres on line, convocatorias etc.</p>
             </div>
             <p class="membership-card__price" aria-live="polite">
               <strong data-price data-monthly-clp="15000" data-yearly-clp="90000" data-monthly-usd="15" data-yearly-usd="90">$15.000</strong>
@@ -336,7 +336,7 @@
             <div class="membership-card__includes" tabindex="0">
               <h3>Aporte contempla</h3>
               <ul>
-                <li>Todo lo incluido en kimün.</li>
+                <li>Todo lo incluido en keyuwün.</li>
                 <li>Encuentros comunitarios en línea.</li>
                 <li>Prioridad para jornadas presenciales.</li>
               </ul>
@@ -362,7 +362,7 @@
             <div class="membership-card__includes" tabindex="0">
               <h3>Aporte contempla</h3>
               <ul>
-                <li>Todo lo incluido en pülli.</li>
+                <li>Incluido lo de kimün y keyuwün.</li>
                 <li>Orientación previa personalizada.</li>
                 <li>Acceso preferente según disponibilidad de cupos.</li>
               </ul>
@@ -371,58 +371,129 @@
             <a class="membership-card__button" href="mi-voluntariado.html?plan=p%C3%BClli" data-membership-plan="pülli">Sumarme como pülli</a>
           </article>
         </div>
-        <p class="membership-note">Las experiencias presenciales requieren inscripción previa.</p>
+        <p class="membership-note"></p>
       </div>
     </section>
 
     <!-- Sección interactiva de experiencias de voluntariado con relatos de muestra reemplazables -->
-    <section class="section-shell section volunteer-experiences public-band public-band--stars" aria-labelledby="experiences-title">
-      <canvas class="particles-canvas" aria-hidden="true"></canvas>
-      <!-- Encabezado editorial de las bitácoras -->
-      <div class="container">
-        <div class="volunteer-experiences__heading reveal">
-          <p class="eyebrow volunteer-experiences__eyebrow">VOLUNTARIADO · APRENDIZAJES COMPARTIDOS</p>
-          <h2 id="experiences-title">Experiencias que dejan huellas…</h2>
-          <p>Selecciona para conocer experiencias de voluntarias, como llegó, como lo vivió, que aprendizaje de Las Ñañas se llevó.</p>
-        </div>
+<section class="section-shell section volunteer-experiences public-band public-band--stars" aria-labelledby="experiences-title">
+  <canvas class="particles-canvas" aria-hidden="true"></canvas>
 
-        <!-- Selector escalable de experiencias y panel de bitácoras asociado -->
-        <div class="volunteer-experiences__layout reveal">
-          <div class="volunteer-experiences__choices" role="tablist" aria-label="Seleccionar experiencia de voluntariado">
-            <!-- Selector de Alejandra activo al cargar -->
-            <button class="volunteer-person is-active" id="volunteer-tab-1" type="button" role="tab" aria-selected="true" aria-controls="volunteer-entry-1" tabindex="0" data-entry="volunteer-entry-1">
-              <span class="volunteer-person__portrait"><img src="../assets/img/Alejandra-voluntaria.jpeg" alt="Alejandra, voluntaria"></span>
-              <span class="volunteer-person__copy"><strong>Alejandra</strong><small>Territorio por confirmar · período por confirmar</small></span>
-            </button>
+  <!-- Encabezado editorial de las bitácoras -->
+  <div class="container">
+    <div class="volunteer-experiences__heading reveal">
+      <p class="eyebrow volunteer-experiences__eyebrow">VOLUNTARIADO · APRENDIZAJES COMPARTIDOS</p>
+      <h2 id="experiences-title">Experiencias que dejan huellas…</h2>
+      <p>Selecciona para conocer experiencias de voluntarias y voluntarios, y qué aprendizajes de Las Ñañas se llevaron.</p>
+    </div>
 
-            <!-- Selector de Ayla -->
-            <button class="volunteer-person" id="volunteer-tab-2" type="button" role="tab" aria-selected="false" aria-controls="volunteer-entry-2" tabindex="-1" data-entry="volunteer-entry-2">
-              <span class="volunteer-person__portrait"><img src="../assets/img/Ayla-voluntaria.jpeg" alt="Ayla, voluntaria"></span>
-              <span class="volunteer-person__copy"><strong>Ayla</strong><small>Territorio por confirmar · período por confirmar</small></span>
-            </button>
+    <!-- Selector escalable de experiencias y panel de bitácoras asociado -->
+    <div class="volunteer-experiences__layout reveal">
+      <div class="volunteer-experiences__choices" role="tablist" aria-label="Seleccionar experiencia de voluntariado">
 
-            <!-- Selector de Carlos -->
-            <button class="volunteer-person" id="volunteer-tab-3" type="button" role="tab" aria-selected="false" aria-controls="volunteer-entry-3" tabindex="-1" data-entry="volunteer-entry-3">
-              <span class="volunteer-person__portrait"><img src="../assets/img/Carlos-voluntaria.jpeg" alt="Carlos, voluntario"></span>
-              <span class="volunteer-person__copy"><strong>Carlos</strong><small>Territorio por confirmar · período por confirmar</small></span>
-            </button>
-          </div>
+        <!-- Selector de Alejandra activo al cargar -->
+        <button class="volunteer-person is-active" id="volunteer-tab-1" type="button" role="tab" aria-selected="true" aria-controls="volunteer-entry-1" tabindex="0" data-entry="volunteer-entry-1">
+          <span class="volunteer-person__portrait">
+            <img src="../assets/img/Alejandra-voluntaria.jpeg" alt="Alejandra, voluntaria">
+          </span>
+          <span class="volunteer-person__copy">
+            <strong>Alejandra</strong>
+            <small>Chol-chol-Tromen-Carahue · 2 meses</small>
+          </span>
+        </button>
 
-          <!-- Bitácora cálida que muestra una experiencia a la vez -->
-          <div class="volunteer-diary">
-            <span class="volunteer-diary__leaf" aria-hidden="true"></span>
-            <!-- Relato de muestra reemplazable de Alejandra -->
-            <article class="volunteer-entry is-active" id="volunteer-entry-1" role="tabpanel" aria-labelledby="volunteer-tab-1"><img class="volunteer-entry__image" src="../assets/img/Alejandra-voluntaria.jpeg" alt="Alejandra durante su experiencia de voluntariado"><p class="volunteer-entry__tag">Bitácora 01</p><h3>Un encuentro que se comparte</h3><blockquote>Relato de ejemplo reemplazable: aquí irá la experiencia autorizada de Alejandra sobre su llegada, lo que compartió y el aprendizaje que se llevó de Las Ñañas.</blockquote></article>
-            <!-- Relato de muestra reemplazable de Ayla -->
-            <article class="volunteer-entry" id="volunteer-entry-2" role="tabpanel" aria-labelledby="volunteer-tab-2" hidden><img class="volunteer-entry__image" src="../assets/img/Ayla-voluntaria.jpeg" alt="Ayla durante su experiencia de voluntariado"><p class="volunteer-entry__tag">Bitácora 02</p><h3>Aprender haciendo en comunidad</h3><blockquote>Relato de ejemplo reemplazable: aquí irá la experiencia autorizada de Ayla sobre los saberes compartidos, el territorio y su aprendizaje junto a la comunidad.</blockquote></article>
-            <!-- Relato de muestra reemplazable de Carlos -->
-            <article class="volunteer-entry" id="volunteer-entry-3" role="tabpanel" aria-labelledby="volunteer-tab-3" hidden><img class="volunteer-entry__image" src="../assets/img/Carlos-voluntaria.jpeg" alt="Carlos durante su experiencia de voluntariado"><p class="volunteer-entry__tag">Bitácora 03</p><h3>Una memoria para llevar</h3><blockquote>Relato de ejemplo reemplazable: aquí irá la experiencia autorizada de Carlos sobre su participación, los vínculos creados y aquello que aprendió en Las Ñañas.</blockquote></article>
-          </div>
-        </div>
-        <!-- Aviso editorial para evitar atribuir testimonios no autorizados -->
-        <p class="volunteer-experiences__note"></p>
+        <!-- Selector de Ayla -->
+        <button class="volunteer-person" id="volunteer-tab-2" type="button" role="tab" aria-selected="false" aria-controls="volunteer-entry-2" tabindex="-1" data-entry="volunteer-entry-2">
+          <span class="volunteer-person__portrait">
+            <img src="../assets/img/Ayla-voluntaria.jpeg" alt="Ayla, voluntaria">
+          </span>
+          <span class="volunteer-person__copy">
+            <strong>Ayla</strong>
+            <small>Territorio por confirmar · período por confirmar</small>
+          </span>
+        </button>
+
+        <!-- Selector de Carlos -->
+        <button class="volunteer-person" id="volunteer-tab-3" type="button" role="tab" aria-selected="false" aria-controls="volunteer-entry-3" tabindex="-1" data-entry="volunteer-entry-3">
+          <span class="volunteer-person__portrait">
+            <img src="../assets/img/Carlos-voluntaria.jpeg" alt="Carlos, voluntario">
+          </span>
+          <span class="volunteer-person__copy">
+            <strong>Carlos</strong>
+            <small>Territorio por confirmar · período por confirmar</small>
+          </span>
+        </button>
+
+        <!-- Selector de Belén -->
+        <button class="volunteer-person" id="volunteer-tab-4" type="button" role="tab" aria-selected="false" aria-controls="volunteer-entry-4" tabindex="-1" data-entry="volunteer-entry-4">
+          <span class="volunteer-person__portrait">
+            <img src="../assets/img/Belen-voluntaria.jpeg" alt="Belén, voluntaria">
+          </span>
+          <span class="volunteer-person__copy">
+            <strong>Belén</strong>
+            <small>Tromen-Temuco · 15 días</small>
+          </span>
+        </button>
+
       </div>
-    </section>
+
+      <!-- Bitácora cálida que muestra una experiencia a la vez -->
+      <div class="volunteer-diary">
+        <span class="volunteer-diary__leaf" aria-hidden="true"></span>
+
+        <!-- Relato de Alejandra -->
+        <article class="volunteer-entry is-active" id="volunteer-entry-1" role="tabpanel" aria-labelledby="volunteer-tab-1">
+          <img class="volunteer-entry__image" src="../assets/img/Alejandra-voluntaria.jpeg" alt="Alejandra durante su experiencia de voluntariado">
+          <p class="volunteer-entry__tag">epu-1</p>
+          <h3>Feliz de la experiencia y aprendizaje</h3>
+          <blockquote>
+            Participé como voluntaria en distintos proyectos de la Región de La Araucanía, colaborando en tareas de huerta, cuidado de gallinas, diseño y desarrollo de sitios web, planificación de actividades y apoyo en la gestión de Las Ñañas.
+
+            Fue una experiencia amable, cercana y llena de aprendizajes que trascienden el trabajo realizado. Me permitió compartir saberes, conocer otras formas de hacer y llevarme aprendizajes valiosos para la vida.
+          </blockquote>
+        </article>
+
+        <!-- Relato de muestra reemplazable de Ayla -->
+        <article class="volunteer-entry" id="volunteer-entry-2" role="tabpanel" aria-labelledby="volunteer-tab-2" hidden>
+          <img class="volunteer-entry__image" src="../assets/img/Ayla-voluntaria.jpeg" alt="Ayla durante su experiencia de voluntariado">
+          <p class="volunteer-entry__tag">Bitácora 02</p>
+          <h3>Aprender haciendo en comunidad</h3>
+          <blockquote>
+            Relato de ejemplo reemplazable: aquí irá la experiencia autorizada de Ayla sobre los saberes compartidos, el territorio y su aprendizaje junto a la comunidad.
+          </blockquote>
+        </article>
+
+        <!-- Relato de muestra reemplazable de Carlos -->
+        <article class="volunteer-entry" id="volunteer-entry-3" role="tabpanel" aria-labelledby="volunteer-tab-3" hidden>
+          <img class="volunteer-entry__image" src="../assets/img/Carlos-voluntaria.jpeg" alt="Carlos durante su experiencia de voluntariado">
+          <p class="volunteer-entry__tag">Bitácora 03</p>
+          <h3>Una memoria para llevar</h3>
+          <blockquote>
+            Relato de ejemplo reemplazable: aquí irá la experiencia autorizada de Carlos sobre su participación, los vínculos creados y aquello que aprendió en Las Ñañas.
+          </blockquote>
+        </article>
+
+        <!-- Relato de Belén -->
+        <article class="volunteer-entry" id="volunteer-entry-4" role="tabpanel" aria-labelledby="volunteer-tab-4" hidden>
+          <img class="volunteer-entry__image" src="../assets/img/Belen-voluntaria.jpeg" alt="Belén durante su experiencia de voluntariado en Tromen">
+          <p class="volunteer-entry__tag">Bitácora 04</p>
+          <h3>Una experiencia alegre y llena de aprendizajes</h3>
+          <blockquote>
+            Tuve una experiencia muy alegre y divertida, aprendiendo y ayudando en labores de alimentación, huerta y tareas de campo, como recoger leña, hacer fuego y preparar harina tostada.
+
+            Las Ñañas me asesoraron para llegar sin mayores dificultades, orientándome sobre el transporte, horarios, valores y todo lo necesario para organizar mi llegada.
+
+            Gracias a Las Ñañas.
+          </blockquote>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- Aviso editorial para evitar atribuir testimonios no autorizados -->
+    <p class="volunteer-experiences__note"></p>
+  </div>
+</section>
 
     <!-- Preguntas prácticas de voluntariado: orientación humana antes de coordinar una visita. -->
     <section class="section-shell section volunteer-faq public-band" aria-labelledby="volunteer-faq-title" data-volunteer-faq>
@@ -430,7 +501,7 @@
         <header class="volunteer-faq__heading reveal">
           <p class="eyebrow">VOLUNTARIADO · ANTES DE VIAJAR</p>
           <h2 id="volunteer-faq-title">Preguntar también es parte del encuentro.</h2>
-          <p>No esperamos que llegues con todo resuelto. Aquí conversamos lo práctico con claridad para construir una experiencia cuidada, realista y buena para ambas partes.</p>
+          <p>No esperamos que llegues con todo resuelto. Aquí conversamos con claridad para construir una experiencia cuidada, realista y buena para ambas partes.</p>
         </header>
 
         <div class="volunteer-faq__layout">

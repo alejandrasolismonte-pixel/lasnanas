@@ -2,7 +2,7 @@
 
 El dashboard y la captura están activos en el sitio real. El usuario aplicó la migración y autorizó la publicación; se desplegó `collect-site-activity` y se comprobó el dashboard con una sesión administradora real. La captura empezó el 27 de septiembre de 2026 a las 23:21, hora de Chile. WhatsApp sigue sin integrar ni programar.
 
-El 28 de septiembre el usuario cambió la estrategia: reportes por correo al alcanzar 100, 200, 300… visitas de cada día de Chile. La nueva cola y su worker están preparados y probados localmente; su publicación y activación siguen pendientes. Ver [reportes de actividad por correo](reportes-actividad-correo.md).
+El 28 de septiembre el usuario cambió la estrategia: reportes por correo al alcanzar 100, 200, 300… visitas de cada día de Chile. La cola, el worker y la revisión automática cada cinco minutos están **activos desde las 16:12**, con autorización explícita del usuario. El proveedor aceptó la prueba con 18 visitas reales registradas hoy, sin modificar los eventos. Ver [reportes de actividad por correo](reportes-actividad-correo.md).
 
 La comprobación de activación devolvió `ready = true`; las 17 comprobaciones HTTP pasaron, incluidas las respuestas 401 para consultas anónimas a la RPC administrativa y a la tabla de eventos. Se verificó que los archivos publicados corresponden al código local. El resumen del 27 de septiembre quedó guardado una sola vez y se comprobó su contenido; esto no implica que se haya enviado por WhatsApp.
 

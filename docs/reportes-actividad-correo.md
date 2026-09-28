@@ -1,6 +1,8 @@
 # Reportes de actividad por correo cada 100 visitas
 
-Preparado y probado localmente el 28 de septiembre de 2026 para revisión y activación posterior. Esta nueva entrega **no está habilitada ni programada**. La captura y el dashboard existentes siguen funcionando. El destinatario fue confirmado en la conversación y se configurará exclusivamente como secreto servidor. Antes de aplicar la migración, desplegar el worker o activar envíos, solicitar la autorización de publicación indicada por el usuario.
+**Activo en producción desde el 28 de septiembre de 2026 a las 16:12, hora de Chile**, con autorización explícita del usuario. Se aplicó la migración, se desplegó el worker independiente y se configuraron el destinatario, la clave privada y Vault. El job `site-activity-email-every-5-minutes` está activo y revisa cada cinco minutos los umbrales de 100, 200, 300… visitas de cada día de Chile.
+
+La prueba autorizada utilizó datos reales, sin insertar visitas ficticias: el reporte del 28 de septiembre contenía **18 visitas registradas hoy**. A las 16:12:06 el proveedor aceptó un correo en un solo intento; la función respondió HTTP 200, `sent=1`, `failed=0`, `uncertain=0`, y la cola guardó `status=sent`. Asunto: «PRUEBA · Las Ñañas · actividad real · 28-09-2026». Esto confirma aceptación por el proveedor; la bandeja de entrada o Spam deben revisarse por separado. El destinatario permanece exclusivamente en configuración servidora.
 
 La entrega utiliza el canal Brevo existente y un worker separado, `send-site-activity-reports`. No modifica los flujos de voluntariado, pagos, administración ni sus notificaciones. No integra WhatsApp.
 
@@ -17,12 +19,13 @@ La migración deja la configuración desactivada. Al pasar de `false` a `true`, 
 
 ## Seguridad y reintentos
 
-Las tablas `site_activity_email_settings` y `site_activity_email_reports` tienen RLS y FORCE RLS, políticas SELECT para admin activo y ningún permiso directo para `PUBLIC`, `anon`, `authenticated` ni `service_role`. El acceso del worker pasa exclusivamente por estas cinco RPC, con autorización `service_role` y `SECURITY DEFINER` con `search_path` vacío:
+Las tablas `site_activity_email_settings` y `site_activity_email_reports` tienen RLS y FORCE RLS, políticas SELECT para admin activo y ningún permiso directo para `PUBLIC`, `anon`, `authenticated` ni `service_role`. El acceso del worker pasa exclusivamente por estas seis RPC, con autorización `service_role` y `SECURITY DEFINER` con `search_path` vacío:
 
 | RPC | Uso |
 | --- | --- |
 | `configure_site_activity_email_reports(boolean)` | Activar o desactivar desde el backend autorizado. |
 | `prepare_site_activity_email_reports(integer)` | Crear los snapshots pendientes; límite entre 1 y 20, predeterminado 20. |
+| `prepare_site_activity_email_test()` | Preparar una prueba manual con agregados reales del día; un único registro por día, sin cambiar eventos ni el umbral automático. |
 | `claim_site_activity_email_reports(uuid, integer)` | Reclamar hasta cinco reportes; límite entre 1 y 5, predeterminado 5. |
 | `mark_site_activity_email_report_sent(uuid, uuid, text)` | Guardar la aceptación de Brevo para el worker que tiene el lease. |
 | `mark_site_activity_email_report_failed(uuid, uuid, text, boolean, boolean)` | Registrar un error sanitizado, indicando si es reintentable y si la aceptación es ambigua. |
@@ -51,9 +54,9 @@ La función usa también la configuración servidora de Supabase para las RPC; n
 ## Revisar y probar antes de activar
 
 1. Revisar `supabase/migrations/202609280002_site_activity_email_reports.sql`, el worker y esta guía. Confirmar autorización para aplicar esa migración, desplegar **sólo** este worker y programar la entrega. La autorización anterior del dashboard y su captura no demuestra por sí sola que esta nueva entrega esté habilitada.
-2. Probar primero en un proyecto Supabase aislado con las migraciones de actividad existentes. Aplicar allí la nueva migración y ejecutar `supabase/diagnostics/site-activity-email-security.sql`: RLS y FORCE RLS deben estar activos, los permisos de tablas en `false`, y las cinco RPC deben poder ejecutarse sólo como `service_role`.
+2. Probar primero en un proyecto Supabase aislado con las migraciones de actividad existentes. Aplicar allí la nueva migración y ejecutar `supabase/diagnostics/site-activity-email-security.sql`: RLS y FORCE RLS deben estar activos, los permisos de tablas en `false`, y las seis RPC deben poder ejecutarse sólo como `service_role`.
 3. Ejecutar `tests/site-activity-email-database.sql` únicamente en ese proyecto aislado, sin tráfico concurrente. Sus fixtures verifican permisos, umbrales, snapshots, propiedad de los trabajos reclamados y reintentos dentro de una transacción que termina en `ROLLBACK`. **No insertar fixtures ni generar visitas ficticias en producción.**
-4. Confirmar una dirección de prueba explícita antes de cualquier correo real. Configurar `SITE_ACTIVITY_REPORT_EMAIL` con esa dirección en el proyecto de prueba. Probar la entrega con visitas controladas que alcancen el umbral en ese proyecto; comprobar un correo por umbral y que repetir la invocación no cree otro envío. No inventar un modo de prueba en producción ni utilizar el destinatario administrativo por defecto.
+4. Confirmar una dirección de prueba explícita antes de cualquier correo real. Configurar `SITE_ACTIVITY_REPORT_EMAIL` con esa dirección en el proyecto de prueba. Probar allí los umbrales con visitas controladas y comprobar la deduplicación. Para una prueba autorizada de entrega en producción, el backend llama a `prepare_site_activity_email_test()` y después al worker: el contenido usa métricas reales, queda identificado como PRUEBA y no modifica las visitas ni la regla de 100. Repetir la preparación ese día devuelve el mismo registro. No hay un modo de prueba HTTP ni destinatario administrativo por defecto.
 5. Para la activación autorizada, configurar el destinatario definitivo y los secretos servidores; desplegar `send-site-activity-reports` con `verify_jwt = false`, ya que valida su propio secreto obligatorio. Mantener la configuración de reportes desactivada hasta terminar las comprobaciones.
 6. Habilitar `pg_cron` y `pg_net`, guardar las dos entradas indicadas abajo en Vault y crear la programación. Ejecutar de nuevo el diagnóstico: debe reconocer el job y su referencia a Vault, sin exponer el comando ni los valores.
 7. Activar mediante una llamada **servidora** a `configure_site_activity_email_reports` con `{ "p_enabled": true }`. La interfaz de administración no activa ni envía correos. Verificar umbrales provenientes del tráfico real y la aceptación en Brevo; no bajar el umbral ni inyectar eventos para forzar un ensayo en producción.
@@ -69,7 +72,7 @@ deno run --no-config --no-lock --allow-read --allow-env tests/run-site-activity-
 deno run --allow-env=TEMP,TMPDIR --allow-write scripts/preview-site-activity-email.ts
 ```
 
-Resultado local: **29 pruebas del worker pasan**, incluido el chequeo de tipos. Las dos migraciones reales y los fixtures de seguridad, hitos, snapshots y reintentos también pasaron en PostgreSQL en memoria con PGlite 0.5.8. Este verificador se descarga únicamente a la caché de Deno; no se añade al sitio ni a las Edge Functions. La prueba SQL no tiene permiso de red y comprueba el `ROLLBACK`. No sustituye la comprobación de configuración y entrega del proveedor en producción.
+Resultado local: **31 pruebas del worker pasan**, incluido el chequeo de tipos y la prueba manual con datos reales. Las dos migraciones reales y los fixtures de seguridad, hitos, snapshots, prueba manual y reintentos también pasaron en PostgreSQL en memoria con PGlite 0.5.8. Este verificador se descarga únicamente a la caché de Deno; no se añade al sitio ni a las Edge Functions. La prueba SQL no tiene permiso de red y comprueba el `ROLLBACK`. La aceptación del proveedor también se comprobó en producción según el registro de activación anterior.
 
 El script de muestra genera HTML en el directorio temporal y muestra su ruta. Usa el renderizador real con cifras ficticias y una franja «MUESTRA LOCAL · DATOS FICTICIOS · NO ENVIADO». No consulta datos reales, no guarda el destinatario definitivo y no envía correo.
 
@@ -80,7 +83,7 @@ Crear estas entradas desde la interfaz de **Supabase Vault**, sin pegar sus valo
 - `site_activity_report_project_url`: URL base del proyecto Supabase autorizado.
 - `site_activity_report_webhook_secret`: el secreto efectivo del header `x-notification-secret`.
 
-El SQL siguiente es una receta para la etapa autorizada, **no parte del diagnóstico ni una instrucción de ejecutarlo ahora**. El nombre del job debe ser único. La configuración inicial desactivada impide que las primeras invocaciones preparen o envíen reportes.
+El SQL siguiente documenta la programación ya creada durante la activación autorizada. **No es necesario volver a ejecutarlo**. El nombre del job es único y la configuración se activó después de guardar sus secretos.
 
 ```sql
 select cron.schedule(
