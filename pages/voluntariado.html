@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="../css/voluntariado.css?v=24">
   <link rel="stylesheet" href="../css/public-faq.css?v=2">
   <!-- Estilos del acceso y registro de voluntariado. -->
-  <link rel="stylesheet" href="../css/voluntariado-demo.css?v=2">
+  <link rel="stylesheet" href="../css/voluntariado-demo.css?v=3">
   <!-- CARGA GLOBAL: indicador central para esperas de autenticación y navegación. -->
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
   <link rel="stylesheet" href="../css/whatsapp-floating.css?v=4">
@@ -631,6 +631,8 @@
           <label>Contraseña<span class="password-field"><input name="password" type="password" minlength="12" maxlength="256" autocomplete="new-password" aria-describedby="register-password-help register-password-error" required><button type="button" data-toggle-password>Mostrar</button></span></label>
           <p class="field-help" id="register-password-help">Usa una frase larga de al menos 12 caracteres. Puedes pegarla o usar tu gestor de contraseñas.</p>
           <p class="field-error" id="register-password-error"></p>
+          <label class="auth-privacy-consent"><input name="privacyConsent" type="checkbox" aria-describedby="register-privacy-error" required><span>Acepto el tratamiento de mis datos personales para gestionar mi cuenta y participación en Las Ñañas, y declaro haber leído la <a href="politica-privacidad.html" target="_blank" rel="noopener">Política de Privacidad</a>.</span></label>
+          <p class="field-error" id="register-privacy-error"></p>
           <!-- ESPERA: el cargador global evita dobles envíos mientras se crea la cuenta. -->
           <button class="button button--primary auth-submit" type="submit" data-register-submit>
             <span data-submit-label>Crear cuenta y continuar</span>
@@ -695,7 +697,7 @@
   <script src="../js/supabase-client.js?v=2"></script>
   <script src="../js/loading-overlay.js?v=2"></script>
   <!-- Acceso y registro mediante Supabase Auth. -->
-  <script src="../js/voluntariado-demo.js?v=6"></script>
+  <script src="../js/voluntariado-demo.js?v=7"></script>
   <script src="../js/whatsapp-floating.js?v=4"></script>
 </body>
 </html>

@@ -152,11 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!register.elements.email.validity.valid) { setError(register,'email','register-email-error','Escribe un correo válido.'); valid=false; }
     if (!country) { setError(register,'country','register-country-error','Selecciona tu país.'); valid=false; }
     if (password.length < 12 || password.length > 256) { setError(register,'password','register-password-error','Usa entre 12 y 256 caracteres.'); valid=false; }
+    if (!register.elements.privacyConsent.checked) { setError(register,'privacyConsent','register-privacy-error','Debes aceptar la Política de Privacidad para crear tu cuenta.'); valid=false; }
     if (!valid) { register.querySelector('[aria-invalid="true"]')?.focus(); return; }
     busy(register,true); status('[data-register-status]','Creando la cuenta…');
     try {
       // Desde Mi Ruka puede crearse una cuenta, pero nunca se adjunta una selección de inscripción implícita.
       const metadata = { first_name:firstName, last_name:lastName, country_code:country };
+      Object.assign(metadata, { privacy_policy_accepted:true, privacy_policy_accepted_at:new Date().toISOString(), privacy_policy_version:'2026-09-28' });
       if (accessMode === 'plan') Object.assign(metadata, { selected_plan:selection.plan, selected_billing:selection.billing, selected_currency:selection.currency });
       const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: callbackUrl(), data: metadata } });
       if (error) throw error;
