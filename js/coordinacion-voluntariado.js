@@ -99,6 +99,7 @@
   }
 
   function redirectMissingSession() {
+    window.LasNanasActivityDashboard?.reset();
     // Ruta fija: voluntariado abrirá directamente la pestaña de acceso de Mi Ruka.
     const requested = new URLSearchParams(window.location.search).get('application');
     if (/^[0-9a-f-]{36}$/i.test(requested || ''))
@@ -107,11 +108,13 @@
   }
 
   function redirectNonAdmin() {
+    window.LasNanasActivityDashboard?.reset();
     // Una cuenta válida sin permiso administrativo vuelve a su espacio personal.
     window.location.replace('mi-voluntariado.html');
   }
 
   function showConnectionError(message) {
+    window.LasNanasActivityDashboard?.reset();
     sessionStatus.textContent = 'No fue posible abrir el panel.';
     noticeText.textContent = message;
     notice.hidden = false;
@@ -295,6 +298,7 @@
   }
 
   function showView(name) {
+    if (!adminUser || layout.hidden) return;
     if (!views.some(view => view.dataset.adminView === name)) return;
     activeView = name;
     ++detailGeneration;
@@ -308,11 +312,14 @@
       if (active) button.setAttribute('aria-current', 'page');
       else button.removeAttribute('aria-current');
     });
+    if (name === 'activity') window.LasNanasActivityDashboard?.open(adminUser.id);
+    else window.LasNanasActivityDashboard?.close();
     if (name === 'activities') loadActivities();
     if (name === 'agendas') loadAgendas();
   }
 
   async function loadApplicationDetail(applicationId, context = activeView) {
+    window.LasNanasActivityDashboard?.close();
     const token = ++detailGeneration;
     currentApplication = null; currentReceipt = null; workflowState = null; receiptOpened = false;
     receiptDownload.disabled = true; syncTransferButton();
@@ -677,6 +684,8 @@
         applications.some(row => row.application_id === requestedApplication)) {
       await loadApplicationDetail(requestedApplication, 'applications');
     }
+    if (!currentApplication && new URLSearchParams(window.location.search || '').get('view') === 'activity')
+      showView('activity');
     await loadVolunteerOptions();
     const agendaPermission = await client.rpc('can_read_agenda');
     agendaAccess = !agendaPermission.error && agendaPermission.data === true;
@@ -716,6 +725,7 @@
   }));
   document.querySelector('[data-refresh-applications]').addEventListener('click', () => loadApplications());
   logoutButton.addEventListener('click', async () => {
+    window.LasNanasActivityDashboard?.reset();
     layout.hidden = true;
     logoutButton.disabled = true;
     await client.auth.signOut();
@@ -1003,6 +1013,7 @@
   });
   client?.auth?.onAuthStateChange?.((event, session) => {
     if (event === 'SIGNED_OUT' || (adminUser && session?.user && session.user.id !== adminUser.id)) {
+      window.LasNanasActivityDashboard?.reset();
       ++detailGeneration;
       layout.hidden = true;
       detail.hidden = true;

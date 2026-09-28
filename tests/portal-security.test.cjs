@@ -9,8 +9,8 @@ const html = readFileSync(resolve(__dirname, '../pages/mi-voluntariado.html'), '
 async function portal({ status = 'draft', membership = null, failure = false, signedIn = true, configured = true, invalidateDuringLoad = false } = {}) {
   const nodes = new Map();
   function node() {
-    return { hidden: true, style: {}, dataset: {}, textContent: '', value: '', checked: false,
-      classList: { toggle() {} }, addEventListener() {}, querySelectorAll: () => [],
+    return { hidden: true, style: {}, dataset: {}, textContent: '', value: '', checked: false, files: [],
+      classList: { toggle() {}, add() {} }, setAttribute() {}, addEventListener() {}, querySelectorAll: () => [],
       append() {}, replaceChildren() { this.cleared = true; },
       elements: new Proxy({}, { get(target, key) { return target[key] ||= node(); } }) };
   }
@@ -45,7 +45,8 @@ async function portal({ status = 'draft', membership = null, failure = false, si
     document: { addEventListener(_, fn) { start = fn; }, querySelector: select, querySelectorAll: () => [], createElement: node },
     window: { LasNanasSupabase: { client: configured ? client : null } },
     sessionStorage: { getItem(key) { assert.notEqual(key, 'lasnanas_visual_demo_v1'); return '{}'; }, removeItem(key) { removed.push(key); } },
-    location: { search: '', replace(url) { redirected = url; } }, URLSearchParams, Intl, Date
+    location: { search: '', replace(url) { redirected = url; } }, URLSearchParams, Intl, Date,
+    setInterval: () => 0, clearInterval() {}, setTimeout, clearTimeout
   });
   await start();
   return { select, removed, get redirected() { return redirected; }, authChange };

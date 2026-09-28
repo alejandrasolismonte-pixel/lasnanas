@@ -7,6 +7,7 @@
   <title>Coordinación de voluntariado · Las Ñañas</title>
   <link rel="stylesheet" href="../css/mi-voluntariado.css?v=6">
   <link rel="stylesheet" href="../css/coordinacion-voluntariado.css?v=4">
+  <link rel="stylesheet" href="../css/site-activity-dashboard.css?v=1">
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
 </head>
 <body>
@@ -35,6 +36,7 @@
           <button type="button" data-admin-view-button="documents">Documentos autorizados</button>
           <button type="button" data-admin-view-button="activities">Actividades oficiales</button>
           <button type="button" data-admin-view-button="agendas">Agendas permitidas</button>
+          <button type="button" data-admin-view-button="activity">Actividad y salud</button>
         </nav>
         <div class="admin-content">
           <section class="admin-view" data-admin-view="applications" aria-labelledby="applications-title">
@@ -99,6 +101,52 @@
             <p class="subtle">Las anotaciones personales se muestran únicamente a administración activa y a coordinación con permiso de agenda.</p>
             <div data-agenda-permission><label>Voluntaria<select data-agenda-owner></select></label><p data-agendas-status role="status" aria-live="polite"></p><div class="admin-agenda-list" data-agendas-list></div></div>
             <p class="notice warning" data-agenda-locked hidden>No fue posible validar el permiso de lectura de agendas. Recarga el panel o consulta la administración de roles.</p>
+          </section>
+
+          <section class="admin-view activity-dashboard" data-admin-view="activity" aria-labelledby="site-activity-title" hidden>
+            <div class="admin-section-head"><div><p class="eyebrow">Seguimiento privado</p><h2 id="site-activity-title">Actividad y salud</h2></div><button class="btn btn-ghost" type="button" data-activity-refresh>Actualizar</button></div>
+            <div class="activity-toolbar">
+              <div class="activity-periods" role="group" aria-label="Período de actividad">
+                <button type="button" data-activity-period="1" aria-pressed="false">Hoy</button>
+                <button type="button" class="active" data-activity-period="7" aria-pressed="true">7 días</button>
+                <button type="button" data-activity-period="30" aria-pressed="false">30 días</button>
+              </div>
+              <p class="help">Última actualización: <span data-activity-updated>Sin actualizar</span> · hora de Chile</p>
+            </div>
+            <p data-activity-status role="status" aria-live="polite">Verificando acceso a las métricas privadas…</p>
+            <div data-activity-content hidden>
+              <div class="activity-visits-grid" aria-label="Visitas por período">
+                <article class="activity-metric activity-metric--visits"><h3>Visitas hoy</h3><strong data-activity-metric="visits-today">—</strong></article>
+                <article class="activity-metric activity-metric--visits"><h3>Últimos 7 días</h3><strong data-activity-metric="visits-7">—</strong></article>
+                <article class="activity-metric activity-metric--visits"><h3>Últimos 30 días</h3><strong data-activity-metric="visits-30">—</strong></article>
+              </div>
+              <h3 class="activity-period-title">En el período: <span data-activity-period-label>7 días</span></h3>
+              <div class="activity-metrics-grid">
+                <article class="activity-metric"><h3>Visitantes únicos</h3><strong data-activity-metric="unique">—</strong><small>Navegadores distintos</small></article>
+                <article class="activity-metric"><h3>Nuevos / recurrentes</h3><div class="activity-visitor-split"><span><strong data-activity-metric="new">—</strong><small>Nuevos</small></span><span><strong data-activity-metric="returning">—</strong><small>Recurrentes</small></span></div></article>
+                <article class="activity-metric"><h3>Visitas a Voluntariado</h3><strong data-activity-metric="volunteer">—</strong><small>Visitas con esta página</small></article>
+                <article class="activity-metric activity-metric--conversion"><h3>Registros iniciados</h3><strong data-activity-metric="registrations">—</strong><small>Visitantes que empiezan el formulario</small></article>
+                <article class="activity-metric activity-metric--conversion"><h3>Solicitudes enviadas</h3><strong data-activity-metric="applications">—</strong><small>Primer envío registrado</small></article>
+              </div>
+              <div class="activity-panels-grid">
+                <section class="activity-panel" aria-labelledby="activity-countries-title"><h3 id="activity-countries-title">Países principales</h3><ol class="activity-ranking" data-activity-countries></ol></section>
+                <section class="activity-panel" aria-labelledby="activity-pages-title"><h3 id="activity-pages-title">Páginas más visitadas</h3><ol class="activity-ranking" data-activity-pages></ol></section>
+              </div>
+              <div class="activity-panels-grid">
+                <section class="activity-panel activity-panel--health" aria-labelledby="activity-health-title"><h3 id="activity-health-title">Estado del sitio</h3><strong class="activity-health-value" data-activity-health>Sin comprobar</strong><p class="help" data-activity-health-detail>Comprobación desde este navegador.</p></section>
+                <section class="activity-panel" aria-labelledby="activity-performance-title"><h3 id="activity-performance-title">Velocidad de carga</h3><strong class="activity-health-value" data-activity-performance>Sin datos</strong><p class="help" data-activity-performance-detail>Promedio de las cargas medidas en el período.</p></section>
+              </div>
+              <p class="help activity-definition">Una visita es una sesión por pestaña con hasta 30 minutos de inactividad. Los únicos son navegadores, no personas. Un registro empieza con la primera interacción con el formulario; cada visitante cuenta una vez en el período. Los envíos se cuentan por su fecha de envío, aunque su estado cambie.</p>
+              <p class="help" data-activity-tracking-started></p>
+              <details class="activity-panel activity-summary-panel">
+                <summary>Resumen diario</summary>
+                <p class="help">Un único resumen de ayer por día, listo para un futuro envío por WhatsApp.</p>
+                <button class="btn btn-ghost" type="button" data-activity-summary>Generar resumen de ayer</button>
+                <p data-activity-summary-status role="status" aria-live="polite"></p>
+                <textarea class="activity-summary-output" data-activity-summary-output aria-label="Texto del resumen diario privado" readonly hidden></textarea>
+                <button class="btn btn-ghost" type="button" data-activity-summary-copy hidden>Copiar resumen</button>
+              </details>
+            </div>
           </section>
 
           <section class="admin-view admin-detail" data-application-detail hidden aria-labelledby="application-detail-title">
@@ -223,6 +271,7 @@
   <script src="../js/loading-overlay.js?v=2"></script>
   <script src="../js/transfer-config.js?v=5"></script>
   <script src="../js/transfer-payments.js?v=5"></script>
-  <script src="../js/coordinacion-voluntariado.js?v=10"></script>
+  <script src="../js/site-activity-dashboard.js?v=1"></script>
+  <script src="../js/coordinacion-voluntariado.js?v=11"></script>
 </body>
 </html>

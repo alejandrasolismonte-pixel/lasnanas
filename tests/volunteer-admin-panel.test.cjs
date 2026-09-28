@@ -68,6 +68,7 @@ async function mount({ authorized = true, failStatusOnce = false } = {}) {
   select('[data-application-detail]').querySelector = select;
   const redirects = [];
   const statusCalls = [];
+  const activityCalls = [];
   const applications = [
     { application_id: 'pending', first_name: 'Paula', last_name: 'Pendiente', plan_id: 'base', billing: 'monthly', application_created_at: '2026-01-01T12:00:00Z', application_status: 'submitted', membership_active: false },
     { application_id: 'process', first_name: 'Inés', last_name: 'Proceso', plan_id: 'base', billing: 'monthly', application_created_at: '2026-01-01T12:00:00Z', application_status: 'in_review', membership_active: false },
@@ -101,12 +102,14 @@ async function mount({ authorized = true, failStatusOnce = false } = {}) {
       assert.ok(['volunteer_profiles', 'application_messages', 'admin_notes'].includes(table));
       const query = {
         select() { return query; }, eq() { return query; }, is() { return query; },
-        order() { return Promise.resolve({ data: [], error: null }); }
+        order() { return query; },
+        then(accept, reject) { return Promise.resolve({ data: [], error: null }).then(accept, reject); }
       };
       return query;
     }
   };
   const document = {
+    addEventListener() {},
     querySelector: select,
     querySelectorAll(selector) {
       if (selector === '[data-category]') return categories;
@@ -120,12 +123,19 @@ async function mount({ authorized = true, failStatusOnce = false } = {}) {
     window: {
       LasNanasSupabase: { client },
       LasNanasTransfers: { configured: () => false, createService: () => ({ receipt: async () => null }) },
-      location: { replace: url => redirects.push(url), assign: url => redirects.push(url) }
+      LasNanasActivityDashboard: {
+        open(userId) { activityCalls.push(['open', userId]); },
+        close() { activityCalls.push(['close']); },
+        reset() { activityCalls.push(['reset']); }
+      },
+      location: { search: '', replace: url => redirects.push(url), assign: url => redirects.push(url) }
     },
-    document, Date, Intl
+    document, Date, Intl, URLSearchParams,
+    sessionStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    setInterval: () => 0, clearInterval() {}, setTimeout, clearTimeout
   });
   await new Promise(resolve => setImmediate(resolve));
-  return { select, categories, viewButtons, views, layout, redirects, statusCalls };
+  return { select, categories, viewButtons, views, layout, redirects, statusCalls, activityCalls };
 }
 
 async function openPendingApplication(panel) {
@@ -165,7 +175,7 @@ test('category tabs filter cards and update selected state', async () => {
 
 test('navigation opens every administrative view and map editor', async () => {
   const panel = await mount();
-  const names = ['applications', 'clarifications', 'payments', 'documents', 'activities', 'agendas'];
+  const names = ['applications', 'clarifications', 'payments', 'documents', 'activities', 'agendas', 'activity'];
   assert.deepEqual(panel.viewButtons.map(button => button.dataset.adminViewButton), names);
   assert.deepEqual(panel.views.map(view => view.dataset.adminView), names);
   for (const name of names) {
@@ -173,6 +183,7 @@ test('navigation opens every administrative view and map editor', async () => {
     assert.deepEqual(panel.views.filter(view => !view.hidden).map(view => view.dataset.adminView), [name]);
     assert.ok(panel.viewButtons.find(button => button.dataset.adminViewButton === name).classList.contains('active'));
   }
+  assert.ok(panel.activityCalls.some(call => call[0] === 'open' && call[1] === 'admin-1'));
   panel.select('[data-admin-edit-map]').click();
   assert.deepEqual(panel.redirects, ['../?editar-mapa=1#territorio']);
 });

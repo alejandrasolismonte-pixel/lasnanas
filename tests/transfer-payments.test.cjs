@@ -162,13 +162,15 @@ async function adminPanel({received=true,enabled=true,revoke=false}={}) {
     receipt:async()=>received?{id:'receipt-a',status:'received'}:null,download:async()=>{}
   })};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../js/coordinacion-voluntariado.js'),'utf8'),{
-    window:{LasNanasSupabase:{client},LasNanasTransfers:transfers,location:{replace(){},assign(){}}},
-    document:{querySelector:select,querySelectorAll(key){
+    window:{LasNanasSupabase:{client},LasNanasTransfers:transfers,location:{search:'',replace(){},assign(){}}},
+    document:{addEventListener(){},querySelector:select,querySelectorAll(key){
       if(key==='[data-admin-view]')return views;
       if(key==='[data-admin-view-button]')return viewButtons;
       if(key==='[data-category]')return categories;
       throw new Error(`Unexpected selector ${key}`);
-    },createElement:node},Intl,Date
+    },createElement:node},Intl,Date,URLSearchParams,
+    sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},
+    setInterval:()=>0,clearInterval(){},setTimeout,clearTimeout
   });
   const flush=()=>new Promise(resolve=>setImmediate(resolve));
   await flush();
