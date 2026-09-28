@@ -95,6 +95,7 @@ Nuevos:
 - `js/site-activity.js`
 - `supabase/migrations/202609270004_private_site_activity.sql`
 - `supabase/diagnostics/site-activity-security.sql`
+- `supabase/diagnostics/site-activity-activation.sql`: comprobación de activación de solo lectura.
 - `supabase/functions/collect-site-activity/index.ts`
 - `supabase/functions/collect-site-activity/index.test.ts`
 - `supabase/functions/collect-site-activity/deno.json`
@@ -111,5 +112,6 @@ Modificados:
 - `index.html`, `pages/voluntariado.html`, `pages/servicios.html`, `pages/productos.html`, `pages/nanas.html`: carga del script pasivo de medición y configuración pública donde faltaba.
 - `supabase/config.toml`: configuración de la función de captura.
 - `tests/volunteer-admin-panel.test.cjs`, `tests/portal-security.test.cjs`, `tests/transfer-payments.test.cjs`: únicamente mocks de navegador actualizados para ejecutar las comprobaciones existentes, conservando sus assertions.
+- `output/activity-dashboard/verify-live.py`: comprobación HTTP de publicación, captura y rechazo de consultas anónimas, sin crear visitas de prueba.
 
 No se añadieron dependencias de producción. Los archivos de correos/credenciales que puedan aparecer modificados simultáneamente en el workspace pertenecen a otros cambios y no fueron editados para este dashboard.
