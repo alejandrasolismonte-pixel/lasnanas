@@ -1,6 +1,8 @@
 # Dashboard privado de actividad y salud
 
-El 27 de septiembre de 2026 el usuario confirmó que aplicó la migración en Supabase y autorizó publicar el dashboard y activar la medición. La captura mostrada confirma las cuatro políticas de lectura administrativa; la activación incluye comprobar también los permisos y las funciones. WhatsApp sigue sin integrar.
+El dashboard y la captura están activos en el sitio real. El usuario aplicó la migración y autorizó la publicación; se desplegó `collect-site-activity` y se comprobó el dashboard con una sesión administradora real. La captura empezó el 27 de septiembre de 2026 a las 23:21, hora de Chile. WhatsApp sigue sin integrar ni programar.
+
+La comprobación de activación devolvió `ready = true`; las 17 comprobaciones HTTP pasaron, incluidas las respuestas 401 para consultas anónimas a la RPC administrativa y a la tabla de eventos. Se verificó que los archivos publicados corresponden al código local. El resumen del 27 de septiembre quedó guardado una sola vez y se comprobó su contenido; esto no implica que se haya enviado por WhatsApp.
 
 ## Dónde se abre
 

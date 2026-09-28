@@ -61,10 +61,9 @@ def fresh_url(url: str) -> str:
     parsed = urllib.parse.urlsplit(url)
     query = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
     if parsed.path.startswith("/rest/v1/"):
-        # PostgREST treats unknown query names as column filters. A supported
-        # offset is a valid cache nonce; the table still has limit=0 and neither
-        # REST response body is read. Permission denial remains the expectation.
-        query.append(("offset", str(uuid.uuid4().int % 2147483647)))
+        # REST requests use no-cache headers. Query nonces can be interpreted
+        # as filters or ranges and obscure the actual permission check.
+        return url
     else:
         query.append(("activity_verification", uuid.uuid4().hex))
     return urllib.parse.urlunsplit(parsed._replace(query=urllib.parse.urlencode(query)))
@@ -170,8 +169,8 @@ def run(args) -> int:
                         headers=anonymous_headers, body=b'{"p_days":1}', timeout=args.timeout)
     record("anonymous_admin_rpc_denied", status in (401, 403), status)
 
-    status, _ = request(f"{project_url}/rest/v1/site_activity_events?select=event_id&limit=0",
-                        headers={"apikey": publishable_key}, timeout=args.timeout)
+    status, _ = request(f"{project_url}/rest/v1/site_activity_events?select=event_id&limit=1",
+                        method="HEAD", headers={"apikey": publishable_key}, timeout=args.timeout)
     record("anonymous_activity_table_denied", status in (401, 403), status)
 
     if args.published:

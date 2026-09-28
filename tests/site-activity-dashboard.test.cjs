@@ -62,7 +62,7 @@ function metrics(days = 7, overrides = {}) {
 }
 
 function mount({ signedIn = true, authorized = true, authError = null, permissionError = null,
-  configured = true, metricHandler, summaryHandler, fetchHandler } = {}) {
+  configured = true, authHandler, metricHandler, summaryHandler, fetchHandler } = {}) {
   const nodes = new Map();
   const select = selector => {
     if (!nodes.has(selector)) nodes.set(selector, element());
@@ -86,7 +86,11 @@ function mount({ signedIn = true, authorized = true, authError = null, permissio
   let authCalls = 0;
   const rpcCalls = [], fetchCalls = [], copied = [];
   const client = {
-    auth: { getUser: async () => { authCalls++; return { data: { user }, error: authError }; } },
+    auth: { getUser: async () => {
+      authCalls++;
+      const result = { data: { user }, error: authError };
+      return authHandler ? authHandler(authCalls, result) : result;
+    } },
     async rpc(name, args) {
       rpcCalls.push({ name, args });
       if (name === 'is_site_activity_admin') return { data: permission, error: permissionError };
@@ -279,6 +283,241 @@ test('daily summary is manual, private, and can be copied without starting any d
   assert.deepEqual(dashboard.copied, [output.value]);
   assert.equal(dashboard.fetchCalls.length, 1, 'summary generation and copy must never make an external delivery request');
 });
+
+test('generated summary survives authorized manual refresh, period change, and polling', async () => {
+  const dashboard = mount();
+  await dashboard.api.open('admin-1');
+  await dashboard.select('[data-activity-summary]').click();
+  await settle();
+  const output = dashboard.select('[data-activity-summary-output]');
+  const message = output.value;
+  const summaryStatus = dashboard.select('[data-activity-summary-status]').textContent;
+  assert.ok(message);
+  const updates = [
+    () => dashboard.select('[data-activity-refresh]').click(),
+    () => dashboard.periods.find(button => button.dataset.activityPeriod === '30').click(),
+    () => { for (const poll of dashboard.intervalHandlers.values()) poll(); }
+  ];
+  for (const update of updates) {
+    await update();
+    await settle();
+    assert.equal(dashboard.select('[data-activity-content]').hidden, false);
+    assert.equal(output.value, message, 'metrics refresh must retain the independent daily summary');
+    assert.equal(output.hidden, false);
+    assert.equal(dashboard.select('[data-activity-summary-status]').textContent, summaryStatus);
+    assert.equal(dashboard.select('[data-activity-summary-copy]').hidden, false);
+  }
+  assert.deepEqual(dashboard.calls('admin_get_site_activity').map(call => call.args.p_days), [7, 7, 30, 30]);
+  assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 1);
+  await dashboard.select('[data-activity-summary-copy]').click();
+  await settle();
+  assert.deepEqual(dashboard.copied, [message]);
+});
+
+test('pending summary survives authorized refresh and period changes without another generation request', async () => {
+  const pending = deferred();
+  const dashboard = mount({ summaryHandler: () => pending.promise });
+  await dashboard.api.open('admin-1');
+  await dashboard.select('[data-activity-summary]').click();
+  await settle();
+  const preparingStatus = dashboard.select('[data-activity-summary-status]').textContent;
+  assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 1);
+  const updates = [
+    () => dashboard.select('[data-activity-refresh]').click(),
+    () => dashboard.periods.find(button => button.dataset.activityPeriod === '1').click(),
+    () => { for (const poll of dashboard.intervalHandlers.values()) poll(); }
+  ];
+  for (const update of updates) {
+    await update();
+    await settle();
+    assert.equal(dashboard.select('[data-activity-content]').hidden, false);
+    assert.equal(dashboard.select('[data-activity-summary]').disabled, true, 'refresh must not enable duplicate generation while the first request is pending');
+    assert.equal(dashboard.select('[data-activity-summary-status]').textContent, preparingStatus);
+    await dashboard.select('[data-activity-summary]').click();
+    await settle();
+    assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 1);
+  }
+  pending.resolve({ data: { summary_date: '2026-09-26', generated_at: '2026-09-27T15:00:00Z', message: 'Summary requested before refresh' }, error: null });
+  await settle();
+  assert.equal(dashboard.select('[data-activity-summary-output]').value, 'Summary requested before refresh');
+  assert.equal(dashboard.select('[data-activity-summary-output]').hidden, false);
+  assert.equal(dashboard.select('[data-activity-summary]').disabled, false);
+  assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 1);
+});
+
+test('summary authorization in flight remains valid across an independent authorized metrics refresh', async () => {
+  const authorization = deferred();
+  const dashboard = mount({ authHandler: (call, result) => call === 2 ? authorization.promise : result });
+  await dashboard.api.open('admin-1');
+  await dashboard.select('[data-activity-summary]').click();
+  await settle();
+  assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 0);
+  await dashboard.select('[data-activity-refresh]').click();
+  await settle();
+  assert.equal(dashboard.calls('admin_get_site_activity').length, 2);
+  assert.equal(dashboard.select('[data-activity-summary]').disabled, true);
+  authorization.resolve({ data: { user: { id: 'admin-1' } }, error: null });
+  await settle();
+  assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 1);
+  assert.match(dashboard.select('[data-activity-summary-output]').value, /Las Ñañas/);
+  assert.equal(dashboard.select('[data-activity-summary-output]').hidden, false);
+});
+
+test('summary authorization failure invalidates a concurrently pending metrics response', async () => {
+  const authorization = deferred(), pendingMetrics = deferred();
+  let metricCalls = 0;
+  const dashboard = mount({ authHandler: (call, result) => call === 2 ? authorization.promise : result,
+    metricHandler: args => ++metricCalls === 1 ? { data: metrics(args.p_days), error: null } : pendingMetrics.promise });
+  await dashboard.api.open('admin-1');
+  await dashboard.select('[data-activity-summary]').click();
+  await settle();
+  await dashboard.select('[data-activity-refresh]').click();
+  await settle();
+  assert.equal(dashboard.calls('admin_get_site_activity').length, 2);
+  dashboard.setAuthorized(false);
+  authorization.resolve({ data: { user: { id: 'admin-1' } }, error: null });
+  await settle();
+  assert.equal(dashboard.select('[data-activity-content]').hidden, true);
+  assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 0);
+  pendingMetrics.resolve({ data: metrics(7, { unique_visitors: 888 }), error: null });
+  await settle();
+  assert.equal(dashboard.select('[data-activity-content]').hidden, true);
+  assert.ok(metricNames.every(name => dashboard.metric(name) === '—'));
+  assert.equal(dashboard.select('[data-activity-summary-output]').value, '');
+  assert.equal(dashboard.calls('admin_record_site_health').length, 1, 'a response after lost authority must not save or render its probe');
+});
+
+test('authorized copy waiting for authentication survives an independent metrics refresh', async () => {
+  const authorization = deferred();
+  const dashboard = mount({ authHandler: (call, result) => call === 3 ? authorization.promise : result });
+  await dashboard.api.open('admin-1');
+  await dashboard.select('[data-activity-summary]').click();
+  await settle();
+  const message = dashboard.select('[data-activity-summary-output]').value;
+  const copying = dashboard.select('[data-activity-summary-copy]').click();
+  await settle();
+  assert.equal(dashboard.copied.length, 0);
+  await dashboard.select('[data-activity-refresh]').click();
+  await settle();
+  authorization.resolve({ data: { user: { id: 'admin-1' } }, error: null });
+  await copying;
+  assert.deepEqual(dashboard.copied, [message]);
+  assert.equal(dashboard.select('[data-activity-summary-status]').textContent, 'Resumen copiado.');
+});
+
+for (const state of ['generated', 'pending']) {
+  test(`opening the view under another administrator cannot retain the previous account's ${state} summary`, async () => {
+    const pending = deferred();
+    const dashboard = mount(state === 'pending' ? { summaryHandler: () => pending.promise } : {});
+    await dashboard.api.open('admin-1');
+    await dashboard.select('[data-activity-summary]').click();
+    await settle();
+    assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 1);
+    if (state === 'generated') assert.ok(dashboard.select('[data-activity-summary-output]').value);
+    dashboard.setUser({ id: 'admin-2' });
+    await dashboard.api.open('admin-2');
+    assert.equal(dashboard.select('[data-activity-content]').hidden, false);
+    assert.equal(dashboard.select('[data-activity-summary-output]').value, '');
+    if (state === 'pending') {
+      pending.resolve({ data: { summary_date: '2026-09-26', generated_at: '2026-09-27T15:00:00Z', message: 'Summary belonging to previous session' }, error: null });
+      await settle();
+    }
+    assert.equal(dashboard.select('[data-activity-summary-output]').value, '');
+    assert.equal(dashboard.select('[data-activity-summary-output]').hidden, true);
+    assert.equal(dashboard.select('[data-activity-summary-copy]').hidden, true);
+    assert.equal(dashboard.intervalHandlers.size, 1, 'the newly authorized view must have only its own polling interval');
+  });
+}
+
+test('role loss during refresh clears the generated summary along with all private metrics', async () => {
+  const dashboard = mount();
+  await dashboard.api.open('admin-1');
+  await dashboard.select('[data-activity-summary]').click();
+  await settle();
+  assert.ok(dashboard.select('[data-activity-summary-output]').value);
+  dashboard.setAuthorized(false);
+  await dashboard.select('[data-activity-refresh]').click();
+  await settle();
+  assert.equal(dashboard.calls('admin_get_site_activity').length, 1);
+  assert.equal(dashboard.select('[data-activity-content]').hidden, true);
+  assert.ok(metricNames.every(name => dashboard.metric(name) === '—'));
+  assert.equal(dashboard.select('[data-activity-summary-output]').value, '');
+  assert.equal(dashboard.select('[data-activity-summary-output]').hidden, true);
+  assert.equal(dashboard.select('[data-activity-summary-copy]').hidden, true);
+});
+
+test('role loss during refresh invalidates an earlier pending summary response', async () => {
+  const pending = deferred();
+  const dashboard = mount({ summaryHandler: () => pending.promise });
+  await dashboard.api.open('admin-1');
+  await dashboard.select('[data-activity-summary]').click();
+  await settle();
+  assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 1);
+  dashboard.setAuthorized(false);
+  await dashboard.select('[data-activity-refresh]').click();
+  await settle();
+  pending.resolve({ data: { summary_date: '2026-09-26', generated_at: '2026-09-27T15:00:00Z', message: 'Summary after access was revoked' }, error: null });
+  await settle();
+  assert.equal(dashboard.select('[data-activity-content]').hidden, true);
+  assert.equal(dashboard.select('[data-activity-summary-output]').value, '');
+  assert.equal(dashboard.select('[data-activity-summary-output]').hidden, true);
+  assert.equal(dashboard.select('[data-activity-summary]').disabled, true);
+});
+
+test('server denial of a metrics refresh invalidates pending summary even after successful role precheck', async () => {
+  const pending = deferred();
+  let denied = false;
+  const dashboard = mount({ summaryHandler: () => pending.promise, metricHandler: args => denied
+    ? { data: null, error: { code: '42501', message: 'private_access_required' } }
+    : { data: metrics(args.p_days), error: null } });
+  await dashboard.api.open('admin-1');
+  await dashboard.select('[data-activity-summary]').click();
+  await settle();
+  denied = true;
+  await dashboard.select('[data-activity-refresh]').click();
+  await settle();
+  assert.equal(dashboard.select('[data-activity-content]').hidden, true);
+  pending.resolve({ data: { summary_date: '2026-09-26', generated_at: '2026-09-27T15:00:00Z', message: 'Late summary after server denied access' }, error: null });
+  await settle();
+  assert.equal(dashboard.select('[data-activity-summary-output]').value, '');
+  assert.equal(dashboard.select('[data-activity-summary-output]').hidden, true);
+  assert.equal(dashboard.select('[data-activity-summary]').disabled, true);
+});
+
+for (const action of ['logout', 'close', 'hidden-tab']) {
+  async function leavePrivateView(dashboard) {
+    if (action === 'logout') { dashboard.setUser(null); dashboard.api.reset(); }
+    else if (action === 'close') dashboard.api.close();
+    else { dashboard.document.hidden = true; await dashboard.document.dispatch('visibilitychange'); }
+  }
+  test(`${action} removes an already generated private summary`, async () => {
+    const dashboard = mount();
+    await dashboard.api.open('admin-1');
+    await dashboard.select('[data-activity-summary]').click();
+    await settle();
+    assert.ok(dashboard.select('[data-activity-summary-output]').value);
+    await leavePrivateView(dashboard);
+    assert.equal(dashboard.select('[data-activity-content]').hidden, true);
+    assert.equal(dashboard.select('[data-activity-summary-output]').value, '');
+    assert.equal(dashboard.select('[data-activity-summary-output]').hidden, true);
+    assert.equal(dashboard.select('[data-activity-summary-copy]').hidden, true);
+  });
+  test(`${action} discards the late response of a pending private summary`, async () => {
+    const pending = deferred();
+    const dashboard = mount({ summaryHandler: () => pending.promise });
+    await dashboard.api.open('admin-1');
+    await dashboard.select('[data-activity-summary]').click();
+    await settle();
+    assert.equal(dashboard.calls('generate_daily_site_activity_summary').length, 1);
+    await leavePrivateView(dashboard);
+    pending.resolve({ data: { summary_date: '2026-09-26', generated_at: '2026-09-27T15:00:00Z', message: 'Late private summary' }, error: null });
+    await settle();
+    assert.equal(dashboard.select('[data-activity-content]').hidden, true);
+    assert.equal(dashboard.select('[data-activity-summary-output]').value, '');
+    assert.equal(dashboard.select('[data-activity-summary-output]').hidden, true);
+    assert.equal(dashboard.select('[data-activity-summary]').disabled, true);
+  });
+}
 
 test('revoked administrator cannot generate a summary after metrics were displayed', async () => {
   const dashboard = mount();

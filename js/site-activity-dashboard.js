@@ -19,9 +19,12 @@
   const dateFormat = new Intl.DateTimeFormat('es-CL', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Santiago', hour12: false });
   const metricNames = ['visits-today', 'visits-7', 'visits-30', 'unique', 'new', 'returning', 'volunteer', 'registrations', 'applications'];
   let active = false, userId = null, days = 7, generation = 0, summaryGeneration = 0;
-  let probeController = null, pollTimer = null;
+  let probeController = null, pollTimer = null, summaryPending = false;
 
   function current(token) { return active && token === generation; }
+  function currentSummary(token, expectedUserId) {
+    return active && !document.hidden && token === summaryGeneration && userId === expectedUserId;
+  }
   function setStatus(message, isError = false) {
     status.textContent = message;
     status.classList.toggle('is-error', isError);
@@ -48,7 +51,7 @@
     summaryOutput.hidden = true;
     copyButton.hidden = true;
   }
-  function clearData() {
+  function clearData(preserveSummary = false) {
     content.hidden = true;
     metricNames.forEach(name => { find(`[data-activity-metric="${name}"]`).textContent = '—'; });
     find('[data-activity-countries]').replaceChildren();
@@ -61,7 +64,7 @@
     find('[data-activity-performance]').textContent = 'Sin datos';
     find('[data-activity-performance-detail]').textContent = 'Promedio de las cargas medidas en el período.';
     summaryButton.disabled = true;
-    clearSummary();
+    if (!preserveSummary) clearSummary();
   }
   function abortProbe() {
     probeController?.abort();
@@ -71,36 +74,40 @@
     if (pollTimer !== null) clearInterval(pollTimer);
     pollTimer = null;
   }
-  function authorityError() {
+  function authorityError(reason) {
     const error = new Error('private_access_required');
-    error.code = '42501';
+    error.code = reason?.code || '42501';
     error.authorityFailure = true;
     return error;
   }
-  async function authorize(token) {
-    if (!current(token)) return false;
-    if (!client || !userId) throw authorityError();
+  async function authorize(isCurrent, expectedUserId) {
+    if (!isCurrent()) return false;
+    if (!client || !expectedUserId) throw authorityError();
     let result;
     try { result = await client.auth.getUser(); }
     catch (_) { throw authorityError(); }
-    if (!current(token)) return false;
-    if (result.error || !result.data?.user || result.data.user.id !== userId) throw authorityError();
+    if (!isCurrent()) return false;
+    if (result?.error || !result?.data?.user || result.data.user.id !== expectedUserId) throw authorityError();
     let permission;
     try { permission = await client.rpc('is_site_activity_admin'); }
     catch (error) {
-      error.authorityFailure = true;
-      throw error;
+      throw authorityError(error);
     }
-    if (!current(token)) return false;
-    if (permission.error) {
-      permission.error.authorityFailure = true;
-      throw permission.error;
-    }
-    if (permission.data !== true) throw authorityError();
+    if (!isCurrent()) return false;
+    if (permission?.error) throw authorityError(permission.error);
+    if (permission?.data !== true) throw authorityError();
     return true;
   }
   function handlePrivateError(error) {
-    clearData();
+    const authorityFailed = error?.code === '42501' || error?.authorityFailure;
+    if (authorityFailed) {
+      ++generation;
+      ++summaryGeneration;
+      summaryPending = false;
+      abortProbe();
+      refreshButton.disabled = false;
+    }
+    clearData(!authorityFailed);
     if (error?.code === '42501') {
       setStatus('No fue posible validar tu acceso administrativo. Las métricas permanecen protegidas.', true);
     } else {
@@ -186,19 +193,20 @@
       ? `Medición de visitas desde ${formatDate(data.tracking_started_at)}. Las solicitudes enviadas usan el historial disponible.`
       : 'Aún no se han registrado visitas. Las solicitudes enviadas usan el historial disponible.';
     content.hidden = false;
-    summaryButton.disabled = false;
+    summaryButton.disabled = summaryPending;
     setStatus(data.visits?.selected === 0 ? 'No hay visitas registradas en este período.' : 'Métricas privadas actualizadas.');
   }
   async function refresh() {
     if (!active || document.hidden) return;
     const token = ++generation;
-    ++summaryGeneration;
+    const expectedUserId = userId;
     abortProbe();
-    clearData();
+    // El resumen de ayer no depende del período ni de la actualización de las métricas.
+    clearData(true);
     refreshButton.disabled = true;
     setStatus('Actualizando actividad y comprobando el sitio…');
     try {
-      if (!(await authorize(token))) return;
+      if (!(await authorize(() => current(token), expectedUserId)) || !current(token)) return;
       const [result, health] = await Promise.all([
         client.rpc('admin_get_site_activity', { p_days: days }),
         checkSite(token)
@@ -221,16 +229,18 @@
     }
   }
   async function generateSummary() {
-    if (!active || content.hidden || summaryButton.disabled) return;
-    const token = generation;
+    if (!active || content.hidden || summaryButton.disabled || summaryPending) return;
     const summaryToken = ++summaryGeneration;
+    const expectedUserId = userId;
+    const isCurrent = () => currentSummary(summaryToken, expectedUserId);
     clearSummary();
+    summaryPending = true;
     summaryButton.disabled = true;
     summaryStatus.textContent = 'Preparando el resumen privado de ayer…';
     try {
-      if (!(await authorize(token)) || summaryToken !== summaryGeneration) return;
+      if (!(await authorize(isCurrent, expectedUserId)) || !isCurrent()) return;
       const { data, error } = await client.rpc('generate_daily_site_activity_summary');
-      if (!current(token) || summaryToken !== summaryGeneration) return;
+      if (!isCurrent()) return;
       if (error) throw error;
       if (!data || typeof data.message !== 'string' || !data.message.trim()) throw new Error('invalid_summary');
       summaryOutput.value = data.message;
@@ -239,11 +249,14 @@
       summaryStatus.textContent = `Resumen del ${summaryDate} · generado ${formatDate(data.generated_at)}. Listo para copiar.`;
       copyButton.hidden = !window.navigator?.clipboard?.writeText;
     } catch (error) {
-      if (!current(token) || summaryToken !== summaryGeneration) return;
+      if (!isCurrent()) return;
       if (error?.code === '42501' || error?.authorityFailure) handlePrivateError(error);
       else summaryStatus.textContent = 'No fue posible generar el resumen. Vuelve a intentarlo en unos minutos.';
     } finally {
-      if (current(token) && summaryToken === summaryGeneration) summaryButton.disabled = content.hidden;
+      if (isCurrent()) {
+        summaryPending = false;
+        summaryButton.disabled = content.hidden;
+      }
     }
   }
   periodButtons.forEach(button => button.addEventListener('click', () => {
@@ -258,13 +271,14 @@
   summaryButton.addEventListener('click', () => { void generateSummary(); });
   copyButton.addEventListener('click', async () => {
     if (!active || content.hidden || summaryOutput.hidden || !summaryOutput.value) return;
-    const token = generation, summaryToken = summaryGeneration;
+    const summaryToken = summaryGeneration, expectedUserId = userId;
+    const isCurrent = () => currentSummary(summaryToken, expectedUserId);
     try {
-      if (!(await authorize(token)) || summaryToken !== summaryGeneration) return;
+      if (!(await authorize(isCurrent, expectedUserId)) || !isCurrent()) return;
       await window.navigator?.clipboard?.writeText(summaryOutput.value);
-      if (current(token) && summaryToken === summaryGeneration) summaryStatus.textContent = 'Resumen copiado.';
+      if (isCurrent()) summaryStatus.textContent = 'Resumen copiado.';
     } catch (error) {
-      if (!current(token) || summaryToken !== summaryGeneration) return;
+      if (!isCurrent()) return;
       if (error?.code === '42501' || error?.authorityFailure) handlePrivateError(error);
       else summaryStatus.textContent = 'Puedes seleccionar y copiar el texto del resumen.';
     }
@@ -274,6 +288,7 @@
     if (document.hidden) {
       ++generation;
       ++summaryGeneration;
+      summaryPending = false;
       abortProbe();
       clearData();
       refreshButton.disabled = false;
@@ -284,6 +299,7 @@
   window.LasNanasActivityDashboard = {
     open(id) {
       if (typeof id !== 'string' || !id) { this.reset(); return; }
+      if (active && userId !== id) this.close();
       active = true;
       userId = id;
       stopPolling();
@@ -295,6 +311,7 @@
       active = false;
       ++generation;
       ++summaryGeneration;
+      summaryPending = false;
       stopPolling();
       abortProbe();
       clearData();
