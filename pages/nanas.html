@@ -27,7 +27,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Kaushan+Script&display=swap" rel="stylesheet">
   <script src="../js/theme-init.js?v=1"></script>
   <link rel="stylesheet" href="../css/desarrollo.css?v=99">
-  <link rel="stylesheet" href="../css/nanas.css?v=19">
+  <link rel="stylesheet" href="../css/nanas.css?v=21">
   <link rel="stylesheet" href="../css/whatsapp-floating.css?v=4">
   <link rel="stylesheet" href="../css/public-theme.css?v=3">
   <link rel="stylesheet" href="../css/loading-overlay.css?v=2">
@@ -67,7 +67,7 @@
           <path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path>
           <circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle>
         </svg>
-        <span class="luxury-btn__text">Registro</span>
+        <span class="luxury-btn__text">INSCRIBIR ÑAÑA</span>
         <svg viewBox="0 0 15 15" class="luxury-btn__ornament-right" aria-hidden="true" focusable="false">
           <path fill="none" stroke="currentColor" d="M7.5,1 L14,7.5 L7.5,14 L1,7.5 L7.5,1Z"></path>
           <circle fill="currentColor" r="2" cy="7.5" cx="7.5"></circle>
@@ -283,25 +283,43 @@
       <div class="container contact-grid">
         <div class="contact-copy reveal">
           <p class="eyebrow">Conectemos · Ruka</p>
-          <h2 id="contact-title">Contacto con Wallmapu</h2>
-          <p>¿Tienes dudas, necesitas contratar nuestros servicios , productos o vulntariado? Escríbenos directamente.</p>
+          <h2 id="contact-title">INSCRIBIR ÑAÑA</h2>
+          <p>Cuéntanos brevemente sobre tu proyecto, tus productos, servicios o saberes, o si necesitas apoyo de manos voluntarias. Déjanos tus datos y nos pondremos en contacto contigo para conversar y coordinar los siguientes pasos.</p>
           <a href="mailto:nanamapuche@gmail.com">nanamapuche@gmail.com</a>
           <p>Región de La Araucanía, Chile<br>lasñañas.cl</p>
         </div>
 
-        <form class="contact-form reveal" id="registro" data-contact-form tabindex="-1" aria-label="Formulario de contacto y registro" action="https://formspree.io/f/xyeynlka" method="POST">
-          <input type="hidden" name="subject" value="Las Ñañas | Ecosistema">
-          <p class="nn-registration-intent" data-registration-intent hidden>Registro para recibir novedades de las ñañas y te lleguen ofertas, esto no incluye ningun tipo de suscripcion.</p>
-          <label>Nombre<input name="nombre" type="text" autocomplete="name" required></label>
-          <label>País<input name="pais" type="text" autocomplete="country-name" required></label>
-          <label>Correo electrónico<input name="email" type="email" autocomplete="email" required></label>
-          <label><span data-contact-phone-label>Teléfono / WhatsApp (opcional)</span><input name="whatsapp" type="tel" autocomplete="tel"></label>
-          <label>Mensaje<textarea name="mensaje" rows="4" required></textarea></label>
-          <button class="button button--primary" type="submit"><span data-contact-submit-label>Enviar mensaje</span> <span aria-hidden="true">→</span></button>
+        <form class="contact-form reveal" id="registro" data-contact-form data-registration-intent="true" tabindex="-1" aria-label="Formulario para inscribir Ñaña" action="https://formspree.io/f/xyeynlka" method="POST">
+          <input type="hidden" name="subject" value="Nueva propuesta · Inscripción Ñaña">
+          <label>Nombre<input name="nombre" type="text" autocomplete="name" placeholder="Nombre de la Ñaña" required></label>
+          <label>Comuna o localidad<input name="localidad" type="text" autocomplete="address-level2" placeholder="Ej. Temuco, Tromen, Padre Las Casas..." required></label>
+          <label><span data-contact-phone-label>Teléfono / WhatsApp</span><input name="whatsapp" type="tel" autocomplete="tel" placeholder="+56 9 ..." required></label>
+          <label>Correo<input name="email" type="email" autocomplete="email" placeholder="correo@ejemplo.cl" required></label>
+          <label>¿Qué quieres ofrecer o desarrollar?
+            <select name="propuesta" required>
+              <option value="Apoyo de manos voluntarias" selected>Apoyo de manos voluntarias</option>
+              <option value="Productos">Productos</option>
+              <option value="Servicios">Servicios</option>
+              <option value="Talleres">Talleres</option>
+              <option value="Saberes">Saberes</option>
+              <option value="Alojamiento o arriendo">Alojamiento o arriendo</option>
+              <option value="Experiencias">Experiencias</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </label>
+          <label>Cuéntanos un poquito sobre tu proyecto<textarea name="mensaje" rows="4" placeholder="¿Qué haces, qué quieres ofrecer o qué apoyo necesitas?" required></textarea></label>
+          <button class="button button--primary" type="submit"><span data-contact-submit-label>ENVIAR INSCRIPCIÓN</span> <span aria-hidden="true">→</span></button>
           <p class="form-feedback" data-form-feedback aria-live="polite"></p>
         </form>
       </div>
     </section>
+
+    <dialog class="nn-products-notice nn-registration-confirmation" data-registration-confirmation aria-labelledby="registration-confirmation-title" aria-describedby="registration-confirmation-copy registration-confirmation-closing">
+      <h2 id="registration-confirmation-title">¡Recibimos tu propuesta!</h2>
+      <p id="registration-confirmation-copy">Gracias por querer ser parte de la Red de Las Ñañas. Revisaremos la información que nos enviaste y nos pondremos en contacto contigo lo antes posible para conversar y coordinar los siguientes pasos.</p>
+      <p id="registration-confirmation-closing"><strong>Chaltumay, peukayal ñañita!</strong></p>
+      <button class="nn-products-notice__button" type="button" data-registration-confirmation-close>CERRAR</button>
+    </dialog>
 
   </main>
 
@@ -337,8 +355,8 @@
 
   <script src="../js/loading-overlay.js?v=2"></script>
   <script src="../js/motion-lifecycle.js?v=2"></script>
-  <script src="../js/desarrollo.js?v=34"></script>
-  <script src="../js/nanas.js?v=9"></script>
+  <script src="../js/desarrollo.js?v=36"></script>
+  <script src="../js/nanas.js?v=10"></script>
   <script src="../js/whatsapp-floating.js?v=4"></script>
   <script src="../js/supabase-config.js"></script>
   <script src="../js/site-activity.js?v=1"></script>

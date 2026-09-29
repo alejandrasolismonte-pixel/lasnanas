@@ -828,6 +828,25 @@
 
 #registro { scroll-margin-top: 6rem; }
 
+#registro.contact-form { grid-template-columns: 1fr; }
+
+#registro select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: .68rem .75rem;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+#registro select:focus {
+  outline: 2px solid var(--orange);
+  outline-offset: 1px;
+  border-color: var(--orange);
+}
+
 html[data-theme="day"] .nn-ecosystem__register {
   border-color: rgba(23, 86, 82, .38);
   background: rgba(252, 255, 254, .94);
@@ -984,7 +1003,8 @@ html[data-theme="day"] .nn-ecosystem__register > p {
   font-size: clamp(1.53rem, 4.5vw, 1.98rem);
 }
 
-.nn-products-notice #products-notice-copy {
+.nn-products-notice #products-notice-copy,
+.nn-registration-confirmation p {
   max-width: 40ch;
   margin: 0 auto 1.5rem;
   color: #d7e7da;

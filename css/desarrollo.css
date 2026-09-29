@@ -4392,3 +4392,219 @@ html[data-theme="day"] .contact-form textarea::placeholder {
     overflow: auto;
   }
 }
+/* =========================================================
+   INVITACIÓN · RED DE LAS ÑAÑAS
+   ========================================================= */
+
+.nana-network-invite {
+  position: relative;
+  padding: clamp(4rem, 7vw, 6rem) 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+
+/* Barra de colores inferior estilo Las Ñañas */
+
+.nana-network-invite::after {
+  content: "";
+  position: absolute;
+
+  left: 50%;
+  bottom: 0;
+
+  width: 100vw;
+  height: 5px;
+
+  transform: translateX(-50%);
+
+  background: linear-gradient(
+    90deg,
+    #16857f 0%,
+    #16857f 13%,
+
+    #83d0d2 13%,
+    #83d0d2 28%,
+
+    #ea580c 28%,
+    #ea580c 40%,
+
+    #16857f 40%,
+    #16857f 68%,
+
+    #f07a32 68%,
+    #f07a32 76%,
+
+    #83d0d2 76%,
+    #83d0d2 100%
+  );
+}
+/* =========================================================
+   INVITACIÓN · RED DE LAS ÑAÑAS
+   ========================================================= */
+
+.nana-network-invite {
+  position: relative;
+  padding: clamp(4rem, 7vw, 6rem) 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+.nana-network-invite__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.nana-network-invite__content {
+  max-width: 780px;
+  text-align: left;
+}
+
+.nana-network-invite__eyebrow {
+  margin: 0 0 1.4rem;
+  color: #ea580c;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nana-network-invite__title {
+  max-width: 900px;
+  margin: 0 0 1.5rem;
+  color: #f5f5f3;
+  font-family: var(--font-heading, Georgia, serif);
+  font-size: clamp(2.7rem, 5.4vw, 4.6rem);
+  font-weight: 500;
+  line-height: 1.08;
+}
+
+.nana-network-invite__subtitle {
+  max-width: 850px;
+  margin: 0;
+  color: #e2e8f0;
+  font-size: clamp(1.15rem, 2vw, 1.35rem);
+  line-height: 1.65;
+}
+
+.nana-network-invite__closing {
+  margin: 1.6rem 0 0;
+  color: #16857f;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.nana-network-invite__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 720px;
+  min-height: 56px;
+
+  margin: 2rem 0 0;
+  padding: 0.9rem 1.5rem;
+
+  border: 1px solid #ea580c;
+  border-radius: 10px;
+
+  background: #ea580c;
+  color: #ffffff !important;
+
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+
+  text-decoration: none !important;
+
+  box-shadow: none;
+
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.nana-network-invite__button:hover {
+  transform: translateY(-2px);
+  background: #f0651e;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.nana-network-invite__button:focus-visible {
+  outline: 3px solid rgba(234, 88, 12, 0.4);
+  outline-offset: 4px;
+}
+
+.nana-network-invite__media {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nana-network-invite__image {
+  display: block;
+
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+
+  object-fit: contain;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .nana-network-invite__layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .nana-network-invite__content {
+    max-width: 100%;
+  }
+
+  .nana-network-invite__media {
+    order: 2;
+  }
+
+  .nana-network-invite__image {
+    max-width: 380px;
+  }
+}
+
+
+@media (max-width: 700px) {
+
+  .nana-network-invite {
+    padding: 3.2rem 0 3.8rem;
+  }
+
+  .nana-network-invite__title {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+  }
+
+  .nana-network-invite__subtitle {
+    font-size: 1rem;
+  }
+
+  .nana-network-invite__closing {
+    font-size: 1.05rem;
+  }
+
+  .nana-network-invite__button {
+    max-width: 100%;
+    min-height: 54px;
+  }
+
+  .nana-network-invite__image {
+    max-width: 300px;
+  }
+}

@@ -362,6 +362,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Envío del Formulario Principal
 const form = document.querySelector('[data-contact-form]');
 const feedback = document.querySelector('[data-form-feedback]');
+const registrationConfirmation = document.querySelector('[data-registration-confirmation]');
+registrationConfirmation?.querySelector('[data-registration-confirmation-close]')?.addEventListener('click', () => {
+  registrationConfirmation.close();
+});
 
 form?.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -371,7 +375,7 @@ form?.addEventListener('submit', async (event) => {
 
   const data = new FormData(form);
   const isRegistration = form.dataset.registrationIntent === 'true';
-  const sendingText = isRegistration ? 'Enviando solicitud…' : 'Enviando mensaje…';
+  const sendingText = isRegistration ? 'Enviando propuesta…' : 'Enviando mensaje…';
   button.disabled = true;
   feedback.textContent = sendingText;
   window.LasNanasLoader?.show(sendingText);
@@ -390,9 +394,10 @@ form?.addEventListener('submit', async (event) => {
     }
 
     feedback.textContent = isRegistration
-      ? '¡Solicitud de registro enviada! Chaltumay pu lamien.'
+      ? '¡Recibimos tu propuesta!'
       : '¡Mensaje enviado! Chaltumay pu lamien.';
     form.reset();
+    if (isRegistration && registrationConfirmation) registrationConfirmation.showModal();
   } catch (error) {
     feedback.textContent =
       'No pudimos confirmar el envío. Tus datos siguen aquí; inténtalo nuevamente.';
