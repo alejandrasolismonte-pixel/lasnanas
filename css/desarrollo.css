@@ -4489,6 +4489,14 @@ html[data-theme="day"] .contact-form textarea::placeholder {
   line-height: 1.65;
 }
 
+html[data-theme="day"] .nana-network-invite__title {
+  color: var(--day-ink);
+}
+
+html[data-theme="day"] .nana-network-invite__subtitle {
+  color: var(--day-muted);
+}
+
 .nana-network-invite__closing {
   margin: 1.6rem 0 0;
   color: #16857f;
