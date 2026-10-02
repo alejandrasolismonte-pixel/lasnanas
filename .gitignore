@@ -5,3 +5,6 @@
 
 # CONFIGURACIÓN GENERADA: contiene únicamente URL y clave publicable, pero no se versiona.
 js/supabase-config.js
+
+# Salida generada para Render: solo archivos destinados al sitio público.
+dist/
