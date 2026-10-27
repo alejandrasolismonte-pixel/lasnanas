@@ -8,7 +8,7 @@
     month: '',
     territory: '',
     title: 'El fuego de bienvenida',
-    description: 'Las Ñañas compartirán en un video, un saber o una invitación desde su territorio.',
+    description: 'Nuestro ecosistema busca aportar al turismo rural e intereses especiales en el sur de Chile, el intercambio cultural, agroecología y el desarrollo de una ruta agroecológica que conecte mujeres, saberes y territorios.',
     src: 'assets/videos/video-mes.mp4',
     poster: 'assets/img/post/post-1.jpeg',
     captionsSrc: '',
@@ -32,7 +32,7 @@
     video.hidden = true;
     placeholder.hidden = false;
     title.textContent = 'El fuego de bienvenida';
-    description.textContent = 'Cada mes, una Ñaña compartirá una historia, un saber o una invitación desde su territorio,';
+    description.textContent = monthlyFeature.description;
     meta.textContent = 'Primer video próximamente · Hasta 2 minutos';
     if (action) action.hidden = true;
   };

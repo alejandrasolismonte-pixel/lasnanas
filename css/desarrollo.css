@@ -1052,6 +1052,39 @@ body.public-flow-page #inicio .hero__arrival {
   border-color: rgba(45,135,78,.75);
 }
 
+/* Mantiene legible la quinta página sin mostrar el texto de la hoja siguiente. */
+#l4 .nanas-face--invitation {
+  background-color: #166534;
+}
+#l4 .nanas-invitation-copy {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+  scrollbar-width: thin;
+  scrollbar-color: #f36b3c transparent;
+}
+#l4 .nanas-invitation-copy p {
+  margin: 0;
+}
+@media (min-width: 769px) and (max-width: 925px) {
+  #l4 .nanas-face--invitation {
+    padding: 24px 26px;
+    gap: 10px;
+  }
+  #l4 .nanas-invitation-copy {
+    gap: 10px;
+    padding-bottom: 2.5rem;
+  }
+  #l4 .nanas-invitation-copy p {
+    font-size: clamp(.9rem, 1.7vw, 1rem);
+    line-height: 1.4;
+  }
+}
+
 /* Modificador para páginas que son solo imagen */
 .nanas-face.is-image {
   padding: 0;
